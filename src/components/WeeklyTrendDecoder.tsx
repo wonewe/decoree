@@ -1,0 +1,113 @@
+import { useCallback, useMemo, useState } from "react";
+import { fetchTrendReports } from "../services/contentService";
+import { useAsyncData } from "../hooks/useAsyncData";
+import type { TrendIntensity, TrendReport } from "../data/trends";
+import { useI18n } from "../shared/i18n";
+
+type IntensityBadgeProps = {
+  intensity: TrendIntensity;
+};
+
+function IntensityBadge({ intensity }: IntensityBadgeProps) {
+  const styles: Record<TrendIntensity, string> = {
+    highlight: "bg-dancheongGreen/10 text-dancheongGreen",
+    insider: "bg-hanBlue/10 text-hanBlue",
+    emerging: "bg-dancheongYellow/10 text-dancheongYellow"
+  };
+
+  const labels: Record<TrendIntensity, string> = {
+    highlight: "Hotspot",
+    insider: "Insider",
+    emerging: "Emergent"
+  };
+
+  return (
+    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${styles[intensity]}`}>
+      {labels[intensity]}
+    </span>
+  );
+}
+
+function TrendCard({ report }: { report: TrendReport }) {
+  const { t } = useI18n();
+  const [showSample, setShowSample] = useState(false);
+
+  return (
+    <article className="card flex flex-col gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <IntensityBadge intensity={report.intensity} />
+          <span className="text-xs text-slate-400">{new Date(report.publishedAt).toLocaleDateString()}</span>
+        </div>
+        {report.isPremium && <span className="badge-premium">{t("trends.premiumBadge")}</span>}
+      </div>
+      <h3 className="text-xl font-semibold text-dancheongNavy">{report.title}</h3>
+      <p className="text-slate-600">{report.summary}</p>
+      <div className="text-sm text-slate-500">
+        <strong>Quartier:</strong> {report.neighborhood} • {report.tags.join(" · ")}
+      </div>
+      {report.isPremium ? (
+        <div className="rounded-2xl border border-dashed border-dancheongRed/40 p-4">
+          {showSample ? (
+            <p className="text-sm text-slate-600">{report.details}</p>
+          ) : (
+            <>
+              <p className="text-sm text-slate-600">{t("trends.unlock")}</p>
+              <button
+                className="mt-3 text-sm font-semibold text-hanBlue hover:underline"
+                onClick={() => setShowSample(true)}
+              >
+                {t("trends.sample")}
+              </button>
+            </>
+          )}
+        </div>
+      ) : (
+        <p className="text-sm text-slate-700">{report.details}</p>
+      )}
+    </article>
+  );
+}
+
+export default function WeeklyTrendDecoder() {
+  const { t } = useI18n();
+  const fetcher = useCallback(() => fetchTrendReports(), []);
+  const { status, data } = useAsyncData(fetcher);
+
+  const sortedReports = useMemo(() => {
+    if (!data) return [];
+    return [...data].sort(
+      (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+    );
+  }, [data]);
+
+  return (
+    <section className="section-container space-y-8">
+      <div className="space-y-4">
+        <h2 className="text-3xl font-bold text-dancheongNavy">{t("trends.title")}</h2>
+        <p className="max-w-2xl text-slate-600">{t("trends.subtitle")}</p>
+      </div>
+      {status === "loading" && (
+        <div className="grid gap-6 md:grid-cols-2">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="animate-pulse rounded-2xl bg-white p-6 shadow">
+              <div className="h-4 w-24 rounded bg-slate-200" />
+              <div className="mt-4 h-6 w-3/4 rounded bg-slate-200" />
+              <div className="mt-6 space-y-3">
+                <div className="h-4 w-full rounded bg-slate-200" />
+                <div className="h-4 w-5/6 rounded bg-slate-200" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {status === "success" && (
+        <div className="grid gap-6 md:grid-cols-2">
+          {sortedReports.map((report) => (
+            <TrendCard key={report.id} report={report} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
