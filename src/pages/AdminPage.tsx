@@ -3,7 +3,6 @@ import {
   addEvent,
   addPhrase,
   addTrendReport,
-  clearCustomContent,
   fetchEvents,
   fetchPhrases,
   fetchTrendReports
@@ -90,13 +89,14 @@ export default function AdminPage() {
     loadAllContent();
   }, [loadAllContent]);
 
-  const customCounts = useMemo(() => {
-    return {
-      trends: trends.filter((item) => item.id.startsWith("custom-trend-")).length,
-      events: events.filter((item) => item.id.startsWith("custom-event-")).length,
-      phrases: phrases.filter((item) => item.id.startsWith("custom-phrase-")).length
-    };
-  }, [trends, events, phrases]);
+  const stats = useMemo(
+    () => ({
+      trends: trends.length,
+      events: events.length,
+      phrases: phrases.length
+    }),
+    [trends, events, phrases]
+  );
 
   const resetForms = () => {
     setTrendForm({
@@ -243,12 +243,6 @@ export default function AdminPage() {
     }
   };
 
-  const handleClearCustomContent = async () => {
-    clearCustomContent();
-    await loadAllContent();
-    showFeedback("success", t("admin.feedback.cleared"));
-  };
-
   return (
     <section className="section-container space-y-10">
       <header className="space-y-4">
@@ -260,16 +254,10 @@ export default function AdminPage() {
           </p>
         )}
         <div className="flex flex-wrap gap-3 text-sm text-slate-500">
-          <span>{t("admin.stats.trends", { count: customCounts.trends })}</span>
-          <span>{t("admin.stats.events", { count: customCounts.events })}</span>
-          <span>{t("admin.stats.phrases", { count: customCounts.phrases })}</span>
+          <span>{t("admin.stats.trends", { count: stats.trends })}</span>
+          <span>{t("admin.stats.events", { count: stats.events })}</span>
+          <span>{t("admin.stats.phrases", { count: stats.phrases })}</span>
         </div>
-        <button
-          onClick={handleClearCustomContent}
-          className="rounded-full border border-dancheongRed px-4 py-2 text-sm font-semibold text-dancheongRed transition hover:bg-dancheongRed/10"
-        >
-          {t("admin.actions.reset")}
-        </button>
         {feedback && (
           <div
             className={`rounded-2xl px-4 py-3 text-sm ${

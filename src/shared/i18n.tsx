@@ -71,7 +71,7 @@ const translations: TranslationDictionary = {
       "subscription.title": "Passez en Premium",
       "subscription.subtitle":
         "Accédez au Trend Decoder complet, à des guides exclusifs et à des conseils personnalisés.",
-      "subscription.price": "6,90€ / mois après l'essai gratuit de 7 jours",
+      "subscription.price": "1,90€ / mois après l'essai gratuit de 7 jours",
       "subscription.cta": "Activer l'abonnement",
       "subscription.loading": "Redirection…",
       "subscription.warning":
@@ -89,9 +89,9 @@ const translations: TranslationDictionary = {
       "admin.title": "Studio Décorée",
       "admin.subtitle":
         "Ajoutez de nouveaux lieux, événements et expressions sans écrire une ligne de code. Les entrées sont enregistrées dans votre navigateur et visibles immédiatement sur le site.",
-      "admin.stats.trends": "Tendances ajoutées: {count}",
-      "admin.stats.events": "Événements ajoutés: {count}",
-      "admin.stats.phrases": "Phrases ajoutées: {count}",
+      "admin.stats.trends": "Tendances publiées: {count}",
+      "admin.stats.events": "Événements publiés: {count}",
+      "admin.stats.phrases": "Expressions publiées: {count}",
       "admin.session": "Connecté·e en tant que {email}",
       "admin.actions.reset": "Réinitialiser les ajouts locaux",
       "admin.feedback.trendSaved": "Nouvelle tendance enregistrée.",
@@ -259,7 +259,7 @@ const translations: TranslationDictionary = {
       "subscription.title": "프리미엄으로 업그레이드",
       "subscription.subtitle":
         "트렌드 전체 리포트와 독점 가이드, 맞춤 추천을 이용해 보세요.",
-      "subscription.price": "7일 무료 체험 후 월 6.90€",
+      "subscription.price": "7일 무료 체험 후 월 1.90€",
       "subscription.cta": "구독 시작하기",
       "subscription.loading": "리디렉션 중…",
       "subscription.warning":
@@ -275,9 +275,9 @@ const translations: TranslationDictionary = {
       "admin.title": "Decorée 콘텐츠 스튜디오",
       "admin.subtitle":
         "코드를 몰라도 새 트렌드, 이벤트, 표현을 바로 등록할 수 있습니다. 이 브라우저에 저장되고 즉시 웹앱에 반영됩니다.",
-      "admin.stats.trends": "추가한 트렌드: {count}건",
-      "admin.stats.events": "추가한 이벤트: {count}건",
-      "admin.stats.phrases": "추가한 표현: {count}건",
+      "admin.stats.trends": "등록된 트렌드: {count}건",
+      "admin.stats.events": "등록된 이벤트: {count}건",
+      "admin.stats.phrases": "등록된 표현: {count}건",
       "admin.session": "{email} 계정으로 로그인됨",
       "admin.actions.reset": "내 브라우저에서 추가 내용 초기화",
       "admin.feedback.trendSaved": "새 트렌드가 저장되었습니다.",

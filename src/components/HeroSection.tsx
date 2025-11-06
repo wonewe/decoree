@@ -6,15 +6,26 @@ export default function HeroSection() {
   const { t } = useI18n();
 
   return (
-    <section className="bg-gradient-to-br from-dancheongYellow/40 via-white to-dancheongGreen/10">
-      <div className="section-container space-y-10">
+    <section className="relative overflow-hidden bg-gradient-to-br from-dancheongYellow/40 via-white to-dancheongGreen/10">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="hero-gradient hero-gradient-1"></div>
+        <div className="hero-gradient hero-gradient-2"></div>
+      </div>
+      <div className="section-container space-y-10 relative">
         <div className="flex flex-col gap-10 md:flex-row md:items-center md:justify-between">
-          <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-6 hero-intro">
             <span className="badge-premium">{t("hero.ribbon")}</span>
-            <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl">{t("hero.title")}</h1>
-            <p className="max-w-xl text-lg text-slate-600">{t("hero.subtitle")}</p>
+            <h1 className="hero-fade text-4xl font-bold opacity-0 translate-y-8 sm:text-5xl md:text-6xl">
+              {t("hero.title")}
+            </h1>
+            <p className="hero-fade hero-delay-1 max-w-xl text-lg text-slate-600 opacity-0 translate-y-8">
+              {t("hero.subtitle")}
+            </p>
             <div className="flex flex-wrap items-center gap-4">
-              <Link to="/trends" className="primary-button">
+              <Link
+                to="/trends"
+                className="hero-fade hero-delay-2 primary-button opacity-0 translate-y-8"
+              >
                 {t("hero.cta.primary")}
               </Link>
               <Link to="/events" className="secondary-button">
@@ -24,8 +35,8 @@ export default function HeroSection() {
           </div>
           <div className="flex flex-1 justify-center">
             <div className="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
-              <div className="absolute -left-6 -top-6 h-14 w-14 rounded-full bg-dancheongRed/80 blur-2xl" />
-              <div className="absolute -bottom-8 -right-10 h-20 w-20 rounded-full bg-hanBlue/50 blur-3xl" />
+              <div className="absolute -left-6 -top-6 h-14 w-14 rounded-full bg-dancheongRed/80 blur-2xl hero-glow hero-glow-1" />
+              <div className="absolute -bottom-8 -right-10 h-20 w-20 rounded-full bg-hanBlue/50 blur-3xl hero-glow hero-glow-2" />
               <div className="relative space-y-4 text-sm">
                 <h3 className="text-lg font-semibold text-dancheongNavy">
                   {t("hero.card.title")}
