@@ -28,7 +28,7 @@ type AdminMessage = {
   text: string;
 };
 
-const LANG_OPTIONS: SupportedLanguage[] = ["fr", "ko", "ja"];
+const LANG_OPTIONS: SupportedLanguage[] = ["fr", "ko", "ja", "en"];
 
 type TrendDraft = {
   id: string;
@@ -78,7 +78,7 @@ function todayIso() {
 function createEmptyTrendDraft(): TrendDraft {
   return {
     id: "",
-    language: "fr",
+    language: "en",
     title: "",
     summary: "",
     details: "",
@@ -95,7 +95,7 @@ function createEmptyTrendDraft(): TrendDraft {
 function trendToDraft(report: TrendReport): TrendDraft {
   return {
     id: report.id,
-    language: report.language ?? "fr",
+    language: report.language ?? "en",
     title: report.title,
     summary: report.summary,
     details: report.details,
@@ -139,7 +139,7 @@ function draftToTrend(draft: TrendDraft): TrendReport {
 function createEmptyEventDraft(): EventDraft {
   return {
     id: "",
-    language: "fr",
+    language: "en",
     title: "",
     description: "",
     date: todayIso(),
@@ -157,7 +157,7 @@ function createEmptyEventDraft(): EventDraft {
 function eventToDraft(event: KCultureEvent): EventDraft {
   return {
     id: event.id,
-    language: event.language ?? "fr",
+    language: event.language ?? "en",
     title: event.title,
     description: event.description,
     date: event.date ?? todayIso(),
@@ -203,7 +203,7 @@ function draftToEvent(draft: EventDraft): KCultureEvent {
 function createEmptyPhraseDraft(): PhraseDraft {
   return {
     id: "",
-    language: "fr",
+    language: "en",
     korean: "",
     transliteration: "",
     translation: "",
@@ -215,7 +215,7 @@ function createEmptyPhraseDraft(): PhraseDraft {
 function phraseToDraft(phrase: Phrase): PhraseDraft {
   return {
     id: phrase.id,
-    language: phrase.language ?? "fr",
+    language: phrase.language ?? "en",
     korean: phrase.korean,
     transliteration: phrase.transliteration,
     translation: phrase.translation,

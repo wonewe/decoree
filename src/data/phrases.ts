@@ -112,5 +112,35 @@ export const PHRASES: Phrase[] = [
     culturalNote:
       "ライブ会場によっては当日アップグレードカウンターが設置されています。早めに交渉しましょう。",
     category: "entertainment"
+  },
+  {
+    id: "en-food-1",
+    language: "en",
+    korean: "추천 메뉴가 뭐예요?",
+    transliteration: "Chucheon menyuga mwoyeyo?",
+    translation: "What's your signature dish?",
+    culturalNote:
+      "Ask for the house recommendation—many chefs feature seasonal twists that aren’t on the printed menu.",
+    category: "food"
+  },
+  {
+    id: "en-shopping-1",
+    language: "en",
+    korean: "이거 선물 포장 가능할까요?",
+    transliteration: "Igeo seonmul pojang ganeunghalkkayo?",
+    translation: "Could you gift wrap this?",
+    culturalNote:
+      "Pop-up stores often offer limited-edition wrapping or stickers for gifts. Ask to see the current design.",
+    category: "shopping"
+  },
+  {
+    id: "en-entertainment-1",
+    language: "en",
+    korean: "오늘 공연 몇 시에 끝나요?",
+    transliteration: "Oneul gongyeon myeot sie kkeutnayo?",
+    translation: "What time does tonight’s show finish?",
+    culturalNote:
+      "Knowing the end time helps you plan late-night transit—many venues share the last subway announcements.",
+    category: "entertainment"
   }
 ];

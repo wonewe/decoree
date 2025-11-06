@@ -204,7 +204,70 @@ export const TREND_REPORTS: TrendReport[] = [
     content: [
       "済州の月汀里ビーチで開催されるサンセット・テーブルは、地元食材の魅力を五感で味わうポップアップダイニング。",
       "シェフが各皿の背景を日本語で紹介し、会場ではアコースティックライブが進行。波の音と音楽がシンクロします。",
-      "Decoréeプレミアム会員は限定シグネチャードリンクとミュージシャンとのトークセッションに招待されます。"
+        "Decoréeプレミアム会員は限定シグネチャードリンクとミュージシャンとのトークセッションに招待されます。"
+      ]
+  },
+  {
+    id: "en-seongsu-cafe-trail",
+    language: "en",
+    title: "Seongsu Café & Concept Trail",
+    summary:
+      "A self-guided afternoon through Seongsu’s design cafés, indie boutiques and riverside speakeasies.",
+    details:
+      "Start with a signature latte flight, browse limited-edition collabs, then finish with sunset cocktails overlooking the Han River.",
+    neighborhood: "Seongsu-dong",
+    tags: ["café", "design", "nightlife"],
+    intensity: "highlight",
+    isPremium: false,
+    publishedAt: "2024-06-15",
+    imageUrl:
+      "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1600&q=80",
+    content: [
+      "Seongsu’s warehouse streets have evolved into Seoul’s laboratory for lifestyle brands. Spend the afternoon hopping between concept cafés and indie boutiques with curated playlists.",
+      "Golden hour is best enjoyed from the revamped Seongsu Bridge deck. Grab a zero-proof cocktail or a seasonal dessert pairing with a view of the river.",
+      "Decorée Premium subscribers can download an interactive map with time slots and queue intel to maximise the trail."
+    ]
+  },
+  {
+    id: "en-ikseon-night-classics",
+    language: "en",
+    title: "Ikseon Night of Classics",
+    summary:
+      "An evening itinerary across Ikseon-dong’s hanok alleys featuring modern hansik dining, retro dessert bars and vinyl lounges.",
+    details:
+      "Perfect for travellers pairing heritage with nightlife. Reservations recommended, especially on weekends.",
+    neighborhood: "Ikseon-dong",
+    tags: ["hanok", "dining", "vinyl"],
+    intensity: "insider",
+    isPremium: true,
+    publishedAt: "2024-06-18",
+    imageUrl:
+      "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=1600&q=80",
+    content: [
+      "Begin with a seasonal tasting menu in a restored hanok where each course references a different region of Korea.",
+      "Move to a retro dessert bar inspired by 80s film sets, then wind down at a listening lounge spinning Seoul funk and city pop vinyl.",
+      "Premium readers receive a booking cheat sheet with recommended seating times and bartender pairings."
+    ]
+  },
+  {
+    id: "en-jeju-nature-lab",
+    language: "en",
+    title: "Jeju Nature Lab Retreat",
+    summary:
+      "A day in Jeju blending volcanic coast hikes, tea estate tastings and regenerative farm workshops.",
+    details:
+      "Ideal for travellers chasing slower rhythms. Transport from Jeju City included on select dates.",
+    neighborhood: "Jeju",
+    tags: ["wellness", "outdoor", "local"],
+    intensity: "emerging",
+    isPremium: false,
+    publishedAt: "2024-06-22",
+    imageUrl:
+      "https://images.unsplash.com/photo-1526481280695-3c46973b38f2?auto=format&fit=crop&w=1600&q=80",
+    content: [
+      "Kick off with a sunrise walk along Jusangjeolli Cliffs, guided by a local storyteller sharing Jeju myths.",
+      "Lunch takes place on a regenerative farm where you’ll pick herbs and learn about slow food practices before a communal meal.",
+      "Finish with a tea meditation in Seogwipo, sampling fresh green tea and tangerine blends while journaling your reflections."
     ]
   }
 ];

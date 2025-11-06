@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 
-export type SupportedLanguage = "fr" | "ko" | "ja";
+export type SupportedLanguage = "fr" | "ko" | "ja" | "en";
 
 type TranslationDictionary = Record<
   SupportedLanguage,
@@ -1094,6 +1094,351 @@ const translations: TranslationDictionary = {
         "フレーズ帳でシーン別の韓国語をチェック。",
       "japaneseLanding.resources.items.events":
         "イベントカレンダーで渡航時期のKカルチャーを確認。"
+    }
+  },
+  en: {
+    label: "English",
+    messages: {
+      "nav.home": "Home",
+      "nav.trends": "Trend Decoder",
+      "nav.events": "Event Calendar",
+      "nav.phrasebook": "Phrasebook",
+      "nav.cultureTest": "Culture Test",
+      "nav.explore": "Discover",
+      "nav.subscribe": "Premium Access",
+      "nav.admin": "Decorée Studio",
+      "auth.login": "Log in",
+      "auth.logout": "Log out",
+      "auth.signup": "Create account",
+      "hero.title": "Explore Korea without barriers",
+      "hero.subtitle":
+        "Weekly trend reports, K-culture events and a personalised phrasebook crafted for global travellers.",
+      "hero.cta.primary": "Read the trends",
+      "hero.cta.secondary": "See what's new",
+      "hero.highlights.title": "Decorée at a glance",
+      "hero.highlights.cta": "Discover",
+      "hero.highlights.trends.title": "Trend Decoder",
+      "hero.highlights.trends.description": "Deep dives on Seoul's weekly cultural pulse.",
+      "hero.highlights.events.title": "K-Culture Calendar",
+      "hero.highlights.events.description": "Filter pop-ups, concerts and festivals by your dates.",
+      "hero.highlights.phrasebook.title": "Personal Phrasebook",
+      "hero.highlights.phrasebook.description":
+        "Save essential expressions with pronunciation and culture notes.",
+      "hero.ribbon": "Decorée MVP",
+      "hero.card.title": "Weekly Trend Decoder",
+      "hero.card.subtitle": "Han River Sunset Market pop-up",
+      "hero.card.caption": "Stripe, Firebase, Google Maps — integration ready.",
+      "hero.spotlight.title": "Decorée picks",
+      "hero.spotlight.tag.trend": "Trend Decoder",
+      "hero.spotlight.tag.event": "Event Calendar",
+      "hero.spotlight.tag.phrase": "Phrasebook",
+      "hero.spotlight.cta.trend": "Read full story",
+      "hero.spotlight.cta.event": "Reserve your spot",
+      "hero.spotlight.cta.phrase": "Learn the phrase",
+      "hero.spotlight.disclaimer": "Premium stories are reserved for Decorée members.",
+      "trends.title": "Weekly Trend Decoder",
+      "trends.subtitle": "Curated insight on Korean culture trends, in English.",
+      "trends.premiumBadge": "Premium",
+      "trends.unlock": "Unlock with premium",
+      "trends.sample": "View sample",
+      "trends.readMore": "Read more",
+      "events.title": "K-Culture Event Calendar",
+      "events.subtitle":
+        "Plan your trip with the latest concerts, festivals, workshops and pop-ups.",
+      "events.filter.label": "Filter by type",
+      "events.filter.all": "All",
+      "events.empty": "No events match your filters just yet.",
+      "event.eventCategory.concert": "Concert / K-Pop",
+      "event.eventCategory.traditional": "Traditional",
+      "event.eventCategory.pop-up": "Pop-up / Workshop",
+      "event.eventCategory.festival": "Festival",
+      "eventDetail.readMore": "See details",
+      "phrasebook.title": "Personalised Korean Phrasebook",
+      "phrasebook.subtitle":
+        "Pick topics you love and memorise essential expressions with transliteration and cultural tips.",
+      "phrasebook.category.food": "Food & Dining",
+      "phrasebook.category.shopping": "Shopping",
+      "phrasebook.category.entertainment": "Culture & Nightlife",
+      "phrasebook.completed": "Saved expressions",
+      "phrasebook.search.label": "Search expressions",
+      "phrasebook.search.placeholder": "Try dessert, market, 감사합니다…",
+      "phrasebook.search.clear": "Clear",
+      "phrasebook.search.empty": "No expression matches your search yet.",
+      "cultureTest.badge": "K-Culture MBTI",
+      "cultureTest.title": "Which Korean traveller are you?",
+      "cultureTest.subtitle":
+        "Answer five questions to reveal your Decorée persona and get curated experiences.",
+      "cultureTest.progress.complete": "Your personalised result is ready!",
+      "cultureTest.progress.step": "Question {current}/{total}",
+      "cultureTest.progress.helper": "Pick the option that feels right, there's no wrong answer.",
+      "cultureTest.actions.previous": "Back",
+      "cultureTest.actions.reset": "Reset",
+      "cultureTest.actions.submit": "See my result",
+      "cultureTest.actions.next": "Next",
+      "cultureTest.actions.share": "Share my profile",
+      "cultureTest.actions.retry": "Restart test",
+      "cultureTest.share.title": "Decorée Culture Test",
+      "cultureTest.share.text": "My Decorée profile: {result}. What's yours?",
+      "cultureTest.share.copied": "Link copied!",
+      "cultureTest.share.error": "We couldn't share your result right now.",
+      "cultureTest.hint.title": "How the test works",
+      "cultureTest.hint.subtitle":
+        "Each answer feeds into Decorée’s four traveller archetypes.",
+      "cultureTest.hint.item.1": "Follow your current vibe, there's no wrong choice.",
+      "cultureTest.hint.item.2": "We mix trends, food, heritage and slow travel data points.",
+      "cultureTest.hint.item.3": "You can go back or restart whenever you like.",
+      "cultureTest.result.badge": "Your Decorée profile",
+      "cultureTest.result.highlight": "Ideas to explore",
+      "cultureTest.result.next.title": "Next steps",
+      "cultureTest.result.next.subtitle":
+        "Discover trends, events and phrases matched to your vibe.",
+      "cultureTest.questions.pace.title": "First day in Seoul: what's your pace?",
+      "cultureTest.questions.pace.subtitle": "Choose the scene that sounds most like you.",
+      "cultureTest.questions.pace.answers.trendsetter":
+        "Hop across pop-up launches and K-pop collabs from the morning.",
+      "cultureTest.questions.pace.answers.foodie":
+        "Start with street food bites and a local market crawl.",
+      "cultureTest.questions.pace.answers.wellness":
+        "Wake up for sunrise in a park, then slow coffee and journaling.",
+      "cultureTest.questions.pace.answers.heritage":
+        "Stroll through palaces and hanok alleys at your own pace.",
+      "cultureTest.questions.morning.title": "What do you book before flying out?",
+      "cultureTest.questions.morning.subtitle": "Pick the activity you never skip.",
+      "cultureTest.questions.morning.answers.trendsetter":
+        "A table at the newest hybrid restaurant in Seongsu.",
+      "cultureTest.questions.morning.answers.foodie":
+        "A kimchi-making class or a late-night tteokbokki tour.",
+      "cultureTest.questions.morning.answers.wellness":
+        "Spa & jjimjilbang session with massage included.",
+      "cultureTest.questions.morning.answers.heritage":
+        "A hanji, calligraphy or custom hanbok workshop.",
+      "cultureTest.questions.souvenir.title": "Must-pack souvenir?",
+      "cultureTest.questions.souvenir.subtitle":
+        "Picture what you'll slip into your carry-on.",
+      "cultureTest.questions.souvenir.answers.trendsetter":
+        "A limited drop from a Seoul concept brand.",
+      "cultureTest.questions.souvenir.answers.foodie":
+        "Craft gochujang or Jeju sea salt.",
+      "cultureTest.questions.souvenir.answers.wellness":
+        "Clean beauty skincare with green tea and citrus.",
+      "cultureTest.questions.souvenir.answers.heritage":
+        "Ceramics or a custom seal with your name in hangul.",
+      "cultureTest.questions.evening.title": "Perfect Seoul night?",
+      "cultureTest.questions.evening.subtitle": "The story you'd post on your feed.",
+      "cultureTest.questions.evening.answers.trendsetter":
+        "Hongdae rooftop with K-hip-hop and city lights.",
+      "cultureTest.questions.evening.answers.foodie":
+        "Food tent hopping then bingsu dessert.",
+      "cultureTest.questions.evening.answers.wellness":
+        "Night-time observatory soak with tea and skyline.",
+      "cultureTest.questions.evening.answers.heritage":
+        "National Theater performance then Cheonggyecheon walk.",
+      "cultureTest.questions.motto.title": "Your travel motto?",
+      "cultureTest.questions.motto.subtitle": "Pick the sentence that captures your tone.",
+      "cultureTest.questions.motto.answers.trendsetter":
+        "\"If it's trending today, I experience it tomorrow.\"",
+      "cultureTest.questions.motto.answers.foodie":
+        "\"Taste it all, from markets to fine dining.\"",
+      "cultureTest.questions.motto.answers.wellness":
+        "\"Slow down and let the city breathe.\"",
+      "cultureTest.questions.motto.answers.heritage":
+        "\"Every neighbourhood tells a story.\"",
+      "cultureTest.results.trendsetter.title": "Seoul trendsetter",
+      "cultureTest.results.trendsetter.description":
+        "Always scanning for hybrid concepts and buzzy launches, you turn trips into living moodboards.",
+      "cultureTest.results.trendsetter.highlights.1":
+        "Keep tabs on pop-ups in Seongsu, DDP and Hannam with Decorée alerts.",
+      "cultureTest.results.trendsetter.highlights.2":
+        "Schedule a signature café visit and an immersive exhibition.",
+      "cultureTest.results.trendsetter.highlights.3":
+        "Subscribe to our Trend Decoder to catch collab drops first.",
+      "cultureTest.results.foodie.title": "K-food explorer",
+      "cultureTest.results.foodie.description":
+        "Markets, modern hansik tables and oversized desserts map out your Korean journey.",
+      "cultureTest.results.foodie.highlights.1":
+        "Pair Gwangjang street food with a modern hansik dinner.",
+      "cultureTest.results.foodie.highlights.2":
+        "Browse artisan jang, tea and confectionery boutiques.",
+      "cultureTest.results.foodie.highlights.3":
+        "Save favourite expressions in your Phrasebook to use on-site.",
+      "cultureTest.results.wellness.title": "Slow & healing traveller",
+      "cultureTest.results.wellness.description":
+        "Urban forests, hot springs and tranquil cafés are your must-haves.",
+      "cultureTest.results.wellness.highlights.1":
+        "Blend a design jjimjilbang, tea house and Bugaksan meditation.",
+      "cultureTest.results.wellness.highlights.2":
+        "Seek calming cafés across Seochon, Ikseon and even Gapado.",
+      "cultureTest.results.wellness.highlights.3":
+        "Scan our Event Calendar for breathwork retreats and yoga pop-ups.",
+      "cultureTest.results.heritage.title": "Heritage storyteller",
+      "cultureTest.results.heritage.description":
+        "Historical quarters, artisans and classic performances fill your notebooks.",
+      "cultureTest.results.heritage.highlights.1":
+        "Book a Bukchon guided walk, hanji workshop and pansori show.",
+      "cultureTest.results.heritage.highlights.2":
+        "Take your time in craft-focused museums and galleries.",
+      "cultureTest.results.heritage.highlights.3":
+        "Use Trend Decoder to track artist residencies opening to the public.",
+      "trendDetail.notFound": "Trend not found",
+      "trendDetail.notFoundSubtitle": "The link may have expired or moved.",
+      "trendDetail.goBack": "Go back",
+      "trendDetail.back": "Back",
+      "trendDetail.sidebarTitle": "Highlights",
+      "trendDetail.neighborhood": "Neighbourhood",
+      "trendDetail.intensity": "Vibe",
+      "trendDetail.intensity.highlight": "Unmissable hotspot",
+      "trendDetail.intensity.insider": "Local insider",
+      "trendDetail.intensity.emerging": "Emerging trend",
+      "trendDetail.published": "Published",
+      "trendDetail.backToList": "Back to trends",
+      "trendDetail.subscribeCta": "Unlock full Decoder",
+      "trendDetail.lockedTitle": "Reserved for premium members",
+      "trendDetail.lockedSubtitle":
+        "Activate Decorée Premium to read this full report.",
+      "trendDetail.unlockButton": "Get premium access",
+      "eventDetail.notFound": "Event not found",
+      "eventDetail.notFoundSubtitle": "It may have been cancelled or rescheduled.",
+      "eventDetail.goBack": "Go back",
+      "eventDetail.back": "Back",
+      "eventDetail.tipsTitle": "Good to know",
+      "eventDetail.infoTitle": "Key info",
+      "eventDetail.when": "Date",
+      "eventDetail.where": "Location",
+      "eventDetail.price": "Price",
+      "eventDetail.bookingCta": "Book now",
+      "eventDetail.backToList": "See more events",
+      "eventDetail.discoverTrends": "Explore the Trend Decoder",
+      "profile.badge": "Decorée profile",
+      "profile.title": "Manage your Decorée profile",
+      "profile.subtitle":
+        "Update your display name and review the secure metadata tied to your account.",
+      "profile.section.identity": "Identity",
+      "profile.section.identityHint":
+        "This name appears in your personalised areas and communications.",
+      "profile.form.displayName": "Display name",
+      "profile.form.displayNamePlaceholder": "E.g. Alex Morgan",
+      "profile.form.email": "Login email",
+      "profile.actions.save": "Save changes",
+      "profile.actions.saving": "Saving…",
+      "profile.actions.logout": "Log out",
+      "profile.feedback.success": "Profile updated!",
+      "profile.errors.displayNameRequired": "Please enter a display name.",
+      "profile.errors.generic": "We couldn't save your profile. Try again later.",
+      "profile.section.account": "Account details",
+      "profile.section.accountHint":
+        "These Firebase metadata fields help protect your Decorée account.",
+      "profile.account.displayName": "Display name",
+      "profile.account.fallbackName": "Not set",
+      "profile.account.email": "Email",
+      "profile.account.created": "Account created",
+      "profile.account.lastLogin": "Last sign-in",
+      "profile.account.uid": "User UID",
+      "profile.noUser.title": "Please log in",
+      "profile.noUser.subtitle": "Sign in to access your personal Decorée page.",
+      "subscription.title": "Upgrade to Premium",
+      "subscription.subtitle":
+        "Access the full Trend Decoder, exclusive guides and curated recommendations.",
+      "subscription.price": "1.90€ / month after 7-day free trial",
+      "subscription.cta": "Start subscription",
+      "subscription.loading": "Redirecting…",
+      "subscription.warning":
+        "Stripe requires a secure server endpoint. Configure `/api/create-checkout-session` or update `VITE_STRIPE_CHECKOUT_ENDPOINT`.",
+      "subscription.active":
+        "Premium is active for this session (finalise via server-side webhook).",
+      "subscription.disabledNotice":
+        "Payments are being set up. Check back soon to activate Decorée Premium.",
+      "subscription.disabledMessage":
+        "Payments are not available yet. We'll notify you when they're ready.",
+      "subscription.disabledCta": "Coming soon",
+      "subscription.missingPrice":
+        "No Stripe Price ID configured. Contact the Decorée team.",
+      "footer.madeIn": "Designed in Seoul for global travellers",
+      "admin.title": "Decorée Studio",
+      "admin.subtitle":
+        "Add new trends, events and expressions without writing code. Entries are stored in your browser and appear instantly.",
+      "admin.stats.trends": "Published trends: {count}",
+      "admin.stats.events": "Published events: {count}",
+      "admin.stats.phrases": "Published expressions: {count}",
+      "admin.session": "Signed in as {email}",
+      "admin.actions.reset": "Clear local additions",
+      "admin.feedback.trendSaved": "Trend saved.",
+      "admin.feedback.eventSaved": "Event saved.",
+      "admin.feedback.phraseSaved": "Expression saved.",
+      "admin.feedback.error": "Something went wrong. Try again.",
+      "admin.feedback.cleared": "Local additions cleared.",
+      "admin.trend.title": "Add a trend",
+      "admin.trend.description":
+        "Fill the fields and click “Save”. Premium trends remain visible to signed-in users only.",
+      "admin.trend.submit": "Save trend",
+      "admin.event.title": "Add a K-culture event",
+      "admin.event.description":
+        "Provide key details so travellers can book quickly.",
+      "admin.event.submit": "Save event",
+      "admin.event.category.concert": "Concert / K-Pop",
+      "admin.event.category.traditional": "Traditional",
+      "admin.event.category.popup": "Pop-up / Workshop",
+      "admin.event.category.festival": "Festival",
+      "admin.phrase.title": "Add an expression",
+      "admin.phrase.description":
+        "Share helpful phrases from the field. They appear in the personalised phrasebook.",
+      "admin.phrase.submit": "Save expression",
+      "admin.form.title": "Title",
+      "admin.form.neighborhood": "Neighbourhood / Area",
+      "admin.form.summary": "Summary (max 2 sentences)",
+      "admin.form.details": "Detail (list view)",
+      "admin.form.tags": "Tags (comma-separated)",
+      "admin.form.imageUrl": "Image URL",
+      "admin.form.content": "Long content (separate paragraphs with a blank line)",
+      "admin.form.intensity.highlight": "Highlight (unmissable)",
+      "admin.form.intensity.insider": "Insider (local pick)",
+      "admin.form.intensity.emerging": "Emerging (trending soon)",
+      "admin.form.isPremium": "Premium content",
+      "admin.form.saving": "Saving…",
+      "admin.form.location": "Location / Nearby station",
+      "admin.form.price": "Price (ex: 49€ or Free)",
+      "admin.form.bookingUrl": "Booking link (optional)",
+      "admin.form.longDescription": "Long description (one paragraph per line break)",
+      "admin.form.tips": "Tips (one per line)",
+      "admin.form.korean": "Expression in Korean",
+      "admin.form.transliteration": "Pronunciation (transliteration)",
+      "admin.form.language": "Language",
+      "admin.form.translation": "Translation (for selected language)",
+      "admin.form.culturalNote": "Culture note (optional)",
+      "auth.badge": "Secure access",
+      "auth.title": "Sign in to Decorée",
+      "auth.subtitle":
+        "Log in to access your favourites. Decorée Studio remains for the team only.",
+      "auth.email": "Email",
+      "auth.password": "Password",
+      "auth.submit": "Sign in",
+      "auth.loggingIn": "Signing in…",
+      "auth.error.unauthorisedEmail":
+        "This email is not authorised. Contact the Decorée team.",
+      "auth.footer.hint": "Credentials are managed via Firebase. Contact the admin if lost.",
+      "auth.footer.support": "Need help? hello@decoree.app",
+      "auth.loading": "Loading the secure workspace…",
+      "auth.firebaseError": "Unable to display the admin area (missing Firebase config).",
+      "auth.loginWithGoogle": "Continue with Google",
+      "auth.googleLoading": "Google sign-in…",
+      "auth.or": "or",
+      "auth.noAccount": "No account yet?",
+      "auth.goToSignup": "Create access",
+      "auth.haveAccount": "Already registered?",
+      "auth.goToLogin": "Go to login",
+      "auth.signupTitle": "Create a Decorée account",
+      "auth.signupSubtitle":
+        "Create your Decorée account and save what you love. Team access is required for the Studio.",
+      "auth.passwordConfirm": "Confirm password",
+      "auth.createAccount": "Create account",
+      "auth.signingUp": "Signing up…",
+      "auth.error.invalidCredential": "Email or password is incorrect.",
+      "auth.error.weakPassword": "Please use at least 6 characters.",
+      "auth.error.emailExists": "This email is already registered.",
+      "auth.error.passwordMismatch": "Passwords do not match.",
+      "auth.adminOnlyTitle": "Admin access required",
+      "auth.adminOnlyDescription":
+        "This page is restricted to approved admins. Reach out to Decorée HQ if you need access.",
+      "auth.adminOnlyCta": "Return home"
     }
   }
 };

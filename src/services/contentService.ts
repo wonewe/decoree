@@ -28,7 +28,7 @@ type WithTimestamps<T> = T & {
   updatedAt?: Timestamp;
 };
 
-const DEFAULT_LANGUAGE: SupportedLanguage = "fr";
+const DEFAULT_LANGUAGE: SupportedLanguage = "en";
 
 const ensureLanguage = <T extends { language?: SupportedLanguage }>(item: T) => ({
   ...item,

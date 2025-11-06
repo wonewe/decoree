@@ -173,7 +173,52 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     ],
     tips: [
       "ヒールの高い靴よりも歩きやすい靴を推奨します。",
-      "写真撮影ポイントでは三脚の使用が禁止されているのでご注意ください."
+        "写真撮影ポイントでは三脚の使用が禁止されているのでご注意ください."
+      ]
+  },
+  {
+    id: "en-seoul-book-fair",
+    language: "en",
+    title: "Seoul Indie Book Fair",
+    description:
+      "Pop-up fair gathering independent Korean publishers, risograph artists and travel zines.",
+    date: "2024-08-24",
+    time: "13:00",
+    location: "Dongdaemun Design Plaza, Seoul",
+    category: "festival",
+    price: "Free entry",
+    imageUrl:
+      "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1600&q=80",
+    longDescription: [
+      "Surf limited print runs, talk to indie editors and join mini-workshops on binding or Seoul neighbourhood storytelling.",
+      "Decorée curates an English-friendly circuit highlighting bilingual creators and ateliers shipping worldwide."
+    ],
+    tips: [
+      "Arrive early to secure tote bags and special edition prints.",
+      "Bring cashless payment (most vendors use QR / card only)."
+    ]
+  },
+  {
+    id: "en-busan-sunset-jazz",
+    language: "en",
+    title: "Busan Sunset Jazz Cruise",
+    description:
+      "Evening cruise along Busan’s coastline featuring local jazz ensembles and rooftop tastings.",
+    date: "2024-09-05",
+    time: "18:30",
+    location: "Busan Marina Pier",
+    category: "concert",
+    price: "79,000 KRW",
+    bookingUrl: "https://example.com/busan-jazz-cruise",
+    imageUrl:
+      "https://images.unsplash.com/photo-1513614806822-25702fa214ac?auto=format&fit=crop&w=1600&q=80",
+    longDescription: [
+      "Boarding begins 30 minutes before sunset with a welcome drink curated by a local distillery.",
+      "Three live sets accompany the cruise, blending K-jazz standards and reimagined OST themes. Premium seating includes a captain’s deck tasting flight."
+    ],
+    tips: [
+      "Bring a light jacket; ocean winds can be brisk after sunset.",
+      "Reserve premium seats in advance—only 20 are available per sailing."
     ]
   }
 ];
