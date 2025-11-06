@@ -60,7 +60,7 @@ npm run build
 
 ## Stripe Checkout
 
-1. Créez une clé **Publishable** Stripe et renseignez `VITE_STRIPE_PUBLISHABLE_KEY`. Définissez également `VITE_STRIPE_CHECKOUT_ENDPOINT` (par défaut `/api/create-checkout-session`).
+1. Créez une clé **Publishable** Stripe et renseignez `VITE_STRIPE_PUBLISHABLE_KEY`. Définissez également `VITE_STRIPE_CHECKOUT_ENDPOINT` (par défaut `/api/create-checkout-session`) et `VITE_STRIPE_PRICE_ID`. Activez le flux en production avec `VITE_STRIPE_ENABLED=true`.
 2. Implémentez un endpoint sécurisé (Firebase Functions, Vercel serverless, etc.) qui reçoit `{ email, planId }`, utilise la clé secrète Stripe (`sk_...`) et renvoie `{ sessionId, url }`. Un exemple Firebase est disponible dans `stripe/functions/createCheckoutSession.ts`.
 3. Déployez cette fonction et configurez les URLs `success_url` et `cancel_url`. Ajoutez votre domaine Vercel dans **Authentication → Sign-in method → Authorised domains**.
 4. Sur Vercel, ajoutez les variables d’environnement (`VITE_STRIPE_*` côté front + clé secrète côté fonction) puis redeployez.

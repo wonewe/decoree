@@ -78,6 +78,13 @@ const translations: TranslationDictionary = {
         "Stripe nécessite un endpoint sécurisé côté serveur. Configurez `/api/create-checkout-session` ou mettez à jour `VITE_STRIPE_CHECKOUT_ENDPOINT`.",
       "subscription.active":
         "Premium activé pour cette session (pensez à confirmer via webhook côté serveur).",
+      "subscription.disabledNotice":
+        "Paiement en cours de préparation. Revenez bientôt pour activer Decorée Premium.",
+      "subscription.disabledMessage":
+        "Le paiement n'est pas encore disponible. Merci pour votre patience !",
+      "subscription.disabledCta": "Paiement en préparation",
+      "subscription.missingPrice":
+        "Aucun Price ID Stripe n'est configuré. Contactez l'équipe Décorée.",
       "footer.madeIn": "Conçu à Séoul pour les voyageurs français",
       "admin.title": "Studio Décorée",
       "admin.subtitle":
@@ -258,6 +265,12 @@ const translations: TranslationDictionary = {
       "subscription.warning":
         "Stripe 결제는 서버(Cloud Functions 등)에 `/api/create-checkout-session` 엔드포인트를 설정해야 합니다.",
       "subscription.active": "이 세션에서 프리미엄이 활성화되었습니다 (웹훅으로 최종 확인해야 합니다).",
+      "subscription.disabledNotice":
+        "결제 기능 준비 중입니다. 조금만 기다려 주세요!",
+      "subscription.disabledMessage":
+        "결제 기능이 아직 열려 있지 않습니다. 준비가 되는 대로 안내드릴게요.",
+      "subscription.disabledCta": "결제 준비중",
+      "subscription.missingPrice": "Stripe Price ID가 설정되지 않았습니다. 운영팀에 문의해 주세요.",
       "footer.madeIn": "프랑스 여행자를 위해 서울에서 제작",
       "admin.title": "Decorée 콘텐츠 스튜디오",
       "admin.subtitle":
