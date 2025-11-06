@@ -1,5 +1,6 @@
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -97,6 +98,23 @@ export async function addTrendReport(report: TrendReport) {
   return fetchTrendReports();
 }
 
+export async function updateTrendReport(report: TrendReport) {
+  await setDoc(
+    doc(trendCollection, report.id),
+    {
+      ...report,
+      updatedAt: Timestamp.now()
+    },
+    { merge: true }
+  );
+  return fetchTrendReports();
+}
+
+export async function deleteTrendReport(id: string) {
+  await deleteDoc(doc(trendCollection, id));
+  return fetchTrendReports();
+}
+
 export async function fetchEvents(): Promise<KCultureEvent[]> {
   try {
     const snapshot = await getDocs(query(eventCollection, orderBy("date", "asc")));
@@ -136,6 +154,23 @@ export async function addEvent(event: KCultureEvent) {
   return fetchEvents();
 }
 
+export async function updateEvent(event: KCultureEvent) {
+  await setDoc(
+    doc(eventCollection, event.id),
+    {
+      ...event,
+      updatedAt: Timestamp.now()
+    },
+    { merge: true }
+  );
+  return fetchEvents();
+}
+
+export async function deleteEvent(id: string) {
+  await deleteDoc(doc(eventCollection, id));
+  return fetchEvents();
+}
+
 export async function fetchPhrases(): Promise<Phrase[]> {
   try {
     const snapshot = await getDocs(phraseCollection);
@@ -160,5 +195,22 @@ export async function addPhrase(phrase: Phrase) {
     updatedAt: Timestamp.now()
   };
   await setDoc(doc(phraseCollection, id), payload, { merge: true });
+  return fetchPhrases();
+}
+
+export async function updatePhrase(phrase: Phrase) {
+  await setDoc(
+    doc(phraseCollection, phrase.id),
+    {
+      ...phrase,
+      updatedAt: Timestamp.now()
+    },
+    { merge: true }
+  );
+  return fetchPhrases();
+}
+
+export async function deletePhrase(id: string) {
+  await deleteDoc(doc(phraseCollection, id));
   return fetchPhrases();
 }
