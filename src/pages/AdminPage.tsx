@@ -41,7 +41,9 @@ export default function AdminPage() {
     tags: "",
     intensity: intensityOptions[0],
     isPremium: false,
-    publishedAt: defaultTrendDate
+    publishedAt: defaultTrendDate,
+    imageUrl: "",
+    content: ""
   });
 
   const [eventForm, setEventForm] = useState({
@@ -52,7 +54,10 @@ export default function AdminPage() {
     location: "",
     category: "concert" as KCultureEvent["category"],
     price: "",
-    bookingUrl: ""
+    bookingUrl: "",
+    imageUrl: "",
+    longDescription: "",
+    tips: ""
   });
 
   const [phraseForm, setPhraseForm] = useState({
@@ -102,7 +107,9 @@ export default function AdminPage() {
       tags: "",
       intensity: intensityOptions[0],
       isPremium: false,
-      publishedAt: defaultTrendDate
+      publishedAt: defaultTrendDate,
+      imageUrl: "",
+      content: ""
     });
     setEventForm({
       title: "",
@@ -112,7 +119,10 @@ export default function AdminPage() {
       location: "",
       category: "concert",
       price: "",
-      bookingUrl: ""
+      bookingUrl: "",
+      imageUrl: "",
+      longDescription: "",
+      tips: ""
     });
     setPhraseForm({
       korean: "",
@@ -141,8 +151,19 @@ export default function AdminPage() {
         tags: trendForm.tags.split(",").map((tag) => tag.trim()).filter(Boolean),
         intensity: trendForm.intensity as TrendIntensity,
         isPremium: trendForm.isPremium,
-        publishedAt: trendForm.publishedAt
+        publishedAt: trendForm.publishedAt,
+        imageUrl:
+          trendForm.imageUrl.trim() ||
+          "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1600&q=80",
+        content:
+          trendForm.content
+            .split(/\n{2,}/)
+            .map((paragraph) => paragraph.trim())
+            .filter(Boolean) || []
       };
+      if (report.content.length === 0) {
+        report.content = [trendForm.summary, trendForm.details];
+      }
       await addTrendReport(report);
       await loadAllContent();
       resetForms();
@@ -168,8 +189,24 @@ export default function AdminPage() {
         location: eventForm.location,
         category: eventForm.category,
         price: eventForm.price,
-        bookingUrl: eventForm.bookingUrl || undefined
+        bookingUrl: eventForm.bookingUrl || undefined,
+        imageUrl:
+          eventForm.imageUrl.trim() ||
+          "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80",
+        longDescription:
+          eventForm.longDescription
+            .split(/\n{2,}/)
+            .map((paragraph) => paragraph.trim())
+            .filter(Boolean) || [],
+        tips:
+          eventForm.tips
+            .split("\n")
+            .map((tip) => tip.trim())
+            .filter(Boolean) || []
       };
+      if (entry.longDescription.length === 0) {
+        entry.longDescription = [eventForm.description];
+      }
       await addEvent(entry);
       await loadAllContent();
       resetForms();
@@ -266,6 +303,14 @@ export default function AdminPage() {
             }
             className="rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
           />
+          <input
+            placeholder={t("admin.form.imageUrl")}
+            value={trendForm.imageUrl}
+            onChange={(event) =>
+              setTrendForm((prev) => ({ ...prev, imageUrl: event.target.value }))
+            }
+            className="rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+          />
           <textarea
             required
             placeholder={t("admin.form.summary")}
@@ -279,6 +324,13 @@ export default function AdminPage() {
             placeholder={t("admin.form.details")}
             value={trendForm.details}
             onChange={(event) => setTrendForm((prev) => ({ ...prev, details: event.target.value }))}
+            className="md:col-span-2 rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+            rows={4}
+          />
+          <textarea
+            placeholder={t("admin.form.content")}
+            value={trendForm.content}
+            onChange={(event) => setTrendForm((prev) => ({ ...prev, content: event.target.value }))}
             className="md:col-span-2 rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
             rows={4}
           />
@@ -395,12 +447,36 @@ export default function AdminPage() {
             className="rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
           />
           <input
+            placeholder={t("admin.form.imageUrl")}
+            value={eventForm.imageUrl}
+            onChange={(event) =>
+              setEventForm((prev) => ({ ...prev, imageUrl: event.target.value }))
+            }
+            className="rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+          />
+          <input
             placeholder={t("admin.form.bookingUrl")}
             value={eventForm.bookingUrl}
             onChange={(event) =>
               setEventForm((prev) => ({ ...prev, bookingUrl: event.target.value }))
             }
             className="rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+          />
+          <textarea
+            placeholder={t("admin.form.longDescription")}
+            value={eventForm.longDescription}
+            onChange={(event) =>
+              setEventForm((prev) => ({ ...prev, longDescription: event.target.value }))
+            }
+            className="md:col-span-2 rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+            rows={4}
+          />
+          <textarea
+            placeholder={t("admin.form.tips")}
+            value={eventForm.tips}
+            onChange={(event) => setEventForm((prev) => ({ ...prev, tips: event.target.value }))}
+            className="md:col-span-2 rounded-xl border border-slate-200 px-3 py-2 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+            rows={3}
           />
           <div className="md:col-span-2 flex justify-end">
             <button

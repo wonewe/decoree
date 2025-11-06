@@ -4,15 +4,18 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { I18nProvider } from "./shared/i18n";
 import { AuthProvider } from "./shared/auth";
+import { PremiumAccessProvider } from "./shared/premiumAccess";
 import "./styles/index.css";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <I18nProvider>
-          <App />
-        </I18nProvider>
+        <PremiumAccessProvider>
+          <I18nProvider>
+            <App />
+          </I18nProvider>
+        </PremiumAccessProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

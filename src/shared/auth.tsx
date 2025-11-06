@@ -38,7 +38,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 function parseAdminEmails(): string[] {
-  const raw = import.meta.env.VITE_FIREBASE_ALLOWED_EMAILS;
+  const raw = import.meta.env.VITE_DECOREE_ADMIN_EMAILS;
   if (!raw) return [];
   return raw
     .split(",")

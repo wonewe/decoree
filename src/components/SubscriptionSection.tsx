@@ -1,9 +1,11 @@
 import { FormEvent, useState } from "react";
 import { createMockCheckoutSession } from "../services/subscriptionService";
 import { useI18n } from "../shared/i18n";
+import { usePremiumAccess } from "../shared/premiumAccess";
 
 export default function SubscriptionSection() {
   const { t } = useI18n();
+  const { hasPremiumAccess, unlockPremium } = usePremiumAccess();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
@@ -17,6 +19,7 @@ export default function SubscriptionSection() {
         planId: "decoree-premium-monthly"
       });
       setCheckoutUrl(response.checkoutUrl);
+      unlockPremium();
     } finally {
       setLoading(false);
     }
@@ -30,6 +33,11 @@ export default function SubscriptionSection() {
           <p className="text-slate-600">{t("subscription.subtitle")}</p>
           <p className="text-lg font-semibold text-hanBlue">{t("subscription.price")}</p>
           <p className="text-xs text-slate-400">{t("subscription.mockWarning")}</p>
+          {hasPremiumAccess && (
+            <p className="rounded-full bg-dancheongGreen/10 px-4 py-2 text-xs font-semibold text-dancheongGreen">
+              {t("subscription.active")}
+            </p>
+          )}
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 md:flex-row md:items-center">
           <input

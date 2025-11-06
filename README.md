@@ -30,12 +30,13 @@ npm run build
 
 - **Weekly Trend Decoder** : cartes de tendances filtrées (premium & gratuites) avec aperçu pour tester l’UX d’un paywall.
 - **K-Culture Event Calendar** : filtrage par type d’événement (concert, festival, pop-up, etc.).
-- **Personalized Korean Phrasebook** : sélection multi-catégories, suivi de progression simulé.
+- **Personalized Korean Phrasebook** : sélection multi-catégories, suivi de progression simulé et recherche plein texte.
+- **Blog détaillé** : chaque tendance/événement dispose d’une page immersive (photo, contenu riche) avec verrouillage Premium sur les articles réservés.
 - **Premium Content Subscription** : formulaire d’email + simulation d’appel Stripe pour préparer l’intégration réelle.
 - **Multilingue FR/KR** : bascule instantanée de la navigation, des CTA et contenus textes.
 - **Responsive** : layout Tailwind responsive (mobile-first), navigation sticky, cartes adaptatives.
 - **Decorée Studio (Admin)** : formulaire `/admin` pour ajouter des tendances, événements et expressions sans toucher au code. Les entrées sont stockées dans le navigateur (localStorage) puis fusionnées avec les données mockées.
-- **Sécurisation par login** : `/admin` est protégé par Firebase Authentication (email/mot de passe ou Google). Tout utilisateur peut créer un compte, mais seules les adresses listées dans `VITE_FIREBASE_ALLOWED_EMAILS` voient et accèdent au Studio.
+- **Sécurisation par login** : `/admin` est protégé par Firebase Authentication (email/mot de passe ou Google). Tout utilisateur peut créer un compte, mais seules les adresses listées dans `VITE_DECOREE_ADMIN_EMAILS` voient et accèdent au Studio.
 
 ## Intégrations futures
 
@@ -54,7 +55,7 @@ npm run build
    - Activez **Authentication → Email/Password**.
    - Activez également **Authentication → Google** si vous souhaitez permettre la connexion par Google.
    - Créez les comptes administrateurs qui doivent accéder au studio ou laissez-les utiliser la page `/signup`.
-3. Listez les emails autorisés dans `VITE_FIREBASE_ALLOWED_EMAILS` (séparés par des virgules). Ces comptes seront reconnus comme administrateurs et verront le lien “Studio Décorée”.
+3. Listez les emails autorisés dans `VITE_DECOREE_ADMIN_EMAILS` (séparés par des virgules). Ces comptes seront reconnus comme administrateurs et verront le lien “Studio Décorée”.
 4. Relancez `npm run dev` pour que Vite recharge la configuration. Rendez-vous sur `/login` ou `/signup` pour tester la connexion ; une fois authentifié, vous serez redirigé vers `/admin`.
 
 ## Notes UX/UI

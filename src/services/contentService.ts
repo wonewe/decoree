@@ -39,6 +39,11 @@ export async function fetchTrendReports() {
   return simulateFirestoreFetch([...TREND_REPORTS, ...stored]);
 }
 
+export async function getTrendReportById(id: string) {
+  const reports = await fetchTrendReports();
+  return reports.find((report) => report.id === id) ?? null;
+}
+
 export async function addTrendReport(report: TrendReport) {
   const stored = readStored<TrendReport>(STORAGE_KEYS.trends);
   const next = [...stored, report];
@@ -49,6 +54,11 @@ export async function addTrendReport(report: TrendReport) {
 export async function fetchEvents() {
   const stored = readStored<KCultureEvent>(STORAGE_KEYS.events);
   return simulateFirestoreFetch([...K_CULTURE_EVENTS, ...stored]);
+}
+
+export async function getEventById(id: string) {
+  const events = await fetchEvents();
+  return events.find((event) => event.id === id) ?? null;
 }
 
 export async function addEvent(event: KCultureEvent) {

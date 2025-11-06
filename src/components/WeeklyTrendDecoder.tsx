@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { fetchTrendReports } from "../services/contentService";
 import { useAsyncData } from "../hooks/useAsyncData";
 import type { TrendIntensity, TrendReport } from "../data/trends";
@@ -65,6 +66,14 @@ function TrendCard({ report }: { report: TrendReport }) {
       ) : (
         <p className="text-sm text-slate-700">{report.details}</p>
       )}
+      <div className="pt-2">
+        <Link
+          to={`/trends/${report.id}`}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-hanBlue hover:underline"
+        >
+          {t("trends.readMore")} →
+        </Link>
+      </div>
     </article>
   );
 }

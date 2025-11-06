@@ -10,6 +10,8 @@ import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import RequireAuth from "./components/RequireAuth";
+import TrendDetailPage from "./pages/TrendDetailPage";
+import EventDetailPage from "./pages/EventDetailPage";
 
 export default function App() {
   return (
@@ -17,7 +19,9 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/trends" element={<TrendsPage />} />
+        <Route path="/trends/:id" element={<TrendDetailPage />} />
         <Route path="/events" element={<EventsPage />} />
+        <Route path="/events/:id" element={<EventDetailPage />} />
         <Route path="/phrasebook" element={<PhrasebookPage />} />
         <Route path="/subscribe" element={<SubscribePage />} />
         <Route

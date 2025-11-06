@@ -1,15 +1,11 @@
 import { useCallback, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import type { EventCategory } from "../data/events";
 import { fetchEvents } from "../services/contentService";
 import { useAsyncData } from "../hooks/useAsyncData";
 import { useI18n } from "../shared/i18n";
 
-const CATEGORY_LABELS: Record<EventCategory, string> = {
-  concert: "K-Pop / Concert",
-  traditional: "Tradition",
-  "pop-up": "Pop-up / Atelier",
-  festival: "Festival"
-};
+const CATEGORY_KEYS: EventCategory[] = ["concert", "traditional", "pop-up", "festival"];
 
 export default function EventCalendar() {
   const { t } = useI18n();
@@ -35,10 +31,10 @@ export default function EventCalendar() {
           active={activeCategory === "all"}
           onClick={() => setActiveCategory("all")}
         />
-        {(Object.keys(CATEGORY_LABELS) as EventCategory[]).map((category) => (
+        {CATEGORY_KEYS.map((category) => (
           <FilterButton
             key={category}
-            label={CATEGORY_LABELS[category]}
+            label={t(`event.eventCategory.${category}`)}
             active={activeCategory === category}
             onClick={() => setActiveCategory(category)}
           />
@@ -75,7 +71,7 @@ export default function EventCalendar() {
                       {new Date(event.date).toLocaleDateString()} · {event.time}
                     </span>
                     <span className="rounded-full bg-slate-100 px-3 py-1">
-                      {CATEGORY_LABELS[event.category]}
+                      {t(`event.eventCategory.${event.category}`)}
                     </span>
                   </div>
                   <div>
@@ -86,6 +82,12 @@ export default function EventCalendar() {
                     <span>{event.location}</span>
                     <span className="font-semibold text-hanBlue">{event.price}</span>
                   </div>
+                  <Link
+                    to={`/events/${event.id}`}
+                    className="inline-flex items-center text-sm font-semibold text-hanBlue hover:underline"
+                  >
+                    {t("eventDetail.readMore")} →
+                  </Link>
                   {event.bookingUrl && (
                     <a
                       href={event.bookingUrl}
@@ -93,7 +95,7 @@ export default function EventCalendar() {
                       rel="noreferrer"
                       className="inline-flex items-center text-sm font-semibold text-hanBlue hover:underline"
                     >
-                      Reserver →
+                      {t("eventDetail.bookingCta")}
                     </a>
                   )}
                 </article>
