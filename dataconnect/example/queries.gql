@@ -1,0 +1,38 @@
+mutation CreateNewTag($name: String!, $slug: String!) @auth(level: USER) {
+  tag_insert(data: {name: $name, slug: $slug})
+}
+
+query ListAllEvents @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  events {
+    id
+    title
+    description
+    eventDate
+    location
+    isPremium
+    imageUrl
+    creator {
+      id
+      username
+      email
+    }
+  }
+}
+
+mutation UpdateTrendDescription($id: UUID!, $description: String!) @auth(level: USER) {
+  trend_update(key: {id: $id}, data: {description: $description})
+}
+
+query ListPremiumPhrasebookEntries @auth(level: USER) {
+  phrasebookEntries(where: {isPremium: {eq: true}}) {
+    id
+    koreanPhrase
+    frenchTranslation
+    pronunciationGuide
+    creator {
+      id
+      username
+      email
+    }
+  }
+}

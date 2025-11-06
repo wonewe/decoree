@@ -6,6 +6,10 @@ import EventsPage from "./pages/EventsPage";
 import PhrasebookPage from "./pages/PhrasebookPage";
 import SubscribePage from "./pages/SubscribePage";
 import NotFoundPage from "./pages/NotFoundPage";
+import AdminPage from "./pages/AdminPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
+import RequireAuth from "./components/RequireAuth";
 
 export default function App() {
   return (
@@ -16,6 +20,16 @@ export default function App() {
         <Route path="/events" element={<EventsPage />} />
         <Route path="/phrasebook" element={<PhrasebookPage />} />
         <Route path="/subscribe" element={<SubscribePage />} />
+        <Route
+          path="/admin"
+          element={
+            <RequireAuth requireAdmin>
+              <AdminPage />
+            </RequireAuth>
+          }
+        />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

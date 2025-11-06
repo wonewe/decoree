@@ -1,4 +1,9 @@
-import { getLanguageLabel, SupportedLanguage, useI18n } from "../shared/i18n";
+import { SupportedLanguage, useI18n } from "../shared/i18n";
+
+const LANGUAGE_LABELS: Record<SupportedLanguage, string> = {
+  fr: "Français",
+  ko: "한국어"
+};
 
 const languages: SupportedLanguage[] = ["fr", "ko"];
 
@@ -10,12 +15,14 @@ export default function LanguageSwitcher() {
       {languages.map((code) => (
         <button
           key={code}
+          type="button"
           onClick={() => setLanguage(code)}
-          className={`rounded-full px-3 py-1 text-sm font-semibold transition ${
+          aria-pressed={language === code}
+          className={`rounded-full px-3 py-1 text-sm font-semibold transition whitespace-nowrap ${
             language === code ? "bg-hanBlue text-white" : "text-slate-600 hover:text-hanBlue"
           }`}
         >
-          {getLanguageLabel(code)}
+          {LANGUAGE_LABELS[code]}
         </button>
       ))}
     </div>

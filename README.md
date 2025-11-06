@@ -34,6 +34,8 @@ npm run build
 - **Premium Content Subscription** : formulaire d’email + simulation d’appel Stripe pour préparer l’intégration réelle.
 - **Multilingue FR/KR** : bascule instantanée de la navigation, des CTA et contenus textes.
 - **Responsive** : layout Tailwind responsive (mobile-first), navigation sticky, cartes adaptatives.
+- **Decorée Studio (Admin)** : formulaire `/admin` pour ajouter des tendances, événements et expressions sans toucher au code. Les entrées sont stockées dans le navigateur (localStorage) puis fusionnées avec les données mockées.
+- **Sécurisation par login** : `/admin` est protégé par Firebase Authentication (email/mot de passe ou Google). Tout utilisateur peut créer un compte, mais seules les adresses listées dans `VITE_FIREBASE_ALLOWED_EMAILS` voient et accèdent au Studio.
 
 ## Intégrations futures
 
@@ -42,6 +44,18 @@ npm run build
 - **Maps & APIs** : géolocalisation d’événements (Kakao/Google) et suggestions dynamiques.
 - **Auth & personnalisation** : connecter l’abonnement aux profils utilisateurs, stocker la progression phrasebook.
 - **Tests** : ajouter des tests unitaires (Vitest) et des tests E2E (Playwright) dès la prochaine itération.
+- **CMS connecté** : remplacer le stockage local du Studio par un backend (Firestore, Contentful, Strapi…) pour que l’équipe puisse collaborer en temps réel.
+- **Rôles avancés** : déléguer la gestion d’accès à Firebase Custom Claims ou à un CMS pour restreindre les permissions par profil.
+
+## Configuration de l’authentification
+
+1. Dupliquez `.env.example` en `.env` puis complétez les variables `VITE_FIREBASE_*` avec la configuration de votre projet Firebase.
+2. Dans la console Firebase :
+   - Activez **Authentication → Email/Password**.
+   - Activez également **Authentication → Google** si vous souhaitez permettre la connexion par Google.
+   - Créez les comptes administrateurs qui doivent accéder au studio ou laissez-les utiliser la page `/signup`.
+3. Listez les emails autorisés dans `VITE_FIREBASE_ALLOWED_EMAILS` (séparés par des virgules). Ces comptes seront reconnus comme administrateurs et verront le lien “Studio Décorée”.
+4. Relancez `npm run dev` pour que Vite recharge la configuration. Rendez-vous sur `/login` ou `/signup` pour tester la connexion ; une fois authentifié, vous serez redirigé vers `/admin`.
 
 ## Notes UX/UI
 

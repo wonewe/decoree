@@ -1,0 +1,56 @@
+type AdminUser @table {
+  username: String!
+  email: String!
+  createdAt: Timestamp!
+  lastLogin: Timestamp
+}
+
+type Tag @table {
+  name: String!
+  slug: String!
+  description: String
+}
+
+type Trend @table {
+  title: String!
+  description: String!
+  createdAt: Timestamp!
+  imageUrl: String
+  isPremium: Boolean
+  creator: AdminUser
+}
+
+type TrendTag @table(key: ["trend", "tag"]) {
+  trend: Trend!
+  tag: Tag!
+}
+
+type Event @table {
+  title: String!
+  description: String!
+  eventDate: Date!
+  location: String!
+  createdAt: Timestamp!
+  imageUrl: String
+  isPremium: Boolean
+  creator: AdminUser
+}
+
+type EventTag @table(key: ["event", "tag"]) {
+  event: Event!
+  tag: Tag!
+}
+
+type PhrasebookEntry @table {
+  koreanPhrase: String!
+  frenchTranslation: String!
+  createdAt: Timestamp!
+  pronunciationGuide: String
+  isPremium: Boolean
+  creator: AdminUser
+}
+
+type PhrasebookEntryTag @table(key: ["phrasebookEntry", "tag"]) {
+  phrasebookEntry: PhrasebookEntry!
+  tag: Tag!
+}
