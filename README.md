@@ -32,7 +32,7 @@ npm run build
 - **K-Culture Event Calendar** : filtrage par type d’événement (concert, festival, pop-up, etc.).
 - **Personalized Korean Phrasebook** : sélection multi-catégories, suivi de progression simulé et recherche plein texte.
 - **Blog détaillé** : chaque tendance/événement dispose d’une page immersive (photo, contenu riche) avec verrouillage Premium sur les articles réservés.
-- **Premium Content Subscription** : formulaire d’email + simulation d’appel Stripe pour préparer l’intégration réelle.
+- **Premium Content Subscription** : formulaire d’email relié à Stripe Checkout (via endpoint sécurisé) pour déclencher la souscription.
 - **Multilingue FR/KR** : bascule instantanée de la navigation, des CTA et contenus textes.
 - **Responsive** : layout Tailwind responsive (mobile-first), navigation sticky, cartes adaptatives.
 - **Decorée Studio (Admin)** : formulaire `/admin` pour ajouter des tendances, événements et expressions sans toucher au code. Les entrées sont stockées dans le navigateur (localStorage) puis fusionnées avec les données mockées.
@@ -40,7 +40,7 @@ npm run build
 
 ## Intégrations futures
 
-- **Stripe** : remplacer `createMockCheckoutSession` par un appel réel vers une Cloud Function ou un backend.
+- **Stripe** : brancher les webhooks (`checkout.session.completed`) pour activer/désactiver automatiquement les droits Premium côté Firestore/Custom Claims.
 - **Firebase Firestore** : connecter `contentService.ts` à Firestore pour gérer les contenus temps réel.
 - **Maps & APIs** : géolocalisation d’événements (Kakao/Google) et suggestions dynamiques.
 - **Auth & personnalisation** : connecter l’abonnement aux profils utilisateurs, stocker la progression phrasebook.
@@ -57,6 +57,14 @@ npm run build
    - Créez les comptes administrateurs qui doivent accéder au studio ou laissez-les utiliser la page `/signup`.
 3. Listez les emails autorisés dans `VITE_DECOREE_ADMIN_EMAILS` (séparés par des virgules). Ces comptes seront reconnus comme administrateurs et verront le lien “Studio Décorée”.
 4. Relancez `npm run dev` pour que Vite recharge la configuration. Rendez-vous sur `/login` ou `/signup` pour tester la connexion ; une fois authentifié, vous serez redirigé vers `/admin`.
+
+## Stripe Checkout
+
+1. Créez une clé **Publishable** Stripe et renseignez `VITE_STRIPE_PUBLISHABLE_KEY`. Définissez également `VITE_STRIPE_CHECKOUT_ENDPOINT` (par défaut `/api/create-checkout-session`).
+2. Implémentez un endpoint sécurisé (Firebase Functions, Vercel serverless, etc.) qui reçoit `{ email, planId }`, utilise la clé secrète Stripe (`sk_...`) et renvoie `{ sessionId, url }`. Un exemple Firebase est disponible dans `stripe/functions/createCheckoutSession.ts`.
+3. Déployez cette fonction et configurez les URLs `success_url` et `cancel_url`. Ajoutez votre domaine Vercel dans **Authentication → Sign-in method → Authorised domains**.
+4. Sur Vercel, ajoutez les variables d’environnement (`VITE_STRIPE_*` côté front + clé secrète côté fonction) puis redeployez.
+5. Mettez en place un webhook Stripe `checkout.session.completed` pour marquer l’utilisateur premium (Custom Claims, Firestore…). Le front ne doit pas accorder l’accès Premium sans cette vérification serveur.
 
 ## Notes UX/UI
 

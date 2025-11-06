@@ -1,5 +1,5 @@
-import { FormEvent, useState } from "react";
-import { createMockCheckoutSession } from "../services/subscriptionService";
+import { FormEvent, useEffect, useState } from "react";
+import { redirectToStripeCheckout } from "../services/subscriptionService";
 import { useI18n } from "../shared/i18n";
 import { usePremiumAccess } from "../shared/premiumAccess";
 
@@ -8,19 +8,27 @@ export default function SubscriptionSection() {
   const { hasPremiumAccess, unlockPremium } = usePremiumAccess();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("status") === "success") {
+      unlockPremium();
+    }
+  }, [unlockPremium]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
+    setError(null);
     try {
-      const response = await createMockCheckoutSession({
+      await redirectToStripeCheckout({
         email,
         planId: "decoree-premium-monthly"
       });
-      setCheckoutUrl(response.checkoutUrl);
-      unlockPremium();
-    } finally {
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
       setLoading(false);
     }
   };
@@ -32,7 +40,7 @@ export default function SubscriptionSection() {
           <h2 className="text-3xl font-bold text-dancheongNavy">{t("subscription.title")}</h2>
           <p className="text-slate-600">{t("subscription.subtitle")}</p>
           <p className="text-lg font-semibold text-hanBlue">{t("subscription.price")}</p>
-          <p className="text-xs text-slate-400">{t("subscription.mockWarning")}</p>
+          <p className="text-xs text-slate-400">{t("subscription.warning")}</p>
           {hasPremiumAccess && (
             <p className="rounded-full bg-dancheongGreen/10 px-4 py-2 text-xs font-semibold text-dancheongGreen">
               {t("subscription.active")}
@@ -49,16 +57,11 @@ export default function SubscriptionSection() {
             className="w-full rounded-full border border-slate-200 px-4 py-3 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
           />
           <button type="submit" className="primary-button w-full md:w-auto" disabled={loading}>
-            {loading ? "Chargement..." : t("subscription.cta")}
+            {loading ? t("subscription.loading") : t("subscription.cta")}
           </button>
         </form>
-        {checkoutUrl && (
-          <div className="rounded-2xl bg-hanBlue/10 p-4 text-sm text-hanBlue">
-            <p>Session Stripe simulée prête :</p>
-            <a href={checkoutUrl} className="font-semibold underline" target="_blank" rel="noreferrer">
-              {checkoutUrl}
-            </a>
-          </div>
+        {error && (
+          <p className="rounded-2xl bg-dancheongRed/10 px-4 py-2 text-sm text-dancheongRed">{error}</p>
         )}
       </div>
     </section>

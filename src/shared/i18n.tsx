@@ -73,9 +73,11 @@ const translations: TranslationDictionary = {
         "Accédez au Trend Decoder complet, à des guides exclusifs et à des conseils personnalisés.",
       "subscription.price": "6,90€ / mois après l'essai gratuit de 7 jours",
       "subscription.cta": "Activer l'abonnement",
-      "subscription.mockWarning":
-        "Intégration Stripe simulée pour l'environnement MVP. Remplacez l'endpoint par votre fonction serveur.",
-      "subscription.active": "Abonnement Premium actif sur cet appareil.",
+      "subscription.loading": "Redirection…",
+      "subscription.warning":
+        "Stripe nécessite un endpoint sécurisé côté serveur. Configurez `/api/create-checkout-session` ou mettez à jour `VITE_STRIPE_CHECKOUT_ENDPOINT`.",
+      "subscription.active":
+        "Premium activé pour cette session (pensez à confirmer via webhook côté serveur).",
       "footer.madeIn": "Conçu à Séoul pour les voyageurs français",
       "admin.title": "Studio Décorée",
       "admin.subtitle":
@@ -252,8 +254,10 @@ const translations: TranslationDictionary = {
         "트렌드 전체 리포트와 독점 가이드, 맞춤 추천을 이용해 보세요.",
       "subscription.price": "7일 무료 체험 후 월 6.90€",
       "subscription.cta": "구독 시작하기",
-      "subscription.mockWarning": "MVP 환경을 위한 Stripe 연동 시뮬레이션입니다.",
-      "subscription.active": "이 기기에서 프리미엄 구독이 활성화되었습니다.",
+      "subscription.loading": "리디렉션 중…",
+      "subscription.warning":
+        "Stripe 결제는 서버(Cloud Functions 등)에 `/api/create-checkout-session` 엔드포인트를 설정해야 합니다.",
+      "subscription.active": "이 세션에서 프리미엄이 활성화되었습니다 (웹훅으로 최종 확인해야 합니다).",
       "footer.madeIn": "프랑스 여행자를 위해 서울에서 제작",
       "admin.title": "Decorée 콘텐츠 스튜디오",
       "admin.subtitle":
