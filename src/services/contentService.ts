@@ -32,19 +32,43 @@ type WithTimestamps<T> = T & {
 const DEFAULT_LANGUAGE: SupportedLanguage = "en";
 const DEFAULT_AUTHOR_ID = AUTHOR_PROFILES[0]?.id ?? "decorée-team";
 
-const ensureLanguage = <T extends { language?: SupportedLanguage }>(item: T) => ({
-  ...item,
-  language: item.language ?? DEFAULT_LANGUAGE
-});
+const LANGUAGE_PREFIXES: SupportedLanguage[] = ["en", "fr", "ko", "ja"];
 
-const filterByLanguage = <T extends { language?: SupportedLanguage }>(
+const inferLanguageFromId = (id: string | undefined): SupportedLanguage | undefined => {
+  if (!id) return undefined;
+  const prefix = id.split("-")[0] as SupportedLanguage;
+  return LANGUAGE_PREFIXES.includes(prefix) ? prefix : undefined;
+};
+
+type WithLanguageMeta<T> = T & { language: SupportedLanguage; __softLanguage?: boolean };
+
+const ensureLanguage = <T extends { language?: SupportedLanguage; id?: string }>(item: T) => {
+  const inferred = inferLanguageFromId(item.id);
+  const hasExplicitLanguage = item.language != null;
+  const language = item.language ?? inferred ?? DEFAULT_LANGUAGE;
+  return {
+    ...item,
+    language,
+    __softLanguage: !hasExplicitLanguage && !inferred
+  } as WithLanguageMeta<T>;
+};
+
+const stripLanguageMeta = <T extends WithLanguageMeta<unknown>>(item: T) => {
+  const { __softLanguage, ...rest } = item;
+  return rest as Omit<T, "__softLanguage">;
+};
+
+const filterByLanguage = <T extends { language?: SupportedLanguage; id?: string }>(
   items: T[],
   language?: SupportedLanguage
 ) => {
+  const normalized = items.map(ensureLanguage);
   if (!language) {
-    return items.map(ensureLanguage);
+    return normalized.map(stripLanguageMeta);
   }
-  return items.map(ensureLanguage).filter((item) => item.language === language);
+  return normalized
+    .filter((item) => item.language === language || item.__softLanguage)
+    .map(stripLanguageMeta);
 };
 
 const sortReports = (reports: TrendReport[]) =>
@@ -52,38 +76,43 @@ const sortReports = (reports: TrendReport[]) =>
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
 
-const fallbackTrends = TREND_REPORTS.map((report) => ({
-  ...ensureLanguage(report),
-  authorId: report.authorId ?? DEFAULT_AUTHOR_ID
-}));
-const fallbackEvents = K_CULTURE_EVENTS.map(ensureLanguage);
-const fallbackPhrases = PHRASES.map(ensureLanguage);
+const fallbackTrends = TREND_REPORTS.map((report) => {
+  const normalized = ensureLanguage(report);
+  const { __softLanguage, ...rest } = normalized;
+  return {
+    ...rest,
+    authorId: report.authorId ?? DEFAULT_AUTHOR_ID
+  };
+});
+const fallbackEvents = K_CULTURE_EVENTS.map((event) => stripLanguageMeta(ensureLanguage(event)));
+const fallbackPhrases = PHRASES.map((phrase) => stripLanguageMeta(ensureLanguage(phrase)));
 
 function toTrend(docData: WithTimestamps<TrendReport>): TrendReport {
+  const normalized = ensureLanguage(docData);
+  const { __softLanguage, ...rest } = normalized;
   return {
-    ...docData,
-    language: docData.language ?? DEFAULT_LANGUAGE,
-    content: docData.content ?? [],
-    tags: docData.tags ?? [],
-    publishedAt: docData.publishedAt ?? new Date().toISOString().slice(0, 10),
-    authorId: docData.authorId ?? DEFAULT_AUTHOR_ID
+    ...rest,
+    content: rest.content ?? [],
+    tags: rest.tags ?? [],
+    publishedAt: rest.publishedAt ?? new Date().toISOString().slice(0, 10),
+    authorId: rest.authorId ?? DEFAULT_AUTHOR_ID
   };
 }
 
 function toEvent(docData: WithTimestamps<KCultureEvent>): KCultureEvent {
+  const normalized = ensureLanguage(docData);
+  const { __softLanguage, ...rest } = normalized;
   return {
-    ...docData,
-    language: docData.language ?? DEFAULT_LANGUAGE,
-    longDescription: docData.longDescription ?? [],
-    tips: docData.tips ?? []
+    ...rest,
+    longDescription: rest.longDescription ?? [],
+    tips: rest.tips ?? []
   };
 }
 
 function toPhrase(docData: WithTimestamps<Phrase>): Phrase {
-  return {
-    ...docData,
-    language: docData.language ?? DEFAULT_LANGUAGE
-  };
+  const normalized = ensureLanguage(docData);
+  const { __softLanguage, ...rest } = normalized;
+  return rest;
 }
 
 export async function fetchTrendReports(
