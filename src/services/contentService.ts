@@ -13,6 +13,7 @@ import {
 import { K_CULTURE_EVENTS, type KCultureEvent } from "../data/events";
 import { PHRASES, type Phrase } from "../data/phrases";
 import { TREND_REPORTS, type TrendReport } from "../data/trends";
+import type { SupportedLanguage } from "../shared/i18n";
 import { getFirebaseApp } from "./firebase";
 
 const app = getFirebaseApp();
@@ -27,18 +28,36 @@ type WithTimestamps<T> = T & {
   updatedAt?: Timestamp;
 };
 
+const DEFAULT_LANGUAGE: SupportedLanguage = "fr";
+
+const ensureLanguage = <T extends { language?: SupportedLanguage }>(item: T) => ({
+  ...item,
+  language: item.language ?? DEFAULT_LANGUAGE
+});
+
+const filterByLanguage = <T extends { language?: SupportedLanguage }>(
+  items: T[],
+  language?: SupportedLanguage
+) => {
+  if (!language) {
+    return items.map(ensureLanguage);
+  }
+  return items.map(ensureLanguage).filter((item) => item.language === language);
+};
+
 const sortReports = (reports: TrendReport[]) =>
   [...reports].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
 
-const fallbackTrends = sortReports(TREND_REPORTS);
-const fallbackEvents = K_CULTURE_EVENTS;
-const fallbackPhrases = PHRASES;
+const fallbackTrends = TREND_REPORTS.map(ensureLanguage);
+const fallbackEvents = K_CULTURE_EVENTS.map(ensureLanguage);
+const fallbackPhrases = PHRASES.map(ensureLanguage);
 
 function toTrend(docData: WithTimestamps<TrendReport>): TrendReport {
   return {
     ...docData,
+    language: docData.language ?? DEFAULT_LANGUAGE,
     content: docData.content ?? [],
     tags: docData.tags ?? [],
     publishedAt: docData.publishedAt ?? new Date().toISOString().slice(0, 10)
@@ -48,26 +67,37 @@ function toTrend(docData: WithTimestamps<TrendReport>): TrendReport {
 function toEvent(docData: WithTimestamps<KCultureEvent>): KCultureEvent {
   return {
     ...docData,
+    language: docData.language ?? DEFAULT_LANGUAGE,
     longDescription: docData.longDescription ?? [],
     tips: docData.tips ?? []
   };
 }
 
-export async function fetchTrendReports(): Promise<TrendReport[]> {
+function toPhrase(docData: WithTimestamps<Phrase>): Phrase {
+  return {
+    ...docData,
+    language: docData.language ?? DEFAULT_LANGUAGE
+  };
+}
+
+export async function fetchTrendReports(
+  language?: SupportedLanguage
+): Promise<TrendReport[]> {
   try {
     const snapshot = await getDocs(
       query(trendCollection, orderBy("publishedAt", "desc"))
     );
     if (snapshot.empty) {
-      return fallbackTrends;
+      return sortReports(filterByLanguage(fallbackTrends, language));
     }
-    return snapshot.docs.map((docSnap) => {
+    const reports = snapshot.docs.map((docSnap) => {
       const data = docSnap.data() as WithTimestamps<TrendReport>;
       return toTrend({ ...data, id: docSnap.id });
     });
+    return sortReports(filterByLanguage(reports, language));
   } catch (error) {
     console.error("Failed to fetch trend reports, fallback to static data.", error);
-    return fallbackTrends;
+    return sortReports(filterByLanguage(fallbackTrends, language));
   }
 }
 
@@ -91,6 +121,7 @@ export async function addTrendReport(report: TrendReport) {
     updatedAt: Timestamp;
   } = {
     ...report,
+    language: report.language ?? DEFAULT_LANGUAGE,
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now()
   };
@@ -103,6 +134,7 @@ export async function updateTrendReport(report: TrendReport) {
     doc(trendCollection, report.id),
     {
       ...report,
+      language: report.language ?? DEFAULT_LANGUAGE,
       updatedAt: Timestamp.now()
     },
     { merge: true }
@@ -115,19 +147,22 @@ export async function deleteTrendReport(id: string) {
   return fetchTrendReports();
 }
 
-export async function fetchEvents(): Promise<KCultureEvent[]> {
+export async function fetchEvents(
+  language?: SupportedLanguage
+): Promise<KCultureEvent[]> {
   try {
     const snapshot = await getDocs(query(eventCollection, orderBy("date", "asc")));
     if (snapshot.empty) {
-      return fallbackEvents;
+      return filterByLanguage(fallbackEvents, language);
     }
-    return snapshot.docs.map((docSnap) => {
+    const events = snapshot.docs.map((docSnap) => {
       const data = docSnap.data() as WithTimestamps<KCultureEvent>;
       return toEvent({ ...data, id: docSnap.id });
     });
+    return filterByLanguage(events, language);
   } catch (error) {
     console.error("Failed to fetch events, fallback to static data.", error);
-    return fallbackEvents;
+    return filterByLanguage(fallbackEvents, language);
   }
 }
 
@@ -147,6 +182,7 @@ export async function addEvent(event: KCultureEvent) {
   const id = event.id;
   const payload: KCultureEvent & { createdAt: Timestamp; updatedAt: Timestamp } = {
     ...event,
+    language: event.language ?? DEFAULT_LANGUAGE,
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now()
   };
@@ -159,6 +195,7 @@ export async function updateEvent(event: KCultureEvent) {
     doc(eventCollection, event.id),
     {
       ...event,
+      language: event.language ?? DEFAULT_LANGUAGE,
       updatedAt: Timestamp.now()
     },
     { merge: true }
@@ -171,19 +208,20 @@ export async function deleteEvent(id: string) {
   return fetchEvents();
 }
 
-export async function fetchPhrases(): Promise<Phrase[]> {
+export async function fetchPhrases(language?: SupportedLanguage): Promise<Phrase[]> {
   try {
     const snapshot = await getDocs(phraseCollection);
     if (snapshot.empty) {
-      return fallbackPhrases;
+      return filterByLanguage(fallbackPhrases, language);
     }
-    return snapshot.docs.map((docSnap) => ({
-      ...(docSnap.data() as Phrase),
-      id: docSnap.id
-    }));
+    const phrases = snapshot.docs.map((docSnap) => {
+      const data = docSnap.data() as WithTimestamps<Phrase>;
+      return toPhrase({ ...data, id: docSnap.id });
+    });
+    return filterByLanguage(phrases, language);
   } catch (error) {
     console.error("Failed to fetch phrases, fallback to static data.", error);
-    return fallbackPhrases;
+    return filterByLanguage(fallbackPhrases, language);
   }
 }
 
@@ -191,6 +229,7 @@ export async function addPhrase(phrase: Phrase) {
   const id = phrase.id;
   const payload: Phrase & { createdAt: Timestamp; updatedAt: Timestamp } = {
     ...phrase,
+    language: phrase.language ?? DEFAULT_LANGUAGE,
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now()
   };
@@ -203,6 +242,7 @@ export async function updatePhrase(phrase: Phrase) {
     doc(phraseCollection, phrase.id),
     {
       ...phrase,
+      language: phrase.language ?? DEFAULT_LANGUAGE,
       updatedAt: Timestamp.now()
     },
     { merge: true }

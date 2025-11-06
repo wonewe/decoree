@@ -1,61 +1,116 @@
+import type { SupportedLanguage } from "../shared/i18n";
+
 export type PhraseCategory = "food" | "shopping" | "entertainment";
 
 export type Phrase = {
   id: string;
+  language: SupportedLanguage;
   korean: string;
   transliteration: string;
-  french: string;
+  translation: string;
   culturalNote: string;
   category: PhraseCategory;
 };
 
 export const PHRASES: Phrase[] = [
   {
-    id: "food-1",
+    id: "fr-food-1",
+    language: "fr",
     korean: "맛있어요!",
     transliteration: "Masisseoyo!",
-    french: "C'est délicieux !",
-    culturalNote: "Exprimez votre enthousiasme : les restaurateurs coréens apprécient les retours positifs.",
+    translation: "C'est délicieux !",
+    culturalNote:
+      "Les chefs coréens adorent entendre un retour enthousiaste : dites-le avec un grand sourire.",
     category: "food"
   },
   {
-    id: "food-2",
+    id: "fr-food-2",
+    language: "fr",
     korean: "추천 메뉴가 뭐예요?",
     transliteration: "Chucheon menyuga mwoyeyo?",
-    french: "Quelle est la spécialité de la maison ?",
-    culturalNote: "Laissez le serveur guider votre découverte, souvent une version moderne de plats traditionnels.",
+    translation: "Quelle est la spécialité de la maison ?",
+    culturalNote:
+      "Demandez la recommandation du serveur pour découvrir un plat saisonnier ou un accord inattendu.",
     category: "food"
   },
   {
-    id: "shopping-1",
+    id: "fr-shopping-1",
+    language: "fr",
     korean: "다른 색상 있어요?",
     transliteration: "Dareun saeksang isseoyo?",
-    french: "Vous l'avez dans une autre couleur ?",
-    culturalNote: "Les boutiques pop-up changent souvent les couleurs selon les collabs K-Pop.",
+    translation: "Vous l'avez dans une autre couleur ?",
+    culturalNote:
+      "Les concept stores renouvellent les coloris chaque semaine, pensez à demander un aperçu du prochain drop.",
     category: "shopping"
   },
   {
-    id: "shopping-2",
-    korean: "택스 리펀드 가능해요?",
-    transliteration: "Taekseu ripeondeu ganeunghaeyo?",
-    french: "Puis-je bénéficier du tax free ?",
-    culturalNote: "Présentez votre passeport : de nombreuses boutiques de Hongdae sont affiliées.",
-    category: "shopping"
-  },
-  {
-    id: "entertainment-1",
-    korean: "사진 같이 찍어도 될까요?",
-    transliteration: "Sajin gachi jjigeodo doelkkayo?",
-    french: "On peut prendre une photo ensemble ?",
-    culturalNote: "Toujours demander avant d'immortaliser une performance de rue.",
+    id: "fr-entertainment-1",
+    language: "fr",
+    korean: "공연 몇 시에 시작해요?",
+    transliteration: "Gongyeon myeot sie sijakaeyo?",
+    translation: "Le spectacle commence à quelle heure ?",
+    culturalNote:
+      "Arrivez 15 minutes en avance : les salles ajoutent souvent un pre-show surprise.",
     category: "entertainment"
   },
   {
-    id: "entertainment-2",
-    korean: "공연 몇 시에 시작해요?",
-    transliteration: "Gongyeon myeot sie sijakaeyo?",
-    french: "Le spectacle commence à quelle heure ?",
-    culturalNote: "Certaines scènes K-Indie démarrent plus tard que prévu, prévoyez une marge.",
+    id: "ko-food-1",
+    language: "ko",
+    korean: "이 집 시그니처가 뭐예요?",
+    transliteration: "I jip sigeuneocheoga mwoyeyo?",
+    translation: "이곳에서 꼭 먹어야 하는 메뉴가 뭐예요?",
+    culturalNote:
+      "로컬 추천 메뉴를 먼저 묻고 주문하면 셰프가 감동하는 편. 한두 가지 추가 추천을 받아보세요.",
+    category: "food"
+  },
+  {
+    id: "ko-shopping-1",
+    language: "ko",
+    korean: "재입고 일정 알 수 있을까요?",
+    transliteration: "Jae-ibgo iljeong al su isseulkkayo?",
+    translation: "다음 입고 날짜를 알려주실 수 있나요?",
+    culturalNote:
+      "핫한 팝업은 빠르게 품절됩니다. 연락처를 남기면 사전 알림을 보내주는 매장도 있어요.",
+    category: "shopping"
+  },
+  {
+    id: "ko-entertainment-1",
+    language: "ko",
+    korean: "현장 포토카드 어디서 받아요?",
+    transliteration: "Hyeonjang photocard eodiseo badayo?",
+    translation: "현장에서 포토카드는 어디에서 받을 수 있나요?",
+    culturalNote:
+      "K-Pop 이벤트는 포토카드를 스탠드별로 배포하니, 입장 전에 부스 위치를 확인하세요.",
+    category: "entertainment"
+  },
+  {
+    id: "ja-food-1",
+    language: "ja",
+    korean: "디저트 추천해주세요.",
+    transliteration: "Dijeoteu chucheonhaejuseyo.",
+    translation: "デザートのおすすめはありますか？",
+    culturalNote:
+      "韓国カフェは季節限定のメニューが豊富。写真を見せながら頼むとスムーズです。",
+    category: "food"
+  },
+  {
+    id: "ja-shopping-1",
+    language: "ja",
+    korean: "포장 가능할까요?",
+    transliteration: "Pojang ganeungalkkayo?",
+    translation: "テイクアウトにできますか？",
+    culturalNote:
+      "ポップアップショップではラッピングサービスも人気。ギフト用と伝えると特別タグを選べる場合があります。",
+    category: "shopping"
+  },
+  {
+    id: "ja-entertainment-1",
+    language: "ja",
+    korean: "좌석 업그레이드 할 수 있어요?",
+    transliteration: "Jwaseok upgrade hal su isseoyo?",
+    translation: "座席のアップグレードはできますか？",
+    culturalNote:
+      "ライブ会場によっては当日アップグレードカウンターが設置されています。早めに交渉しましょう。",
     category: "entertainment"
   }
 ];

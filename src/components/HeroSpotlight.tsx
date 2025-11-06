@@ -22,12 +22,17 @@ const FALLBACK_PHRASE_IMAGE =
   "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1600&q=80";
 
 export default function HeroSpotlight() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   const spotlights = useMemo<Spotlight[]>(() => {
-    const trend = TREND_REPORTS.find((item) => !item.isPremium) ?? TREND_REPORTS[0];
-    const event = K_CULTURE_EVENTS[0];
-    const phrase = PHRASES[0];
+    const trend =
+      TREND_REPORTS.find((item) => item.language === language && !item.isPremium) ??
+      TREND_REPORTS.find((item) => item.language === language) ??
+      TREND_REPORTS[0];
+    const event =
+      K_CULTURE_EVENTS.find((item) => item.language === language) ?? K_CULTURE_EVENTS[0];
+    const phrase =
+      PHRASES.find((item) => item.language === language) ?? PHRASES[0];
 
     return [
       {
@@ -54,14 +59,14 @@ export default function HeroSpotlight() {
         key: "phrase" as const,
         tag: t("hero.spotlight.tag.phrase"),
         title: phrase.korean,
-        description: phrase.french,
+        description: phrase.translation,
         meta: `${phrase.transliteration} • ${t(`phrasebook.category.${phrase.category}`)}`,
         imageUrl: FALLBACK_PHRASE_IMAGE,
         cta: t("hero.spotlight.cta.phrase"),
         to: "/phrasebook"
       }
     ];
-  }, [t]);
+  }, [language, t]);
 
   const [activeIndex, setActiveIndex] = useState(0);
 

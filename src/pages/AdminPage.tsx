@@ -18,6 +18,8 @@ import {
   updateTrendReport
 } from "../services/contentService";
 import { useAuth } from "../shared/auth";
+import type { SupportedLanguage } from "../shared/i18n";
+import { getLanguageLabel } from "../shared/i18n";
 
 type ActiveSection = "trends" | "events" | "phrases";
 
@@ -26,8 +28,11 @@ type AdminMessage = {
   text: string;
 };
 
+const LANG_OPTIONS: SupportedLanguage[] = ["fr", "ko", "ja"];
+
 type TrendDraft = {
   id: string;
+  language: SupportedLanguage;
   title: string;
   summary: string;
   details: string;
@@ -42,6 +47,7 @@ type TrendDraft = {
 
 type EventDraft = {
   id: string;
+  language: SupportedLanguage;
   title: string;
   description: string;
   date: string;
@@ -57,9 +63,10 @@ type EventDraft = {
 
 type PhraseDraft = {
   id: string;
+  language: SupportedLanguage;
   korean: string;
   transliteration: string;
-  french: string;
+  translation: string;
   culturalNote: string;
   category: PhraseCategory;
 };
@@ -71,6 +78,7 @@ function todayIso() {
 function createEmptyTrendDraft(): TrendDraft {
   return {
     id: "",
+    language: "fr",
     title: "",
     summary: "",
     details: "",
@@ -87,6 +95,7 @@ function createEmptyTrendDraft(): TrendDraft {
 function trendToDraft(report: TrendReport): TrendDraft {
   return {
     id: report.id,
+    language: report.language ?? "fr",
     title: report.title,
     summary: report.summary,
     details: report.details,
@@ -113,6 +122,7 @@ function draftToTrend(draft: TrendDraft): TrendReport {
 
   return {
     id: draft.id.trim(),
+    language: draft.language,
     title: draft.title.trim(),
     summary: draft.summary.trim(),
     details: draft.details.trim(),
@@ -129,6 +139,7 @@ function draftToTrend(draft: TrendDraft): TrendReport {
 function createEmptyEventDraft(): EventDraft {
   return {
     id: "",
+    language: "fr",
     title: "",
     description: "",
     date: todayIso(),
@@ -146,6 +157,7 @@ function createEmptyEventDraft(): EventDraft {
 function eventToDraft(event: KCultureEvent): EventDraft {
   return {
     id: event.id,
+    language: event.language ?? "fr",
     title: event.title,
     description: event.description,
     date: event.date ?? todayIso(),
@@ -173,6 +185,7 @@ function draftToEvent(draft: EventDraft): KCultureEvent {
 
   return {
     id: draft.id.trim(),
+    language: draft.language,
     title: draft.title.trim(),
     description: draft.description.trim(),
     date: draft.date,
@@ -190,9 +203,10 @@ function draftToEvent(draft: EventDraft): KCultureEvent {
 function createEmptyPhraseDraft(): PhraseDraft {
   return {
     id: "",
+    language: "fr",
     korean: "",
     transliteration: "",
-    french: "",
+    translation: "",
     culturalNote: "",
     category: "food"
   };
@@ -201,9 +215,10 @@ function createEmptyPhraseDraft(): PhraseDraft {
 function phraseToDraft(phrase: Phrase): PhraseDraft {
   return {
     id: phrase.id,
+    language: phrase.language ?? "fr",
     korean: phrase.korean,
     transliteration: phrase.transliteration,
-    french: phrase.french,
+    translation: phrase.translation,
     culturalNote: phrase.culturalNote,
     category: phrase.category
   };
@@ -212,9 +227,10 @@ function phraseToDraft(phrase: Phrase): PhraseDraft {
 function draftToPhrase(draft: PhraseDraft): Phrase {
   return {
     id: draft.id.trim(),
+    language: draft.language,
     korean: draft.korean.trim(),
     transliteration: draft.transliteration.trim(),
-    french: draft.french.trim(),
+    translation: draft.translation.trim(),
     culturalNote: draft.culturalNote.trim(),
     category: draft.category
   };
@@ -552,10 +568,15 @@ export default function AdminPage() {
         </div>
         <div className="space-y-2">
           {trends.map((report) =>
-            renderListButton(report.id, report.title, selectedTrendId === report.id, () => {
+            renderListButton(
+              report.id,
+              `[${getLanguageLabel(report.language ?? "fr")}] ${report.title}`,
+              selectedTrendId === report.id,
+              () => {
               setSelectedTrendId(report.id);
               setTrendDraft(trendToDraft(report));
-            })
+              }
+            )
           )}
           {trends.length === 0 && (
             <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
@@ -581,7 +602,26 @@ export default function AdminPage() {
           )}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            언어
+            <select
+              value={trendDraft.language}
+              onChange={(e) =>
+                setTrendDraft((prev) => ({
+                  ...prev,
+                  language: e.target.value as SupportedLanguage
+                }))
+              }
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            >
+              {LANG_OPTIONS.map((lang) => (
+                <option key={lang} value={lang}>
+                  {getLanguageLabel(lang)}
+                </option>
+              ))}
+            </select>
+          </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
             ID (영문 소문자, 하이픈 권장)
             <input
@@ -750,10 +790,15 @@ export default function AdminPage() {
         </div>
         <div className="space-y-2">
           {events.map((event) =>
-            renderListButton(event.id, event.title, selectedEventId === event.id, () => {
-              setSelectedEventId(event.id);
-              setEventDraft(eventToDraft(event));
-            })
+            renderListButton(
+              event.id,
+              `[${getLanguageLabel(event.language ?? "fr")}] ${event.title}`,
+              selectedEventId === event.id,
+              () => {
+                setSelectedEventId(event.id);
+                setEventDraft(eventToDraft(event));
+              }
+            )
           )}
           {events.length === 0 && (
             <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
@@ -779,7 +824,26 @@ export default function AdminPage() {
           )}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            언어
+            <select
+              value={eventDraft.language}
+              onChange={(e) =>
+                setEventDraft((prev) => ({
+                  ...prev,
+                  language: e.target.value as SupportedLanguage
+                }))
+              }
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            >
+              {LANG_OPTIONS.map((lang) => (
+                <option key={lang} value={lang}>
+                  {getLanguageLabel(lang)}
+                </option>
+              ))}
+            </select>
+          </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
             ID
             <input
@@ -959,7 +1023,7 @@ export default function AdminPage() {
           {phrases.map((phrase) =>
             renderListButton(
               phrase.id,
-              phrase.korean,
+              `[${getLanguageLabel(phrase.language ?? "fr")}] ${phrase.korean}`,
               selectedPhraseId === phrase.id,
               () => {
                 setSelectedPhraseId(phrase.id);
@@ -991,7 +1055,26 @@ export default function AdminPage() {
           )}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            언어
+            <select
+              value={phraseDraft.language}
+              onChange={(e) =>
+                setPhraseDraft((prev) => ({
+                  ...prev,
+                  language: e.target.value as SupportedLanguage
+                }))
+              }
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            >
+              {LANG_OPTIONS.map((lang) => (
+                <option key={lang} value={lang}>
+                  {getLanguageLabel(lang)}
+                </option>
+              ))}
+            </select>
+          </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
             ID
             <input
@@ -1043,11 +1126,11 @@ export default function AdminPage() {
         </label>
 
         <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-          프랑스어 번역
+          번역 (선택한 언어)
           <input
             type="text"
-            value={phraseDraft.french}
-            onChange={(e) => setPhraseDraft((prev) => ({ ...prev, french: e.target.value }))}
+            value={phraseDraft.translation}
+            onChange={(e) => setPhraseDraft((prev) => ({ ...prev, translation: e.target.value }))}
             className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
             required
           />

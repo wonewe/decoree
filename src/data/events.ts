@@ -1,7 +1,10 @@
+import type { SupportedLanguage } from "../shared/i18n";
+
 export type EventCategory = "concert" | "traditional" | "pop-up" | "festival";
 
 export type KCultureEvent = {
   id: string;
+  language: SupportedLanguage;
   title: string;
   description: string;
   date: string;
@@ -17,10 +20,11 @@ export type KCultureEvent = {
 
 export const K_CULTURE_EVENTS: KCultureEvent[] = [
   {
-    id: "aespa-arena",
+    id: "fr-aespa-arena",
+    language: "fr",
     title: "Aespa Hyperline Tour - Séoul",
     description:
-      "Concert K-Pop avec zones d'expérience VR avant le show. Guides en français disponibles sur place.",
+      "Concert K-pop avec zones VR immersives avant le show et guides francophones sur place.",
     date: "2024-07-13",
     time: "19:30",
     location: "KSPO Dome, Séoul",
@@ -29,19 +33,20 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1600&q=80",
     longDescription: [
-      "La tournée Hyperline d'Aespa arrive à Séoul avec un dispositif immersif : zones VR avant le show, chorégraphies interactives et merchandising en édition limitée.",
-      "Les portes ouvrent à 17h et la zone VR se remplit très vite : conseillez à vos lecteurs/rices de réserver un créneau dans l'app officielle SM. Les détenteurs de billets VIP reçoivent une session de meet & greet de 5 minutes."
+      "La tournée Hyperline d'Aespa transforme le KSPO Dome en terrain de jeu immersif : zones VR, chorégraphies interactives et merchandising en édition limitée.",
+      "Les portes ouvrent à 17h. Réservez votre créneau VR via l'app SM Town pour éviter la file. Les billets VIP incluent un mini meet & greet de 5 minutes."
     ],
     tips: [
-      "Prévoir une arrivée deux heures avant l'ouverture des portes pour profiter de la zone expérience.",
-      "Téléchargez l'app SM Town : des sous-titres français sont disponibles pour le pre-show briefing."
+      "Arrivez deux heures avant le show pour profiter de toutes les expériences.",
+      "Téléchargez l'app SM Town : sous-titres français disponibles pour le briefing."
     ]
   },
   {
-    id: "bukchon-hanok-night",
+    id: "fr-bukchon-hanok-night",
+    language: "fr",
     title: "Nuit Hanbok & Photowalk",
     description:
-      "Visite nocturne de Bukchon Hanok Village avec prêt de hanbok premium et photographe francophone.",
+      "Tour nocturne de Bukchon avec location de hanbok premium et photographe francophone.",
     date: "2024-07-15",
     time: "20:00",
     location: "Bukchon Hanok Village, Séoul",
@@ -51,19 +56,20 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1560944527-a4a429848866?auto=format&fit=crop&w=1600&q=80",
     longDescription: [
-      "Au cœur de Bukchon, ce photowalk nocturne propose la location de hanbok premium, un stylisme express et un photographe francophone qui guide chaque pose.",
-      "Le parcours inclut trois points de vue incontournables : Samcheongdong-gil, la ruelle des toits et un salon de thé secret pour une pause douce avec tisanes coréennes."
+      "Découvrez Bukchon de nuit avec un hanbok premium, un stylisme express et un photographe francophone qui guide chaque pose.",
+      "Le parcours inclut Samcheongdong-gil, la ruelle des toits et un salon de thé caché où déguster des tisanes coréennes."
     ],
     tips: [
-      "Choisissez le créneau de 20h pour éviter la foule et profiter du coucher du soleil sur les toits.",
-      "Préparez deux accessoires personnels (sac, éventail) pour personnaliser les photos souvenirs."
+      "Choisissez le créneau de 20h pour capturer la lumière dorée au-dessus des toits.",
+      "Apportez deux accessoires personnels pour personnaliser vos photos."
     ]
   },
   {
-    id: "makgeolli-class",
+    id: "fr-makgeolli-class",
+    language: "fr",
     title: "Atelier Makgeolli x Fromage",
     description:
-      "Atelier fusion où un maître brasseur explique comment accorder makgeolli et fromages français.",
+      "Masterclass d'accords makgeolli et fromages français animée par un brasseur coréen.",
     date: "2024-07-18",
     time: "18:00",
     location: "Seongsu Silo Lab, Séoul",
@@ -72,33 +78,102 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1514516345957-556ca7d90a8f?auto=format&fit=crop&w=1600&q=80",
     longDescription: [
-      "Le maître brasseur Kim Min-su explique l'art du makgeolli et propose des accords inattendus avec des fromages français importés par une fromagerie de Hongdae.",
-      "L'atelier se termine par un mini-lab où chaque participant ajoute ses toppings (yuzu, basilic asiatique, gingembre) pour créer sa propre cuvée."
+      "Le maître brasseur Kim Min-su partage les secrets du makgeolli avant de proposer des accords inattendus avec des fromages importés.",
+      "Les participants terminent par un mini-lab : toppings yuzu, basilic asiatique ou gingembre pour créer leur propre cuvée."
     ],
     tips: [
-      "Nombre de places limité à 14 personnes. Réservez à l'avance via Naver Booking.",
-      "Apportez une boîte isotherme si vous souhaitez repartir avec une bouteille souvenir."
+      "Places limitées à 14 personnes, réservez via Naver Booking.",
+      "Apportez une boîte isotherme si vous souhaitez repartir avec une bouteille."
     ]
   },
   {
-    id: "jeonju-festival",
-    title: "Festival de gastronomie Jeonju",
+    id: "ko-seoul-summer-fest",
+    language: "ko",
+    title: "한강 썸머 뮤직 페스트",
     description:
-      "Découverte des spécialités de Jeonju avec stands francophones et mini ateliers de cuisine.",
-    date: "2024-07-20",
-    time: "12:00",
-    location: "Gare de Jeonju - zone événements",
+      "한강 수변 무대에서 열리는 여름 음악 축제. 로컬 밴드와 디제이 라인업이 밤새 이어집니다.",
+    date: "2024-07-27",
+    time: "18:30",
+    location: "한강 반포 야외무대",
     category: "festival",
-    price: "Entrée libre",
+    price: "무료 입장",
     imageUrl:
-      "https://images.unsplash.com/photo-1527169402691-feff5539e52c?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1600&q=80",
     longDescription: [
-      "Jeonju, capitale gastronomique, organise un festival mettant en avant bibimbap revisité, dégustations de kimchi premium et ateliers de temple food.",
-      "Un train spécial relie Séoul à Jeonju en 1h40 et inclut un snack coréen créé pour l'occasion."
+      "썸머 뮤직 페스트는 반포 야외무대에서 진행되는 야간 음악축제로, 로컬 인디 밴드와 DJ가 번갈아 무대를 채웁니다.",
+      "돗자리 대여와 푸드트럭이 운영되어 느긋한 피크닉 분위기를 즐길 수 있습니다. Decorée 구독자는 사운드 체크 투어에 참여 가능합니다."
     ],
     tips: [
-      "Réservez le KTX du matin pour profiter de toute la journée et revenir dans la soirée.",
-      "Passez au stand \"Découverte makgeolli\" pour une initiation gratuite aux accords culinaires."
+      "저녁 6시 이전에 도착해 선착순 좌석을 확보하세요.",
+      "무선 이어폰 대신 현장 음향을 온전히 느끼고 싶다면 이어플러그를 준비해보세요."
+    ]
+  },
+  {
+    id: "ko-jeju-tea-atelier",
+    language: "ko",
+    title: "제주 녹차 블렌딩 클래스",
+    description:
+      "비밀스러운 다원에서 진행되는 차 블렌딩 클래스. 향과 색을 직접 조합해 나만의 티백을 완성합니다.",
+    date: "2024-08-03",
+    time: "14:00",
+    location: "제주 서귀포 개인 다원",
+    category: "pop-up",
+    price: "55,000원",
+    bookingUrl: "https://example.com/jeju-tea",
+    imageUrl:
+      "https://images.unsplash.com/photo-1505577058444-a3dab90d4253?auto=format&fit=crop&w=1600&q=80",
+    longDescription: [
+      "서귀포에 위치한 비공개 다원에서 티마스터가 제주산 녹차와 허브를 소개하고 블렌딩 기초를 알려드립니다.",
+      "블렌딩을 마친 뒤에는 초록빛 다원을 바라보며 차와 디저트를 즐기는 티 타임이 이어집니다."
+    ],
+    tips: [
+      "오후 햇살이 강하니 모자와 선크림을 준비하세요.",
+      "예약 시 알레르기 정보를 기재하면 맞춤 허브를 추천받을 수 있습니다."
+    ]
+  },
+  {
+    id: "ja-osaka-k-market",
+    language: "ja",
+    title: "大阪Kカルチャーマーケット",
+    description:
+      "大阪・中之島で開催される韓国カルチャー複合イベント。トークショーとフードゾーンを同時に展開。",
+    date: "2024-08-10",
+    time: "11:00",
+    location: "大阪 中之島バンクス",
+    category: "festival",
+    price: "前売り 3,500円",
+    bookingUrl: "https://example.com/osaka-kmarket",
+    imageUrl:
+      "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1600&q=80",
+    longDescription: [
+      "韓国カルチャーを総合的に体験できるマーケット。最新コスメやファッションブランドのポップアップが集結します。",
+      "ステージではドラマOSTライブやKカルチャートーク、日本語通訳付きのワークショップが行われます。"
+    ],
+    tips: [
+      "午前中に入場すると限定グッズの整理券を受け取れます。",
+      "フードゾーンは現金決済不可。交通系ICカードを事前にチャージしてください。"
+    ]
+  },
+  {
+    id: "ja-kyoto-night-hanbok",
+    language: "ja",
+    title: "京都・韓服ライティングウォーク",
+    description:
+      "京都の寺院で韓服を着て楽しむ夜間ライトアップ散策。韓国茶サロン付きの限定プログラム。",
+    date: "2024-09-07",
+    time: "19:00",
+    location: "京都 東山エリア",
+    category: "traditional",
+    price: "8,900円",
+    imageUrl:
+      "https://images.unsplash.com/photo-1545239351-ef35f43d514b?auto=format&fit=crop&w=1600&q=80",
+    longDescription: [
+      "韓服スタイリストが着付けを担当し、韓国と日本の文化をつなぐナイトツアー。寺院の特別ライトアップを日本語の解説付きで堪能できます。",
+      "後半は韓国茶サロンでティータイム。韓国伝統菓子とともに余韻を味わえます。"
+    ],
+    tips: [
+      "ヒールの高い靴よりも歩きやすい靴を推奨します。",
+      "写真撮影ポイントでは三脚の使用が禁止されているのでご注意ください."
     ]
   }
 ];

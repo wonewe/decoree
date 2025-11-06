@@ -10,21 +10,16 @@ type IntensityBadgeProps = {
 };
 
 function IntensityBadge({ intensity }: IntensityBadgeProps) {
+  const { t } = useI18n();
   const styles: Record<TrendIntensity, string> = {
     highlight: "bg-dancheongGreen/10 text-dancheongGreen",
     insider: "bg-hanBlue/10 text-hanBlue",
     emerging: "bg-dancheongYellow/10 text-dancheongYellow"
   };
 
-  const labels: Record<TrendIntensity, string> = {
-    highlight: "Hotspot",
-    insider: "Insider",
-    emerging: "Emergent"
-  };
-
   return (
     <span className={`rounded-full px-3 py-1 text-xs font-semibold ${styles[intensity]}`}>
-      {labels[intensity]}
+      {t(`trendDetail.intensity.${intensity}`)}
     </span>
   );
 }
@@ -45,7 +40,8 @@ function TrendCard({ report }: { report: TrendReport }) {
       <h3 className="text-xl font-semibold text-dancheongNavy">{report.title}</h3>
       <p className="text-slate-600">{report.summary}</p>
       <div className="text-sm text-slate-500">
-        <strong>Quartier:</strong> {report.neighborhood} • {report.tags.join(" · ")}
+        <strong>{t("trendDetail.neighborhood")}:</strong> {report.neighborhood} •{" "}
+        {report.tags.join(" · ")}
       </div>
       {report.isPremium ? (
         <div className="rounded-2xl border border-dashed border-dancheongRed/40 p-4">
@@ -79,8 +75,8 @@ function TrendCard({ report }: { report: TrendReport }) {
 }
 
 export default function WeeklyTrendDecoder() {
-  const { t } = useI18n();
-  const fetcher = useCallback(() => fetchTrendReports(), []);
+  const { t, language } = useI18n();
+  const fetcher = useCallback(() => fetchTrendReports(language), [language]);
   const { status, data } = useAsyncData(fetcher);
 
   const sortedReports = useMemo(() => {

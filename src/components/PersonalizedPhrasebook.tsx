@@ -7,11 +7,11 @@ import { useI18n } from "../shared/i18n";
 const CATEGORY_KEYS: PhraseCategory[] = ["food", "shopping", "entertainment"];
 
 export default function PersonalizedPhrasebook() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [selectedCategories, setSelectedCategories] = useState<PhraseCategory[]>(["food"]);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState("");
-  const fetcher = useCallback(() => fetchPhrases(), []);
+  const fetcher = useCallback(() => fetchPhrases(language), [language]);
   const { status, data } = useAsyncData(fetcher);
 
   const toggleCategory = (category: PhraseCategory) => {
@@ -32,7 +32,7 @@ export default function PersonalizedPhrasebook() {
         const haystack = [
           phrase.korean,
           phrase.transliteration,
-          phrase.french,
+          phrase.translation,
           phrase.culturalNote
         ]
           .join(" ")
@@ -153,7 +153,7 @@ export default function PersonalizedPhrasebook() {
                       {phrase.transliteration}
                     </p>
                   </div>
-                  <p className="text-slate-600">{phrase.french}</p>
+                  <p className="text-slate-600">{phrase.translation}</p>
                   <div className="rounded-xl bg-slate-100 p-3 text-sm text-slate-500">
                     {phrase.culturalNote}
                   </div>

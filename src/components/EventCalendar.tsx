@@ -8,9 +8,9 @@ import { useI18n } from "../shared/i18n";
 const CATEGORY_KEYS: EventCategory[] = ["concert", "traditional", "pop-up", "festival"];
 
 export default function EventCalendar() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [activeCategory, setActiveCategory] = useState<EventCategory | "all">("all");
-  const fetcher = useCallback(() => fetchEvents(), []);
+  const fetcher = useCallback(() => fetchEvents(language), [language]);
   const { status, data } = useAsyncData(fetcher);
 
   const filteredEvents = useMemo(() => {
