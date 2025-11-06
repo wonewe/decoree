@@ -4,6 +4,7 @@ import { fetchTrendReports } from "../services/contentService";
 import { useAsyncData } from "../hooks/useAsyncData";
 import type { TrendIntensity, TrendReport } from "../data/trends";
 import { useI18n } from "../shared/i18n";
+import { getAuthorProfile } from "../data/authors";
 
 type IntensityBadgeProps = {
   intensity: TrendIntensity;
@@ -27,6 +28,7 @@ function IntensityBadge({ intensity }: IntensityBadgeProps) {
 function TrendCard({ report }: { report: TrendReport }) {
   const { t } = useI18n();
   const [showSample, setShowSample] = useState(false);
+  const author = getAuthorProfile(report.authorId);
 
   return (
     <article className="card flex flex-col gap-4">
@@ -39,6 +41,22 @@ function TrendCard({ report }: { report: TrendReport }) {
       </div>
       <h3 className="text-xl font-semibold text-dancheongNavy">{report.title}</h3>
       <p className="text-slate-600">{report.summary}</p>
+      {author && (
+        <div className="flex items-center gap-3 text-xs text-slate-500">
+          <img
+            src={author.avatarUrl}
+            alt={author.name}
+            className="h-8 w-8 rounded-full object-cover"
+            loading="lazy"
+          />
+          <div className="flex flex-col">
+            <span className="font-semibold text-slate-600">
+              {t("trends.byline", { author: author.name })}
+            </span>
+            <span>{author.title}</span>
+          </div>
+        </div>
+      )}
       <div className="text-sm text-slate-500">
         <strong>{t("trendDetail.neighborhood")}:</strong> {report.neighborhood} •{" "}
         {report.tags.join(" · ")}

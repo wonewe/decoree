@@ -3,6 +3,7 @@ import { FormEvent, useEffect, useState } from "react";
 import type { TrendReport, TrendIntensity } from "../data/trends";
 import type { KCultureEvent, EventCategory } from "../data/events";
 import type { Phrase, PhraseCategory } from "../data/phrases";
+import { AUTHOR_PROFILES } from "../data/authors";
 import {
   addEvent,
   addPhrase,
@@ -33,6 +34,7 @@ const LANG_OPTIONS: SupportedLanguage[] = ["fr", "ko", "ja", "en"];
 type TrendDraft = {
   id: string;
   language: SupportedLanguage;
+  authorId: string;
   title: string;
   summary: string;
   details: string;
@@ -79,6 +81,7 @@ function createEmptyTrendDraft(): TrendDraft {
   return {
     id: "",
     language: "en",
+    authorId: AUTHOR_PROFILES[0]?.id ?? "",
     title: "",
     summary: "",
     details: "",
@@ -96,6 +99,7 @@ function trendToDraft(report: TrendReport): TrendDraft {
   return {
     id: report.id,
     language: report.language ?? "en",
+    authorId: report.authorId ?? AUTHOR_PROFILES[0]?.id ?? "",
     title: report.title,
     summary: report.summary,
     details: report.details,
@@ -123,6 +127,7 @@ function draftToTrend(draft: TrendDraft): TrendReport {
   return {
     id: draft.id.trim(),
     language: draft.language,
+    authorId: draft.authorId,
     title: draft.title.trim(),
     summary: draft.summary.trim(),
     details: draft.details.trim(),
@@ -567,17 +572,16 @@ export default function AdminPage() {
           </button>
         </div>
         <div className="space-y-2">
-          {trends.map((report) =>
-            renderListButton(
-              report.id,
-              `[${getLanguageLabel(report.language ?? "fr")}] ${report.title}`,
-              selectedTrendId === report.id,
-              () => {
+          {trends.map((report) => {
+            const author = AUTHOR_PROFILES.find((profile) => profile.id === report.authorId);
+            const label = `[${getLanguageLabel(report.language ?? "en")}] ${report.title}${
+              author ? ` · ${author.name}` : ""
+            }`;
+            return renderListButton(report.id, label, selectedTrendId === report.id, () => {
               setSelectedTrendId(report.id);
               setTrendDraft(trendToDraft(report));
-              }
-            )
-          )}
+            });
+          })}
           {trends.length === 0 && (
             <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
               아직 등록된 트렌드가 없습니다. 오른쪽 양식을 채워 새 트렌드를 추가하세요.
@@ -602,7 +606,7 @@ export default function AdminPage() {
           )}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-4">
           <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
             언어
             <select
@@ -618,6 +622,25 @@ export default function AdminPage() {
               {LANG_OPTIONS.map((lang) => (
                 <option key={lang} value={lang}>
                   {getLanguageLabel(lang)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            저자
+            <select
+              value={trendDraft.authorId}
+              onChange={(e) =>
+                setTrendDraft((prev) => ({
+                  ...prev,
+                  authorId: e.target.value
+                }))
+              }
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            >
+              {AUTHOR_PROFILES.map((author) => (
+                <option key={author.id} value={author.id}>
+                  {author.name} — {author.title}
                 </option>
               ))}
             </select>

@@ -4,6 +4,7 @@ import type { TrendReport } from "../data/trends";
 import { getTrendReportById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
 import { usePremiumAccess } from "../shared/premiumAccess";
+import { getAuthorProfile } from "../data/authors";
 
 type Status = "idle" | "loading" | "success" | "not-found" | "error";
 
@@ -58,6 +59,7 @@ export default function TrendDetailPage() {
 
   const published = new Date(report.publishedAt).toLocaleDateString();
   const tagList = report.tags.join(" • ");
+  const author = getAuthorProfile(report.authorId);
 
   return (
     <article className="bg-white">
@@ -106,11 +108,31 @@ export default function TrendDetailPage() {
             </div>
           </div>
         ) : (
-          <div className="prose prose-slate max-w-4xl">
-            {report.content.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
-          </div>
+          <>
+            <div className="prose prose-slate max-w-4xl">
+              {report.content.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))}
+            </div>
+            {author && (
+              <div className="mt-10 flex flex-col gap-4 rounded-3xl bg-white p-6 shadow md:flex-row md:items-center md:gap-6">
+                <img
+                  src={author.avatarUrl}
+                  alt={author.name}
+                  loading="lazy"
+                  className="h-20 w-20 flex-shrink-0 rounded-full object-cover shadow"
+                />
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                    {t("trendDetail.author.label")}
+                  </p>
+                  <h3 className="text-xl font-semibold text-dancheongNavy">{author.name}</h3>
+                  <p className="text-sm font-semibold text-slate-500">{author.title}</p>
+                  <p className="text-sm text-slate-600">{author.bio}</p>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         <aside className="mt-10 rounded-3xl bg-slate-50 p-6">

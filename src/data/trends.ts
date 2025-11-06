@@ -15,6 +15,7 @@ export type TrendReport = {
   publishedAt: string;
   imageUrl: string;
   content: string[];
+  authorId: string;
 };
 
 export const TREND_REPORTS: TrendReport[] = [
@@ -37,7 +38,8 @@ export const TREND_REPORTS: TrendReport[] = [
       "Les berges du fleuve Han deviennent un terrain de jeu pour les créateurs coréens : pendant tout le mois de juin, la Sunset Market réinvente le concept-store à ciel ouvert.",
       "Débutez votre visite vers 16h pour profiter des corners DIY et de la street food signée par des guest chefs. Au coucher du soleil, place aux DJ locaux.",
       "Réservez les sessions « Sunset DJ » via l'app officielle (onglet VIP) et arrivez 30 minutes à l'avance pour capturer la golden hour sur Yeouido."
-    ]
+    ],
+    authorId: "sofia-l"
   },
   {
     id: "fr-seongsu-vinyl-bar",
@@ -58,7 +60,8 @@ export const TREND_REPORTS: TrendReport[] = [
       "Needle & Beam reprend le format des listening bars new-yorkais avec une sélection de vinyles pressés à Séoul et un dessert bar inspiré des dramas.",
       "Les places sont limitées : conseillez à vos lectrices/eurs de réserver le créneau de 19h via KakaoTalk. Les abonnés Decorée Premium bénéficient d'un code priorité.",
       "Chaque dimanche matin, une session « vinyle à emporter » permet d'acquérir des pressages exclusifs à ramener dans sa valise."
-    ]
+    ],
+    authorId: "jiwoo-k"
   },
   {
     id: "fr-busan-ocean-film",
@@ -79,7 +82,8 @@ export const TREND_REPORTS: TrendReport[] = [
       "Un écran géant posé sur l'eau, des courts-métrages coréens et une ambiance seaside : Busan Ocean Film Night attire le public chaque vendredi de juillet.",
       "Les masterclasses de 25 minutes décodent les tendances du cinéma coréen sur Netflix. Pensez à réserver vos places via le site officiel.",
       "Le pass backstage (29 000 KRW) donne accès à un rooftop lounge avec dégustation de makgeolli artisanal et rencontre avec l'équipe curatoriale."
-    ]
+    ],
+    authorId: "sofia-l"
   },
   {
     id: "ko-seochon-sunset-walk",
@@ -100,7 +104,8 @@ export const TREND_REPORTS: TrendReport[] = [
       "서촌 노을 산책 로드맵은 통의동부터 시작합니다. 독립 서점에서 저녁을 준비하고, 골목 안쪽의 공예 숍을 들러보세요.",
       "노을이 물드는 시간에는 한옥 카페에서 전통차와 디저트를 즐기고, 루프탑 바로 이동해 서울 야경을 감상합니다.",
       "Decorée 구독자는 큐레이션 플레이리스트와 포토 스팟 지도를 다운로드할 수 있습니다."
-    ]
+    ],
+    authorId: "jiwoo-k"
   },
   {
     id: "ko-gangneung-brew-lab",
@@ -121,7 +126,8 @@ export const TREND_REPORTS: TrendReport[] = [
       "강릉 스페셜티 브루랩은 해변 전망을 즐기며 커피를 연구하는 공간입니다. 로스터와 바리스타가 직접 테이스팅을 진행합니다.",
       "Morning flight는 가벼운 라이트 로스트, 과일향 중배전, 디저트 페어링이 어우러진 코스로 구성됩니다.",
       "워크숍 참가자는 자신만의 블렌드를 기록한 미니 로그북을 받아볼 수 있습니다."
-    ]
+    ],
+    authorId: "jiwoo-k"
   },
   {
     id: "ko-daegu-night-market",
@@ -142,7 +148,8 @@ export const TREND_REPORTS: TrendReport[] = [
       "대구 야시장 아트 마켓은 지역 작가들의 라이브 페인팅과 DJ 세트가 공존하는 밤 축제입니다.",
       "푸드 존에서는 막창 시그니처 메뉴와 디저트 샵의 마카롱이 인기. 모바일 결제가 편리합니다.",
       "Decorée에서는 작가별 추천 시간대와 팝업 부스 지도를 제공해 더욱 효율적인 동선을 제안합니다."
-    ]
+    ],
+    authorId: "sofia-l"
   },
   {
     id: "ja-nu-jeonghan-exhibition",
@@ -163,7 +170,8 @@ export const TREND_REPORTS: TrendReport[] = [
       "ヌリジョンハン美術館は韓国の近現代作家を紹介する注目スポット。夜間は展示室全体が柔らかなライトアップに包まれます。",
       "日本語対応の学芸員が作品の背景やアーティストのエピソードを丁寧に解説。限定グッズもこの時間帯のみ購入可能。",
       "ツアー後は屋上庭園で韓国茶と和菓子のアレンジデザートを楽しめます。"
-    ]
+    ],
+    authorId: "maya-h"
   },
   {
     id: "ja-ikseon-handcraft-route",
@@ -184,7 +192,8 @@ export const TREND_REPORTS: TrendReport[] = [
       "益善洞の細い路地には、韓屋を改装した工房やギャラリーが点在。Decoréeでは日本語サポート付きの工房を厳選しました。",
       "午前の判子ワークショップでは、ハングルのデザインから彫刻までを学び、自分だけの印章を持ち帰れます。",
       "午後のポジャギ小物づくりは色選びがポイント。講師がおすすめの色合わせを提案してくれるので失敗知らずです。"
-    ]
+    ],
+    authorId: "sofia-l"
   },
   {
     id: "ja-jeju-sunset-table",
@@ -204,8 +213,9 @@ export const TREND_REPORTS: TrendReport[] = [
     content: [
       "済州の月汀里ビーチで開催されるサンセット・テーブルは、地元食材の魅力を五感で味わうポップアップダイニング。",
       "シェフが各皿の背景を日本語で紹介し、会場ではアコースティックライブが進行。波の音と音楽がシンクロします。",
-        "Decoréeプレミアム会員は限定シグネチャードリンクとミュージシャンとのトークセッションに招待されます。"
-      ]
+      "Decoréeプレミアム会員は限定シグネチャードリンクとミュージシャンとのトークセッションに招待されます。"
+      ],
+    authorId: "maya-h"
   },
   {
     id: "en-seongsu-cafe-trail",
@@ -226,7 +236,8 @@ export const TREND_REPORTS: TrendReport[] = [
       "Seongsu’s warehouse streets have evolved into Seoul’s laboratory for lifestyle brands. Spend the afternoon hopping between concept cafés and indie boutiques with curated playlists.",
       "Golden hour is best enjoyed from the revamped Seongsu Bridge deck. Grab a zero-proof cocktail or a seasonal dessert pairing with a view of the river.",
       "Decorée Premium subscribers can download an interactive map with time slots and queue intel to maximise the trail."
-    ]
+    ],
+    authorId: "maya-h"
   },
   {
     id: "en-ikseon-night-classics",
@@ -247,7 +258,8 @@ export const TREND_REPORTS: TrendReport[] = [
       "Begin with a seasonal tasting menu in a restored hanok where each course references a different region of Korea.",
       "Move to a retro dessert bar inspired by 80s film sets, then wind down at a listening lounge spinning Seoul funk and city pop vinyl.",
       "Premium readers receive a booking cheat sheet with recommended seating times and bartender pairings."
-    ]
+    ],
+    authorId: "jiwoo-k"
   },
   {
     id: "en-jeju-nature-lab",
@@ -268,6 +280,7 @@ export const TREND_REPORTS: TrendReport[] = [
       "Kick off with a sunrise walk along Jusangjeolli Cliffs, guided by a local storyteller sharing Jeju myths.",
       "Lunch takes place on a regenerative farm where you’ll pick herbs and learn about slow food practices before a communal meal.",
       "Finish with a tea meditation in Seogwipo, sampling fresh green tea and tangerine blends while journaling your reflections."
-    ]
+    ],
+    authorId: "maya-h"
   }
 ];

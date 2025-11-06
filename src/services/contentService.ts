@@ -13,6 +13,7 @@ import {
 import { K_CULTURE_EVENTS, type KCultureEvent } from "../data/events";
 import { PHRASES, type Phrase } from "../data/phrases";
 import { TREND_REPORTS, type TrendReport } from "../data/trends";
+import { AUTHOR_PROFILES } from "../data/authors";
 import type { SupportedLanguage } from "../shared/i18n";
 import { getFirebaseApp } from "./firebase";
 
@@ -29,6 +30,7 @@ type WithTimestamps<T> = T & {
 };
 
 const DEFAULT_LANGUAGE: SupportedLanguage = "en";
+const DEFAULT_AUTHOR_ID = AUTHOR_PROFILES[0]?.id ?? "decorée-team";
 
 const ensureLanguage = <T extends { language?: SupportedLanguage }>(item: T) => ({
   ...item,
@@ -50,7 +52,10 @@ const sortReports = (reports: TrendReport[]) =>
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
 
-const fallbackTrends = TREND_REPORTS.map(ensureLanguage);
+const fallbackTrends = TREND_REPORTS.map((report) => ({
+  ...ensureLanguage(report),
+  authorId: report.authorId ?? DEFAULT_AUTHOR_ID
+}));
 const fallbackEvents = K_CULTURE_EVENTS.map(ensureLanguage);
 const fallbackPhrases = PHRASES.map(ensureLanguage);
 
@@ -60,7 +65,8 @@ function toTrend(docData: WithTimestamps<TrendReport>): TrendReport {
     language: docData.language ?? DEFAULT_LANGUAGE,
     content: docData.content ?? [],
     tags: docData.tags ?? [],
-    publishedAt: docData.publishedAt ?? new Date().toISOString().slice(0, 10)
+    publishedAt: docData.publishedAt ?? new Date().toISOString().slice(0, 10),
+    authorId: docData.authorId ?? DEFAULT_AUTHOR_ID
   };
 }
 
@@ -121,6 +127,7 @@ export async function addTrendReport(report: TrendReport) {
     updatedAt: Timestamp;
   } = {
     ...report,
+    authorId: report.authorId ?? DEFAULT_AUTHOR_ID,
     language: report.language ?? DEFAULT_LANGUAGE,
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now()
@@ -134,6 +141,7 @@ export async function updateTrendReport(report: TrendReport) {
     doc(trendCollection, report.id),
     {
       ...report,
+      authorId: report.authorId ?? DEFAULT_AUTHOR_ID,
       language: report.language ?? DEFAULT_LANGUAGE,
       updatedAt: Timestamp.now()
     },

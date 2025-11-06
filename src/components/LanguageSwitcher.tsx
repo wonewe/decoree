@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { SupportedLanguage, useI18n, getLanguageLabel } from "../shared/i18n";
 
-const languages: SupportedLanguage[] = ["fr", "ko", "ja", "en"];
+const languages: SupportedLanguage[] = ["en", "fr", "ko", "ja"];
 
 export default function LanguageSwitcher() {
   const { language, setLanguage } = useI18n();
