@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 
-export type SupportedLanguage = "fr" | "ko";
+export type SupportedLanguage = "fr" | "ko" | "ja";
 
 type TranslationDictionary = Record<
   SupportedLanguage,
@@ -18,6 +18,8 @@ const translations: TranslationDictionary = {
       "nav.trends": "Trend Decoder",
       "nav.events": "Calendrier",
       "nav.phrasebook": "Phrasebook",
+      "nav.cultureTest": "Test culture Corée",
+      "nav.explore": "Explorer",
       "nav.subscribe": "Abonnement Premium",
       "nav.admin": "Studio Décorée",
       "auth.login": "Connexion",
@@ -28,6 +30,15 @@ const translations: TranslationDictionary = {
         "Décodage des tendances, événements K-culture et phrasebook personnalisé, conçus pour les voyageurs francophones.",
       "hero.cta.primary": "Explorer les tendances",
       "hero.cta.secondary": "Voir les nouveautés",
+      "hero.highlights.title": "Decorée en un clin d'œil",
+      "hero.highlights.cta": "Découvrir",
+      "hero.highlights.trends.title": "Trend Decoder",
+      "hero.highlights.trends.description": "Consultez notre analyse hebdomadaire en français.",
+      "hero.highlights.events.title": "Calendrier K-Culture",
+      "hero.highlights.events.description": "Planifiez concerts, festivals et pop-ups selon vos dates.",
+      "hero.highlights.phrasebook.title": "Phrasebook personnalisé",
+      "hero.highlights.phrasebook.description":
+        "Retrouvez des expressions clés avec audio et notes culturelles.",
       "hero.ribbon": "Decorée MVP",
       "hero.card.title": "Weekly Trend Decoder",
       "hero.card.subtitle": "Pop-up Han River Sunset Market",
@@ -68,6 +79,123 @@ const translations: TranslationDictionary = {
       "phrasebook.search.placeholder": "Rechercher: dessert, shopping, 감사합니다…",
       "phrasebook.search.clear": "Effacer",
       "phrasebook.search.empty": "Aucune expression ne correspond à votre recherche pour l’instant.",
+      "cultureTest.badge": "Quiz K-Culture",
+      "cultureTest.title": "Quel voyageur de Corée êtes-vous ?",
+      "cultureTest.subtitle":
+        "Répondez à 5 questions et obtenez un profil Decorée avec des idées de tendances, d’événements et d’expressions à tester sur place.",
+      "cultureTest.progress.complete": "Résultat personnalisé prêt !",
+      "cultureTest.progress.step": "Question {current}/{total}",
+      "cultureTest.progress.helper": "Une seule réponse par question, suivez votre intuition.",
+      "cultureTest.actions.previous": "Précédent",
+      "cultureTest.actions.reset": "Réinitialiser",
+      "cultureTest.actions.submit": "Voir mon résultat",
+      "cultureTest.actions.next": "Suivant",
+      "cultureTest.actions.share": "Partager mon profil",
+      "cultureTest.actions.retry": "Recommencer",
+      "cultureTest.share.title": "Quiz Decorée",
+      "cultureTest.share.text": "Mon profil Decorée : {result}. Et toi, quel voyageur de Corée es-tu ?",
+      "cultureTest.share.copied": "Lien copié !",
+      "cultureTest.share.error": "Impossible de partager pour le moment.",
+      "cultureTest.hint.title": "Comment fonctionne le test ?",
+      "cultureTest.hint.subtitle":
+        "Chaque réponse alimente les quatre profils voyageurs imaginés par Decorée.",
+      "cultureTest.hint.item.1": "Pas de bonne ou mauvaise réponse : écoutez votre vibe du moment.",
+      "cultureTest.hint.item.2":
+        "Les résultats mixent tendances, gastronomie, patrimoine et slow travel.",
+      "cultureTest.hint.item.3":
+        "Vous pouvez revenir en arrière ou recommencer complètement quand vous voulez.",
+      "cultureTest.result.badge": "Votre profil Decorée",
+      "cultureTest.result.highlight": "À explorer",
+      "cultureTest.result.next.title": "Envie d'aller plus loin ?",
+      "cultureTest.result.next.subtitle":
+        "Trouvez des tendances, événements et expressions qui collent à votre vibe.",
+      "cultureTest.questions.pace.title": "Premier jour à Séoul : votre rythme idéal ?",
+      "cultureTest.questions.pace.subtitle": "Choisissez le scénario qui vous ressemble le plus.",
+      "cultureTest.questions.pace.answers.trendsetter":
+        "Je saute d'une ouverture pop-up à une collab K-pop.",
+      "cultureTest.questions.pace.answers.foodie":
+        "Je commence par un marché local et un petit-déj street food.",
+      "cultureTest.questions.pace.answers.wellness":
+        "Je file voir le lever du soleil au parc puis un café slow.",
+      "cultureTest.questions.pace.answers.heritage":
+        "Je prends le temps de flâner entre palais et ruelles hanok.",
+      "cultureTest.questions.morning.title": "Votre première réservation avant le départ ?",
+      "cultureTest.questions.morning.subtitle": "L'activité qui s'impose dans votre planning.",
+      "cultureTest.questions.morning.answers.trendsetter":
+        "Une table dans le nouveau resto conceptuel de Seongsu.",
+      "cultureTest.questions.morning.answers.foodie":
+        "Un cours de kimchi ou un tour de tteokbokki nocturne.",
+      "cultureTest.questions.morning.answers.wellness":
+        "Un jjimjilbang chic avec massage inclus.",
+      "cultureTest.questions.morning.answers.heritage":
+        "Un atelier de hanji, calligraphie ou un hanbok sur mesure.",
+      "cultureTest.questions.souvenir.title": "Quel souvenir ramenez-vous absolument ?",
+      "cultureTest.questions.souvenir.subtitle":
+        "Celui que vous glisserez dans votre valise cabine.",
+      "cultureTest.questions.souvenir.answers.trendsetter":
+        "Un drop limité signé par une marque locale en vogue.",
+      "cultureTest.questions.souvenir.answers.foodie":
+        "Des sauces artisanales, gochujang ou sel de mer de Jeju.",
+      "cultureTest.questions.souvenir.answers.wellness":
+        "Des soins clean beauty à base de thé vert et yuzu.",
+      "cultureTest.questions.souvenir.answers.heritage":
+        "De la céramique ou un sceau personnalisé gravé.",
+      "cultureTest.questions.evening.title": "Votre soirée parfaite à Séoul ?",
+      "cultureTest.questions.evening.subtitle": "Ce que vous postez en story.",
+      "cultureTest.questions.evening.answers.trendsetter":
+        "Un rooftop à Hongdae, playlist K-hip-hop et city lights.",
+      "cultureTest.questions.evening.answers.foodie":
+        "Un marathon pojangmacha puis dessert bingsu.",
+      "cultureTest.questions.evening.answers.wellness":
+        "Un bain de nuit à l'observatoire, thé et skyline paisible.",
+      "cultureTest.questions.evening.answers.heritage":
+        "Un spectacle au National Theater puis promenade sur Cheonggyecheon illuminé.",
+      "cultureTest.questions.motto.title": "Votre mantra de voyage ?",
+      "cultureTest.questions.motto.subtitle": "La phrase qui résume votre vibe.",
+      "cultureTest.questions.motto.answers.trendsetter":
+        "\"Si c'est sur TikTok aujourd'hui, je le vis demain.\"",
+      "cultureTest.questions.motto.answers.foodie":
+        "\"On goûte tout, du marché aux tables étoilées.\"",
+      "cultureTest.questions.motto.answers.wellness":
+        "\"On ralentit pour sentir la ville respirer.\"",
+      "cultureTest.questions.motto.answers.heritage":
+        "\"Chaque quartier a une histoire à raconter.\"",
+      "cultureTest.results.trendsetter.title": "Trendsetter séoulite",
+      "cultureTest.results.trendsetter.description":
+        "Toujours à l'affût des concepts hybrides, vous transformez chaque voyage en moodboard vivant. Vous vibrez pour Seongsu, Hannam ou Yeonnam et vous inspirez votre cercle avec des trouvailles inédites.",
+      "cultureTest.results.trendsetter.highlights.1":
+        "Réservez un créneau dans les pop-ups mode/culture du moment (chapters de Seongsu, espace DDP…).",
+      "cultureTest.results.trendsetter.highlights.2":
+        "Ajoutez un café signature et une expo immersive pour nourrir votre feed.",
+      "cultureTest.results.trendsetter.highlights.3":
+        "Suivez notre Trend Decoder pour ne rater aucun lancement collab.",
+      "cultureTest.results.foodie.title": "Explorateur·rice K-Food",
+      "cultureTest.results.foodie.description":
+        "Vous cartographiez la Corée par le goût : marchés, pop-up food, tables néo-traditionnelles et desserts XXL. Chaque repas devient un récit.",
+      "cultureTest.results.foodie.highlights.1":
+        "Planifiez un tour street-food à Gwangjang puis une dégustation dans un bistro hansik moderne.",
+      "cultureTest.results.foodie.highlights.2":
+        "Passez chez les artisans du sur mesure : jang, thé, confiseries.",
+      "cultureTest.results.foodie.highlights.3":
+        "Notez vos coups de cœur dans le Phrasebook pour les retrouver sur place.",
+      "cultureTest.results.wellness.title": "Voyageur·se slow & healing",
+      "cultureTest.results.wellness.description":
+        "Vous cherchez la face apaisée de la Corée : forêts urbaines, sources chaudes, cafés calmes et rituels bien-être.",
+      "cultureTest.results.wellness.highlights.1":
+        "Combinez un jjimjilbang design, un tea house et une méditation sur Bugaksan.",
+      "cultureTest.results.wellness.highlights.2":
+        "Direction les cafés ressourçants de Seochon, Ikseon ou Gapado si vous prolongez.",
+      "cultureTest.results.wellness.highlights.3":
+        "Consultez notre Event Calendar pour les retraites et ateliers respiration.",
+      "cultureTest.results.heritage.title": "Storyteller patrimonial",
+      "cultureTest.results.heritage.description":
+        "Votre curiosité vous mène vers les quartiers historiques, les artisans et les spectacles traditionnels. Vous construisez un carnet de voyage riche en histoires.",
+      "cultureTest.results.heritage.highlights.1":
+        "Réservez une visite guidée à Bukchon, un atelier hanji et un spectacle de pansori.",
+      "cultureTest.results.heritage.highlights.2":
+        "Flânez dans les musées alternatifs et galeries dédiées à l'artisanat coréen.",
+      "cultureTest.results.heritage.highlights.3":
+        "Utilisez notre Trend Decoder pour dénicher les résidences artistiques ouvertes.",
       "subscription.title": "Passez en Premium",
       "subscription.subtitle":
         "Accédez au Trend Decoder complet, à des guides exclusifs et à des conseils personnalisés.",
@@ -198,7 +326,34 @@ const translations: TranslationDictionary = {
       "eventDetail.price": "Tarif",
       "eventDetail.bookingCta": "Réserver maintenant",
       "eventDetail.backToList": "Voir d'autres événements",
-      "eventDetail.discoverTrends": "Explorer le Trend Decoder"
+      "eventDetail.discoverTrends": "Explorer le Trend Decoder",
+      "japaneseLanding.badge": "Decorée pour le Japon",
+      "japaneseLanding.hero.title": "Bienvenue sur Decorée, la K-culture en japonais",
+      "japaneseLanding.hero.subtitle":
+        "Basée à Séoul, l'équipe Decorée rassemble pour le public japonais les tendances, événements et conseils essentiels.",
+      "japaneseLanding.hero.primary": "Accéder à la version japonaise",
+      "japaneseLanding.hero.secondary": "Voir la version française",
+      "japaneseLanding.overview.title": "Ce que propose Decorée",
+      "japaneseLanding.overview.items.trend.title": "Trend Decoder hebdo",
+      "japaneseLanding.overview.items.trend.description":
+        "Pop-up, collaborations K-culture, ambiance quartier : un digest en japonais pour préparer votre voyage.",
+      "japaneseLanding.overview.items.event.title": "Calendrier K-culture",
+      "japaneseLanding.overview.items.event.description":
+        "Concerts, festivals et spectacles traditionnels filtrés par dates et quartiers.",
+      "japaneseLanding.overview.items.phrase.title": "Phrasebook voyage & culture",
+      "japaneseLanding.overview.items.phrase.description":
+        "Expressions clés avec prononciation et notes culturelles disponibles en japonais.",
+      "japaneseLanding.cta.title": "Découvrez la Corée avec Decorée",
+      "japaneseLanding.cta.subtitle":
+        "Nous accompagnons les voyageurs japonais passionnés de tendances et de patrimoine coréen.",
+      "japaneseLanding.cta.button": "Lire les tendances récentes",
+      "japaneseLanding.resources.title": "Et ensuite ?",
+      "japaneseLanding.resources.items.cultureTest":
+        "Essayez notre test culture pour connaître votre profil Decorée.",
+      "japaneseLanding.resources.items.phrasebook":
+        "Parcourez le Phrasebook et enregistrez vos expressions favorites.",
+      "japaneseLanding.resources.items.events":
+        "Consultez le calendrier pour planifier vos sorties K-culture."
     }
   },
   ko: {
@@ -208,6 +363,8 @@ const translations: TranslationDictionary = {
       "nav.trends": "트렌드 리포트",
       "nav.events": "이벤트 캘린더",
       "nav.phrasebook": "맞춤형 회화",
+      "nav.cultureTest": "한국 문화 테스트",
+      "nav.explore": "콘텐츠 탐색",
       "nav.subscribe": "프리미엄 구독",
       "nav.admin": "Decorée 스튜디오",
       "auth.login": "로그인",
@@ -218,6 +375,14 @@ const translations: TranslationDictionary = {
         "프랑스어로 제공되는 최신 트렌드 분석, K-컬처 이벤트, 관심사별 한국어 표현 학습.",
       "hero.cta.primary": "트렌드 확인하기",
       "hero.cta.secondary": "새소식 보기",
+      "hero.highlights.title": "Decorée 한눈에 보기",
+      "hero.highlights.cta": "자세히 보기",
+      "hero.highlights.trends.title": "트렌드 리포트",
+      "hero.highlights.trends.description": "프랑스어로 정리된 주간 인사이트.",
+      "hero.highlights.events.title": "K-컬처 캘린더",
+      "hero.highlights.events.description": "공연·페스티벌 일정을 한 번에 확인하세요.",
+      "hero.highlights.phrasebook.title": "맞춤형 회화장",
+      "hero.highlights.phrasebook.description": "상황별 표현과 문화 팁을 저장해 두세요.",
       "hero.ribbon": "Decorée MVP",
       "hero.card.title": "Weekly Trend Decoder",
       "hero.card.subtitle": "한강 선셋 마켓 팝업",
@@ -256,6 +421,118 @@ const translations: TranslationDictionary = {
       "phrasebook.search.placeholder": "예: 디저트, 쇼핑, 감사합니다…",
       "phrasebook.search.clear": "지우기",
       "phrasebook.search.empty": "조건에 맞는 표현이 없습니다. 다른 키워드로 검색해 보세요.",
+      "cultureTest.badge": "K-컬처 MBTI",
+      "cultureTest.title": "당신은 어떤 한국 여행자일까요?",
+      "cultureTest.subtitle":
+        "5개의 질문으로 나만의 여행 페르소나를 찾아보세요. Decorée에서 바로 즐길 수 있는 맞춤 추천을 보여드릴게요.",
+      "cultureTest.progress.complete": "맞춤 추천이 준비됐어요!",
+      "cultureTest.progress.step": "{current}/{total}번 질문",
+      "cultureTest.progress.helper": "한 가지를 골라 직감을 믿어보세요.",
+      "cultureTest.actions.previous": "이전",
+      "cultureTest.actions.reset": "전체 초기화",
+      "cultureTest.actions.submit": "결과 보기",
+      "cultureTest.actions.next": "다음",
+      "cultureTest.actions.share": "결과 공유하기",
+      "cultureTest.actions.retry": "다시 테스트하기",
+      "cultureTest.share.title": "Decorée 여행 페르소나",
+      "cultureTest.share.text": "Decorée 테스트 결과: {result}. 당신의 한국 여행 페르소나는 무엇인가요?",
+      "cultureTest.share.copied": "링크가 복사되었습니다!",
+      "cultureTest.share.error": "공유에 실패했습니다. 잠시 후 다시 시도해 주세요.",
+      "cultureTest.hint.title": "테스트 이용 방법",
+      "cultureTest.hint.subtitle": "각 답변은 Decorée가 정리한 네 가지 여행 성향 데이터와 연결됩니다.",
+      "cultureTest.hint.item.1": "정답은 없어요. 지금 끌리는 장면을 고르세요.",
+      "cultureTest.hint.item.2": "트렌드, 미식, 힐링, 헤리티지를 입체적으로 분석해 드려요.",
+      "cultureTest.hint.item.3": "언제든지 이전으로 돌아가거나 전체를 초기화할 수 있어요.",
+      "cultureTest.result.badge": "나의 Decorée 페르소나",
+      "cultureTest.result.highlight": "추천 포인트",
+      "cultureTest.result.next.title": "다음으로 할 일",
+      "cultureTest.result.next.subtitle": "페르소나에 맞는 트렌드·이벤트·회화장을 계속 발견해 보세요.",
+      "cultureTest.questions.pace.title": "서울 첫날, 어떤 템포로 움직이나요?",
+      "cultureTest.questions.pace.subtitle": "가장 끌리는 장면을 골라 주세요.",
+      "cultureTest.questions.pace.answers.trendsetter":
+        "오픈런으로 플래그십과 팝업을 연달아 방문!",
+      "cultureTest.questions.pace.answers.foodie":
+        "재래시장과 길거리 간식으로 에너지 충전.",
+      "cultureTest.questions.pace.answers.wellness":
+        "공원 일출 산책 후 잔잔한 스페셜티 카페.",
+      "cultureTest.questions.pace.answers.heritage":
+        "궁과 한옥 골목을 천천히 거닐며 시작.",
+      "cultureTest.questions.morning.title": "가장 먼저 예약하는 일정은?",
+      "cultureTest.questions.morning.subtitle": "여행 계획에 꼭 넣는 체험을 선택하세요.",
+      "cultureTest.questions.morning.answers.trendsetter":
+        "성수의 하이브리드 다이닝·콘셉트 레스토랑.",
+      "cultureTest.questions.morning.answers.foodie":
+        "김치 클래스 또는 야간 떡볶이 투어.",
+      "cultureTest.questions.morning.answers.wellness":
+        "찜질방 & 마사지, 힐링 스케줄.",
+      "cultureTest.questions.morning.answers.heritage":
+        "한지·서예 등 장인 클래스 혹은 맞춤 한복.",
+      "cultureTest.questions.souvenir.title": "꼭 챙겨오는 기념품은?",
+      "cultureTest.questions.souvenir.subtitle": "기내용 가방에 들어갈 아이템을 떠올려 보세요.",
+      "cultureTest.questions.souvenir.answers.trendsetter":
+        "로컬 브랜드 한정 출시 아이템.",
+      "cultureTest.questions.souvenir.answers.foodie":
+        "수제 고추장, 장아찌, 프리미엄 식재료.",
+      "cultureTest.questions.souvenir.answers.wellness":
+        "그린티·유자 기반 클린 뷰티 제품.",
+      "cultureTest.questions.souvenir.answers.heritage":
+        "공예 도자기 또는 전각(도장) 맞춤 제작.",
+      "cultureTest.questions.evening.title": "이상적인 서울의 밤은?",
+      "cultureTest.questions.evening.subtitle": "스토리로 남기고 싶은 순간은 무엇인가요?",
+      "cultureTest.questions.evening.answers.trendsetter":
+        "홍대·이태원 루프탑에서 K-힙합과 네온 뷰.",
+      "cultureTest.questions.evening.answers.foodie":
+        "포장마차 투어 후 빙수로 마무리.",
+      "cultureTest.questions.evening.answers.wellness":
+        "전망대 야간 온천 & 티 타임.",
+      "cultureTest.questions.evening.answers.heritage":
+        "국립극장 공연 후 청계천 야경 산책.",
+      "cultureTest.questions.motto.title": "여행 모토는?",
+      "cultureTest.questions.motto.subtitle": "당신의 여행 톤앤매너를 보여줄 문장을 골라보세요.",
+      "cultureTest.questions.motto.answers.trendsetter":
+        "\"오늘의 트렌드는 내일 바로 경험한다.\"",
+      "cultureTest.questions.motto.answers.foodie":
+        "\"시장부터 파인다이닝까지 맛은 빠짐없이.\"",
+      "cultureTest.questions.motto.answers.wellness":
+        "\"천천히 걸으면 도시의 숨결이 들린다.\"",
+      "cultureTest.questions.motto.answers.heritage":
+        "\"모든 동네엔 이야기와 기억이 있다.\"",
+      "cultureTest.results.trendsetter.title": "서울 트렌드세터",
+      "cultureTest.results.trendsetter.description":
+        "새로운 컨셉과 협업에 가장 먼저 반응하는 타입. 성수·한남·연남을 무대로 여행을 무드보드처럼 기록하고, 주변에게 신상 인사이트를 전해요.",
+      "cultureTest.results.trendsetter.highlights.1":
+        "성수, DDP 등 요즘 뜨는 팝업과 플래그십 예약 알림을 켜 두세요.",
+      "cultureTest.results.trendsetter.highlights.2":
+        "무드 있는 시그니처 카페와 몰입형 전시를 일정에 추가하세요.",
+      "cultureTest.results.trendsetter.highlights.3":
+        "Trend Decoder를 구독하면 가장 빠른 런칭 정보를 받을 수 있어요.",
+      "cultureTest.results.foodie.title": "K-푸드 탐험가",
+      "cultureTest.results.foodie.description":
+        "시장부터 네오-한식과 디저트까지 맛으로 여행을 설계합니다. 한 끼마다 이야기를 만들고 기록해요.",
+      "cultureTest.results.foodie.highlights.1":
+        "광장시장 스트리트푸드와 모던 한식 다이닝을 하루 코스로 엮어보세요.",
+      "cultureTest.results.foodie.highlights.2":
+        "장(발효 소스), 차, 전통 과자 등 장인 매장을 탐방해 보세요.",
+      "cultureTest.results.foodie.highlights.3":
+        "Phrasebook 표현을 미리 저장하고 맛집에서 자연스럽게 사용해 보세요.",
+      "cultureTest.results.wellness.title": "슬로우 힐링 여행자",
+      "cultureTest.results.wellness.description":
+        "도시 속 숲과 온천, 잔잔한 카페를 찾아 몸과 마음을 회복합니다. 느린 속도로 한국을 느끼는 타입이에요.",
+      "cultureTest.results.wellness.highlights.1":
+        "디자인 찜질방, 티 하우스, 북악산 명상 코스를 조합해 보세요.",
+      "cultureTest.results.wellness.highlights.2":
+        "서촌·익선·가파도 등 로컬 힐링 스폿을 체크해 보세요.",
+      "cultureTest.results.wellness.highlights.3":
+        "Event Calendar에서 요가·호흡 워크숍을 찾아보세요.",
+      "cultureTest.results.heritage.title": "헤리티지 스토리텔러",
+      "cultureTest.results.heritage.description":
+        "역사적 공간과 장인, 전통 공연에 끌리는 타입. 기록을 남기며 이야기를 수집해요.",
+      "cultureTest.results.heritage.highlights.1":
+        "북촌 해설 투어, 한지 공방, 판소리 공연을 예약해 보세요.",
+      "cultureTest.results.heritage.highlights.2":
+        "대안 전시관과 공예 갤러리를 여유롭게 둘러보세요.",
+      "cultureTest.results.heritage.highlights.3":
+        "Trend Decoder에서 레지던시·아티스트 이벤트를 확인하세요.",
       "subscription.title": "프리미엄으로 업그레이드",
       "subscription.subtitle":
         "트렌드 전체 리포트와 독점 가이드, 맞춤 추천을 이용해 보세요.",
@@ -381,7 +658,364 @@ const translations: TranslationDictionary = {
       "eventDetail.price": "가격",
       "eventDetail.bookingCta": "예약하기",
       "eventDetail.backToList": "다른 이벤트 보기",
-      "eventDetail.discoverTrends": "트렌드 리포트 보기"
+      "eventDetail.discoverTrends": "트렌드 리포트 보기",
+      "japaneseLanding.badge": "Decorée for Japan",
+      "japaneseLanding.hero.title": "일본 사용자를 위한 Decorée에 오신 것을 환영합니다",
+      "japaneseLanding.hero.subtitle":
+        "서울 기반 Decorée 팀이 일본 여행자를 위해 최신 트렌드와 이벤트, 여행 꿀팁을 일본어로 정리했습니다.",
+      "japaneseLanding.hero.primary": "일본어 버전으로 보기",
+      "japaneseLanding.hero.secondary": "프랑스어 버전 보기",
+      "japaneseLanding.overview.title": "Decorée가 드리는 서비스",
+      "japaneseLanding.overview.items.trend.title": "주간 트렌드 리포트",
+      "japaneseLanding.overview.items.trend.description":
+        "현지에서 화제인 팝업과 협업, 동네 무드를 일본어로 요약해 드립니다.",
+      "japaneseLanding.overview.items.event.title": "K-컬처 캘린더",
+      "japaneseLanding.overview.items.event.description":
+        "공연, 페스티벌, 전통 공연을 날짜와 지역별로 손쉽게 확인하세요.",
+      "japaneseLanding.overview.items.phrase.title": "여행 & 문화 한국어",
+      "japaneseLanding.overview.items.phrase.description":
+        "상황별 표현과 문화 메모를 일본어·한글·발음과 함께 제공합니다.",
+      "japaneseLanding.cta.title": "Decorée와 함께 더 가까워지는 한국 여행",
+      "japaneseLanding.cta.subtitle":
+        "트렌드를 사랑하고 한일 문화 연결을 꿈꾸는 여러분을 위한 맞춤 허브입니다.",
+      "japaneseLanding.cta.button": "최신 트렌드 읽어보기",
+      "japaneseLanding.resources.title": "다음 단계",
+      "japaneseLanding.resources.items.cultureTest":
+        "한국 문화 테스트로 나의 여행 페르소나를 확인하세요.",
+      "japaneseLanding.resources.items.phrasebook":
+        "프레이즈북에서 상황별 한국어 표현을 미리 익혀보세요.",
+      "japaneseLanding.resources.items.events":
+        "이벤트 캘린더로 방문 시기에 맞는 K-컬처를 찾아보세요."
+    }
+  },
+  ja: {
+    label: "日本語",
+    messages: {
+      "nav.home": "ホーム",
+      "nav.trends": "トレンドデコーダー",
+      "nav.events": "Kカルチャーカレンダー",
+      "nav.phrasebook": "パーソナル会話帳",
+      "nav.cultureTest": "韓国カルチャーテスト",
+      "nav.explore": "ディスカバー",
+      "nav.subscribe": "プレミアム登録",
+      "nav.admin": "Decoréeスタジオ",
+      "auth.login": "ログイン",
+      "auth.logout": "ログアウト",
+      "auth.signup": "アカウント作成",
+      "hero.title": "言葉の壁なしで韓国を旅しよう",
+      "hero.subtitle":
+        "最新トレンド分析、Kカルチャーイベント、興味別の韓国語フレーズを日本語でお届けします。",
+      "hero.cta.primary": "トレンドを読む",
+      "hero.cta.secondary": "新着を見る",
+      "hero.highlights.title": "Decoréeを一目で",
+      "hero.highlights.cta": "もっと見る",
+      "hero.highlights.trends.title": "トレンドデコーダー",
+      "hero.highlights.trends.description": "日本語で読める週間トレンド分析。",
+      "hero.highlights.events.title": "Kカルチャーカレンダー",
+      "hero.highlights.events.description": "コンサートやポップアップをまとめてチェック。",
+      "hero.highlights.phrasebook.title": "パーソナル会話帳",
+      "hero.highlights.phrasebook.description": "シーン別フレーズとカルチャーメモを保存。",
+      "hero.ribbon": "Decorée MVP",
+      "hero.card.title": "Weekly Trend Decoder",
+      "hero.card.subtitle": "漢江サンセットマーケット ポップアップ",
+      "hero.card.caption": "Stripe・Firebase・Google Mapsの連携準備OK。",
+      "hero.spotlight.title": "Decoréeおすすめ",
+      "hero.spotlight.tag.trend": "トレンドレポート",
+      "hero.spotlight.tag.event": "イベントカレンダー",
+      "hero.spotlight.tag.phrase": "パーソナル会話帳",
+      "hero.spotlight.cta.trend": "特集を読む",
+      "hero.spotlight.cta.event": "席を予約する",
+      "hero.spotlight.cta.phrase": "フレーズを学ぶ",
+      "hero.spotlight.disclaimer": "プレミアムコンテンツはDecorée会員限定です。",
+      "trends.title": "週間トレンドデコーダー",
+      "trends.subtitle": "日本のトラベラー向けに、韓国の消費トレンドを深掘りします。",
+      "trends.premiumBadge": "プレミアム",
+      "trends.unlock": "購読して全て読む",
+      "trends.sample": "無料サンプルを見る",
+      "trends.readMore": "レポートを読む",
+      "events.title": "Kカルチャー イベントカレンダー",
+      "events.subtitle": "旅行日程に合わせてコンサート、フェス、ポップアップを検索。",
+      "events.filter.label": "タイプを選択",
+      "events.filter.all": "すべて",
+      "events.empty": "条件に合うイベントが見つかりません。",
+      "event.eventCategory.concert": "コンサート / K-Pop",
+      "event.eventCategory.traditional": "伝統芸能",
+      "event.eventCategory.pop-up": "ポップアップ / クラス",
+      "event.eventCategory.festival": "フェスティバル",
+      "eventDetail.readMore": "イベント詳細へ",
+      "phrasebook.title": "パーソナル韓国語フレーズ帳",
+      "phrasebook.subtitle": "興味を選んで、音声とカルチャーメモ付きの必須表現を練習。",
+      "phrasebook.category.food": "グルメ",
+      "phrasebook.category.shopping": "ショッピング",
+      "phrasebook.category.entertainment": "カルチャー・エンタメ",
+      "phrasebook.completed": "学習済みフレーズ",
+      "phrasebook.search.label": "フレーズ検索",
+      "phrasebook.search.placeholder": "例: デザート, 쇼핑, 감사합니다…",
+      "phrasebook.search.clear": "クリア",
+      "phrasebook.search.empty": "該当するフレーズが見つかりません。別のキーワードをお試しください。",
+      "cultureTest.badge": "KカルチャーMBTI",
+      "cultureTest.title": "あなたはどんな韓国旅行タイプ？",
+      "cultureTest.subtitle":
+        "5つの質問に答えるだけで、Decoréeが提案する旅行ペルソナとおすすめプランがわかります。",
+      "cultureTest.progress.complete": "パーソナル診断の準備が整いました！",
+      "cultureTest.progress.step": "質問 {current}/{total}",
+      "cultureTest.progress.helper": "直感で1つを選んでください。",
+      "cultureTest.actions.previous": "前へ",
+      "cultureTest.actions.reset": "すべてリセット",
+      "cultureTest.actions.submit": "結果を見る",
+      "cultureTest.actions.next": "次へ",
+      "cultureTest.actions.share": "結果をシェア",
+      "cultureTest.actions.retry": "再テスト",
+      "cultureTest.share.title": "Decorée 旅行診断",
+      "cultureTest.share.text": "私のDecorée診断結果: {result}。あなたはどのタイプ？",
+      "cultureTest.share.copied": "リンクをコピーしました！",
+      "cultureTest.share.error": "共有に失敗しました。少し待って再試行してください。",
+      "cultureTest.hint.title": "テストのヒント",
+      "cultureTest.hint.subtitle": "それぞれの回答が4つの旅行ペルソナに紐づきます。",
+      "cultureTest.hint.item.1": "正解はありません。今の気分で選びましょう。",
+      "cultureTest.hint.item.2": "トレンド・グルメ・ヒーリング・ヘリテージを総合的に分析します。",
+      "cultureTest.hint.item.3": "いつでも戻る・リセットが可能です。",
+      "cultureTest.result.badge": "あなたのDecoréeペルソナ",
+      "cultureTest.result.highlight": "おすすめポイント",
+      "cultureTest.result.next.title": "次のステップ",
+      "cultureTest.result.next.subtitle": "ペルソナに合わせたトレンド・イベント・フレーズを見つけましょう。",
+      "cultureTest.questions.pace.title": "ソウル初日、どんなペースで動きますか？",
+      "cultureTest.questions.pace.subtitle": "一番ワクワクするシーンを選んでください。",
+      "cultureTest.questions.pace.answers.trendsetter":
+        "話題のフラッグシップとポップアップをハシゴ。",
+      "cultureTest.questions.pace.answers.foodie":
+        "ローカル市場と屋台グルメでスタート。",
+      "cultureTest.questions.pace.answers.wellness":
+        "公園で朝日を浴びてから静かなカフェへ。",
+      "cultureTest.questions.pace.answers.heritage":
+        "宮殿と韓屋路地をゆっくり散策。",
+      "cultureTest.questions.morning.title": "出発前に必ず予約する体験は？",
+      "cultureTest.questions.morning.subtitle": "旅に欠かせないアクティビティを選択。",
+      "cultureTest.questions.morning.answers.trendsetter":
+        "聖水のコンセプトレストラン。",
+      "cultureTest.questions.morning.answers.foodie":
+        "キムチクラスまたは夜のトッポッキツアー。",
+      "cultureTest.questions.morning.answers.wellness":
+        "チムジルバン＆マッサージのヒーリングコース。",
+      "cultureTest.questions.morning.answers.heritage":
+        "韓紙・書芸などのクラフト体験やオーダーメイド韓服。",
+      "cultureTest.questions.souvenir.title": "必ず持ち帰るお土産は？",
+      "cultureTest.questions.souvenir.subtitle": "機内持ち込みに入れるアイテムを想像して。",
+      "cultureTest.questions.souvenir.answers.trendsetter":
+        "人気ローカルブランドの限定アイテム。",
+      "cultureTest.questions.souvenir.answers.foodie":
+        "手作りコチュジャンやプレミアム調味料。",
+      "cultureTest.questions.souvenir.answers.wellness":
+        "緑茶・ゆずベースのクリーンビューティー。",
+      "cultureTest.questions.souvenir.answers.heritage":
+        "陶芸品またはオリジナル印章。",
+      "cultureTest.questions.evening.title": "理想のソウルナイトは？",
+      "cultureTest.questions.evening.subtitle": "SNSに残したいシーンを選択。",
+      "cultureTest.questions.evening.answers.trendsetter":
+        "弘大・梨泰院のルーフトップでKヒップホップと夜景。",
+      "cultureTest.questions.evening.answers.foodie":
+        "ポジャンマチャ巡りとパッピンスで締め。",
+      "cultureTest.questions.evening.answers.wellness":
+        "夜景温泉とお茶でゆったり。",
+      "cultureTest.questions.evening.answers.heritage":
+        "国立劇場の公演後に清渓川を散歩。",
+      "cultureTest.questions.motto.title": "旅のモットーは？",
+      "cultureTest.questions.motto.subtitle": "あなたの旅スタイルを表すフレーズを選択。",
+      "cultureTest.questions.motto.answers.trendsetter":
+        "「今日話題のものは明日体験する。」",
+      "cultureTest.questions.motto.answers.foodie":
+        "「市場からファインダイニングまで味わい尽くす。」",
+      "cultureTest.questions.motto.answers.wellness":
+        "「ゆっくり歩けば街の息遣いが聞こえる。」",
+      "cultureTest.questions.motto.answers.heritage":
+        "「すべての街角に物語がある。」",
+      "cultureTest.results.trendsetter.title": "ソウルトレンドセッター",
+      "cultureTest.results.trendsetter.description":
+        "新しいコンセプトに敏感で、聖水・漢南・延南を舞台に旅をムードボードのように記録します。最新インサイトを周りへシェアするタイプ。",
+      "cultureTest.results.trendsetter.highlights.1":
+        "聖水やDDPなど話題のポップアップ予約通知をオンに。",
+      "cultureTest.results.trendsetter.highlights.2":
+        "シグネチャーカフェと没入型展示を行程に追加。",
+      "cultureTest.results.trendsetter.highlights.3":
+        "Trend Decoderを購読して最新ローンチ情報をキャッチ。",
+      "cultureTest.results.foodie.title": "Kフード探検家",
+      "cultureTest.results.foodie.description":
+        "市場からネオ韓食、デザートまで“食”で旅をデザイン。各食体験をストーリーとして記録します。",
+      "cultureTest.results.foodie.highlights.1":
+        "広蔵市場のストリートフードとモダン韓食のディナーを1日に詰め込む。",
+      "cultureTest.results.foodie.highlights.2":
+        "発酵ジャン、茶、伝統菓子の職人ショップ巡り。",
+      "cultureTest.results.foodie.highlights.3":
+        "Phrasebookにフレーズを保存して現地で活用。",
+      "cultureTest.results.wellness.title": "スローヒーリング旅人",
+      "cultureTest.results.wellness.description":
+        "都市の森や温泉、静かなカフェで心身を整える旅。ゆったりと韓国を感じるタイプ。",
+      "cultureTest.results.wellness.highlights.1":
+        "デザインチムジルバン、ティーハウス、北岳山の瞑想コースを組み合わせる。",
+      "cultureTest.results.wellness.highlights.2":
+        "西村・益善・加波島などローカルヒーリングスポットをチェック。",
+      "cultureTest.results.wellness.highlights.3":
+        "Event Calendarでヨガや呼吸ワークショップを探す。",
+      "cultureTest.results.heritage.title": "ヘリテージストーリーテラー",
+      "cultureTest.results.heritage.description":
+        "歴史的スポットや職人、伝統公演に惹かれ、記録しながら物語を集めるタイプ。",
+      "cultureTest.results.heritage.highlights.1":
+        "北村のガイドツアー、韓紙工房、パンソリ公演を予約。",
+      "cultureTest.results.heritage.highlights.2":
+        "クラフト専門のギャラリーや代替スペースをゆっくり巡る。",
+      "cultureTest.results.heritage.highlights.3":
+        "Trend Decoderでレジデンスやアーティストイベントをチェック。",
+      "subscription.title": "プレミアムへアップグレード",
+      "subscription.subtitle":
+        "トレンドレポート全文、限定ガイド、パーソナルアドバイスへアクセス。",
+      "subscription.price": "7日間無料トライアル後 月額1.90€",
+      "subscription.cta": "購読を開始",
+      "subscription.loading": "リダイレクト中…",
+      "subscription.warning":
+        "Stripe決済にはサーバー側で`/api/create-checkout-session`エンドポイントを設定してください。",
+      "subscription.active": "このセッションでプレミアムが有効になりました (Webhookで最終確認が必要です)。",
+      "subscription.disabledNotice": "決済機能を準備中です。もう少しお待ちください！",
+      "subscription.disabledMessage": "まだ決済はご利用いただけません。準備が整い次第お知らせします。",
+      "subscription.disabledCta": "決済準備中",
+      "subscription.missingPrice": "Stripe Price IDが設定されていません。運営チームへご連絡ください。",
+      "footer.madeIn": "フランス人旅行者のためにソウルで設計",
+      "admin.title": "Decorée コンテンツスタジオ",
+      "admin.subtitle":
+        "コード不要でトレンド・イベント・フレーズを即時公開。ブラウザに保存され、サイトへ即反映されます。",
+      "admin.stats.trends": "登録済みトレンド: {count}件",
+      "admin.stats.events": "登録済みイベント: {count}件",
+      "admin.stats.phrases": "登録済みフレーズ: {count}件",
+      "admin.session": "{email}としてログイン中",
+      "admin.actions.reset": "このブラウザの追加分を初期化",
+      "admin.feedback.trendSaved": "新しいトレンドを保存しました。",
+      "admin.feedback.eventSaved": "新しいイベントを保存しました。",
+      "admin.feedback.phraseSaved": "新しいフレーズを保存しました。",
+      "admin.feedback.error": "エラーが発生しました。再度お試しください。",
+      "admin.feedback.cleared": "このブラウザで追加したコンテンツを削除しました。",
+      "admin.trend.title": "トレンドを追加",
+      "admin.trend.description":
+        "項目を入力して「保存」を押すと、Trend Decoderに即反映されます。",
+      "admin.trend.submit": "トレンドを保存",
+      "admin.event.title": "Kカルチャー イベントを追加",
+      "admin.event.description": "旅行者がすぐ予約できるよう、主要情報を入力してください。",
+      "admin.event.submit": "イベントを保存",
+      "admin.event.category.concert": "コンサート / K-Pop",
+      "admin.event.category.traditional": "伝統公演",
+      "admin.event.category.popup": "ポップアップ / クラス",
+      "admin.event.category.festival": "フェスティバル",
+      "admin.phrase.title": "フレーズを追加",
+      "admin.phrase.description": "現地で役立った表現を共有しましょう。会話帳に反映されます。",
+      "admin.phrase.submit": "フレーズを保存",
+      "admin.form.title": "タイトル",
+      "admin.form.neighborhood": "エリア / 場所",
+      "admin.form.summary": "概要 (最大2文)",
+      "admin.form.details": "詳細説明",
+      "admin.form.tags": "カンマ区切りのタグ",
+      "admin.form.imageUrl": "メイン画像URL",
+      "admin.form.content": "本文 (段落ごとに改行)",
+      "admin.form.intensity.highlight": "ハイライト (必訪)",
+      "admin.form.intensity.insider": "インサイダー (ローカル推し)",
+      "admin.form.intensity.emerging": "エマージング (注目上昇)",
+      "admin.form.isPremium": "プレミアムコンテンツ",
+      "admin.form.saving": "保存中…",
+      "admin.form.location": "住所 / 最寄り駅",
+      "admin.form.price": "価格 (例: 49€または無料)",
+      "admin.form.bookingUrl": "予約リンク (任意)",
+      "admin.form.longDescription": "詳細紹介 (段落ごとに改行)",
+      "admin.form.tips": "ヒント (1行に1つ)",
+      "admin.form.korean": "韓国語フレーズ",
+      "admin.form.transliteration": "発音表記",
+      "admin.form.french": "仏語訳",
+      "admin.form.culturalNote": "カルチャーメモ (任意)",
+      "auth.badge": "セキュアアクセス",
+      "auth.title": "Decorée ログイン",
+      "auth.subtitle":
+        "ログインしてお気に入りを保存。スタジオは運営チーム向けです。",
+      "auth.email": "メールアドレス",
+      "auth.password": "パスワード",
+      "auth.submit": "ログイン",
+      "auth.loggingIn": "ログイン中…",
+      "auth.error.unauthorisedEmail": "許可されていない管理者メールです。チームへ連絡してください。",
+      "auth.footer.hint": "アカウントはFirebaseで管理されています。紛失時は運営へご連絡ください。",
+      "auth.footer.support": "サポート: hello@decoree.app",
+      "auth.loading": "セキュア領域を読み込み中…",
+      "auth.firebaseError": "Firebase設定が見つからず管理ページを表示できません。",
+      "auth.loginWithGoogle": "Googleで続行",
+      "auth.googleLoading": "Googleログイン中…",
+      "auth.or": "または",
+      "auth.noAccount": "まだアカウントがありませんか？",
+      "auth.goToSignup": "アカウント作成",
+      "auth.haveAccount": "すでにアカウントがありますか？",
+      "auth.goToLogin": "ログイン",
+      "auth.signupTitle": "Decoréeアカウントを作成",
+      "auth.signupSubtitle":
+        "お気に入りを整理するDecoréeアカウントを作成。スタジオ権限は運営チームへお問い合わせください。",
+      "auth.passwordConfirm": "パスワード確認",
+      "auth.createAccount": "アカウント作成",
+      "auth.signingUp": "登録処理中…",
+      "auth.error.invalidCredential": "メールまたはパスワードが正しくありません。",
+      "auth.error.weakPassword": "6文字以上のパスワードを設定してください。",
+      "auth.error.emailExists": "既に登録済みのメールです。",
+      "auth.error.passwordMismatch": "パスワードが一致しません。",
+      "auth.adminOnlyTitle": "管理者権限が必要です",
+      "auth.adminOnlyDescription":
+        "このページは指定された管理者のみアクセスできます。権限が必要な場合はDecorée運営へお問い合わせください。",
+      "auth.adminOnlyCta": "ホームに戻る",
+      "trendDetail.notFound": "トレンドを見つけられませんでした",
+      "trendDetail.notFoundSubtitle": "リンクが無効になったか移動された可能性があります。",
+      "trendDetail.goBack": "戻る",
+      "trendDetail.back": "戻る",
+      "trendDetail.sidebarTitle": "ポイント",
+      "trendDetail.neighborhood": "エリア",
+      "trendDetail.intensity": "雰囲気",
+      "trendDetail.intensity.highlight": "絶対行きたいスポット",
+      "trendDetail.intensity.insider": "ローカル推薦",
+      "trendDetail.intensity.emerging": "注目上昇中",
+      "trendDetail.published": "公開日",
+      "trendDetail.backToList": "トレンド一覧へ",
+      "trendDetail.subscribeCta": "フルレポートを見る",
+      "trendDetail.lockedTitle": "プレミアム限定",
+      "trendDetail.lockedSubtitle": "Decoréeプレミアムで閲覧できます。",
+      "trendDetail.unlockButton": "プレミアムを有効化",
+      "eventDetail.notFound": "イベントが見つかりませんでした",
+      "eventDetail.notFoundSubtitle": "削除されたか日程が変更された可能性があります。",
+      "eventDetail.goBack": "戻る",
+      "eventDetail.back": "戻る",
+      "eventDetail.tipsTitle": "参加前のヒント",
+      "eventDetail.infoTitle": "基本情報",
+      "eventDetail.when": "日時",
+      "eventDetail.where": "場所",
+      "eventDetail.price": "料金",
+      "eventDetail.bookingCta": "予約へ進む",
+      "eventDetail.backToList": "他のイベントを見る",
+      "eventDetail.discoverTrends": "トレンドレポートを探す",
+      "japaneseLanding.badge": "Decorée for Japan",
+      "japaneseLanding.hero.title": "Decoréeへようこそ、韓国カルチャーを日本語で",
+      "japaneseLanding.hero.subtitle":
+        "ソウルを中心にKカルチャーを追いかけるDecoréeが、日本語ユーザー向けに最新情報と旅行サポートをまとめました。",
+      "japaneseLanding.hero.primary": "日本語で利用を開始",
+      "japaneseLanding.hero.secondary": "フランス語版を見る",
+      "japaneseLanding.overview.title": "Decoréeができること",
+      "japaneseLanding.overview.items.trend.title": "週間トレンドレポート",
+      "japaneseLanding.overview.items.trend.description":
+        "現地で話題のポップアップ、カルチャー、街のムードを日本語で要約。旅の参考に。",
+      "japaneseLanding.overview.items.event.title": "Kカルチャーイベント検索",
+      "japaneseLanding.overview.items.event.description":
+        "ライブやフェス、伝統公演まで、日程・エリア別に探せます。",
+      "japaneseLanding.overview.items.phrase.title": "旅×カルチャー韓国語",
+      "japaneseLanding.overview.items.phrase.description":
+        "シーン別フレーズとカルチャーメモを日本語＋ハングル＋発音でセット。",
+      "japaneseLanding.cta.title": "Decoréeと一緒に韓国をもっと身近に",
+      "japaneseLanding.cta.subtitle":
+        "トレンド好き、日本文化と韓国カルチャーの橋渡しを目指す皆さんをサポートします。",
+      "japaneseLanding.cta.button": "最新トレンドを読む",
+      "japaneseLanding.resources.title": "次の一歩",
+      "japaneseLanding.resources.items.cultureTest":
+        "韓国カルチャーテストで自分の旅タイプを診断。",
+      "japaneseLanding.resources.items.phrasebook":
+        "フレーズ帳でシーン別の韓国語をチェック。",
+      "japaneseLanding.resources.items.events":
+        "イベントカレンダーで渡航時期のKカルチャーを確認。"
     }
   }
 };

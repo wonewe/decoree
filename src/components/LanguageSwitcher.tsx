@@ -2,10 +2,11 @@ import { SupportedLanguage, useI18n } from "../shared/i18n";
 
 const LANGUAGE_LABELS: Record<SupportedLanguage, string> = {
   fr: "Français",
-  ko: "한국어"
+  ko: "한국어",
+  ja: "日本語"
 };
 
-const languages: SupportedLanguage[] = ["fr", "ko"];
+const languages: SupportedLanguage[] = ["fr", "ko", "ja"];
 
 export default function LanguageSwitcher() {
   const { language, setLanguage } = useI18n();

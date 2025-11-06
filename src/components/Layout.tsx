@@ -1,23 +1,47 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useI18n } from "../shared/i18n";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useAuth } from "../shared/auth";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const navItems = [
-  { path: "/", labelKey: "nav.home" },
+const exploreLinks = [
   { path: "/trends", labelKey: "nav.trends" },
   { path: "/events", labelKey: "nav.events" },
   { path: "/phrasebook", labelKey: "nav.phrasebook" },
-  { path: "/subscribe", labelKey: "nav.subscribe" },
-  { path: "/admin", labelKey: "nav.admin", requireAdmin: true }
+  { path: "/culture-test", labelKey: "nav.cultureTest" }
 ] as const;
 
 export default function Layout() {
   const { t } = useI18n();
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [authError, setAuthError] = useState<string | null>(null);
+  const [isExploreOpen, setIsExploreOpen] = useState(false);
+  const exploreRef = useRef<HTMLDivElement>(null);
+
+  const isExploreActive = exploreLinks.some((link) =>
+    location.pathname.startsWith(link.path)
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!exploreRef.current) return;
+      if (!exploreRef.current.contains(event.target as Node)) {
+        setIsExploreOpen(false);
+      }
+    };
+
+    if (isExploreOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isExploreOpen]);
+
+  useEffect(() => {
+    setIsExploreOpen(false);
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     try {
@@ -37,26 +61,64 @@ export default function Layout() {
             Decorée
           </NavLink>
           <nav className="hidden items-center gap-6 text-sm font-semibold md:flex">
-            {navItems
-              .filter((item) => {
-                if ("requireAdmin" in item && item.requireAdmin) {
-                  return isAdmin;
+            <div className="relative" ref={exploreRef}>
+              <button
+                type="button"
+                onClick={() => setIsExploreOpen((prev) => !prev)}
+                className={`flex items-center gap-2 rounded-full px-4 py-2 transition ${
+                  isExploreActive || isExploreOpen
+                    ? "bg-hanBlue text-white shadow-lg"
+                    : "text-slate-600 hover:text-hanBlue"
+                }`}
+                aria-haspopup="menu"
+                aria-expanded={isExploreOpen}
+              >
+                {t("nav.explore")}
+                <span className="text-xs">{isExploreOpen ? "▲" : "▼"}</span>
+              </button>
+              {isExploreOpen && (
+                <div className="absolute right-0 z-10 mt-3 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+                  {exploreLinks.map((link) => (
+                    <NavLink
+                      key={link.path}
+                      to={link.path}
+                      onClick={() => setIsExploreOpen(false)}
+                      className={({ isActive }) =>
+                        `block rounded-xl px-3 py-2 text-sm transition ${
+                          isActive
+                            ? "bg-hanBlue text-white"
+                            : "text-slate-600 hover:bg-slate-100 hover:text-hanBlue"
+                        }`
+                      }
+                    >
+                      {t(link.labelKey)}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+            <NavLink
+              to="/subscribe"
+              className={({ isActive }) =>
+                `transition hover:text-hanBlue ${
+                  isActive ? "text-hanBlue" : "text-slate-600"
+                }`
+              }
+            >
+              {t("nav.subscribe")}
+            </NavLink>
+            {isAdmin && (
+              <NavLink
+                to="/admin"
+                className={({ isActive }) =>
+                  `transition hover:text-hanBlue ${
+                    isActive ? "text-hanBlue" : "text-slate-600"
+                  }`
                 }
-                return true;
-              })
-              .map((item) => (
-                <NavLink
-                  key={item.path}
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `transition hover:text-hanBlue ${
-                      isActive ? "text-hanBlue" : "text-slate-600"
-                    }`
-                  }
-                >
-                  {t(item.labelKey)}
-                </NavLink>
-              ))}
+              >
+                {t("nav.admin")}
+              </NavLink>
+            )}
           </nav>
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
