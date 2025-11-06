@@ -124,7 +124,12 @@ export default function Layout() {
             <LanguageSwitcher />
             {user ? (
               <div className="flex items-center gap-2">
-                <span className="hidden text-xs text-slate-500 md:inline">{user.email}</span>
+                <NavLink
+                  to="/profile"
+                  className="inline-flex rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-hanBlue hover:text-hanBlue"
+                >
+                  {user.displayName?.trim() || user.email}
+                </NavLink>
                 <button
                   onClick={handleLogout}
                   className="rounded-full border border-dancheongRed px-3 py-1 text-xs font-semibold text-dancheongRed transition hover:bg-dancheongRed/10"

@@ -13,6 +13,7 @@ import RequireAuth from "./components/RequireAuth";
 import TrendDetailPage from "./pages/TrendDetailPage";
 import EventDetailPage from "./pages/EventDetailPage";
 import CultureTestPage from "./pages/CultureTestPage";
+import ProfilePage from "./pages/ProfilePage";
 
 export default function App() {
   return (
@@ -25,6 +26,14 @@ export default function App() {
         <Route path="/events/:id" element={<EventDetailPage />} />
         <Route path="/phrasebook" element={<PhrasebookPage />} />
         <Route path="/culture-test" element={<CultureTestPage />} />
+        <Route
+          path="/profile"
+          element={
+            <RequireAuth>
+              <ProfilePage />
+            </RequireAuth>
+          }
+        />
         <Route path="/subscribe" element={<SubscribePage />} />
         <Route
           path="/admin"

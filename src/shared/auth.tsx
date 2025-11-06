@@ -15,6 +15,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  updateProfile,
   type Auth,
   type User
 } from "firebase/auth";
@@ -33,6 +34,7 @@ type AuthContextValue = {
   firebaseError: string | null;
   lastErrorCode: string | null;
   clearLastError: () => void;
+  updateProfileInfo: (updates: { displayName?: string; photoURL?: string }) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -50,6 +52,10 @@ function extractErrorCode(error: unknown): string {
   if (error instanceof FirebaseError) return error.code;
   if (error instanceof Error) return error.message;
   return String(error);
+}
+
+function cloneFirebaseUser(user: User): User {
+  return Object.assign(Object.create(Object.getPrototypeOf(user)), user);
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -143,6 +149,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth);
   };
 
+  const updateProfileInfo = async (updates: { displayName?: string; photoURL?: string }) => {
+    if (!auth || !auth.currentUser) {
+      throw new Error("No authenticated user to update.");
+    }
+    setLastErrorCode(null);
+    try {
+      await updateProfile(auth.currentUser, updates);
+      await auth.currentUser.reload();
+      if (auth.currentUser) {
+        setUser(cloneFirebaseUser(auth.currentUser));
+      }
+    } catch (error) {
+      captureError(error);
+      throw error;
+    }
+  };
+
   const clearLastError = useCallback(() => setLastErrorCode(null), []);
 
   const value: AuthContextValue = {
@@ -156,7 +179,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAdminEmail,
     firebaseError,
     lastErrorCode,
-    clearLastError
+    clearLastError,
+    updateProfileInfo
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
