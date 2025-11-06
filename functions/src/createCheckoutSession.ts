@@ -1,17 +1,13 @@
-import {config} from "firebase-functions";
 import {https} from "firebase-functions/v2";
 import Stripe from "stripe";
 import type {Request, Response} from "express";
 
-const stripeSecretKey =
-  config().stripe?.secret_key ?? process.env.STRIPE_SECRET_KEY ?? "";
-const defaultPriceId =
-  config().stripe?.price_id ?? process.env.STRIPE_PRICE_ID ?? "";
-const successHost =
-  config().app?.host ?? process.env.APP_HOST ?? "";
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY ?? "";
+const defaultPriceId = process.env.STRIPE_PRICE_ID ?? "";
+const successHost = process.env.APP_HOST ?? "";
 
 export const createCheckoutSession = https.onRequest(
-  {region: "us-central1", cors: true},
+  {region: "asia-northeast3", cors: true, invoker: "public"},
   async (req: Request, res: Response) => {
     if (req.method !== "POST") {
       res.status(405).send("Method Not Allowed");
@@ -27,13 +23,19 @@ export const createCheckoutSession = https.onRequest(
       }
 
       if (!stripeSecretKey || !defaultPriceId || !successHost) {
+        console.error("Stripe configuration missing", {
+          hasEnvSecret: Boolean(process.env.STRIPE_SECRET_KEY),
+          hasEnvPrice: Boolean(process.env.STRIPE_PRICE_ID),
+          hasEnvHost: Boolean(process.env.APP_HOST),
+        });
         res
           .status(500)
-          .send([
-            "Stripe configuration missing.",
-            "Set secret_key, price_id and app.host via",
-            "`firebase functions:config:set` or environment variables.",
-          ].join(" "));
+          .send(
+            [
+              "Stripe configuration missing.",
+              "Set STRIPE_SECRET_KEY, STRIPE_PRICE_ID, APP_HOST env vars.",
+            ].join(" ")
+          );
         return;
       }
 

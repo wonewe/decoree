@@ -1,7 +1,9 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { redirectToStripeCheckout } from "../services/subscriptionService";
 import { useI18n } from "../shared/i18n";
 import { usePremiumAccess } from "../shared/premiumAccess";
+
+const pricePlanId = import.meta.env.VITE_STRIPE_PRICE_ID;
 
 export default function SubscriptionSection() {
   const { t } = useI18n();
@@ -9,6 +11,7 @@ export default function SubscriptionSection() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const priceId = useMemo(() => pricePlanId, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -24,7 +27,7 @@ export default function SubscriptionSection() {
     try {
       await redirectToStripeCheckout({
         email,
-        planId: "decoree-premium-monthly"
+        planId: priceId
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
