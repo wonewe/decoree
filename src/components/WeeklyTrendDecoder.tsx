@@ -31,62 +31,76 @@ function TrendCard({ report }: { report: TrendReport }) {
   const author = getAuthorProfile(report.authorId);
 
   return (
-    <article className="card flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <IntensityBadge intensity={report.intensity} />
-          <span className="text-xs text-slate-400">{new Date(report.publishedAt).toLocaleDateString()}</span>
-        </div>
-        {report.isPremium && <span className="badge-premium">{t("trends.premiumBadge")}</span>}
-      </div>
-      <h3 className="text-xl font-semibold text-dancheongNavy">{report.title}</h3>
-      <p className="text-slate-600">{report.summary}</p>
-      {author && (
-        <div className="flex items-center gap-3 text-xs text-slate-500">
-          <img
-            src={author.avatarUrl}
-            alt={author.name}
-            className="h-8 w-8 rounded-full object-cover"
-            loading="lazy"
-          />
-          <div className="flex flex-col">
-            <span className="font-semibold text-slate-600">
-              {t("trends.byline", { author: author.name })}
-            </span>
-            <span>{author.title}</span>
+    <article className="card">
+      <div className="flex flex-col gap-6 md:flex-row md:items-stretch">
+        <div className="flex-1 space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <IntensityBadge intensity={report.intensity} />
+              <span className="text-xs text-slate-400">
+                {new Date(report.publishedAt).toLocaleDateString()}
+              </span>
+            </div>
+            {report.isPremium && <span className="badge-premium">{t("trends.premiumBadge")}</span>}
+          </div>
+          <h3 className="text-xl font-semibold text-dancheongNavy">{report.title}</h3>
+          <p className="text-slate-600">{report.summary}</p>
+          {author && (
+            <div className="flex items-center gap-3 text-xs text-slate-500">
+              <img
+                src={author.avatarUrl}
+                alt={author.name}
+                className="h-8 w-8 rounded-full object-cover"
+                loading="lazy"
+              />
+              <div className="flex flex-col">
+                <span className="font-semibold text-slate-600">
+                  {t("trends.byline", { author: author.name })}
+                </span>
+                <span>{author.title}</span>
+              </div>
+            </div>
+          )}
+          <div className="text-sm text-slate-500">
+            <strong>{t("trendDetail.neighborhood")}:</strong> {report.neighborhood} •{" "}
+            {report.tags.join(" · ")}
+          </div>
+          {report.isPremium ? (
+            <div className="rounded-2xl border border-dashed border-dancheongRed/40 p-4">
+              {showSample ? (
+                <p className="text-sm text-slate-600">{report.details}</p>
+              ) : (
+                <>
+                  <p className="text-sm text-slate-600">{t("trends.unlock")}</p>
+                  <button
+                    className="mt-3 text-sm font-semibold text-hanBlue hover:underline"
+                    onClick={() => setShowSample(true)}
+                  >
+                    {t("trends.sample")}
+                  </button>
+                </>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-700">{report.details}</p>
+          )}
+          <div className="pt-2">
+            <Link
+              to={`/trends/${report.id}`}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-hanBlue hover:underline"
+            >
+              {t("trends.readMore")} →
+            </Link>
           </div>
         </div>
-      )}
-      <div className="text-sm text-slate-500">
-        <strong>{t("trendDetail.neighborhood")}:</strong> {report.neighborhood} •{" "}
-        {report.tags.join(" · ")}
-      </div>
-      {report.isPremium ? (
-        <div className="rounded-2xl border border-dashed border-dancheongRed/40 p-4">
-          {showSample ? (
-            <p className="text-sm text-slate-600">{report.details}</p>
-          ) : (
-            <>
-              <p className="text-sm text-slate-600">{t("trends.unlock")}</p>
-              <button
-                className="mt-3 text-sm font-semibold text-hanBlue hover:underline"
-                onClick={() => setShowSample(true)}
-              >
-                {t("trends.sample")}
-              </button>
-            </>
-          )}
-        </div>
-      ) : (
-        <p className="text-sm text-slate-700">{report.details}</p>
-      )}
-      <div className="pt-2">
-        <Link
-          to={`/trends/${report.id}`}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-hanBlue hover:underline"
-        >
-          {t("trends.readMore")} →
-        </Link>
+        <figure className="overflow-hidden rounded-2xl bg-slate-100 md:w-56 lg:w-64">
+          <img
+            src={report.imageUrl}
+            alt={report.title}
+            className="h-48 w-full object-cover md:h-full"
+            loading="lazy"
+          />
+        </figure>
       </div>
     </article>
   );

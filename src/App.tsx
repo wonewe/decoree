@@ -14,12 +14,14 @@ import TrendDetailPage from "./pages/TrendDetailPage";
 import EventDetailPage from "./pages/EventDetailPage";
 import CultureTestPage from "./pages/CultureTestPage";
 import ProfilePage from "./pages/ProfilePage";
+import LocalizedLandingPage from "./pages/LocalizedLandingPage";
 
 export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
+        <Route path="/:lang(fr|ko|ja|en)" element={<LocalizedLandingPage />} />
         <Route path="/trends" element={<TrendsPage />} />
         <Route path="/trends/:id" element={<TrendDetailPage />} />
         <Route path="/events" element={<EventsPage />} />

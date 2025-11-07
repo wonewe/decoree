@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react";
 
 export type SupportedLanguage = "fr" | "ko" | "ja" | "en";
 
@@ -1462,9 +1462,60 @@ type I18nContextValue = {
 };
 
 const I18nContext = createContext<I18nContextValue | undefined>(undefined);
+const LANGUAGE_STORAGE_KEY = "decoree.language";
+const SUPPORTED_LANGUAGES: SupportedLanguage[] = ["fr", "ko", "ja", "en"];
+
+function normalizeLanguage(lang?: string | null): SupportedLanguage | null {
+  if (!lang) return null;
+  const lower = lang.toLowerCase();
+  return SUPPORTED_LANGUAGES.find((item) => item === lower) ?? null;
+}
+
+function detectInitialLanguage(): SupportedLanguage {
+  if (typeof window === "undefined") return "fr";
+
+  const url = new URL(window.location.href);
+  const queryLang = normalizeLanguage(url.searchParams.get("lang"));
+  if (queryLang) return queryLang;
+
+  const pathSegment = window.location.pathname.split("/")[1];
+  const pathLang = normalizeLanguage(pathSegment);
+  if (pathLang) return pathLang;
+
+  const storedLang = normalizeLanguage(window.localStorage.getItem(LANGUAGE_STORAGE_KEY));
+  if (storedLang) return storedLang;
+
+  const navigatorLang = normalizeLanguage(window.navigator.language?.slice(0, 2));
+  if (navigatorLang) return navigatorLang;
+
+  return "fr";
+}
+
+function persistLanguage(lang: SupportedLanguage) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+  } catch {
+    // ignore storage errors (e.g., private mode)
+  }
+  const url = new URL(window.location.href);
+  const firstSegment = url.pathname.split("/")[1];
+  if (normalizeLanguage(firstSegment)) {
+    url.searchParams.delete("lang");
+  } else {
+    url.searchParams.set("lang", lang);
+  }
+  const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+  window.history.replaceState({}, "", nextUrl);
+}
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<SupportedLanguage>("fr");
+  const [language, setLanguageState] = useState<SupportedLanguage>(() => detectInitialLanguage());
+
+  const setLanguage = useCallback((lang: SupportedLanguage) => {
+    setLanguageState(lang);
+    persistLanguage(lang);
+  }, []);
 
   const value = useMemo<I18nContextValue>(() => {
     const messages = translations[language].messages;
