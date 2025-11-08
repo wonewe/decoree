@@ -7,6 +7,7 @@ import { useHeaderAuth } from "../hooks/useHeaderAuth";
 const exploreLinks = [
   { path: "/trends", labelKey: "nav.trends" },
   { path: "/events", labelKey: "nav.events" },
+  { path: "/popups", labelKey: "nav.popups" },
   { path: "/culture-test", labelKey: "nav.cultureTest" }
 ] as const;
 
