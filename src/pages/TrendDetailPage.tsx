@@ -5,6 +5,7 @@ import { getTrendReportById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
 import { usePremiumAccess } from "../shared/premiumAccess";
 import { getAuthorProfile } from "../data/authors";
+import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
 
 type Status = "idle" | "loading" | "success" | "not-found" | "error";
 
@@ -60,6 +61,15 @@ export default function TrendDetailPage() {
   const published = new Date(report.publishedAt).toLocaleDateString();
   const tagList = report.tags.join(" • ");
   const author = getAuthorProfile(report.authorId);
+  const bookmarkItem = {
+    id: report.id,
+    type: "trend" as const,
+    title: report.title,
+    summary: report.summary,
+    imageUrl: report.imageUrl,
+    location: report.neighborhood,
+    href: `/trends/${report.id}`
+  };
 
   return (
     <article className="bg-white">
@@ -69,6 +79,9 @@ export default function TrendDetailPage() {
           alt={report.title}
           className="h-full w-full object-cover"
         />
+        <div className="absolute right-6 top-6">
+          <BookmarkButton item={bookmarkItem} />
+        </div>
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-6 py-8 text-white">
           <button
             onClick={() => navigate(-1)}

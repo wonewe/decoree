@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "../shared/i18n";
 import { usePopups } from "../hooks/usePopups";
+import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
 
 const mapUrl = "https://maps.google.com/?q=Seoul+pop-up";
 
@@ -132,6 +133,20 @@ export default function PopupRadarPage() {
                     className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
+                  <div className="absolute right-3 top-3">
+                    <BookmarkButton
+                      size="sm"
+                      item={{
+                        id: popup.id,
+                        type: "popup",
+                        title: popup.title,
+                        summary: popup.description,
+                        imageUrl: popup.posterUrl,
+                        location: popup.location,
+                        href: `/popups/${popup.id}`
+                      }}
+                    />
+                  </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
                     <div className="text-xs">{popup.window}</div>
                     <h3 className="text-2xl font-bold">{popup.title}</h3>

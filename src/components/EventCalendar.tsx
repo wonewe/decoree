@@ -5,6 +5,7 @@ import { useI18n } from "../shared/i18n";
 import { EventCardSkeleton } from "./events/EventCardSkeleton";
 import { EventEmptyState } from "./events/EventEmptyState";
 import { useEventList } from "../hooks/useEventList";
+import { BookmarkButton } from "./bookmarks/BookmarkButton";
 
 const CATEGORY_KEYS: EventCategory[] = ["concert", "traditional", "pop-up", "festival"];
 
@@ -56,13 +57,27 @@ export default function EventCalendar() {
         <div className="grid gap-6 md:grid-cols-2">
           {filteredEvents.map((event) => (
             <article key={event.id} className="card space-y-4">
-              <div className="flex items-center justify-between text-sm text-slate-500">
-                <span>
-                  {new Date(event.date).toLocaleDateString()} · {event.time}
-                </span>
-                <span className="rounded-full bg-slate-100 px-3 py-1">
-                  {t(`event.eventCategory.${event.category}`)}
-                </span>
+              <div className="flex items-start justify-between gap-3 text-sm text-slate-500">
+                <div>
+                  <span>
+                    {new Date(event.date).toLocaleDateString()} · {event.time}
+                  </span>
+                  <span className="ml-2 inline-flex rounded-full bg-slate-100 px-3 py-1">
+                    {t(`event.eventCategory.${event.category}`)}
+                  </span>
+                </div>
+                <BookmarkButton
+                  size="sm"
+                  item={{
+                    id: event.id,
+                    type: "event",
+                    title: event.title,
+                    summary: event.description,
+                    imageUrl: event.imageUrl,
+                    location: event.location,
+                    href: `/events/${event.id}`
+                  }}
+                />
               </div>
               <div>
                 <h3 className="text-xl font-semibold text-dancheongNavy">{event.title}</h3>

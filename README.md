@@ -62,6 +62,12 @@ npm run build
 
 Pour développer hors ligne ou sans projet Firebase, définissez `VITE_USE_STATIC_CONTENT=true` dans votre `.env`. Les repositories sauteront alors les requêtes Firestore et utiliseront instantanément les données mockées (ajout/mise à jour/suppression resteront indisponibles tant que Firebase n’est pas configuré).
 
+## Traduction automatique du Pop-up Radar
+
+- Les fiches du Pop-up Radar peuvent être rédigées en coréen puis automatiquement exposées en français, anglais ou japonais.
+- Activez `VITE_POPUP_AUTO_TRANSLATE=true` pour autoriser cette traduction côté client (Google Translate non authentifié est utilisé en fallback). Si l’appel échoue, le texte coréen reste affiché.
+- Seule la collection “Pop-ups” est concernée ; les tendances, événements et phrasebook continuent d’utiliser leurs langues respectives.
+
 ## Stripe Checkout
 
 1. Créez une clé **Publishable** Stripe et renseignez `VITE_STRIPE_PUBLISHABLE_KEY`. Définissez également `VITE_STRIPE_CHECKOUT_ENDPOINT` (par défaut `/api/create-checkout-session`) et `VITE_STRIPE_PRICE_ID`. Activez le flux en production avec `VITE_STRIPE_ENABLED=true`.

@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import type { KCultureEvent } from "../data/events";
 import { getEventById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
+import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
 
 type Status = "idle" | "loading" | "success" | "not-found" | "error";
 
@@ -60,6 +61,15 @@ export default function EventDetailPage() {
     month: "long",
     day: "numeric"
   });
+  const bookmarkItem = {
+    id: event.id,
+    type: "event" as const,
+    title: event.title,
+    summary: event.description,
+    imageUrl: event.imageUrl,
+    location: event.location,
+    href: `/events/${event.id}`
+  };
 
   return (
     <article className="bg-white">
@@ -69,6 +79,9 @@ export default function EventDetailPage() {
           alt={event.title}
           className="h-full w-full object-cover"
         />
+        <div className="absolute right-6 top-6">
+          <BookmarkButton item={bookmarkItem} />
+        </div>
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-6 py-8 text-white">
           <button
             onClick={() => navigate(-1)}

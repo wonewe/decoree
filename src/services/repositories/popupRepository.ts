@@ -11,8 +11,12 @@ import {
 import { popupCollection } from "./firestoreClient";
 import { POPUP_EVENTS, type PopupEvent } from "../../data/popups";
 import type { SupportedLanguage } from "../../shared/i18n";
-import { DEFAULT_LANGUAGE, ensureLanguage, filterByLanguage, stripLanguageMeta } from "./languageUtils";
+import { DEFAULT_LANGUAGE, ensureLanguage, stripLanguageMeta } from "./languageUtils";
 import { assertFirestoreAvailable, shouldUseStaticContent } from "./runtimeConfig";
+import {
+  shouldAutoTranslatePopup,
+  translatePopupEvent
+} from "../translation/popupTranslationService";
 
 type WithTimestamps<T> = T & {
   createdAt?: Timestamp;
@@ -27,39 +31,74 @@ const toPopup = (docData: WithTimestamps<PopupEvent>): PopupEvent => {
   return rest;
 };
 
+const localizePopups = async (popups: PopupEvent[], language?: SupportedLanguage) => {
+  const normalized = popups.map((popup) => ensureLanguage(popup));
+  if (!language) {
+    return normalized.map(stripLanguageMeta);
+  }
+
+  const localized = await Promise.all(
+    normalized.map(async (popup) => {
+      if (popup.language === language || popup.__softLanguage) {
+        return stripLanguageMeta(popup);
+      }
+
+      if (shouldAutoTranslatePopup(popup.language, language)) {
+        const translated = await translatePopupEvent(stripLanguageMeta(popup), language);
+        if (translated) {
+          return translated;
+        }
+        return { ...stripLanguageMeta(popup), language };
+      }
+
+      return null;
+    })
+  );
+
+  return localized.filter((popup): popup is PopupEvent => popup != null);
+};
+
 export async function fetchPopups(language?: SupportedLanguage): Promise<PopupEvent[]> {
   if (shouldUseStaticContent()) {
-    return filterByLanguage(fallbackPopups, language);
+    return localizePopups(fallbackPopups, language);
   }
   try {
     const snapshot = await getDocs(query(popupCollection, orderBy("window", "asc")));
     if (snapshot.empty) {
-      return filterByLanguage(fallbackPopups, language);
+      return localizePopups(fallbackPopups, language);
     }
     const popups = snapshot.docs.map((docSnap) => {
       const data = docSnap.data() as WithTimestamps<PopupEvent>;
       return toPopup({ ...data, id: docSnap.id });
     });
-    return filterByLanguage(popups, language);
+    return localizePopups(popups, language);
   } catch (error) {
     console.error("Failed to fetch popups, fallback to static data.", error);
-    return filterByLanguage(fallbackPopups, language);
+    return localizePopups(fallbackPopups, language);
   }
 }
 
-export async function getPopupById(id: string) {
+export async function getPopupById(id: string, language?: SupportedLanguage) {
+  const localizeSingle = async (popup: PopupEvent | null) => {
+    if (!popup) return null;
+    const [localized] = await localizePopups([popup], language);
+    return localized ?? null;
+  };
+
   if (shouldUseStaticContent()) {
-    return fallbackPopups.find((popup) => popup.id === id) ?? null;
+    const fallback = fallbackPopups.find((popup) => popup.id === id) ?? null;
+    return localizeSingle(fallback);
   }
   try {
     const snapshot = await getDoc(doc(popupCollection, id));
     if (snapshot.exists()) {
-      return toPopup({ ...(snapshot.data() as PopupEvent), id: snapshot.id });
+      return localizeSingle(toPopup({ ...(snapshot.data() as PopupEvent), id: snapshot.id }));
     }
   } catch (error) {
     console.error("Unable to fetch popup by id", error);
   }
-  return fallbackPopups.find((popup) => popup.id === id) ?? null;
+  const fallback = fallbackPopups.find((popup) => popup.id === id) ?? null;
+  return localizeSingle(fallback);
 }
 
 export async function addPopup(popup: PopupEvent) {

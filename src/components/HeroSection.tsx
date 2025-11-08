@@ -5,28 +5,36 @@ export default function HeroSection() {
   const { t } = useI18n();
   const highlights = [
     {
-      icon: "📰",
       title: t("hero.highlights.trends.title"),
       description: t("hero.highlights.trends.description"),
-      to: "/trends"
+      to: "/trends",
+      image:
+        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+      accent: "from-black/70 via-black/20 to-transparent"
     },
     {
-      icon: "🎟️",
       title: t("hero.highlights.events.title"),
       description: t("hero.highlights.events.description"),
-      to: "/events"
+      to: "/events",
+      image:
+        "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=1200&q=80",
+      accent: "from-hanBlue/70 via-hanBlue/30 to-transparent"
     },
     {
-      icon: "🗣️",
       title: t("hero.highlights.phrasebook.title"),
       description: t("hero.highlights.phrasebook.description"),
-      to: "/phrasebook"
+      to: "/phrasebook",
+      image:
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=80",
+      accent: "from-dancheongGreen/70 via-dancheongGreen/30 to-transparent"
     },
     {
-      icon: "🏙️",
       title: t("hero.highlights.popups.title"),
       description: t("hero.highlights.popups.description"),
-      to: "/popups"
+      to: "/popups",
+      image:
+        "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80",
+      accent: "from-dancheongYellow/70 via-dancheongYellow/30 to-transparent"
     }
   ] as const;
 
@@ -66,25 +74,39 @@ export default function HeroSection() {
           <h2 className="text-lg font-semibold uppercase tracking-wide text-slate-500">
             {t("hero.highlights.title")}
           </h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-5 md:grid-cols-2">
             {highlights.map((item) => (
               <Link
                 key={item.title}
                 to={item.to}
-                className="group flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:border-hanBlue/40 hover:shadow-xl"
+                className="group relative overflow-hidden rounded-3xl shadow-lg transition duration-200 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:shadow-2xl hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
               >
-                <span className="text-2xl" aria-hidden="true">
-                  {item.icon}
-                </span>
-                <div className="space-y-1">
-                  <h3 className="text-lg font-semibold text-dancheongNavy group-hover:text-hanBlue">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-slate-600">{item.description}</p>
+                <div className="absolute inset-0">
+                  <img
+                    src={item.image}
+                    alt=""
+                    className="h-full w-full object-cover transition duration-200 ease-out group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${item.accent} backdrop-blur-sm`}
+                  ></div>
                 </div>
-                <span className="text-xs font-semibold text-hanBlue group-hover:underline">
-                  {t("hero.highlights.cta")} →
-                </span>
+                <div className="relative flex min-h-[220px] flex-col justify-between p-5 text-white lg:p-6">
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <h3 className="text-2xl font-semibold leading-tight">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-white/80 opacity-0 transition duration-200 group-hover:opacity-100 group-hover:drop-shadow">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white/90 transition duration-200 group-hover:translate-x-0 translate-x-2">
+                    {t("hero.highlights.cta")} →
+                  </span>
+                </div>
               </Link>
             ))}
           </div>

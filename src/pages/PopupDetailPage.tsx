@@ -3,17 +3,18 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import type { PopupEvent } from "../data/popups";
 import { getPopupById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
+import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
 
 export default function PopupDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const navigate = useNavigate();
   const [popup, setPopup] = useState<PopupEvent | null>(null);
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
 
   useEffect(() => {
     if (!id) return;
-    getPopupById(id)
+    getPopupById(id, language)
       .then((data) => {
         if (!data) {
           setStatus("error");
@@ -23,7 +24,7 @@ export default function PopupDetailPage() {
         setStatus("success");
       })
       .catch(() => setStatus("error"));
-  }, [id]);
+  }, [id, language]);
 
   if (status === "loading") {
     return (
@@ -44,10 +45,23 @@ export default function PopupDetailPage() {
     );
   }
 
+  const bookmarkItem = {
+    id: popup.id,
+    type: "popup" as const,
+    title: popup.title,
+    summary: popup.description,
+    imageUrl: popup.heroImageUrl,
+    location: popup.location,
+    href: `/popups/${popup.id}`
+  };
+
   return (
     <article className="bg-white">
       <div className="relative h-[320px] w-full overflow-hidden">
         <img src={popup.heroImageUrl} alt={popup.title} className="h-full w-full object-cover" />
+        <div className="absolute right-6 top-6">
+          <BookmarkButton item={bookmarkItem} />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
         <div className="absolute bottom-6 left-1/2 w-full max-w-5xl -translate-x-1/2 px-6 text-white">
           <button

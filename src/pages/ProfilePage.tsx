@@ -1,12 +1,15 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../shared/auth";
 import { useI18n } from "../shared/i18n";
+import { useBookmarks } from "../shared/bookmarks";
 
 type FormStatus = "idle" | "saving" | "success" | "error";
 
 export default function ProfilePage() {
   const { user, logout, updateProfileInfo } = useAuth();
   const { t } = useI18n();
+  const { bookmarks, removeBookmark } = useBookmarks();
   const [displayName, setDisplayName] = useState(user?.displayName ?? "");
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -53,6 +56,14 @@ export default function ProfilePage() {
   const lastLogin = user.metadata?.lastSignInTime
     ? new Date(user.metadata.lastSignInTime).toLocaleDateString()
     : null;
+
+  const sortedBookmarks = useMemo(
+    () =>
+      [...bookmarks].sort(
+        (a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime()
+      ),
+    [bookmarks]
+  );
 
   return (
     <section className="section-container space-y-10">
@@ -162,6 +173,58 @@ export default function ProfilePage() {
           </dl>
         </aside>
       </div>
+
+      <section className="space-y-6 rounded-3xl bg-white p-8 shadow">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-semibold text-dancheongNavy">
+            {t("profile.bookmarks.title")}
+          </h2>
+          <p className="text-sm text-slate-500">{t("profile.bookmarks.subtitle")}</p>
+        </div>
+        {sortedBookmarks.length === 0 ? (
+          <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+            {t("profile.bookmarks.empty")}
+          </p>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            {sortedBookmarks.map((bookmark) => (
+              <article
+                key={`${bookmark.type}-${bookmark.id}`}
+                className="flex flex-col gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-4"
+              >
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  <span>{t(`bookmarks.type.${bookmark.type}`)}</span>
+                  <span>{new Date(bookmark.savedAt).toLocaleDateString()}</span>
+                </div>
+                <h3 className="text-lg font-semibold text-dancheongNavy">{bookmark.title}</h3>
+                {bookmark.summary && (
+                  <p className="text-sm text-slate-600">{bookmark.summary}</p>
+                )}
+                {bookmark.location && (
+                  <p className="text-xs uppercase tracking-wide text-slate-500">
+                    {bookmark.location}
+                  </p>
+                )}
+                <div className="flex flex-wrap gap-2 text-sm font-semibold">
+                  <Link
+                    to={bookmark.href}
+                    className="rounded-full border border-hanBlue px-4 py-2 text-hanBlue transition hover:bg-hanBlue hover:text-white"
+                  >
+                    {t("bookmarks.actions.view")}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => removeBookmark(bookmark.type, bookmark.id)}
+                    className="rounded-full border border-slate-200 px-4 py-2 text-slate-500 transition hover:border-dancheongRed hover:text-dancheongRed"
+                  >
+                    {t("bookmarks.actions.remove")}
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
     </section>
   );
 }
