@@ -1,22 +1,20 @@
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useI18n } from "../shared/i18n";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { useAuth } from "../shared/auth";
 import { useEffect, useRef, useState } from "react";
+import { useHeaderAuth } from "../hooks/useHeaderAuth";
 
 const exploreLinks = [
   { path: "/trends", labelKey: "nav.trends" },
   { path: "/events", labelKey: "nav.events" },
-  { path: "/phrasebook", labelKey: "nav.phrasebook" },
   { path: "/culture-test", labelKey: "nav.cultureTest" }
 ] as const;
 
 export default function Layout() {
   const { t } = useI18n();
-  const { user, logout, isAdmin } = useAuth();
-  const navigate = useNavigate();
+  const { user, isAdmin, handleLogout, isProcessing, error: authError, dismissError } =
+    useHeaderAuth();
   const location = useLocation();
-  const [authError, setAuthError] = useState<string | null>(null);
   const [isExploreOpen, setIsExploreOpen] = useState(false);
   const exploreRef = useRef<HTMLDivElement>(null);
 
@@ -42,16 +40,6 @@ export default function Layout() {
   useEffect(() => {
     setIsExploreOpen(false);
   }, [location.pathname]);
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate("/");
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      setAuthError(message);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-100 to-white text-slate-900">
@@ -98,6 +86,16 @@ export default function Layout() {
               )}
             </div>
             <NavLink
+              to="/phrasebook"
+              className={({ isActive }) =>
+                `transition hover:text-hanBlue ${
+                  isActive ? "text-hanBlue" : "text-slate-600"
+                }`
+              }
+            >
+              {t("nav.phrasebook")}
+            </NavLink>
+            <NavLink
               to="/subscribe"
               className={({ isActive }) =>
                 `transition hover:text-hanBlue ${
@@ -132,9 +130,10 @@ export default function Layout() {
                 </NavLink>
                 <button
                   onClick={handleLogout}
-                  className="rounded-full border border-dancheongRed px-3 py-1 text-xs font-semibold text-dancheongRed transition hover:bg-dancheongRed/10"
+                  className="rounded-full border border-dancheongRed px-3 py-1 text-xs font-semibold text-dancheongRed transition hover:bg-dancheongRed/10 disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={isProcessing}
                 >
-                  {t("auth.logout")}
+                  {isProcessing ? t("auth.loading") : t("auth.logout")}
                 </button>
               </div>
             ) : (
@@ -156,8 +155,17 @@ export default function Layout() {
           </div>
         </div>
         {authError && (
-          <div className="bg-dancheongRed/10 py-2 text-center text-xs text-dancheongRed">
-            {authError}
+          <div className="bg-dancheongRed/10 px-4 py-2 text-xs text-dancheongRed">
+            <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+              <span>{authError}</span>
+              <button
+                type="button"
+                onClick={dismissError}
+                className="rounded-full border border-dancheongRed px-3 py-1 text-[10px] font-semibold transition hover:bg-dancheongRed/10"
+              >
+                ×
+              </button>
+            </div>
           </div>
         )}
       </header>

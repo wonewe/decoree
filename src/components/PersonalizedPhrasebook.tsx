@@ -1,8 +1,9 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { Phrase, PhraseCategory } from "../data/phrases";
-import { fetchPhrases } from "../services/contentService";
-import { useAsyncData } from "../hooks/useAsyncData";
 import { useI18n } from "../shared/i18n";
+import { usePhrasebook } from "../hooks/usePhrasebook";
+import { PhraseCardSkeleton } from "./phrasebook/PhraseCardSkeleton";
+import { PhraseEmptyState } from "./phrasebook/PhraseEmptyState";
 
 const CATEGORY_KEYS: PhraseCategory[] = ["food", "shopping", "entertainment"];
 
@@ -11,8 +12,7 @@ export default function PersonalizedPhrasebook() {
   const [selectedCategories, setSelectedCategories] = useState<PhraseCategory[]>(["food"]);
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState("");
-  const fetcher = useCallback(() => fetchPhrases(language), [language]);
-  const { status, data } = useAsyncData(fetcher);
+  const { status, phrases, error } = usePhrasebook(language);
 
   const toggleCategory = (category: PhraseCategory) => {
     setSelectedCategories((current) =>
@@ -23,9 +23,8 @@ export default function PersonalizedPhrasebook() {
   };
 
   const filteredPhrases = useMemo(() => {
-    if (!data) return [];
     const normalizedSearch = searchTerm.trim().toLowerCase();
-    return data
+    return phrases
       .filter((phrase) => selectedCategories.includes(phrase.category))
       .filter((phrase) => {
         if (!normalizedSearch) return true;
@@ -39,7 +38,7 @@ export default function PersonalizedPhrasebook() {
           .toLowerCase();
         return haystack.includes(normalizedSearch);
       });
-  }, [data, selectedCategories, searchTerm]);
+  }, [phrases, selectedCategories, searchTerm]);
 
   const handleMarkCompleted = (phrase: Phrase) => {
     setCompleted((prev) => new Set(prev).add(phrase.id));
@@ -47,7 +46,9 @@ export default function PersonalizedPhrasebook() {
     console.info("Phrase completed:", phrase.id);
   };
 
-  const completionRate = data ? Math.round((completed.size / data.length) * 100) : 0;
+  const completionRate = phrases.length ? Math.round((completed.size / phrases.length) * 100) : 0;
+  const showEmpty = status === "success" && phrases.length === 0;
+  const showError = status === "error";
 
   return (
     <section className="section-container space-y-8">
@@ -99,16 +100,26 @@ export default function PersonalizedPhrasebook() {
       {status === "loading" && (
         <div className="grid gap-6 md:grid-cols-2">
           {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="animate-pulse rounded-2xl bg-white p-6 shadow">
-              <div className="h-4 w-32 rounded bg-slate-200" />
-              <div className="mt-4 h-6 w-3/5 rounded bg-slate-200" />
-              <div className="mt-6 h-4 w-full rounded bg-slate-200" />
-            </div>
+            <PhraseCardSkeleton key={index} />
           ))}
         </div>
       )}
 
-      {status === "success" && (
+      {showEmpty && (
+        <PhraseEmptyState
+          title={t("phrasebook.empty")}
+          description={t("phrasebook.subtitle")}
+        />
+      )}
+
+      {showError && (
+        <PhraseEmptyState
+          title={t("phrasebook.error")}
+          description={error?.message ?? t("phrasebook.subtitle")}
+        />
+      )}
+
+      {status === "success" && phrases.length > 0 && (
         <>
           <div className="rounded-2xl bg-white p-4 shadow">
             <div className="flex items-center justify-between">

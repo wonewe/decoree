@@ -15,6 +15,8 @@ import EventDetailPage from "./pages/EventDetailPage";
 import CultureTestPage from "./pages/CultureTestPage";
 import ProfilePage from "./pages/ProfilePage";
 import LocalizedLandingPage from "./pages/LocalizedLandingPage";
+import PopupRadarPage from "./pages/PopupRadarPage";
+import PopupDetailPage from "./pages/PopupDetailPage";
 
 export default function App() {
   return (
@@ -28,6 +30,8 @@ export default function App() {
         <Route path="/events/:id" element={<EventDetailPage />} />
         <Route path="/phrasebook" element={<PhrasebookPage />} />
         <Route path="/culture-test" element={<CultureTestPage />} />
+        <Route path="/popups" element={<PopupRadarPage />} />
+        <Route path="/popups/:id" element={<PopupDetailPage />} />
         <Route
           path="/profile"
           element={

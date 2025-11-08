@@ -44,6 +44,10 @@ body {
   animation-delay: 0.3s;
 }
 
+.hero-intro .hero-delay-3 {
+  animation-delay: 0.45s;
+}
+
 .hero-gradient {
   position: absolute;
   width: 40vw;

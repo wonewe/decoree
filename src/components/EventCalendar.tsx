@@ -1,22 +1,25 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import type { EventCategory } from "../data/events";
-import { fetchEvents } from "../services/contentService";
-import { useAsyncData } from "../hooks/useAsyncData";
 import { useI18n } from "../shared/i18n";
+import { EventCardSkeleton } from "./events/EventCardSkeleton";
+import { EventEmptyState } from "./events/EventEmptyState";
+import { useEventList } from "../hooks/useEventList";
 
 const CATEGORY_KEYS: EventCategory[] = ["concert", "traditional", "pop-up", "festival"];
 
 export default function EventCalendar() {
   const { t, language } = useI18n();
   const [activeCategory, setActiveCategory] = useState<EventCategory | "all">("all");
-  const fetcher = useCallback(() => fetchEvents(language), [language]);
-  const { status, data } = useAsyncData(fetcher);
+  const { status, events, error } = useEventList(language);
 
   const filteredEvents = useMemo(() => {
-    if (!data) return [];
-    return data.filter((event) => activeCategory === "all" || event.category === activeCategory);
-  }, [data, activeCategory]);
+    return events.filter((event) => activeCategory === "all" || event.category === activeCategory);
+  }, [events, activeCategory]);
+
+  const showGrid = status === "success" && filteredEvents.length > 0;
+  const showEmpty = status === "success" && filteredEvents.length === 0;
+  const showError = status === "error";
 
   return (
     <section className="section-container space-y-8">
@@ -44,65 +47,62 @@ export default function EventCalendar() {
       {status === "loading" && (
         <div className="grid gap-6 md:grid-cols-2">
           {Array.from({ length: 2 }).map((_, index) => (
-            <div key={index} className="animate-pulse rounded-2xl bg-white p-6 shadow">
-              <div className="h-4 w-32 rounded bg-slate-200" />
-              <div className="mt-4 h-6 w-3/4 rounded bg-slate-200" />
-              <div className="mt-6 space-y-3">
-                <div className="h-4 w-full rounded bg-slate-200" />
-                <div className="h-4 w-1/2 rounded bg-slate-200" />
-              </div>
-            </div>
+            <EventCardSkeleton key={index} />
           ))}
         </div>
       )}
 
-      {status === "success" && (
-        <>
-          {filteredEvents.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-slate-500">
-              {t("events.empty")}
-            </p>
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2">
-              {filteredEvents.map((event) => (
-                <article key={event.id} className="card space-y-4">
-                  <div className="flex items-center justify-between text-sm text-slate-500">
-                    <span>
-                      {new Date(event.date).toLocaleDateString()} · {event.time}
-                    </span>
-                    <span className="rounded-full bg-slate-100 px-3 py-1">
-                      {t(`event.eventCategory.${event.category}`)}
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-dancheongNavy">{event.title}</h3>
-                    <p className="mt-2 text-slate-600">{event.description}</p>
-                  </div>
-                  <div className="flex items-center justify-between text-sm text-slate-500">
-                    <span>{event.location}</span>
-                    <span className="font-semibold text-hanBlue">{event.price}</span>
-                  </div>
-                  <Link
-                    to={`/events/${event.id}`}
-                    className="inline-flex items-center text-sm font-semibold text-hanBlue hover:underline"
-                  >
-                    {t("eventDetail.readMore")} →
-                  </Link>
-                  {event.bookingUrl && (
-                    <a
-                      href={event.bookingUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center text-sm font-semibold text-hanBlue hover:underline"
-                    >
-                      {t("eventDetail.bookingCta")}
-                    </a>
-                  )}
-                </article>
-              ))}
-            </div>
-          )}
-        </>
+      {showGrid && (
+        <div className="grid gap-6 md:grid-cols-2">
+          {filteredEvents.map((event) => (
+            <article key={event.id} className="card space-y-4">
+              <div className="flex items-center justify-between text-sm text-slate-500">
+                <span>
+                  {new Date(event.date).toLocaleDateString()} · {event.time}
+                </span>
+                <span className="rounded-full bg-slate-100 px-3 py-1">
+                  {t(`event.eventCategory.${event.category}`)}
+                </span>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-dancheongNavy">{event.title}</h3>
+                <p className="mt-2 text-slate-600">{event.description}</p>
+              </div>
+              <div className="flex items-center justify-between text-sm text-slate-500">
+                <span>{event.location}</span>
+                <span className="font-semibold text-hanBlue">{event.price}</span>
+              </div>
+              <Link
+                to={`/events/${event.id}`}
+                className="inline-flex items-center text-sm font-semibold text-hanBlue hover:underline"
+              >
+                {t("eventDetail.readMore")} →
+              </Link>
+              {event.bookingUrl && (
+                <a
+                  href={event.bookingUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center text-sm font-semibold text-hanBlue hover:underline"
+                >
+                  {t("eventDetail.bookingCta")}
+                </a>
+              )}
+            </article>
+          ))}
+        </div>
+      )}
+      {showEmpty && (
+        <EventEmptyState
+          title={t("events.empty")}
+          description={t("events.subtitle")}
+        />
+      )}
+      {showError && (
+        <EventEmptyState
+          title={t("events.error")}
+          description={error?.message ?? t("events.subtitle")}
+        />
       )}
     </section>
   );

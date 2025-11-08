@@ -10,8 +10,8 @@ export const AUTHOR_PROFILES: AuthorProfile[] = [
   {
     id: "jaewon-kim",
     name: "Jaewon Kim",
-    title: "Decorée Product Owner",
-    bio: "I am Product Owner of Decorée",
+    title: "Decorée Team Lead",
+    bio: "Find k-trends in Decorée!",
     avatarUrl:
       "https://res.cloudinary.com/dfbjpfrno/image/upload/v1762441482/IMG_6004_jewfzd.jpg"
   },

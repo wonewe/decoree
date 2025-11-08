@@ -21,6 +21,12 @@ export default function HeroSection() {
       title: t("hero.highlights.phrasebook.title"),
       description: t("hero.highlights.phrasebook.description"),
       to: "/phrasebook"
+    },
+    {
+      icon: "🏙️",
+      title: t("hero.highlights.popups.title"),
+      description: t("hero.highlights.popups.description"),
+      to: "/popups"
     }
   ] as const;
 
@@ -47,7 +53,10 @@ export default function HeroSection() {
               >
                 {t("hero.cta.primary")}
               </Link>
-              <Link to="/events" className="secondary-button">
+              <Link
+                to="/events"
+                className="hero-fade hero-delay-3 secondary-button opacity-0 translate-y-8"
+              >
                 {t("hero.cta.secondary")}
               </Link>
             </div>
@@ -57,7 +66,7 @@ export default function HeroSection() {
           <h2 className="text-lg font-semibold uppercase tracking-wide text-slate-500">
             {t("hero.highlights.title")}
           </h2>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {highlights.map((item) => (
               <Link
                 key={item.title}

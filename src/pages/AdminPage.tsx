@@ -3,26 +3,31 @@ import { FormEvent, useEffect, useState } from "react";
 import type { TrendReport, TrendIntensity } from "../data/trends";
 import type { KCultureEvent, EventCategory } from "../data/events";
 import type { Phrase, PhraseCategory } from "../data/phrases";
+import type { PopupEvent, PopupStatus } from "../data/popups";
 import { AUTHOR_PROFILES } from "../data/authors";
 import {
   addEvent,
   addPhrase,
+  addPopup,
   addTrendReport,
   deleteEvent,
   deletePhrase,
+  deletePopup,
   deleteTrendReport,
   fetchEvents,
   fetchPhrases,
+  fetchPopups,
   fetchTrendReports,
   updateEvent,
   updatePhrase,
+  updatePopup,
   updateTrendReport
 } from "../services/contentService";
 import { useAuth } from "../shared/auth";
 import type { SupportedLanguage } from "../shared/i18n";
 import { getLanguageLabel } from "../shared/i18n";
 
-type ActiveSection = "trends" | "events" | "phrases";
+type ActiveSection = "trends" | "events" | "phrases" | "popups";
 
 type AdminMessage = {
   tone: "success" | "error" | "info";
@@ -71,6 +76,23 @@ type PhraseDraft = {
   translation: string;
   culturalNote: string;
   category: PhraseCategory;
+};
+
+type PopupDraft = {
+  id: string;
+  language: SupportedLanguage;
+  title: string;
+  brand: string;
+  window: string;
+  status: PopupStatus;
+  location: string;
+  posterUrl: string;
+  heroImageUrl: string;
+  tagsInput: string;
+  description: string;
+  highlightsInput: string;
+  detailsInput: string;
+  reservationUrl: string;
 };
 
 function todayIso() {
@@ -241,6 +263,75 @@ function draftToPhrase(draft: PhraseDraft): Phrase {
   };
 }
 
+function createEmptyPopupDraft(): PopupDraft {
+  return {
+    id: "",
+    language: "en",
+    title: "",
+    brand: "",
+    window: "2024.06.01 - 06.30",
+    status: "now",
+    location: "",
+    posterUrl: "",
+    heroImageUrl: "",
+    tagsInput: "",
+    description: "",
+    highlightsInput: "",
+    detailsInput: "",
+    reservationUrl: ""
+  };
+}
+
+function popupToDraft(popup: PopupEvent): PopupDraft {
+  return {
+    id: popup.id,
+    language: popup.language ?? "en",
+    title: popup.title,
+    brand: popup.brand,
+    window: popup.window,
+    status: popup.status,
+    location: popup.location,
+    posterUrl: popup.posterUrl,
+    heroImageUrl: popup.heroImageUrl,
+    tagsInput: popup.tags.join(", "),
+    description: popup.description,
+    highlightsInput: popup.highlights.join("\n"),
+    detailsInput: popup.details.join("\n\n"),
+    reservationUrl: popup.reservationUrl ?? ""
+  };
+}
+
+function draftToPopup(draft: PopupDraft): PopupEvent {
+  const tags = draft.tagsInput
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const highlights = draft.highlightsInput
+    .split(/\n+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const details = draft.detailsInput
+    .split(/\n+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+  return {
+    id: draft.id.trim(),
+    language: draft.language,
+    title: draft.title.trim(),
+    brand: draft.brand.trim(),
+    window: draft.window.trim(),
+    status: draft.status,
+    location: draft.location.trim(),
+    posterUrl: draft.posterUrl.trim(),
+    heroImageUrl: draft.heroImageUrl.trim() || draft.posterUrl.trim(),
+    tags,
+    description: draft.description.trim(),
+    highlights,
+    details,
+    reservationUrl: draft.reservationUrl.trim() || undefined
+  };
+}
+
 export default function AdminPage() {
   const { user, logout } = useAuth();
   const [activeSection, setActiveSection] = useState<ActiveSection>("trends");
@@ -250,34 +341,40 @@ export default function AdminPage() {
   const [trends, setTrends] = useState<TrendReport[]>([]);
   const [events, setEvents] = useState<KCultureEvent[]>([]);
   const [phrases, setPhrases] = useState<Phrase[]>([]);
+  const [popups, setPopups] = useState<PopupEvent[]>([]);
 
   const [trendDraft, setTrendDraft] = useState<TrendDraft>(createEmptyTrendDraft);
   const [eventDraft, setEventDraft] = useState<EventDraft>(createEmptyEventDraft);
   const [phraseDraft, setPhraseDraft] = useState<PhraseDraft>(createEmptyPhraseDraft);
+  const [popupDraft, setPopupDraft] = useState<PopupDraft>(createEmptyPopupDraft);
 
   const [selectedTrendId, setSelectedTrendId] = useState<string | null>(null);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [selectedPhraseId, setSelectedPhraseId] = useState<string | null>(null);
+  const [selectedPopupId, setSelectedPopupId] = useState<string | null>(null);
 
   const [savingTrend, setSavingTrend] = useState(false);
   const [savingEvent, setSavingEvent] = useState(false);
   const [savingPhrase, setSavingPhrase] = useState(false);
+  const [savingPopup, setSavingPopup] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
     async function loadContent() {
       setLoading(true);
       try {
-        const [trendData, eventData, phraseData] = await Promise.all([
+        const [trendData, eventData, phraseData, popupData] = await Promise.all([
           fetchTrendReports(),
           fetchEvents(),
-          fetchPhrases()
+          fetchPhrases(),
+          fetchPopups()
         ]);
 
         if (!isMounted) return;
         setTrends(trendData);
         setEvents(eventData);
         setPhrases(phraseData);
+        setPopups(popupData);
 
         if (trendData.length > 0) {
           setSelectedTrendId(trendData[0].id);
@@ -290,6 +387,10 @@ export default function AdminPage() {
         if (phraseData.length > 0) {
           setSelectedPhraseId(phraseData[0].id);
           setPhraseDraft(phraseToDraft(phraseData[0]));
+        }
+        if (popupData.length > 0) {
+          setSelectedPopupId(popupData[0].id);
+          setPopupDraft(popupToDraft(popupData[0]));
         }
       } catch (error) {
         console.error("Failed to load admin content", error);
@@ -517,6 +618,70 @@ export default function AdminPage() {
       });
     } finally {
       setSavingPhrase(false);
+    }
+  };
+
+  const handlePopupSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    resetMessage();
+    const payload = draftToPopup(popupDraft);
+    if (!payload.id) {
+      setMessage({ tone: "error", text: "ID는 반드시 입력해야 합니다." });
+      return;
+    }
+    setSavingPopup(true);
+    try {
+      const exists = popups.some((item) => item.id === payload.id);
+      const updated = exists ? await updatePopup(payload) : await addPopup(payload);
+      setPopups(updated);
+      const saved = updated.find((item) => item.id === payload.id);
+      if (saved) {
+        setPopupDraft(popupToDraft(saved));
+        setSelectedPopupId(saved.id);
+      }
+      setMessage({
+        tone: "success",
+        text: exists ? "팝업이 업데이트되었습니다." : "새 팝업이 등록되었습니다."
+      });
+    } catch (error) {
+      console.error("Failed to save popup", error);
+      setMessage({
+        tone: "error",
+        text: `팝업을 저장할 수 없습니다. 입력 값을 확인해주세요.\n${describeError(error)}`
+      });
+    } finally {
+      setSavingPopup(false);
+    }
+  };
+
+  const handlePopupDelete = async (id: string) => {
+    resetMessage();
+    if (!id) {
+      setMessage({ tone: "error", text: "삭제할 항목을 먼저 선택해주세요." });
+      return;
+    }
+    const confirmed = window.confirm("정말로 이 팝업을 삭제하시겠어요?");
+    if (!confirmed) return;
+    setSavingPopup(true);
+    try {
+      const updated = await deletePopup(id);
+      setPopups(updated);
+      if (updated.length > 0) {
+        setSelectedPopupId(updated[0].id);
+        setPopupDraft(popupToDraft(updated[0]));
+      } else {
+        setSelectedPopupId(null);
+        setPopupDraft(createEmptyPopupDraft());
+      }
+      setMessage({ tone: "success", text: "팝업을 삭제했습니다." });
+    } catch (error) {
+      console.error("Failed to delete popup", error);
+      setMessage({
+        tone: "error",
+        text: `팝업을 삭제할 수 없습니다. 다시 시도해주세요.\n${describeError(error)}`
+      });
+    } finally {
+      setSavingPopup(false);
     }
   };
 
@@ -1192,6 +1357,243 @@ export default function AdminPage() {
     </div>
   );
 
+  const renderPopupsSection = () => (
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+      <aside className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-dancheongNavy">팝업 레이더</h3>
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedPopupId(null);
+              setPopupDraft(createEmptyPopupDraft());
+            }}
+            className="text-sm font-semibold text-hanBlue hover:underline"
+          >
+            새 팝업 작성
+          </button>
+        </div>
+        <div className="space-y-2">
+          {popups.map((popup) =>
+            renderListButton(
+              popup.id,
+              `[${getLanguageLabel(popup.language ?? "fr")}] ${popup.title} · ${popup.brand}`,
+              selectedPopupId === popup.id,
+              () => {
+                setSelectedPopupId(popup.id);
+                setPopupDraft(popupToDraft(popup));
+              }
+            )
+          )}
+          {popups.length === 0 && (
+            <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
+              아직 등록된 팝업이 없습니다. 오른쪽 양식을 채워 추가하세요.
+            </p>
+          )}
+        </div>
+      </aside>
+
+      <form onSubmit={handlePopupSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-semibold text-dancheongNavy">
+            {selectedPopupId ? "팝업 수정" : "새 팝업 등록"}
+          </h3>
+          {selectedPopupId && (
+            <button
+              type="button"
+              onClick={() => handlePopupDelete(selectedPopupId)}
+              className="text-sm font-semibold text-rose-600 hover:text-rose-700"
+            >
+              삭제
+            </button>
+          )}
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-4">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            언어
+            <select
+              value={popupDraft.language}
+              onChange={(e) =>
+                setPopupDraft((prev) => ({
+                  ...prev,
+                  language: e.target.value as SupportedLanguage
+                }))
+              }
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            >
+              {LANG_OPTIONS.map((lang) => (
+                <option key={lang} value={lang}>
+                  {getLanguageLabel(lang)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            ID
+            <input
+              type="text"
+              value={popupDraft.id}
+              onChange={(e) => setPopupDraft((prev) => ({ ...prev, id: e.target.value }))}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              required
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            상태
+            <select
+              value={popupDraft.status}
+              onChange={(e) =>
+                setPopupDraft((prev) => ({ ...prev, status: e.target.value as PopupStatus }))
+              }
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            >
+              <option value="now">진행 중</option>
+              <option value="soon">오픈 예정</option>
+            </select>
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            기간
+            <input
+              type="text"
+              value={popupDraft.window}
+              onChange={(e) => setPopupDraft((prev) => ({ ...prev, window: e.target.value }))}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              placeholder="2024.06.01 - 06.24 • 11:00-20:00"
+              required
+            />
+          </label>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            제목
+            <input
+              type="text"
+              value={popupDraft.title}
+              onChange={(e) => setPopupDraft((prev) => ({ ...prev, title: e.target.value }))}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              required
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            브랜드 / 기획자
+            <input
+              type="text"
+              value={popupDraft.brand}
+              onChange={(e) => setPopupDraft((prev) => ({ ...prev, brand: e.target.value }))}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              required
+            />
+          </label>
+        </div>
+
+        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          위치
+          <input
+            type="text"
+            value={popupDraft.location}
+            onChange={(e) => setPopupDraft((prev) => ({ ...prev, location: e.target.value }))}
+            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            required
+          />
+        </label>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            포스터 이미지 URL
+            <input
+              type="url"
+              value={popupDraft.posterUrl}
+              onChange={(e) => setPopupDraft((prev) => ({ ...prev, posterUrl: e.target.value }))}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              required
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            상세 헤더 이미지 URL (선택)
+            <input
+              type="url"
+              value={popupDraft.heroImageUrl}
+              onChange={(e) => setPopupDraft((prev) => ({ ...prev, heroImageUrl: e.target.value }))}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            />
+          </label>
+        </div>
+
+        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          태그 (쉼표로 구분)
+          <input
+            type="text"
+            value={popupDraft.tagsInput}
+            onChange={(e) => setPopupDraft((prev) => ({ ...prev, tagsInput: e.target.value }))}
+            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+          />
+        </label>
+
+        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          소개 문장
+          <textarea
+            value={popupDraft.description}
+            onChange={(e) => setPopupDraft((prev) => ({ ...prev, description: e.target.value }))}
+            className="h-24 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+          />
+        </label>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            하이라이트 (줄바꿈으로 구분)
+            <textarea
+              value={popupDraft.highlightsInput}
+              onChange={(e) =>
+                setPopupDraft((prev) => ({ ...prev, highlightsInput: e.target.value }))
+              }
+              className="h-32 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            상세 설명
+            <textarea
+              value={popupDraft.detailsInput}
+              onChange={(e) => setPopupDraft((prev) => ({ ...prev, detailsInput: e.target.value }))}
+              className="h-32 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            />
+          </label>
+        </div>
+
+        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          예약 링크 (선택)
+          <input
+            type="url"
+            value={popupDraft.reservationUrl}
+            onChange={(e) => setPopupDraft((prev) => ({ ...prev, reservationUrl: e.target.value }))}
+            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+          />
+        </label>
+
+        <div className="flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedPopupId(null);
+              setPopupDraft(createEmptyPopupDraft());
+            }}
+            className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+          >
+            새로 작성
+          </button>
+          <button
+            type="submit"
+            disabled={savingPopup}
+            className="rounded-full bg-hanBlue px-6 py-2 text-sm font-semibold text-white shadow transition hover:bg-dancheongNavy disabled:cursor-not-allowed disabled:bg-slate-400"
+          >
+            {savingPopup ? "저장 중..." : "저장하기"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+
   return (
     <main className="section-container space-y-10">
       <header className="space-y-4">
@@ -1249,6 +1651,16 @@ export default function AdminPage() {
           >
             한국어 프레이즈북
           </button>
+          <button
+            type="button"
+            onClick={() => {
+              setActiveSection("popups");
+              resetMessage();
+            }}
+            className={sectionTabClass("popups")}
+          >
+            팝업 레이더
+          </button>
         </div>
 
         {renderMessage()}
@@ -1263,6 +1675,7 @@ export default function AdminPage() {
           {activeSection === "trends" && renderTrendsSection()}
           {activeSection === "events" && renderEventsSection()}
           {activeSection === "phrases" && renderPhrasesSection()}
+          {activeSection === "popups" && renderPopupsSection()}
         </>
       )}
     </main>
