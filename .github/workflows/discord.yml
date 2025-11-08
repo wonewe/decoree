@@ -8,11 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send commit info to Discord
-        uses: Ilshidur/action-discord@master
-        with:
-          args: |
-            **${{ github.actor }}** pushed to `${{ github.repository }}`
-            Commit: ${{ github.event.head_commit.message }}
-            URL: <${{ github.event.head_commit.url }}>
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": \"💬 **${{ github.actor }}** pushed to `${{ github.repository }}`\n📝 Commit: ${{ github.event.head_commit.message }}\n🔗 <${{ github.event.head_commit.url }}>\"}" \
+            ${{ secrets.DISCORD_WEBHOOK }}
