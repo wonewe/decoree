@@ -58,6 +58,10 @@ npm run build
 3. Listez les emails autorisés dans `VITE_DECOREE_ADMIN_EMAILS` (séparés par des virgules). Ces comptes seront reconnus comme administrateurs et verront le lien “Studio Décorée”.
 4. Relancez `npm run dev` pour que Vite recharge la configuration. Rendez-vous sur `/login` ou `/signup` pour tester la connexion ; une fois authentifié, vous serez redirigé vers `/admin`.
 
+## Mode contenu statique
+
+Pour développer hors ligne ou sans projet Firebase, définissez `VITE_USE_STATIC_CONTENT=true` dans votre `.env`. Les repositories sauteront alors les requêtes Firestore et utiliseront instantanément les données mockées (ajout/mise à jour/suppression resteront indisponibles tant que Firebase n’est pas configuré).
+
 ## Stripe Checkout
 
 1. Créez une clé **Publishable** Stripe et renseignez `VITE_STRIPE_PUBLISHABLE_KEY`. Définissez également `VITE_STRIPE_CHECKOUT_ENDPOINT` (par défaut `/api/create-checkout-session`) et `VITE_STRIPE_PRICE_ID`. Activez le flux en production avec `VITE_STRIPE_ENABLED=true`.

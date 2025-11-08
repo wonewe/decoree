@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, type KeyboardEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import type { TrendIntensity, TrendReport } from "../../data/trends";
 import { useI18n } from "../../shared/i18n";
 import { getAuthorProfile } from "../../data/authors";
@@ -10,26 +10,43 @@ type TrendCardProps = {
 
 export function TrendCard({ report }: TrendCardProps) {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const author = getAuthorProfile(report.authorId);
   const [showSample, setShowSample] = useState(false);
 
   const publishedLabel = new Date(report.publishedAt).toLocaleDateString();
+  const goToDetail = () => {
+    navigate(`/trends/${report.id}`);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      goToDetail();
+    }
+  };
 
   return (
-    <article className="card">
-      <div className="flex flex-col gap-6 md:flex-row md:items-stretch">
-        <div className="flex-1 space-y-4">
+    <article
+      className="card cursor-pointer transition-[box-shadow,transform] hover:-translate-y-1 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-hanBlue"
+      role="button"
+      tabIndex={0}
+      onClick={goToDetail}
+      onKeyDown={handleKeyDown}
+    >
+      <div className="flex flex-col gap-4 md:flex-row md:items-stretch">
+        <div className="flex-1 space-y-3">
           <CardHeader
             intensity={report.intensity}
             publishedLabel={publishedLabel}
             isPremium={report.isPremium}
           />
-          <h3 className="text-xl font-semibold text-dancheongNavy">{report.title}</h3>
-          <p className="text-slate-600">{report.summary}</p>
+          <h3 className="text-lg font-semibold text-dancheongNavy">{report.title}</h3>
+          <p className="text-sm text-slate-600">{report.summary}</p>
           {author && (
             <AuthorMeta name={author.name} title={author.title} avatarUrl={author.avatarUrl} />
           )}
-          <div className="text-sm text-slate-500">
+          <div className="text-xs text-slate-500">
             <strong>{t("trendDetail.neighborhood")}:</strong> {report.neighborhood} •{" "}
             {report.tags.join(" · ")}
           </div>
@@ -42,20 +59,12 @@ export function TrendCard({ report }: TrendCardProps) {
           ) : (
             <p className="text-sm text-slate-700">{report.details}</p>
           )}
-          <div className="pt-2">
-            <Link
-              to={`/trends/${report.id}`}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-hanBlue hover:underline"
-            >
-              {t("trends.readMore")} →
-            </Link>
-          </div>
         </div>
-        <figure className="overflow-hidden rounded-2xl bg-slate-100 md:w-56 lg:w-64">
+        <figure className="overflow-hidden rounded-2xl bg-slate-100 md:w-40 lg:w-48">
           <img
             src={report.imageUrl}
             alt={report.title}
-            className="h-48 w-full object-cover md:h-full"
+            className="h-28 w-full object-cover md:h-full"
             loading="lazy"
           />
         </figure>
@@ -131,7 +140,10 @@ function PremiumPreview({ showSample, onUnlockSample, details }: PremiumPreviewP
       <p className="text-sm text-slate-600">{t("trends.unlock")}</p>
       <button
         className="mt-3 text-sm font-semibold text-hanBlue hover:underline"
-        onClick={onUnlockSample}
+        onClick={(event) => {
+          event.stopPropagation();
+          onUnlockSample();
+        }}
         type="button"
       >
         {t("trends.sample")}

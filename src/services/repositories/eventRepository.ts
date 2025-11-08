@@ -12,6 +12,7 @@ import { eventCollection } from "./firestoreClient";
 import { K_CULTURE_EVENTS, type KCultureEvent } from "../../data/events";
 import type { SupportedLanguage } from "../../shared/i18n";
 import { DEFAULT_LANGUAGE, ensureLanguage, filterByLanguage, stripLanguageMeta } from "./languageUtils";
+import { assertFirestoreAvailable, shouldUseStaticContent } from "./runtimeConfig";
 
 type WithTimestamps<T> = T & {
   createdAt?: Timestamp;
@@ -31,6 +32,9 @@ const toEvent = (docData: WithTimestamps<KCultureEvent>): KCultureEvent => {
 };
 
 export async function fetchEvents(language?: SupportedLanguage): Promise<KCultureEvent[]> {
+  if (shouldUseStaticContent()) {
+    return filterByLanguage(fallbackEvents, language);
+  }
   try {
     const snapshot = await getDocs(query(eventCollection, orderBy("date", "asc")));
     if (snapshot.empty) {
@@ -48,6 +52,9 @@ export async function fetchEvents(language?: SupportedLanguage): Promise<KCultur
 }
 
 export async function getEventById(id: string) {
+  if (shouldUseStaticContent()) {
+    return fallbackEvents.find((event) => event.id === id) ?? null;
+  }
   try {
     const snapshot = await getDoc(doc(eventCollection, id));
     if (snapshot.exists()) {
@@ -60,6 +67,7 @@ export async function getEventById(id: string) {
 }
 
 export async function addEvent(event: KCultureEvent) {
+  assertFirestoreAvailable("Adding an event");
   const id = event.id;
   const payload: KCultureEvent & { createdAt: Timestamp; updatedAt: Timestamp } = {
     ...event,
@@ -72,6 +80,7 @@ export async function addEvent(event: KCultureEvent) {
 }
 
 export async function updateEvent(event: KCultureEvent) {
+  assertFirestoreAvailable("Updating an event");
   await setDoc(
     doc(eventCollection, event.id),
     {
@@ -85,6 +94,7 @@ export async function updateEvent(event: KCultureEvent) {
 }
 
 export async function deleteEvent(id: string) {
+  assertFirestoreAvailable("Deleting an event");
   await deleteDoc(doc(eventCollection, id));
   return fetchEvents();
 }

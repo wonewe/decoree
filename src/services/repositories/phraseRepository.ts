@@ -10,6 +10,7 @@ import { phraseCollection } from "./firestoreClient";
 import { PHRASES, type Phrase } from "../../data/phrases";
 import type { SupportedLanguage } from "../../shared/i18n";
 import { DEFAULT_LANGUAGE, ensureLanguage, filterByLanguage, stripLanguageMeta } from "./languageUtils";
+import { assertFirestoreAvailable, shouldUseStaticContent } from "./runtimeConfig";
 
 type WithTimestamps<T> = T & {
   createdAt?: Timestamp;
@@ -25,6 +26,9 @@ const toPhrase = (docData: WithTimestamps<Phrase>): Phrase => {
 };
 
 export async function fetchPhrases(language?: SupportedLanguage): Promise<Phrase[]> {
+  if (shouldUseStaticContent()) {
+    return filterByLanguage(fallbackPhrases, language);
+  }
   try {
     const snapshot = await getDocs(phraseCollection);
     if (snapshot.empty) {
@@ -42,6 +46,9 @@ export async function fetchPhrases(language?: SupportedLanguage): Promise<Phrase
 }
 
 export async function getPhraseById(id: string) {
+  if (shouldUseStaticContent()) {
+    return fallbackPhrases.find((phrase) => phrase.id === id) ?? null;
+  }
   try {
     const snapshot = await getDoc(doc(phraseCollection, id));
     if (snapshot.exists()) {
@@ -54,6 +61,7 @@ export async function getPhraseById(id: string) {
 }
 
 export async function addPhrase(phrase: Phrase) {
+  assertFirestoreAvailable("Adding a phrase");
   const id = phrase.id;
   const payload: Phrase & { createdAt: Timestamp; updatedAt: Timestamp } = {
     ...phrase,
@@ -66,6 +74,7 @@ export async function addPhrase(phrase: Phrase) {
 }
 
 export async function updatePhrase(phrase: Phrase) {
+  assertFirestoreAvailable("Updating a phrase");
   await setDoc(
     doc(phraseCollection, phrase.id),
     {
@@ -79,6 +88,7 @@ export async function updatePhrase(phrase: Phrase) {
 }
 
 export async function deletePhrase(id: string) {
+  assertFirestoreAvailable("Deleting a phrase");
   await deleteDoc(doc(phraseCollection, id));
   return fetchPhrases();
 }

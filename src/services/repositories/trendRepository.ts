@@ -13,6 +13,7 @@ import { TREND_REPORTS, type TrendReport } from "../../data/trends";
 import { AUTHOR_PROFILES } from "../../data/authors";
 import type { SupportedLanguage } from "../../shared/i18n";
 import { DEFAULT_LANGUAGE, ensureLanguage, filterByLanguage } from "./languageUtils";
+import { assertFirestoreAvailable, shouldUseStaticContent } from "./runtimeConfig";
 
 const DEFAULT_AUTHOR_ID = AUTHOR_PROFILES[0]?.id ?? "decorée-team";
 
@@ -48,6 +49,9 @@ const toTrend = (docData: WithTimestamps<TrendReport>): TrendReport => {
 };
 
 export async function fetchTrendReports(language?: SupportedLanguage): Promise<TrendReport[]> {
+  if (shouldUseStaticContent()) {
+    return sortReports(filterByLanguage(fallbackTrends, language));
+  }
   try {
     const snapshot = await getDocs(query(trendCollection, orderBy("publishedAt", "desc")));
     if (snapshot.empty) {
@@ -65,6 +69,9 @@ export async function fetchTrendReports(language?: SupportedLanguage): Promise<T
 }
 
 export async function getTrendReportById(id: string) {
+  if (shouldUseStaticContent()) {
+    return fallbackTrends.find((report) => report.id === id) ?? null;
+  }
   try {
     const docRef = doc(trendCollection, id);
     const snapshot = await getDoc(docRef);
@@ -78,6 +85,7 @@ export async function getTrendReportById(id: string) {
 }
 
 export async function addTrendReport(report: TrendReport) {
+  assertFirestoreAvailable("Adding a trend report");
   const id = report.id;
   const payload: TrendReport & { createdAt: Timestamp; updatedAt: Timestamp } = {
     ...report,
@@ -91,6 +99,7 @@ export async function addTrendReport(report: TrendReport) {
 }
 
 export async function updateTrendReport(report: TrendReport) {
+  assertFirestoreAvailable("Updating a trend report");
   await setDoc(
     doc(trendCollection, report.id),
     {
@@ -105,6 +114,7 @@ export async function updateTrendReport(report: TrendReport) {
 }
 
 export async function deleteTrendReport(id: string) {
+  assertFirestoreAvailable("Deleting a trend report");
   await deleteDoc(doc(trendCollection, id));
   return fetchTrendReports();
 }

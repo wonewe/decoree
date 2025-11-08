@@ -12,6 +12,7 @@ import { popupCollection } from "./firestoreClient";
 import { POPUP_EVENTS, type PopupEvent } from "../../data/popups";
 import type { SupportedLanguage } from "../../shared/i18n";
 import { DEFAULT_LANGUAGE, ensureLanguage, filterByLanguage, stripLanguageMeta } from "./languageUtils";
+import { assertFirestoreAvailable, shouldUseStaticContent } from "./runtimeConfig";
 
 type WithTimestamps<T> = T & {
   createdAt?: Timestamp;
@@ -27,6 +28,9 @@ const toPopup = (docData: WithTimestamps<PopupEvent>): PopupEvent => {
 };
 
 export async function fetchPopups(language?: SupportedLanguage): Promise<PopupEvent[]> {
+  if (shouldUseStaticContent()) {
+    return filterByLanguage(fallbackPopups, language);
+  }
   try {
     const snapshot = await getDocs(query(popupCollection, orderBy("window", "asc")));
     if (snapshot.empty) {
@@ -44,6 +48,9 @@ export async function fetchPopups(language?: SupportedLanguage): Promise<PopupEv
 }
 
 export async function getPopupById(id: string) {
+  if (shouldUseStaticContent()) {
+    return fallbackPopups.find((popup) => popup.id === id) ?? null;
+  }
   try {
     const snapshot = await getDoc(doc(popupCollection, id));
     if (snapshot.exists()) {
@@ -56,6 +63,7 @@ export async function getPopupById(id: string) {
 }
 
 export async function addPopup(popup: PopupEvent) {
+  assertFirestoreAvailable("Adding a popup event");
   const payload: PopupEvent & { createdAt: Timestamp; updatedAt: Timestamp } = {
     ...popup,
     language: popup.language ?? DEFAULT_LANGUAGE,
@@ -67,6 +75,7 @@ export async function addPopup(popup: PopupEvent) {
 }
 
 export async function updatePopup(popup: PopupEvent) {
+  assertFirestoreAvailable("Updating a popup event");
   await setDoc(
     doc(popupCollection, popup.id),
     {
@@ -80,6 +89,7 @@ export async function updatePopup(popup: PopupEvent) {
 }
 
 export async function deletePopup(id: string) {
+  assertFirestoreAvailable("Deleting a popup event");
   await deleteDoc(doc(popupCollection, id));
   return fetchPopups();
 }
