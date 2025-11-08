@@ -3,6 +3,7 @@ import { useI18n } from "../shared/i18n";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useEffect, useRef, useState } from "react";
 import { useHeaderAuth } from "../hooks/useHeaderAuth";
+import { trackPageView } from "../shared/analytics";
 
 const exploreLinks = [
   { path: "/trends", labelKey: "nav.trends" },
@@ -41,6 +42,10 @@ export default function Layout() {
   useEffect(() => {
     setIsExploreOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    trackPageView(`${location.pathname}${location.search}`, document.title);
+  }, [location.pathname, location.search]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-100 to-white text-slate-900">
