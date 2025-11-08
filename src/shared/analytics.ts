@@ -27,7 +27,7 @@ export function initAnalytics() {
   };
 
   window.gtag("js", new Date());
-  window.gtag("config", MEASUREMENT_ID);
+  window.gtag("config", MEASUREMENT_ID, { debug_mode: true });
 
   const script = document.createElement("script");
   script.async = true;
@@ -53,6 +53,7 @@ export function trackPageView(path: string, title: string) {
   window.gtag("event", "page_view", {
     page_path: path,
     page_title: title,
-    send_to: MEASUREMENT_ID
+    send_to: MEASUREMENT_ID,
+    debug_mode: true
   });
 }
