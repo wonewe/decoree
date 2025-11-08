@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import type { TrendIntensity, TrendReport } from "../../data/trends";
 import { useI18n } from "../../shared/i18n";
 import { getAuthorProfile } from "../../data/authors";
+import { formatDate } from "../../shared/date";
 import { BookmarkButton } from "../bookmarks/BookmarkButton";
 
 type TrendCardProps = {
@@ -24,7 +25,7 @@ export function TrendCard({ report }: TrendCardProps) {
     href: `/trends/${report.id}`
   };
 
-  const publishedLabel = new Date(report.publishedAt).toLocaleDateString();
+  const publishedLabel = formatDate(report.publishedAt);
   const goToDetail = () => {
     navigate(`/trends/${report.id}`);
   };

@@ -5,6 +5,7 @@ import { getTrendReportById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
 import { usePremiumAccess } from "../shared/premiumAccess";
 import { getAuthorProfile } from "../data/authors";
+import { formatDate } from "../shared/date";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
 
 type Status = "idle" | "loading" | "success" | "not-found" | "error";
@@ -58,7 +59,7 @@ export default function TrendDetailPage() {
     );
   }
 
-  const published = new Date(report.publishedAt).toLocaleDateString();
+  const published = formatDate(report.publishedAt);
   const tagList = report.tags.join(" • ");
   const author = getAuthorProfile(report.authorId);
   const bookmarkItem = {
@@ -168,12 +169,9 @@ export default function TrendDetailPage() {
           </ul>
         </aside>
 
-        <div className="mt-12 flex justify-between gap-4">
+        <div className="mt-12 flex justify-end">
           <Link to="/trends" className="secondary-button">
             {t("trendDetail.backToList")}
-          </Link>
-          <Link to="/subscribe" className="primary-button">
-            {t("trendDetail.subscribeCta")}
           </Link>
         </div>
       </div>

@@ -6,17 +6,38 @@ import { EventCardSkeleton } from "./events/EventCardSkeleton";
 import { EventEmptyState } from "./events/EventEmptyState";
 import { useEventList } from "../hooks/useEventList";
 import { BookmarkButton } from "./bookmarks/BookmarkButton";
+import { formatDate } from "../shared/date";
 
 const CATEGORY_KEYS: EventCategory[] = ["concert", "traditional", "pop-up", "festival"];
 
 export default function EventCalendar() {
   const { t, language } = useI18n();
   const [activeCategory, setActiveCategory] = useState<EventCategory | "all">("all");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const { status, events, error } = useEventList(language);
 
   const filteredEvents = useMemo(() => {
-    return events.filter((event) => activeCategory === "all" || event.category === activeCategory);
-  }, [events, activeCategory]);
+    return events.filter((event) => {
+      if (activeCategory !== "all" && event.category !== activeCategory) {
+        return false;
+      }
+      const eventTimestamp = new Date(event.date).getTime();
+      if (startDate) {
+        const startTimestamp = new Date(startDate).getTime();
+        if (Number.isFinite(startTimestamp) && eventTimestamp < startTimestamp) {
+          return false;
+        }
+      }
+      if (endDate) {
+        const endTimestamp = new Date(endDate).getTime();
+        if (Number.isFinite(endTimestamp) && eventTimestamp > endTimestamp) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [events, activeCategory, startDate, endDate]);
 
   const showGrid = status === "success" && filteredEvents.length > 0;
   const showEmpty = status === "success" && filteredEvents.length === 0;
@@ -53,6 +74,42 @@ export default function EventCalendar() {
         </div>
       )}
 
+      <div className="space-y-3 rounded-3xl bg-white p-4 shadow">
+        <div className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+          {t("events.dateFilter.title")}
+        </div>
+        <div className="grid gap-4 md:grid-cols-[repeat(2,minmax(0,1fr))_auto]">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            {t("events.dateFilter.start")}
+            <input
+              type="date"
+              value={startDate}
+              onChange={(event) => setStartDate(event.target.value)}
+              className="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            {t("events.dateFilter.end")}
+            <input
+              type="date"
+              value={endDate}
+              onChange={(event) => setEndDate(event.target.value)}
+              className="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => {
+              setStartDate("");
+              setEndDate("");
+            }}
+            className="self-end rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-dancheongRed hover:text-dancheongRed"
+          >
+            {t("events.dateFilter.reset")}
+          </button>
+        </div>
+      </div>
+
       {showGrid && (
         <div className="grid gap-6 md:grid-cols-2">
           {filteredEvents.map((event) => (
@@ -60,7 +117,7 @@ export default function EventCalendar() {
               <div className="flex items-start justify-between gap-3 text-sm text-slate-500">
                 <div>
                   <span>
-                    {new Date(event.date).toLocaleDateString()} · {event.time}
+                    {formatDate(event.date)} · {event.time}
                   </span>
                   <span className="ml-2 inline-flex rounded-full bg-slate-100 px-3 py-1">
                     {t(`event.eventCategory.${event.category}`)}

@@ -12,7 +12,7 @@ export default {
       },
       fontFamily: {
         heading: ["\"Pretendard\"", "system-ui", "sans-serif"],
-        body: ["\"Noto Sans\"", "system-ui", "sans-serif"]
+        body: ["\"Pretendard\"", "system-ui", "sans-serif"]
       }
     }
   },

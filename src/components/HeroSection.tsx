@@ -70,16 +70,16 @@ export default function HeroSection() {
             </div>
           </div>
         </div>
-        <section className="space-y-6 rounded-3xl bg-white/70 p-6 shadow-lg backdrop-blur md:p-8">
-          <h2 className="text-lg font-semibold uppercase tracking-wide text-slate-500">
+        <section className="space-y-4 rounded-3xl border border-white/40 bg-white/30 p-5 shadow-lg backdrop-blur">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-900">
             {t("hero.highlights.title")}
           </h2>
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-3 md:grid-cols-2">
             {highlights.map((item) => (
               <Link
                 key={item.title}
                 to={item.to}
-                className="group relative overflow-hidden rounded-3xl shadow-lg transition duration-200 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:shadow-2xl hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                className="group relative overflow-hidden rounded-2xl border border-white/30 bg-white/10 shadow transition duration-200 ease-out hover:-translate-y-1 hover:shadow-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
               >
                 <div className="absolute inset-0">
                   <img
@@ -92,18 +92,12 @@ export default function HeroSection() {
                     className={`absolute inset-0 bg-gradient-to-br ${item.accent} backdrop-blur-sm`}
                   ></div>
                 </div>
-                <div className="relative flex min-h-[220px] flex-col justify-between p-5 text-white lg:p-6">
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <h3 className="text-2xl font-semibold leading-tight">
-                        {item.title}
-                      </h3>
-                      <p className="text-sm text-white/80 opacity-0 transition duration-200 group-hover:opacity-100 group-hover:drop-shadow">
-                        {item.description}
-                      </p>
-                    </div>
+                <div className="relative flex min-h-[160px] flex-col justify-between p-4 text-white">
+                  <div>
+                    <h3 className="text-lg font-semibold leading-tight">{item.title}</h3>
+                    <p className="mt-1 text-xs text-white/75">{item.description}</p>
                   </div>
-                  <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white/90 transition duration-200 group-hover:translate-x-0 translate-x-2">
+                  <span className="inline-flex items-center gap-2 text-xs font-semibold text-white/90 transition duration-200 group-hover:translate-x-0 translate-x-2">
                     {t("hero.highlights.cta")} →
                   </span>
                 </div>

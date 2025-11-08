@@ -4,6 +4,7 @@ import { TREND_REPORTS } from "../data/trends";
 import { K_CULTURE_EVENTS } from "../data/events";
 import { PHRASES } from "../data/phrases";
 import { useI18n } from "../shared/i18n";
+import { formatDate } from "../shared/date";
 
 type SpotlightKey = "trend" | "event" | "phrase";
 
@@ -40,7 +41,7 @@ export default function HeroSpotlight() {
         tag: t("hero.spotlight.tag.trend"),
         title: trend.title,
         description: trend.summary,
-        meta: `${trend.neighborhood} • ${new Date(trend.publishedAt).toLocaleDateString()}`,
+        meta: `${trend.neighborhood} • ${formatDate(trend.publishedAt)}`,
         imageUrl: trend.imageUrl,
         cta: t("hero.spotlight.cta.trend"),
         to: `/trends/${trend.id}`
@@ -50,7 +51,7 @@ export default function HeroSpotlight() {
         tag: t("hero.spotlight.tag.event"),
         title: event.title,
         description: event.description,
-        meta: `${new Date(event.date).toLocaleDateString()} • ${event.location}`,
+        meta: `${formatDate(event.date)} • ${event.location}`,
         imageUrl: event.imageUrl,
         cta: t("hero.spotlight.cta.event"),
         to: `/events/${event.id}`

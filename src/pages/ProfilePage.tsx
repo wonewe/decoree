@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../shared/auth";
 import { useI18n } from "../shared/i18n";
 import { useBookmarks } from "../shared/bookmarks";
+import { formatDate } from "../shared/date";
 
 type FormStatus = "idle" | "saving" | "success" | "error";
 
@@ -50,12 +51,8 @@ export default function ProfilePage() {
     }
   };
 
-  const createdAt = user.metadata?.creationTime
-    ? new Date(user.metadata.creationTime).toLocaleDateString()
-    : null;
-  const lastLogin = user.metadata?.lastSignInTime
-    ? new Date(user.metadata.lastSignInTime).toLocaleDateString()
-    : null;
+  const createdAt = user.metadata?.creationTime ? formatDate(user.metadata.creationTime) : null;
+  const lastLogin = user.metadata?.lastSignInTime ? formatDate(user.metadata.lastSignInTime) : null;
 
   const sortedBookmarks = useMemo(
     () =>
@@ -194,7 +191,7 @@ export default function ProfilePage() {
               >
                 <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-400">
                   <span>{t(`bookmarks.type.${bookmark.type}`)}</span>
-                  <span>{new Date(bookmark.savedAt).toLocaleDateString()}</span>
+                  <span>{formatDate(bookmark.savedAt)}</span>
                 </div>
                 <h3 className="text-lg font-semibold text-dancheongNavy">{bookmark.title}</h3>
                 {bookmark.summary && (
