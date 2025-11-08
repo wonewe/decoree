@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: Send commit info to Discord
         run: |
-          curl -H "Content-Type: application/json" \
-            -X POST \
-            -d "{\"content\": \"💬 **${{ github.actor }}** pushed to `${{ github.repository }}`\n📝 Commit: ${{ github.event.head_commit.message }}\n🔗 <${{ github.event.head_commit.url }}>\"}" \
-            ${{ secrets.DISCORD_WEBHOOK }}
+          echo "Sending Discord notification..."
+          curl -X POST -H "Content-Type: application/json" \
+          -d "{\"content\":\"**${{ github.actor }}** pushed to \`${{ github.repository }}\`%0A📝 Commit: ${{ github.event.head_commit.message }}%0A🔗 <${{ github.event.head_commit.url }}>\"}" \
+          "${{ secrets.DISCORD_WEBHOOK }}"
