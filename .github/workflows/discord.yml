@@ -1,8 +1,8 @@
 name: Discord Commit Notify
 on:
-  push:        
+  push:
     branches:
-      - main  
+      - main
 jobs:
   notify:
     runs-on: ubuntu-latest
