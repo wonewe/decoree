@@ -6,6 +6,7 @@ declare global {
 }
 
 const MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
+console.log("[GA] check env:", MEASUREMENT_ID);
 let isLoaded = false;
 let initPromise: Promise<void> | null = null;
 const pendingEvents: Array<{ path: string; title?: string }> = [];
