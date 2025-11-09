@@ -5,14 +5,15 @@ declare global {
   }
 }
 
-const MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
+const GTAG_ID =
+  import.meta.env.VITE_GTM_CONTAINER_ID ?? import.meta.env.VITE_GA_MEASUREMENT_ID ?? "GT-M6JL3T4B";
 let gtagReady = false;
 const pendingEvents: Array<{ path: string; title?: string }> = [];
 
 export function initAnalytics(): Promise<void> {
   return new Promise((resolve) => {
-    if (typeof window === "undefined" || !MEASUREMENT_ID) {
-      console.warn("[GA] init skipped - no window or measurement id");
+    if (typeof window === "undefined" || !GTAG_ID) {
+      console.warn("[GA] init skipped - no window or gtag id");
       resolve();
       return;
     }
@@ -36,11 +37,11 @@ export function initAnalytics(): Promise<void> {
 
     const script = document.createElement("script");
     script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GTAG_ID}`;
     script.onload = () => {
       console.info("[GA] gtag loaded and initialized");
       window.gtag?.("js", new Date());
-      window.gtag?.("config", MEASUREMENT_ID, { debug_mode: true });
+      window.gtag?.("config", GTAG_ID, { debug_mode: true });
       gtagReady = true;
       flushPendingEvents();
       resolve();
@@ -64,7 +65,7 @@ export function trackPageView(path: string, title?: string) {
   window.gtag("event", "page_view", {
     page_path: path,
     page_title: title ?? document.title,
-    send_to: MEASUREMENT_ID
+    send_to: GTAG_ID
   });
   console.info("[GA] page_view sent", { path });
 }
