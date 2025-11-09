@@ -8,6 +8,7 @@ declare global {
 const MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 let isLoaded = false;
 let initPromise: Promise<void> | null = null;
+const pendingEvents: Array<{ path: string; title?: string }> = [];
 
 export function initAnalytics() {
   if (typeof window === "undefined" || !MEASUREMENT_ID) {
@@ -37,6 +38,7 @@ export function initAnalytics() {
       window.gtag("js", new Date());
       window.gtag("config", MEASUREMENT_ID, { debug_mode: true });
       isLoaded = true;
+      flushPendingEvents();
       resolve();
     };
     script.onerror = (error) => {
@@ -51,14 +53,13 @@ export function initAnalytics() {
 
 export function trackPageView(path: string, title: string) {
   if (typeof window === "undefined" || !window.gtag || !MEASUREMENT_ID) {
-    if (typeof window !== "undefined") {
-      console.warn("[GA] track skipped", {
-        hasGtag: Boolean(window.gtag),
-        measurementId: MEASUREMENT_ID,
-        path,
-        title
-      });
-    }
+    pendingEvents.push({ path, title });
+    console.warn("[GA] track queued (gtag not ready)", {
+      hasGtag: typeof window !== "undefined" ? Boolean(window.gtag) : false,
+      measurementId: MEASUREMENT_ID,
+      path,
+      title
+    });
     return;
   }
   window.gtag("event", "page_view", {
@@ -67,4 +68,18 @@ export function trackPageView(path: string, title: string) {
     send_to: MEASUREMENT_ID,
     debug_mode: true
   });
+}
+
+function flushPendingEvents() {
+  if (!window.gtag) return;
+  while (pendingEvents.length > 0) {
+    const event = pendingEvents.shift();
+    if (!event) break;
+    window.gtag("event", "page_view", {
+      page_path: event.path,
+      page_title: event.title ?? document.title,
+      send_to: MEASUREMENT_ID,
+      debug_mode: true
+    });
+  }
 }
