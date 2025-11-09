@@ -9,22 +9,23 @@ import { PremiumAccessProvider } from "./shared/premiumAccess";
 import { initAnalytics, trackPageView } from "./shared/analytics";
 import "./styles/index.css";
 
-initAnalytics().then(() => {
+(async () => {
+  await initAnalytics();
   trackPageView(window.location.pathname + window.location.search, document.title);
-});
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <BookmarkProvider>
-          <PremiumAccessProvider>
-            <I18nProvider>
-              <App />
-            </I18nProvider>
-          </PremiumAccessProvider>
-        </BookmarkProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>
-);
+  ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+    <React.StrictMode>
+      <BrowserRouter>
+        <AuthProvider>
+          <BookmarkProvider>
+            <PremiumAccessProvider>
+              <I18nProvider>
+                <App />
+              </I18nProvider>
+            </PremiumAccessProvider>
+          </BookmarkProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </React.StrictMode>
+  );
+})();

@@ -6,81 +6,75 @@ declare global {
 }
 
 const MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
-console.log("[GA] check env:", MEASUREMENT_ID);
-let isLoaded = false;
-let initPromise: Promise<void> | null = null;
+let gtagReady = false;
 const pendingEvents: Array<{ path: string; title?: string }> = [];
 
-export function initAnalytics() {
-  if (typeof window === "undefined" || !MEASUREMENT_ID) {
-    console.warn("[GA] init skipped - no window or measurement id");
-    return Promise.resolve();
-  }
+export function initAnalytics(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined" || !MEASUREMENT_ID) {
+      console.warn("[GA] init skipped - no window or measurement id");
+      resolve();
+      return;
+    }
 
-  if (isLoaded) {
-    return Promise.resolve();
-  }
+    if (gtagReady) {
+      resolve();
+      return;
+    }
 
-  if (initPromise) {
-    return initPromise;
-  }
+    if (typeof window.gtag === "function") {
+      gtagReady = true;
+      resolve();
+      return;
+    }
 
-  initPromise = new Promise<void>((resolve) => {
+    window.dataLayer = window.dataLayer || [];
+    function gtag(...args: unknown[]) {
+      window.dataLayer?.push(args);
+    }
+    window.gtag = gtag;
+
     const script = document.createElement("script");
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
     script.onload = () => {
-      console.info("[GA] script loaded, initializing gtag");
-      window.dataLayer = window.dataLayer || [];
-      function gtag(...args: unknown[]) {
-        window.dataLayer?.push(args);
-      }
-      window.gtag = gtag;
-      window.gtag("js", new Date());
-      window.gtag("config", MEASUREMENT_ID, { debug_mode: true });
-      isLoaded = true;
+      console.info("[GA] gtag loaded and initialized");
+      window.gtag?.("js", new Date());
+      window.gtag?.("config", MEASUREMENT_ID, { debug_mode: true });
+      gtagReady = true;
       flushPendingEvents();
       resolve();
     };
-    script.onerror = (error) => {
-      console.error("[GA] script failed to load", error);
+    script.onerror = (err) => {
+      console.error("[GA] script failed to load", err);
       resolve();
     };
+
     document.head.appendChild(script);
   });
-
-  return initPromise;
 }
 
-export function trackPageView(path: string, title: string) {
-  if (typeof window === "undefined" || !window.gtag || !MEASUREMENT_ID) {
+export function trackPageView(path: string, title?: string) {
+  if (!gtagReady || typeof window.gtag !== "function") {
+    console.warn("[GA] gtag not ready, event queued", { path, title });
     pendingEvents.push({ path, title });
-    console.warn("[GA] track queued (gtag not ready)", {
-      hasGtag: typeof window !== "undefined" ? Boolean(window.gtag) : false,
-      measurementId: MEASUREMENT_ID,
-      path,
-      title
-    });
     return;
   }
+
   window.gtag("event", "page_view", {
     page_path: path,
-    page_title: title,
-    send_to: MEASUREMENT_ID,
-    debug_mode: true
+    page_title: title ?? document.title,
+    send_to: MEASUREMENT_ID
   });
+  console.info("[GA] page_view sent", { path });
 }
 
 function flushPendingEvents() {
-  if (!window.gtag) return;
+  console.info(`[GA] flushing ${pendingEvents.length} queued events`);
   while (pendingEvents.length > 0) {
-    const event = pendingEvents.shift();
-    if (!event) break;
-    window.gtag("event", "page_view", {
-      page_path: event.path,
-      page_title: event.title ?? document.title,
-      send_to: MEASUREMENT_ID,
-      debug_mode: true
-    });
+    const ev = pendingEvents.shift();
+    if (ev) {
+      trackPageView(ev.path, ev.title);
+    }
   }
 }
