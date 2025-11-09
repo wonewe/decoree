@@ -20,22 +20,22 @@ export function initAnalytics() {
     return;
   }
 
-  console.info("[GA] init start", MEASUREMENT_ID);
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function gtag(...args: unknown[]) {
-    window.dataLayer?.push(args);
-  };
-
-  window.gtag("js", new Date());
-  window.gtag("config", MEASUREMENT_ID, { debug_mode: true });
-
   const script = document.createElement("script");
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${MEASUREMENT_ID}`;
-  document.head.appendChild(script);
+  script.onload = () => {
+    console.info("[GA] script loaded, initializing gtag");
+    window.dataLayer = window.dataLayer || [];
+    function gtag(...args: unknown[]) {
+      window.dataLayer?.push(args);
+    }
+    window.gtag = gtag;
+    window.gtag("js", new Date());
+    window.gtag("config", MEASUREMENT_ID, { debug_mode: true });
+  };
 
+  document.head.appendChild(script);
   isLoaded = true;
-  console.info("[GA] gtag script appended");
 }
 
 export function trackPageView(path: string, title: string) {
