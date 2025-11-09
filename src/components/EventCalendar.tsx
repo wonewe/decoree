@@ -111,18 +111,40 @@ export default function EventCalendar() {
       </div>
 
       {showGrid && (
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 lg:grid-cols-3">
           {filteredEvents.map((event) => (
-            <article key={event.id} className="card space-y-4">
-              <div className="flex items-start justify-between gap-3 text-sm text-slate-500">
-                <div>
-                  <span>
-                    {formatDate(event.date)} · {event.time}
-                  </span>
-                  <span className="ml-2 inline-flex rounded-full bg-slate-100 px-3 py-1">
-                    {t(`event.eventCategory.${event.category}`)}
-                  </span>
-                </div>
+            <article
+              key={event.id}
+              className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <div className="flex items-start justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <span>
+                  {formatDate(event.date)} · {event.time}
+                </span>
+                <span>{t(`event.eventCategory.${event.category}`)}</span>
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold text-dancheongNavy">{event.title}</h3>
+                <p className="text-sm text-slate-600 line-clamp-3">{event.description}</p>
+              </div>
+              <div className="flex flex-col gap-1 text-sm text-slate-500">
+                <span>{event.location}</span>
+                <span className="font-semibold text-slate-700">{event.price}</span>
+              </div>
+              <div className="mt-auto flex flex-wrap items-center gap-3 text-sm font-semibold">
+                <Link to={`/events/${event.id}`} className="text-hanBlue hover:underline">
+                  {t("eventDetail.readMore")} →
+                </Link>
+                {event.bookingUrl && (
+                  <a
+                    href={event.bookingUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-slate-500 hover:text-hanBlue"
+                  >
+                    {t("eventDetail.bookingCta")}
+                  </a>
+                )}
                 <BookmarkButton
                   size="sm"
                   item={{
@@ -136,30 +158,6 @@ export default function EventCalendar() {
                   }}
                 />
               </div>
-              <div>
-                <h3 className="text-xl font-semibold text-dancheongNavy">{event.title}</h3>
-                <p className="mt-2 text-slate-600">{event.description}</p>
-              </div>
-              <div className="flex items-center justify-between text-sm text-slate-500">
-                <span>{event.location}</span>
-                <span className="font-semibold text-hanBlue">{event.price}</span>
-              </div>
-              <Link
-                to={`/events/${event.id}`}
-                className="inline-flex items-center text-sm font-semibold text-hanBlue hover:underline"
-              >
-                {t("eventDetail.readMore")} →
-              </Link>
-              {event.bookingUrl && (
-                <a
-                  href={event.bookingUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center text-sm font-semibold text-hanBlue hover:underline"
-                >
-                  {t("eventDetail.bookingCta")}
-                </a>
-              )}
             </article>
           ))}
         </div>

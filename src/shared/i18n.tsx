@@ -116,6 +116,7 @@ const translations: TranslationDictionary = {
       "trends.unlock": "Débloquer via l'abonnement",
       "trends.sample": "Voir un extrait gratuit",
       "trends.readMore": "Lire le reportage",
+      "trends.viewAll": "Voir toutes les tendances",
       "trends.byline": "Par {author}",
       "events.title": "K-Culture Event Calendar",
       "events.subtitle":
@@ -566,6 +567,7 @@ const translations: TranslationDictionary = {
       "trends.unlock": "구독으로 전체 보기",
       "trends.sample": "무료 미리보기",
       "trends.readMore": "자세히 보기",
+      "trends.viewAll": "모든 트렌드 보기",
       "trends.byline": "{author} 작성",
       "events.title": "K-컬처 이벤트 캘린더",
       "events.subtitle": "여행 일정에 맞는 공연, 축제, 팝업을 검색하세요.",
@@ -1000,6 +1002,7 @@ const translations: TranslationDictionary = {
       "trends.unlock": "購読して全て読む",
       "trends.sample": "無料サンプルを見る",
       "trends.readMore": "レポートを読む",
+      "trends.viewAll": "すべてのトレンドを見る",
       "trends.byline": "{author} が執筆",
       "events.title": "Kカルチャー イベントカレンダー",
       "events.subtitle": "旅の日程に合わせてコンサート、フェス、ポップアップを検索。",
@@ -1435,6 +1438,7 @@ const translations: TranslationDictionary = {
       "trends.unlock": "Unlock with premium",
       "trends.sample": "View sample",
       "trends.readMore": "Read more",
+      "trends.viewAll": "See all trends",
       "trends.byline": "By {author}",
       "events.title": "K-Culture Event Calendar",
       "events.subtitle":
