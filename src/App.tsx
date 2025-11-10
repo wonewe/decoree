@@ -17,6 +17,12 @@ import ProfilePage from "./pages/ProfilePage";
 import LocalizedLandingPage from "./pages/LocalizedLandingPage";
 import PopupRadarPage from "./pages/PopupRadarPage";
 import PopupDetailPage from "./pages/PopupDetailPage";
+import PublicServicesGuidePage from "./pages/PublicServicesGuidePage";
+import PublicServiceDetailPage from "./pages/PublicServiceDetailPage";
+import AppTutorialHubPage from "./pages/AppTutorialHubPage";
+import AppTutorialDetailPage from "./pages/AppTutorialDetailPage";
+import StudentCommunityPage from "./pages/StudentCommunityPage";
+import CommunityBoardDetailPage from "./pages/CommunityBoardDetailPage";
 
 export default function App() {
   return (
@@ -29,6 +35,12 @@ export default function App() {
         <Route path="/events" element={<EventsPage />} />
         <Route path="/events/:id" element={<EventDetailPage />} />
         <Route path="/phrasebook" element={<PhrasebookPage />} />
+        <Route path="/local-support/services" element={<PublicServicesGuidePage />} />
+        <Route path="/local-support/services/:id" element={<PublicServiceDetailPage />} />
+        <Route path="/local-support/apps" element={<AppTutorialHubPage />} />
+        <Route path="/local-support/apps/:id" element={<AppTutorialDetailPage />} />
+        <Route path="/local-support/community" element={<StudentCommunityPage />} />
+        <Route path="/local-support/community/:id" element={<CommunityBoardDetailPage />} />
         <Route path="/culture-test" element={<CultureTestPage />} />
         <Route path="/popups" element={<PopupRadarPage />} />
         <Route path="/popups/:id" element={<PopupDetailPage />} />
