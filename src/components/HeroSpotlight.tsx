@@ -4,6 +4,7 @@ import { TREND_REPORTS } from "../data/trends";
 import { K_CULTURE_EVENTS } from "../data/events";
 import { PHRASES } from "../data/phrases";
 import { useI18n } from "../shared/i18n";
+import { BLANK_IMAGE } from "../shared/placeholders";
 import { formatDate } from "../shared/date";
 
 type SpotlightKey = "trend" | "event" | "phrase";
@@ -19,8 +20,7 @@ type Spotlight = {
   to: string;
 };
 
-const FALLBACK_PHRASE_IMAGE =
-  "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1600&q=80";
+const FALLBACK_PHRASE_IMAGE = BLANK_IMAGE;
 
 export default function HeroSpotlight() {
   const { t, language } = useI18n();

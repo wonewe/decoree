@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useI18n } from "../shared/i18n";
+import { BLANK_IMAGE } from "../shared/placeholders";
 
 export default function HeroSection() {
   const { t } = useI18n();
@@ -8,32 +9,28 @@ export default function HeroSection() {
       title: t("hero.highlights.trends.title"),
       description: t("hero.highlights.trends.description"),
       to: "/trends",
-      image:
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+      image: BLANK_IMAGE,
       accent: "from-black/70 via-black/20 to-transparent"
     },
     {
       title: t("hero.highlights.events.title"),
       description: t("hero.highlights.events.description"),
       to: "/events",
-      image:
-        "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=1200&q=80",
+      image: BLANK_IMAGE,
       accent: "from-hanBlue/70 via-hanBlue/30 to-transparent"
     },
     {
       title: t("hero.highlights.phrasebook.title"),
       description: t("hero.highlights.phrasebook.description"),
       to: "/phrasebook",
-      image:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=1200&q=80",
+      image: BLANK_IMAGE,
       accent: "from-dancheongGreen/70 via-dancheongGreen/30 to-transparent"
     },
     {
       title: t("hero.highlights.popups.title"),
       description: t("hero.highlights.popups.description"),
       to: "/popups",
-      image:
-        "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80",
+      image: BLANK_IMAGE,
       accent: "from-dancheongYellow/70 via-dancheongYellow/30 to-transparent"
     }
   ] as const;

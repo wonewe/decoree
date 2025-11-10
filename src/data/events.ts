@@ -1,4 +1,5 @@
 import type { SupportedLanguage } from "../shared/i18n";
+import { BLANK_IMAGE } from "../shared/placeholders";
 
 export type EventCategory = "concert" | "traditional" | "pop-up" | "festival";
 
@@ -30,8 +31,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     location: "KSPO Dome, Séoul",
     category: "concert",
     price: "89€",
-    imageUrl:
-      "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     longDescription: [
       "La tournée Hyperline d'Aespa transforme le KSPO Dome en terrain de jeu immersif : zones VR, chorégraphies interactives et merchandising en édition limitée.",
       "Les portes ouvrent à 17h. Réservez votre créneau VR via l'app SM Town pour éviter la file. Les billets VIP incluent un mini meet & greet de 5 minutes."
@@ -53,8 +53,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     category: "traditional",
     price: "49€",
     bookingUrl: "https://example.com/bukchon-night",
-    imageUrl:
-      "https://images.unsplash.com/photo-1560944527-a4a429848866?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     longDescription: [
       "Découvrez Bukchon de nuit avec un hanbok premium, un stylisme express et un photographe francophone qui guide chaque pose.",
       "Le parcours inclut Samcheongdong-gil, la ruelle des toits et un salon de thé caché où déguster des tisanes coréennes."
@@ -75,8 +74,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     location: "Seongsu Silo Lab, Séoul",
     category: "pop-up",
     price: "35€",
-    imageUrl:
-      "https://images.unsplash.com/photo-1514516345957-556ca7d90a8f?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     longDescription: [
       "Le maître brasseur Kim Min-su partage les secrets du makgeolli avant de proposer des accords inattendus avec des fromages importés.",
       "Les participants terminent par un mini-lab : toppings yuzu, basilic asiatique ou gingembre pour créer leur propre cuvée."
@@ -97,8 +95,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     location: "한강 반포 야외무대",
     category: "festival",
     price: "무료 입장",
-    imageUrl:
-      "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     longDescription: [
       "썸머 뮤직 페스트는 반포 야외무대에서 진행되는 야간 음악축제로, 로컬 인디 밴드와 DJ가 번갈아 무대를 채웁니다.",
       "돗자리 대여와 푸드트럭이 운영되어 느긋한 피크닉 분위기를 즐길 수 있습니다. Decorée 구독자는 사운드 체크 투어에 참여 가능합니다."
@@ -120,8 +117,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     category: "pop-up",
     price: "55,000원",
     bookingUrl: "https://example.com/jeju-tea",
-    imageUrl:
-      "https://images.unsplash.com/photo-1505577058444-a3dab90d4253?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     longDescription: [
       "서귀포에 위치한 비공개 다원에서 티마스터가 제주산 녹차와 허브를 소개하고 블렌딩 기초를 알려드립니다.",
       "블렌딩을 마친 뒤에는 초록빛 다원을 바라보며 차와 디저트를 즐기는 티 타임이 이어집니다."
@@ -143,8 +139,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     category: "festival",
     price: "前売り 3,500円",
     bookingUrl: "https://example.com/osaka-kmarket",
-    imageUrl:
-      "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     longDescription: [
       "韓国カルチャーを総合的に体験できるマーケット。最新コスメやファッションブランドのポップアップが集結します。",
       "ステージではドラマOSTライブやKカルチャートーク、日本語通訳付きのワークショップが行われます。"
@@ -165,8 +160,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     location: "京都 東山エリア",
     category: "traditional",
     price: "8,900円",
-    imageUrl:
-      "https://images.unsplash.com/photo-1545239351-ef35f43d514b?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     longDescription: [
       "韓服スタイリストが着付けを担当し、韓国と日本の文化をつなぐナイトツアー。寺院の特別ライトアップを日本語の解説付きで堪能できます。",
       "後半は韓国茶サロンでティータイム。韓国伝統菓子とともに余韻を味わえます。"
@@ -187,8 +181,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     location: "Dongdaemun Design Plaza, Seoul",
     category: "festival",
     price: "Free entry",
-    imageUrl:
-      "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     longDescription: [
       "Surf limited print runs, talk to indie editors and join mini-workshops on binding or Seoul neighbourhood storytelling.",
       "Decorée curates an English-friendly circuit highlighting bilingual creators and ateliers shipping worldwide."
@@ -210,8 +203,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     category: "concert",
     price: "79,000 KRW",
     bookingUrl: "https://example.com/busan-jazz-cruise",
-    imageUrl:
-      "https://images.unsplash.com/photo-1513614806822-25702fa214ac?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     longDescription: [
       "Boarding begins 30 minutes before sunset with a welcome drink curated by a local distillery.",
       "Three live sets accompany the cruise, blending K-jazz standards and reimagined OST themes. Premium seating includes a captain’s deck tasting flight."

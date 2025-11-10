@@ -1,4 +1,5 @@
 import type { SupportedLanguage } from "../shared/i18n";
+import { BLANK_IMAGE } from "../shared/placeholders";
 
 export type PopupStatus = "now" | "soon";
 
@@ -28,10 +29,8 @@ export const POPUP_EVENTS: PopupEvent[] = [
     window: "2024.06.01 - 06.24 • 11:00-20:00",
     status: "now",
     location: "Layered 성수 2F",
-    posterUrl:
-      "https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80",
-    heroImageUrl:
-      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1600&q=80",
+    posterUrl: BLANK_IMAGE,
+    heroImageUrl: BLANK_IMAGE,
     tags: ["capsule", "dessert", "limited"],
     description:
       "아이웨어 캡슐과 한정 디저트를 동시에 공개하는 팝업. 선착순 30명에게 실크스크린 토트를 증정합니다.",
@@ -54,10 +53,8 @@ export const POPUP_EVENTS: PopupEvent[] = [
     window: "2024.06.20 - 06.28 • 12:00-21:00",
     status: "now",
     location: "뚝섬로 8길 스탠드오일 아카이브",
-    posterUrl:
-      "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?auto=format&fit=crop&w=1200&q=80",
-    heroImageUrl:
-      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1600&q=80",
+    posterUrl: BLANK_IMAGE,
+    heroImageUrl: BLANK_IMAGE,
     tags: ["design", "workshop", "upcycling"],
     description:
       "가방 커스터마이징과 업사이클 코너, 15시 포스트카드 스탬프 세션으로 구성된 마켓.",
@@ -80,10 +77,8 @@ export const POPUP_EVENTS: PopupEvent[] = [
     window: "2024.07.05 오픈 • 18:00-23:00",
     status: "soon",
     location: "성수로 7 OR.EO 루프탑",
-    posterUrl:
-      "https://images.unsplash.com/photo-1529333166437-1c1f6db0ed76?auto=format&fit=crop&w=1200&q=80",
-    heroImageUrl:
-      "https://images.unsplash.com/photo-1529333166437-1c1f6db0ed76?auto=format&fit=crop&w=1600&q=80",
+    posterUrl: BLANK_IMAGE,
+    heroImageUrl: BLANK_IMAGE,
     tags: ["nightlife", "playlist", "zero-proof"],
     description:
       "논알콜 칵테일과 성수 뷰가 있는 리스닝 바. 로컬 DJ 플레이리스트를 라이브로 감상하세요.",

@@ -20,16 +20,14 @@ export const AUTHOR_PROFILES: AuthorProfile[] = [
     name: "Dongha Lee",
     title: "Marketing Specialist",
     bio: "French market Marketing Specialist at Decorée",
-    avatarUrl:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80"
+    avatarUrl: ""
   },
   {
     id: "Taeho-ahn",
     name: "Taeho Ahn",
     title: "Japanese Contents Editor",
     bio: "Japanese Contents Editor at Decorée",
-    avatarUrl:
-      "https://images.unsplash.com/photo-1524504385544-6b70041f87f2?auto=format&fit=crop&w=400&q=80"
+    avatarUrl: ""
   },
 ];
 

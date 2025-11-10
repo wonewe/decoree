@@ -1,4 +1,5 @@
 import type { SupportedLanguage } from "../shared/i18n";
+import { BLANK_IMAGE } from "../shared/placeholders";
 
 export type TrendIntensity = "highlight" | "insider" | "emerging";
 
@@ -32,8 +33,7 @@ export const TREND_REPORTS: TrendReport[] = [
     intensity: "highlight",
     isPremium: false,
     publishedAt: "2024-06-03",
-    imageUrl:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     content: [
       "Les berges du fleuve Han deviennent un terrain de jeu pour les créateurs coréens : pendant tout le mois de juin, la Sunset Market réinvente le concept-store à ciel ouvert.",
       "Débutez votre visite vers 16h pour profiter des corners DIY et de la street food signée par des guest chefs. Au coucher du soleil, place aux DJ locaux.",
@@ -54,8 +54,7 @@ export const TREND_REPORTS: TrendReport[] = [
     intensity: "insider",
     isPremium: true,
     publishedAt: "2024-06-05",
-    imageUrl:
-      "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     content: [
       "Needle & Beam reprend le format des listening bars new-yorkais avec une sélection de vinyles pressés à Séoul et un dessert bar inspiré des dramas.",
       "Les places sont limitées : conseillez à vos lectrices/eurs de réserver le créneau de 19h via KakaoTalk. Les abonnés Decorée Premium bénéficient d'un code priorité.",
@@ -76,8 +75,7 @@ export const TREND_REPORTS: TrendReport[] = [
     intensity: "emerging",
     isPremium: false,
     publishedAt: "2024-06-02",
-    imageUrl:
-      "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     content: [
       "Un écran géant posé sur l'eau, des courts-métrages coréens et une ambiance seaside : Busan Ocean Film Night attire le public chaque vendredi de juillet.",
       "Les masterclasses de 25 minutes décodent les tendances du cinéma coréen sur Netflix. Pensez à réserver vos places via le site officiel.",
@@ -98,8 +96,7 @@ export const TREND_REPORTS: TrendReport[] = [
     intensity: "highlight",
     isPremium: false,
     publishedAt: "2024-06-10",
-    imageUrl:
-      "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     content: [
       "서촌 노을 산책 로드맵은 통의동부터 시작합니다. 독립 서점에서 저녁을 준비하고, 골목 안쪽의 공예 숍을 들러보세요.",
       "노을이 물드는 시간에는 한옥 카페에서 전통차와 디저트를 즐기고, 루프탑 바로 이동해 서울 야경을 감상합니다.",
@@ -120,8 +117,7 @@ export const TREND_REPORTS: TrendReport[] = [
     intensity: "insider",
     isPremium: true,
     publishedAt: "2024-06-14",
-    imageUrl:
-      "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     content: [
       "강릉 스페셜티 브루랩은 해변 전망을 즐기며 커피를 연구하는 공간입니다. 로스터와 바리스타가 직접 테이스팅을 진행합니다.",
       "Morning flight는 가벼운 라이트 로스트, 과일향 중배전, 디저트 페어링이 어우러진 코스로 구성됩니다.",
@@ -142,8 +138,7 @@ export const TREND_REPORTS: TrendReport[] = [
     intensity: "emerging",
     isPremium: false,
     publishedAt: "2024-06-18",
-    imageUrl:
-      "https://images.unsplash.com/photo-1545239351-ef35f43d514b?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     content: [
       "대구 야시장 아트 마켓은 지역 작가들의 라이브 페인팅과 DJ 세트가 공존하는 밤 축제입니다.",
       "푸드 존에서는 막창 시그니처 메뉴와 디저트 샵의 마카롱이 인기. 모바일 결제가 편리합니다.",
@@ -164,8 +159,7 @@ export const TREND_REPORTS: TrendReport[] = [
     intensity: "highlight",
     isPremium: false,
     publishedAt: "2024-06-07",
-    imageUrl:
-      "https://images.unsplash.com/photo-1529429617124-aee711a12003?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     content: [
       "ヌリジョンハン美術館は韓国の近現代作家を紹介する注目スポット。夜間は展示室全体が柔らかなライトアップに包まれます。",
       "日本語対応の学芸員が作品の背景やアーティストのエピソードを丁寧に解説。限定グッズもこの時間帯のみ購入可能。",
@@ -186,8 +180,7 @@ export const TREND_REPORTS: TrendReport[] = [
     intensity: "insider",
     isPremium: true,
     publishedAt: "2024-06-12",
-    imageUrl:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     content: [
       "益善洞の細い路地には、韓屋を改装した工房やギャラリーが点在。Decoréeでは日本語サポート付きの工房を厳選しました。",
       "午前の判子ワークショップでは、ハングルのデザインから彫刻までを学び、自分だけの印章を持ち帰れます。",
@@ -208,8 +201,7 @@ export const TREND_REPORTS: TrendReport[] = [
     intensity: "emerging",
     isPremium: false,
     publishedAt: "2024-06-20",
-    imageUrl:
-      "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     content: [
       "済州の月汀里ビーチで開催されるサンセット・テーブルは、地元食材の魅力を五感で味わうポップアップダイニング。",
       "シェフが各皿の背景を日本語で紹介し、会場ではアコースティックライブが進行。波の音と音楽がシンクロします。",
@@ -230,8 +222,7 @@ export const TREND_REPORTS: TrendReport[] = [
     intensity: "highlight",
     isPremium: false,
     publishedAt: "2024-06-15",
-    imageUrl:
-      "https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     content: [
       "Seongsu’s warehouse streets have evolved into Seoul’s laboratory for lifestyle brands. Spend the afternoon hopping between concept cafés and indie boutiques with curated playlists.",
       "Golden hour is best enjoyed from the revamped Seongsu Bridge deck. Grab a zero-proof cocktail or a seasonal dessert pairing with a view of the river.",
@@ -252,8 +243,7 @@ export const TREND_REPORTS: TrendReport[] = [
     intensity: "insider",
     isPremium: true,
     publishedAt: "2024-06-18",
-    imageUrl:
-      "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     content: [
       "Begin with a seasonal tasting menu in a restored hanok where each course references a different region of Korea.",
       "Move to a retro dessert bar inspired by 80s film sets, then wind down at a listening lounge spinning Seoul funk and city pop vinyl.",
@@ -274,8 +264,7 @@ export const TREND_REPORTS: TrendReport[] = [
     intensity: "emerging",
     isPremium: false,
     publishedAt: "2024-06-22",
-    imageUrl:
-      "https://images.unsplash.com/photo-1526481280695-3c46973b38f2?auto=format&fit=crop&w=1600&q=80",
+    imageUrl: BLANK_IMAGE,
     content: [
       "Kick off with a sunrise walk along Jusangjeolli Cliffs, guided by a local storyteller sharing Jeju myths.",
       "Lunch takes place on a regenerative farm where you’ll pick herbs and learn about slow food practices before a communal meal.",
