@@ -33,6 +33,7 @@ npm run build
 - **Personalized Korean Phrasebook** : sélection multi-catégories, suivi de progression simulé et recherche plein texte.
 - **Pop-up Radar** : cartes compactes, recherche et fiches détaillées pour suivre les collaborations et pop-ups par quartier.
 - **Local Support Hub** : onglet “Support local” dédié (guides services publics, tutoriels d’apps coréennes, communauté étudiants/expats).
+- **Studio multi-langues** : interface renouvelée pour publier un contenu et le déployer automatiquement en FR/KO/JA/EN grâce à la traduction intégrée.
 - **Blog détaillé** : chaque tendance/événement dispose d’une page immersive (photo, contenu riche) avec astuces pratiques.
 - **Multilingue FR/KR** : bascule instantanée de la navigation, des CTA et contenus textes.
 - **Responsive** : layout Tailwind responsive (mobile-first), navigation sticky, cartes adaptatives.
@@ -58,6 +59,11 @@ npm run build
    - Créez les comptes administrateurs qui doivent accéder au studio ou laissez-les utiliser la page `/signup`.
 3. Listez les emails autorisés dans `VITE_KORAID_ADMIN_EMAILS` (séparés par des virgules). Ces comptes seront reconnus comme administrateurs et verront le lien “Studio koraid”.
 4. Relancez `npm run dev` pour que Vite recharge la configuration. Rendez-vous sur `/login` ou `/signup` pour tester la connexion ; une fois authentifié, vous serez redirigé vers `/admin`.
+
+## Studio multi-langues
+
+- Chaque formulaire du Studio permet de sélectionner plusieurs langues de publication ; le contenu est automatiquement traduit en FR/KO/JA/EN et synchronisé avec l’ID `lang-id`.
+- La traduction automatique est activée par défaut. Pour la désactiver (et gérer les traductions manuellement), définissez `VITE_STUDIO_AUTO_TRANSLATE=false` dans `.env`.
 
 ## Mode contenu statique
 

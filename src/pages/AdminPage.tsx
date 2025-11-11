@@ -26,6 +26,13 @@ import {
 import { useAuth } from "../shared/auth";
 import type { SupportedLanguage } from "../shared/i18n";
 import { getLanguageLabel } from "../shared/i18n";
+import {
+  STUDIO_AUTO_TRANSLATE_ENABLED,
+  translateEventContent,
+  translatePhraseContent,
+  translatePopupContent,
+  translateTrendReportContent
+} from "../services/translation/contentLocalizationService";
 
 type ActiveSection = "trends" | "events" | "phrases" | "popups";
 
@@ -39,6 +46,7 @@ const LANG_OPTIONS: SupportedLanguage[] = ["fr", "ko", "ja", "en"];
 type TrendDraft = {
   id: string;
   language: SupportedLanguage;
+  languages: SupportedLanguage[];
   authorId: string;
   title: string;
   summary: string;
@@ -54,6 +62,7 @@ type TrendDraft = {
 type EventDraft = {
   id: string;
   language: SupportedLanguage;
+  languages: SupportedLanguage[];
   title: string;
   description: string;
   date: string;
@@ -70,6 +79,7 @@ type EventDraft = {
 type PhraseDraft = {
   id: string;
   language: SupportedLanguage;
+  languages: SupportedLanguage[];
   korean: string;
   transliteration: string;
   translation: string;
@@ -80,6 +90,7 @@ type PhraseDraft = {
 type PopupDraft = {
   id: string;
   language: SupportedLanguage;
+  languages: SupportedLanguage[];
   title: string;
   brand: string;
   window: string;
@@ -102,6 +113,7 @@ function createEmptyTrendDraft(): TrendDraft {
   return {
     id: "",
     language: "en",
+    languages: ["en"],
     authorId: AUTHOR_PROFILES[0]?.id ?? "",
     title: "",
     summary: "",
@@ -119,6 +131,7 @@ function trendToDraft(report: TrendReport): TrendDraft {
   return {
     id: report.id,
     language: report.language ?? "en",
+    languages: [report.language ?? "en"],
     authorId: report.authorId ?? AUTHOR_PROFILES[0]?.id ?? "",
     title: report.title,
     summary: report.summary,
@@ -163,6 +176,7 @@ function createEmptyEventDraft(): EventDraft {
   return {
     id: "",
     language: "en",
+    languages: ["en"],
     title: "",
     description: "",
     date: todayIso(),
@@ -181,6 +195,7 @@ function eventToDraft(event: KCultureEvent): EventDraft {
   return {
     id: event.id,
     language: event.language ?? "en",
+    languages: [event.language ?? "en"],
     title: event.title,
     description: event.description,
     date: event.date ?? todayIso(),
@@ -227,6 +242,7 @@ function createEmptyPhraseDraft(): PhraseDraft {
   return {
     id: "",
     language: "en",
+    languages: ["en"],
     korean: "",
     transliteration: "",
     translation: "",
@@ -239,6 +255,7 @@ function phraseToDraft(phrase: Phrase): PhraseDraft {
   return {
     id: phrase.id,
     language: phrase.language ?? "en",
+    languages: [phrase.language ?? "en"],
     korean: phrase.korean,
     transliteration: phrase.transliteration,
     translation: phrase.translation,
@@ -263,6 +280,7 @@ function createEmptyPopupDraft(): PopupDraft {
   return {
     id: "",
     language: "en",
+    languages: ["en"],
     title: "",
     brand: "",
     window: "2024.06.01 - 06.30",
@@ -282,6 +300,7 @@ function popupToDraft(popup: PopupEvent): PopupDraft {
   return {
     id: popup.id,
     language: popup.language ?? "en",
+    languages: [popup.language ?? "en"],
     title: popup.title,
     brand: popup.brand,
     window: popup.window,
@@ -326,6 +345,44 @@ function draftToPopup(draft: PopupDraft): PopupEvent {
     details,
     reservationUrl: draft.reservationUrl.trim() || undefined
   };
+}
+
+function resolveTargetLanguages(
+  selected: SupportedLanguage[] | undefined,
+  baseLanguage: SupportedLanguage
+) {
+  const fallback = selected && selected.length > 0 ? selected : [baseLanguage];
+  return Array.from(new Set(fallback));
+}
+
+function normalizeBaseId(id: string, baseLanguage: SupportedLanguage) {
+  const prefix = `${baseLanguage}-`;
+  if (id.startsWith(prefix)) {
+    return id.slice(prefix.length);
+  }
+  return id;
+}
+
+function buildLocalizedId(
+  baseId: string,
+  baseLanguage: SupportedLanguage,
+  language: SupportedLanguage,
+  totalLanguages: number
+) {
+  if (totalLanguages <= 1) {
+    return baseId.trim();
+  }
+  const canonical = normalizeBaseId(baseId.trim(), baseLanguage) || baseId.trim();
+  return `${language}-${canonical}`;
+}
+
+function syncLanguagesOnSourceChange(
+  languages: SupportedLanguage[] | undefined,
+  nextLanguage: SupportedLanguage
+) {
+  if (!languages || languages.length === 0) return [nextLanguage];
+  if (languages.length === 1) return [nextLanguage];
+  return languages;
 }
 
 export default function AdminPage() {
@@ -429,20 +486,62 @@ export default function AdminPage() {
       setMessage({ tone: "error", text: "ID는 반드시 입력해야 합니다." });
       return;
     }
+    const targetLanguages = resolveTargetLanguages(trendDraft.languages, payload.language);
     setSavingTrend(true);
     try {
-      const exists = trends.some((item) => item.id === payload.id);
-      const updated = exists ? await updateTrendReport(payload) : await addTrendReport(payload);
-      setTrends(updated);
-      const saved = updated.find((item) => item.id === payload.id);
+      const localizedPayloads: TrendReport[] = [];
+      for (const lang of targetLanguages) {
+        const localizedId = buildLocalizedId(
+          payload.id,
+          payload.language,
+          lang,
+          targetLanguages.length
+        );
+        if (lang === payload.language) {
+          localizedPayloads.push({ ...payload, id: localizedId, language: lang });
+          continue;
+        }
+        const translated = await translateTrendReportContent(payload, lang);
+        localizedPayloads.push({
+          ...(translated ?? { ...payload }),
+          id: localizedId,
+          language: lang
+        });
+      }
+
+      let createdCount = 0;
+      let updatedCount = 0;
+      for (const entry of localizedPayloads) {
+        const exists = trends.some((item) => item.id === entry.id);
+        if (exists) {
+          await updateTrendReport(entry);
+          updatedCount += 1;
+        } else {
+          await addTrendReport(entry);
+          createdCount += 1;
+        }
+      }
+
+      const refreshed = await fetchTrendReports();
+      setTrends(refreshed);
+      const preferredId =
+        localizedPayloads.find((entry) => entry.language === payload.language)?.id ??
+        localizedPayloads[0]?.id;
+      const saved = refreshed.find((item) => item.id === preferredId);
       if (saved) {
-        setTrendDraft(trendToDraft(saved));
+        setTrendDraft({
+          ...trendToDraft(saved),
+          languages: targetLanguages
+        });
         setSelectedTrendId(saved.id);
       }
-      setMessage({
-        tone: "success",
-        text: exists ? "트렌드가 업데이트되었습니다." : "새 트렌드가 등록되었습니다."
-      });
+      const successText =
+        createdCount && updatedCount
+          ? `새 ${createdCount}개 언어 + ${updatedCount}개 언어 콘텐츠를 반영했습니다.`
+          : createdCount
+          ? `${createdCount}개 언어 버전이 추가되었습니다.`
+          : `${updatedCount}개 언어 버전이 업데이트되었습니다.`;
+      setMessage({ tone: "success", text: successText });
     } catch (error) {
       console.error("Failed to save trend", error);
       setMessage({
@@ -495,20 +594,62 @@ export default function AdminPage() {
       setMessage({ tone: "error", text: "ID는 반드시 입력해야 합니다." });
       return;
     }
+    const targetLanguages = resolveTargetLanguages(eventDraft.languages, payload.language);
     setSavingEvent(true);
     try {
-      const exists = events.some((item) => item.id === payload.id);
-      const updated = exists ? await updateEvent(payload) : await addEvent(payload);
-      setEvents(updated);
-      const saved = updated.find((item) => item.id === payload.id);
+      const localizedPayloads: KCultureEvent[] = [];
+      for (const lang of targetLanguages) {
+        const localizedId = buildLocalizedId(
+          payload.id,
+          payload.language,
+          lang,
+          targetLanguages.length
+        );
+        if (lang === payload.language) {
+          localizedPayloads.push({ ...payload, id: localizedId, language: lang });
+          continue;
+        }
+        const translated = await translateEventContent(payload, lang);
+        localizedPayloads.push({
+          ...(translated ?? { ...payload }),
+          id: localizedId,
+          language: lang
+        });
+      }
+
+      let createdCount = 0;
+      let updatedCount = 0;
+      for (const entry of localizedPayloads) {
+        const exists = events.some((item) => item.id === entry.id);
+        if (exists) {
+          await updateEvent(entry);
+          updatedCount += 1;
+        } else {
+          await addEvent(entry);
+          createdCount += 1;
+        }
+      }
+
+      const refreshed = await fetchEvents();
+      setEvents(refreshed);
+      const preferredId =
+        localizedPayloads.find((entry) => entry.language === payload.language)?.id ??
+        localizedPayloads[0]?.id;
+      const saved = refreshed.find((item) => item.id === preferredId);
       if (saved) {
-        setEventDraft(eventToDraft(saved));
+        setEventDraft({
+          ...eventToDraft(saved),
+          languages: targetLanguages
+        });
         setSelectedEventId(saved.id);
       }
-      setMessage({
-        tone: "success",
-        text: exists ? "이벤트가 업데이트되었습니다." : "새 이벤트가 등록되었습니다."
-      });
+      const successText =
+        createdCount && updatedCount
+          ? `새 ${createdCount}개 언어 + ${updatedCount}개 언어 이벤트를 반영했습니다.`
+          : createdCount
+          ? `${createdCount}개 언어 버전이 추가되었습니다.`
+          : `${updatedCount}개 언어 버전이 업데이트되었습니다.`;
+      setMessage({ tone: "success", text: successText });
     } catch (error) {
       console.error("Failed to save event", error);
       setMessage({
@@ -561,20 +702,62 @@ export default function AdminPage() {
       setMessage({ tone: "error", text: "ID는 반드시 입력해야 합니다." });
       return;
     }
+    const targetLanguages = resolveTargetLanguages(phraseDraft.languages, payload.language);
     setSavingPhrase(true);
     try {
-      const exists = phrases.some((item) => item.id === payload.id);
-      const updated = exists ? await updatePhrase(payload) : await addPhrase(payload);
-      setPhrases(updated);
-      const saved = updated.find((item) => item.id === payload.id);
+      const localizedPayloads: Phrase[] = [];
+      for (const lang of targetLanguages) {
+        const localizedId = buildLocalizedId(
+          payload.id,
+          payload.language,
+          lang,
+          targetLanguages.length
+        );
+        if (lang === payload.language) {
+          localizedPayloads.push({ ...payload, id: localizedId, language: lang });
+          continue;
+        }
+        const translated = await translatePhraseContent(payload, lang);
+        localizedPayloads.push({
+          ...(translated ?? { ...payload }),
+          id: localizedId,
+          language: lang
+        });
+      }
+
+      let createdCount = 0;
+      let updatedCount = 0;
+      for (const entry of localizedPayloads) {
+        const exists = phrases.some((item) => item.id === entry.id);
+        if (exists) {
+          await updatePhrase(entry);
+          updatedCount += 1;
+        } else {
+          await addPhrase(entry);
+          createdCount += 1;
+        }
+      }
+
+      const refreshed = await fetchPhrases();
+      setPhrases(refreshed);
+      const preferredId =
+        localizedPayloads.find((entry) => entry.language === payload.language)?.id ??
+        localizedPayloads[0]?.id;
+      const saved = refreshed.find((item) => item.id === preferredId);
       if (saved) {
-        setPhraseDraft(phraseToDraft(saved));
+        setPhraseDraft({
+          ...phraseToDraft(saved),
+          languages: targetLanguages
+        });
         setSelectedPhraseId(saved.id);
       }
-      setMessage({
-        tone: "success",
-        text: exists ? "표현이 업데이트되었습니다." : "새 표현이 등록되었습니다."
-      });
+      const successText =
+        createdCount && updatedCount
+          ? `새 ${createdCount}개 언어 + ${updatedCount}개 언어 표현을 반영했습니다.`
+          : createdCount
+          ? `${createdCount}개 언어 버전이 추가되었습니다.`
+          : `${updatedCount}개 언어 버전이 업데이트되었습니다.`;
+      setMessage({ tone: "success", text: successText });
     } catch (error) {
       console.error("Failed to save phrase", error);
       setMessage({
@@ -625,20 +808,62 @@ export default function AdminPage() {
       setMessage({ tone: "error", text: "ID는 반드시 입력해야 합니다." });
       return;
     }
+    const targetLanguages = resolveTargetLanguages(popupDraft.languages, payload.language);
     setSavingPopup(true);
     try {
-      const exists = popups.some((item) => item.id === payload.id);
-      const updated = exists ? await updatePopup(payload) : await addPopup(payload);
-      setPopups(updated);
-      const saved = updated.find((item) => item.id === payload.id);
+      const localizedPayloads: PopupEvent[] = [];
+      for (const lang of targetLanguages) {
+        const localizedId = buildLocalizedId(
+          payload.id,
+          payload.language,
+          lang,
+          targetLanguages.length
+        );
+        if (lang === payload.language) {
+          localizedPayloads.push({ ...payload, id: localizedId, language: lang });
+          continue;
+        }
+        const translated = await translatePopupContent(payload, lang);
+        localizedPayloads.push({
+          ...(translated ?? { ...payload }),
+          id: localizedId,
+          language: lang
+        });
+      }
+
+      let createdCount = 0;
+      let updatedCount = 0;
+      for (const entry of localizedPayloads) {
+        const exists = popups.some((item) => item.id === entry.id);
+        if (exists) {
+          await updatePopup(entry);
+          updatedCount += 1;
+        } else {
+          await addPopup(entry);
+          createdCount += 1;
+        }
+      }
+
+      const refreshed = await fetchPopups();
+      setPopups(refreshed);
+      const preferredId =
+        localizedPayloads.find((entry) => entry.language === payload.language)?.id ??
+        localizedPayloads[0]?.id;
+      const saved = refreshed.find((item) => item.id === preferredId);
       if (saved) {
-        setPopupDraft(popupToDraft(saved));
+        setPopupDraft({
+          ...popupToDraft(saved),
+          languages: targetLanguages
+        });
         setSelectedPopupId(saved.id);
       }
-      setMessage({
-        tone: "success",
-        text: exists ? "팝업이 업데이트되었습니다." : "새 팝업이 등록되었습니다."
-      });
+      const successText =
+        createdCount && updatedCount
+          ? `새 ${createdCount}개 언어 + ${updatedCount}개 언어 팝업을 반영했습니다.`
+          : createdCount
+          ? `${createdCount}개 언어 버전이 추가되었습니다.`
+          : `${updatedCount}개 언어 버전이 업데이트되었습니다.`;
+      setMessage({ tone: "success", text: successText });
     } catch (error) {
       console.error("Failed to save popup", error);
       setMessage({
@@ -716,6 +941,49 @@ export default function AdminPage() {
     </button>
   );
 
+  type LanguageMultiSelectProps = {
+    label: string;
+    helper?: string;
+    value: SupportedLanguage[];
+    onChange: (next: SupportedLanguage[]) => void;
+  };
+
+  const LanguageMultiSelect = ({ label, helper, value, onChange }: LanguageMultiSelectProps) => {
+    const toggleLanguage = (lang: SupportedLanguage) => {
+      onChange(
+        value.includes(lang)
+          ? value.filter((item) => item !== lang)
+          : [...value, lang]
+      );
+    };
+
+    return (
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-semibold text-dancheongNavy">{label}</span>
+        <div className="flex flex-wrap gap-2">
+          {LANG_OPTIONS.map((lang) => {
+            const isActive = value.includes(lang);
+            return (
+              <button
+                key={lang}
+                type="button"
+                onClick={() => toggleLanguage(lang)}
+                className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                  isActive
+                    ? "bg-hanBlue text-white shadow"
+                    : "border border-slate-200 bg-white text-slate-600 hover:border-hanBlue hover:text-hanBlue"
+                }`}
+              >
+                {getLanguageLabel(lang)}
+              </button>
+            );
+          })}
+        </div>
+        {helper && <p className="text-xs text-slate-500">{helper}</p>}
+      </div>
+    );
+  };
+
   const renderTrendsSection = () => (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
       <aside className="space-y-3">
@@ -775,7 +1043,11 @@ export default function AdminPage() {
               onChange={(e) =>
                 setTrendDraft((prev) => ({
                   ...prev,
-                  language: e.target.value as SupportedLanguage
+                  language: e.target.value as SupportedLanguage,
+                  languages: syncLanguagesOnSourceChange(
+                    prev.languages,
+                    e.target.value as SupportedLanguage
+                  )
                 }))
               }
               className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
@@ -827,6 +1099,33 @@ export default function AdminPage() {
               required
             />
           </label>
+        </div>
+
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
+          <LanguageMultiSelect
+            label="노출 언어 (복수 선택)"
+            helper="작성 언어를 기준으로 자동 번역하여 각 언어 버전이 생성됩니다. 선택하지 않으면 작성 언어만 발행됩니다."
+            value={trendDraft.languages}
+            onChange={(languages) => setTrendDraft((prev) => ({ ...prev, languages }))}
+          />
+          <p className="mt-2 text-xs text-slate-500">
+            다국어 발행 시 ID 앞에 언어 코드가 자동으로 붙습니다. 예){" "}
+            <span className="font-semibold text-dancheongNavy">
+              {trendDraft.languages.length > 1 ? `fr-${normalizeBaseId(trendDraft.id || "trend-id", trendDraft.language)}` : trendDraft.id || "trend-id"}
+            </span>
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
+          <LanguageMultiSelect
+            label="노출 언어"
+            helper="선택한 언어마다 이벤트 설명이 자동 번역되어 게시됩니다."
+            value={eventDraft.languages}
+            onChange={(languages) => setEventDraft((prev) => ({ ...prev, languages }))}
+          />
+          <p className="mt-2 text-xs text-slate-500">
+            여러 언어를 발행하면 ID는 <strong>{`lang-${normalizeBaseId(eventDraft.id || "event-id", eventDraft.language)}`}</strong> 형식으로 저장됩니다.
+          </p>
         </div>
 
         <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
@@ -1003,7 +1302,11 @@ export default function AdminPage() {
               onChange={(e) =>
                 setEventDraft((prev) => ({
                   ...prev,
-                  language: e.target.value as SupportedLanguage
+                  language: e.target.value as SupportedLanguage,
+                  languages: syncLanguagesOnSourceChange(
+                    prev.languages,
+                    e.target.value as SupportedLanguage
+                  )
                 }))
               }
               className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
@@ -1234,7 +1537,11 @@ export default function AdminPage() {
               onChange={(e) =>
                 setPhraseDraft((prev) => ({
                   ...prev,
-                  language: e.target.value as SupportedLanguage
+                  language: e.target.value as SupportedLanguage,
+                  languages: syncLanguagesOnSourceChange(
+                    prev.languages,
+                    e.target.value as SupportedLanguage
+                  )
                 }))
               }
               className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
@@ -1270,6 +1577,18 @@ export default function AdminPage() {
               <option value="entertainment">엔터테인먼트</option>
             </select>
           </label>
+        </div>
+
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
+          <LanguageMultiSelect
+            label="노출 언어"
+            helper="선택한 언어마다 번역과 문화 노트가 자동 생성됩니다."
+            value={phraseDraft.languages}
+            onChange={(languages) => setPhraseDraft((prev) => ({ ...prev, languages }))}
+          />
+          <p className="mt-2 text-xs text-slate-500">
+            예) <strong>{`ja-${normalizeBaseId(phraseDraft.id || "phrase-id", phraseDraft.language)}`}</strong>
+          </p>
         </div>
 
         <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
@@ -1400,7 +1719,11 @@ export default function AdminPage() {
               onChange={(e) =>
                 setPopupDraft((prev) => ({
                   ...prev,
-                  language: e.target.value as SupportedLanguage
+                  language: e.target.value as SupportedLanguage,
+                  languages: syncLanguagesOnSourceChange(
+                    prev.languages,
+                    e.target.value as SupportedLanguage
+                  )
                 }))
               }
               className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
@@ -1446,6 +1769,18 @@ export default function AdminPage() {
               required
             />
           </label>
+        </div>
+
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
+          <LanguageMultiSelect
+            label="노출 언어"
+            helper="팝업 카드와 상세 페이지가 선택한 언어로 자동 생성됩니다."
+            value={popupDraft.languages}
+            onChange={(languages) => setPopupDraft((prev) => ({ ...prev, languages }))}
+          />
+          <p className="mt-2 text-xs text-slate-500">
+            예) <strong>{`en-${normalizeBaseId(popupDraft.id || "popup-id", popupDraft.language)}`}</strong>
+          </p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
@@ -1601,6 +1936,49 @@ export default function AdminPage() {
               </button>
             </div>
           )}
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              다국어 자동 번역
+            </p>
+            <p className="mt-2 text-lg font-semibold text-dancheongNavy">
+              {STUDIO_AUTO_TRANSLATE_ENABLED ? "활성화됨" : "비활성화됨"}
+            </p>
+            <p className="text-sm text-slate-500">
+              작성 언어 한 번으로 {LANG_OPTIONS.map((lang) => getLanguageLabel(lang)).join(", ")}{" "}
+              페이지에 동시 노출됩니다.
+            </p>
+          </div>
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              현재 콘텐츠
+            </p>
+            <div className="mt-2 grid grid-cols-3 gap-2 text-center">
+              <div>
+                <p className="text-lg font-bold text-dancheongNavy">{trends.length}</p>
+                <p className="text-xs text-slate-500">트렌드</p>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-dancheongNavy">{events.length}</p>
+                <p className="text-xs text-slate-500">이벤트</p>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-dancheongNavy">{phrases.length}</p>
+                <p className="text-xs text-slate-500">프레이즈</p>
+              </div>
+            </div>
+          </div>
+          <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              ID 안내
+            </p>
+            <p className="mt-2 text-sm text-slate-600">
+              다국어 발행 시 ID는 <strong>언어코드-id</strong> 형태로 저장됩니다. 예){" "}
+              <span className="font-semibold text-dancheongNavy">fr-seongsu-guide</span>
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-3">
