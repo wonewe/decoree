@@ -1111,20 +1111,24 @@ export default function AdminPage() {
           <p className="mt-2 text-xs text-slate-500">
             다국어 발행 시 ID 앞에 언어 코드가 자동으로 붙습니다. 예){" "}
             <span className="font-semibold text-dancheongNavy">
-              {trendDraft.languages.length > 1 ? `fr-${normalizeBaseId(trendDraft.id || "trend-id", trendDraft.language)}` : trendDraft.id || "trend-id"}
+              {trendDraft.languages.length > 1
+                ? `fr-${normalizeBaseId(trendDraft.id || "trend-id", trendDraft.language)}`
+                : trendDraft.id || "trend-id"}
             </span>
           </p>
         </div>
 
         <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
           <LanguageMultiSelect
-            label="노출 언어"
+            label="노출 언어 (복수 선택)"
             helper="선택한 언어마다 이벤트 설명이 자동 번역되어 게시됩니다."
             value={eventDraft.languages}
             onChange={(languages) => setEventDraft((prev) => ({ ...prev, languages }))}
           />
           <p className="mt-2 text-xs text-slate-500">
-            여러 언어를 발행하면 ID는 <strong>{`lang-${normalizeBaseId(eventDraft.id || "event-id", eventDraft.language)}`}</strong> 형식으로 저장됩니다.
+            여러 언어를 발행하면 ID는{" "}
+            <strong>{`lang-${normalizeBaseId(eventDraft.id || "event-id", eventDraft.language)}`}</strong>{" "}
+            형식으로 저장됩니다.
           </p>
         </div>
 
@@ -1581,7 +1585,7 @@ export default function AdminPage() {
 
         <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
           <LanguageMultiSelect
-            label="노출 언어"
+            label="노출 언어 (복수 선택)"
             helper="선택한 언어마다 번역과 문화 노트가 자동 생성됩니다."
             value={phraseDraft.languages}
             onChange={(languages) => setPhraseDraft((prev) => ({ ...prev, languages }))}
@@ -1773,7 +1777,7 @@ export default function AdminPage() {
 
         <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
           <LanguageMultiSelect
-            label="노출 언어"
+            label="노출 언어 (복수 선택)"
             helper="팝업 카드와 상세 페이지가 선택한 언어로 자동 생성됩니다."
             value={popupDraft.languages}
             onChange={(languages) => setPopupDraft((prev) => ({ ...prev, languages }))}
