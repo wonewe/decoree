@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent } from "react";
+import { type KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import type { TrendIntensity, TrendReport } from "../../data/trends";
 import { useI18n } from "../../shared/i18n";
@@ -14,7 +14,6 @@ export function TrendCard({ report }: TrendCardProps) {
   const { t } = useI18n();
   const navigate = useNavigate();
   const author = getAuthorProfile(report.authorId);
-  const [showSample, setShowSample] = useState(false);
   const bookmarkItem = {
     id: report.id,
     type: "trend" as const,
@@ -48,11 +47,7 @@ export function TrendCard({ report }: TrendCardProps) {
       <div className="flex flex-col gap-4 md:flex-row md:items-stretch">
         <div className="flex-1 space-y-3">
           <div className="flex items-start justify-between gap-3">
-            <CardHeader
-              intensity={report.intensity}
-              publishedLabel={publishedLabel}
-              isPremium={report.isPremium}
-            />
+            <CardHeader intensity={report.intensity} publishedLabel={publishedLabel} />
             <BookmarkButton item={bookmarkItem} size="sm" />
           </div>
           <h3 className="text-lg font-semibold text-dancheongNavy">{report.title}</h3>
@@ -64,15 +59,7 @@ export function TrendCard({ report }: TrendCardProps) {
             <strong>{t("trendDetail.neighborhood")}:</strong> {report.neighborhood} •{" "}
             {report.tags.join(" · ")}
           </div>
-          {report.isPremium ? (
-            <PremiumPreview
-              showSample={showSample}
-              onUnlockSample={() => setShowSample(true)}
-              details={report.details}
-            />
-          ) : (
-            <p className="text-sm text-slate-700">{report.details}</p>
-          )}
+          <p className="text-sm text-slate-700">{report.details}</p>
         </div>
         <figure className="overflow-hidden rounded-2xl bg-slate-100 md:w-40 lg:w-48">
           <img
@@ -90,10 +77,9 @@ export function TrendCard({ report }: TrendCardProps) {
 type CardHeaderProps = {
   intensity: TrendIntensity;
   publishedLabel: string;
-  isPremium: boolean;
 };
 
-function CardHeader({ intensity, publishedLabel, isPremium }: CardHeaderProps) {
+function CardHeader({ intensity, publishedLabel }: CardHeaderProps) {
   const { t } = useI18n();
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -101,7 +87,6 @@ function CardHeader({ intensity, publishedLabel, isPremium }: CardHeaderProps) {
         <IntensityBadge intensity={intensity} />
         <span className="text-xs text-slate-400">{publishedLabel}</span>
       </div>
-      {isPremium && <span className="badge-premium">{t("trends.premiumBadge")}</span>}
     </div>
   );
 }
@@ -128,40 +113,6 @@ function AuthorMeta({ name, title, avatarUrl }: AuthorMetaProps) {
         </span>
         <span>{title}</span>
       </div>
-    </div>
-  );
-}
-
-type PremiumPreviewProps = {
-  showSample: boolean;
-  onUnlockSample: () => void;
-  details: string;
-};
-
-function PremiumPreview({ showSample, onUnlockSample, details }: PremiumPreviewProps) {
-  const { t } = useI18n();
-
-  if (showSample) {
-    return (
-      <div className="rounded-2xl border border-dashed border-dancheongRed/40 p-4">
-        <p className="text-sm text-slate-600">{details}</p>
-      </div>
-    );
-  }
-
-  return (
-    <div className="rounded-2xl border border-dashed border-dancheongRed/40 p-4">
-      <p className="text-sm text-slate-600">{t("trends.unlock")}</p>
-      <button
-        className="mt-3 text-sm font-semibold text-hanBlue hover:underline"
-        onClick={(event) => {
-          event.stopPropagation();
-          onUnlockSample();
-        }}
-        type="button"
-      >
-        {t("trends.sample")}
-      </button>
     </div>
   );
 }

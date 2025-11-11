@@ -21,7 +21,7 @@ export default function CommunityBoardDetailPage() {
   return (
     <section className="section-container space-y-8">
       <header className="space-y-3">
-        <span className="badge-premium bg-hanBlue/10 text-hanBlue">{t("nav.localSupport")}</span>
+        <span className="badge-label bg-hanBlue/10 text-hanBlue">{t("nav.localSupport")}</span>
         <h1 className="text-4xl font-bold text-dancheongNavy">{board.name}</h1>
         <p className="text-slate-600">{board.summary}</p>
       </header>

@@ -2,7 +2,6 @@ import HeroSection from "../components/HeroSection";
 import WeeklyTrendDecoder from "../components/WeeklyTrendDecoder";
 import EventCalendar from "../components/EventCalendar";
 import PersonalizedPhrasebook from "../components/PersonalizedPhrasebook";
-import SubscriptionSection from "../components/SubscriptionSection";
 
 export default function HomePage() {
   return (
@@ -11,7 +10,6 @@ export default function HomePage() {
       <WeeklyTrendDecoder />
       <EventCalendar />
       <PersonalizedPhrasebook />
-      <SubscriptionSection />
     </>
   );
 }

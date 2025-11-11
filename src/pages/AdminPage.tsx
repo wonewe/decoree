@@ -46,7 +46,6 @@ type TrendDraft = {
   neighborhood: string;
   tagsInput: string;
   intensity: TrendIntensity;
-  isPremium: boolean;
   publishedAt: string;
   imageUrl: string;
   contentInput: string;
@@ -110,7 +109,6 @@ function createEmptyTrendDraft(): TrendDraft {
     neighborhood: "",
     tagsInput: "",
     intensity: "highlight",
-    isPremium: false,
     publishedAt: todayIso(),
     imageUrl: "",
     contentInput: ""
@@ -128,7 +126,6 @@ function trendToDraft(report: TrendReport): TrendDraft {
     neighborhood: report.neighborhood,
     tagsInput: report.tags.join(", "),
     intensity: report.intensity,
-    isPremium: report.isPremium,
     publishedAt: report.publishedAt ?? todayIso(),
     imageUrl: report.imageUrl,
     contentInput: report.content.join("\n\n")
@@ -156,7 +153,6 @@ function draftToTrend(draft: TrendDraft): TrendReport {
     neighborhood: draft.neighborhood.trim(),
     tags,
     intensity: draft.intensity,
-    isPremium: draft.isPremium,
     publishedAt: draft.publishedAt || todayIso(),
     imageUrl: draft.imageUrl.trim(),
     content
@@ -898,33 +894,20 @@ export default function AdminPage() {
               placeholder="pop-up, mode, street food"
             />
           </label>
-          <div className="grid gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-              트렌드 강도
-              <select
-                value={trendDraft.intensity}
-                onChange={(e) =>
-                  setTrendDraft((prev) => ({ ...prev, intensity: e.target.value as TrendIntensity }))
-                }
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-              >
-                <option value="highlight">Highlight</option>
-                <option value="insider">Insider</option>
-                <option value="emerging">Emerging</option>
-              </select>
-            </label>
-            <label className="flex items-center gap-3 text-sm font-semibold text-dancheongNavy">
-              <input
-                type="checkbox"
-                checked={trendDraft.isPremium}
-                onChange={(e) =>
-                  setTrendDraft((prev) => ({ ...prev, isPremium: e.target.checked }))
-                }
-                className="h-4 w-4 rounded border-slate-300"
-              />
-              프리미엄 전용
-            </label>
-          </div>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            트렌드 강도
+            <select
+              value={trendDraft.intensity}
+              onChange={(e) =>
+                setTrendDraft((prev) => ({ ...prev, intensity: e.target.value as TrendIntensity }))
+              }
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            >
+              <option value="highlight">Highlight</option>
+              <option value="insider">Insider</option>
+              <option value="emerging">Emerging</option>
+            </select>
+          </label>
         </div>
 
         <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">

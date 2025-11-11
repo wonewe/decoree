@@ -4,7 +4,6 @@ import HomePage from "./pages/HomePage";
 import TrendsPage from "./pages/TrendsPage";
 import EventsPage from "./pages/EventsPage";
 import PhrasebookPage from "./pages/PhrasebookPage";
-import SubscribePage from "./pages/SubscribePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
@@ -52,7 +51,6 @@ export default function App() {
             </RequireAuth>
           }
         />
-        <Route path="/subscribe" element={<SubscribePage />} />
         <Route
           path="/admin"
           element={

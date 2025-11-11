@@ -27,9 +27,7 @@ export default function HeroSpotlight() {
 
   const spotlights = useMemo<Spotlight[]>(() => {
     const trend =
-      TREND_REPORTS.find((item) => item.language === language && !item.isPremium) ??
-      TREND_REPORTS.find((item) => item.language === language) ??
-      TREND_REPORTS[0];
+      TREND_REPORTS.find((item) => item.language === language) ?? TREND_REPORTS[0];
     const event =
       K_CULTURE_EVENTS.find((item) => item.language === language) ?? K_CULTURE_EVENTS[0];
     const phrase =
@@ -135,7 +133,7 @@ function HeroSpotlightSlide({ spotlight }: HeroSpotlightSlideProps) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6 text-white md:p-8">
-          <span className="badge-premium bg-white/20 text-white backdrop-blur">
+          <span className="badge-label bg-white/20 text-white backdrop-blur">
             {spotlight.tag}
           </span>
           <h3 className="mt-4 text-2xl font-semibold md:text-3xl">{spotlight.title}</h3>

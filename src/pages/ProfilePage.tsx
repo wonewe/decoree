@@ -65,7 +65,7 @@ export default function ProfilePage() {
   return (
     <section className="section-container space-y-10">
       <header className="space-y-3">
-        <span className="badge-premium bg-hanBlue/10 text-hanBlue">
+        <span className="badge-label bg-hanBlue/10 text-hanBlue">
           {t("profile.badge")}
         </span>
         <h1 className="text-4xl font-bold text-dancheongNavy md:text-5xl">

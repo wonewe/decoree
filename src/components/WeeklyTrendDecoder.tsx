@@ -35,13 +35,8 @@ export default function WeeklyTrendDecoder() {
                 key={report.id}
                 className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
-                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-400">
-                  <span>
-                    {formatDate(report.publishedAt)} · {report.neighborhood}
-                  </span>
-                  {report.isPremium && (
-                    <span className="text-hanBlue">{t("trends.premiumBadge")}</span>
-                  )}
+                <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  {formatDate(report.publishedAt)} · {report.neighborhood}
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-xl font-semibold text-dancheongNavy">{report.title}</h3>

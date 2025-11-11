@@ -5,7 +5,6 @@ import App from "./App";
 import { I18nProvider } from "./shared/i18n";
 import { AuthProvider } from "./shared/auth";
 import { BookmarkProvider } from "./shared/bookmarks";
-import { PremiumAccessProvider } from "./shared/premiumAccess";
 import { initAnalytics, trackPageView } from "./shared/analytics";
 import "./styles/index.css";
 
@@ -18,11 +17,9 @@ import "./styles/index.css";
       <BrowserRouter>
         <AuthProvider>
           <BookmarkProvider>
-            <PremiumAccessProvider>
-              <I18nProvider>
-                <App />
-              </I18nProvider>
-            </PremiumAccessProvider>
+            <I18nProvider>
+              <App />
+            </I18nProvider>
           </BookmarkProvider>
         </AuthProvider>
       </BrowserRouter>

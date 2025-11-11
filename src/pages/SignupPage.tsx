@@ -79,7 +79,7 @@ export default function SignupPage() {
     <section className="section-container">
       <div className="mx-auto max-w-lg space-y-6 rounded-3xl bg-white p-8 shadow-xl">
         <header className="space-y-2 text-center">
-          <span className="badge-premium">{t("auth.badge")}</span>
+          <span className="badge-label">{t("auth.badge")}</span>
           <h1 className="text-3xl font-bold text-dancheongNavy">{t("auth.signupTitle")}</h1>
           <p className="text-sm text-slate-500">{t("auth.signupSubtitle")}</p>
           {firebaseError && (

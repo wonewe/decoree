@@ -1,6 +1,6 @@
 # Decorée – MVP Web App
 
-Decorée est une application web monopage (SPA) pensée pour accompagner les voyageurs francophones (18-25 ans) lors de leurs séjours en Corée du Sud. Ce MVP couvre les fonctionnalités essentielles décrites dans le PRD : Trend Decoder hebdomadaire, calendrier d’événements K-Culture, phrasebook personnalisé et amorce d’abonnement premium.
+Decorée est une application web monopage (SPA) pensée pour accompagner les voyageurs francophones (18-25 ans) lors de leurs séjours en Corée du Sud. Ce MVP couvre les fonctionnalités essentielles décrites dans le PRD : Trend Decoder hebdomadaire, calendrier d’événements K-Culture, phrasebook personnalisé et hub de support local (services publics, apps, communauté).
 
 ## Démarrer le projet
 
@@ -20,19 +20,20 @@ npm run build
 ## Structure principale
 
 - `src/App.tsx` – Configuration du routing SPA avec React Router.
-- `src/components/*` – Composants UI (Trend Decoder, calendrier, phrasebook, CTA abonnement, etc.).
+- `src/components/*` – Composants UI (Trend Decoder, calendrier, phrasebook, Pop-up Radar, etc.).
 - `src/pages/*` – Pages basées sur les sections du PRD.
 - `src/shared/i18n.tsx` – Contexte de localisation (FR/KR) et gestion du switcher.
-- `src/services/*` – Services simulant l’accès Firestore et Stripe pour l’environnement MVP.
+- `src/services/*` – Services simulant l’accès Firestore pour l’environnement MVP.
 - `src/data/*` – Contenu mocké pour Trend Decoder, événements et phrasebook.
 
 ## Fonctionnalités MVP
 
-- **Weekly Trend Decoder** : cartes de tendances filtrées (premium & gratuites) avec aperçu pour tester l’UX d’un paywall.
+- **Weekly Trend Decoder** : cartes de tendances éditoriales (FR, KO, JA) avec navigation par intensité et auteurs.
 - **K-Culture Event Calendar** : filtrage par type d’événement (concert, festival, pop-up, etc.).
 - **Personalized Korean Phrasebook** : sélection multi-catégories, suivi de progression simulé et recherche plein texte.
-- **Blog détaillé** : chaque tendance/événement dispose d’une page immersive (photo, contenu riche) avec verrouillage Premium sur les articles réservés.
-- **Premium Content Subscription** : formulaire d’email relié à Stripe Checkout (via endpoint sécurisé) pour déclencher la souscription.
+- **Pop-up Radar** : cartes compactes, recherche et fiches détaillées pour suivre les collaborations et pop-ups par quartier.
+- **Local Support Hub** : onglet “Support local” dédié (guides services publics, tutoriels d’apps coréennes, communauté étudiants/expats).
+- **Blog détaillé** : chaque tendance/événement dispose d’une page immersive (photo, contenu riche) avec astuces pratiques.
 - **Multilingue FR/KR** : bascule instantanée de la navigation, des CTA et contenus textes.
 - **Responsive** : layout Tailwind responsive (mobile-first), navigation sticky, cartes adaptatives.
 - **Decorée Studio (Admin)** : formulaire `/admin` pour ajouter des tendances, événements et expressions sans toucher au code. Les entrées sont stockées dans le navigateur (localStorage) puis fusionnées avec les données mockées.
@@ -40,10 +41,10 @@ npm run build
 
 ## Intégrations futures
 
-- **Stripe** : brancher les webhooks (`checkout.session.completed`) pour activer/désactiver automatiquement les droits Premium côté Firestore/Custom Claims.
+- **Monétisation publicitaire** : préparer les emplacements natifs (Trend Decoder, Pop-up Radar, hub local) et connecter un réseau/serveur pub lorsque les audiences seront suffisantes.
 - **Firebase Firestore** : connecter `contentService.ts` à Firestore pour gérer les contenus temps réel.
 - **Maps & APIs** : géolocalisation d’événements (Kakao/Google) et suggestions dynamiques.
-- **Auth & personnalisation** : connecter l’abonnement aux profils utilisateurs, stocker la progression phrasebook.
+- **Auth & personnalisation** : relier les préférences utilisateurs (langue, favoris) aux profils et stocker la progression phrasebook.
 - **Tests** : ajouter des tests unitaires (Vitest) et des tests E2E (Playwright) dès la prochaine itération.
 - **CMS connecté** : remplacer le stockage local du Studio par un backend (Firestore, Contentful, Strapi…) pour que l’équipe puisse collaborer en temps réel.
 - **Rôles avancés** : déléguer la gestion d’accès à Firebase Custom Claims ou à un CMS pour restreindre les permissions par profil.
@@ -68,19 +69,11 @@ Pour développer hors ligne ou sans projet Firebase, définissez `VITE_USE_STATI
 - Activez `VITE_POPUP_AUTO_TRANSLATE=true` pour autoriser cette traduction côté client (Google Translate non authentifié est utilisé en fallback). Si l’appel échoue, le texte coréen reste affiché.
 - Seule la collection “Pop-ups” est concernée ; les tendances, événements et phrasebook continuent d’utiliser leurs langues respectives.
 
-## Stripe Checkout
-
-1. Créez une clé **Publishable** Stripe et renseignez `VITE_STRIPE_PUBLISHABLE_KEY`. Définissez également `VITE_STRIPE_CHECKOUT_ENDPOINT` (par défaut `/api/create-checkout-session`) et `VITE_STRIPE_PRICE_ID`. Activez le flux en production avec `VITE_STRIPE_ENABLED=true`.
-2. Implémentez un endpoint sécurisé (Firebase Functions, Vercel serverless, etc.) qui reçoit `{ email, planId }`, utilise la clé secrète Stripe (`sk_...`) et renvoie `{ sessionId, url }`. Un exemple Firebase est disponible dans `stripe/functions/createCheckoutSession.ts`.
-3. Déployez cette fonction et configurez les URLs `success_url` et `cancel_url`. Ajoutez votre domaine Vercel dans **Authentication → Sign-in method → Authorised domains**.
-4. Sur Vercel, ajoutez les variables d’environnement (`VITE_STRIPE_*` côté front + clé secrète côté fonction) puis redeployez.
-5. Mettez en place un webhook Stripe `checkout.session.completed` pour marquer l’utilisateur premium (Custom Claims, Firestore…). Le front ne doit pas accorder l’accès Premium sans cette vérification serveur.
-
 ## Notes UX/UI
 
 - Palette inspirée du dancheong traditionnel (bleu, vert, rouge).
 - Boutons arrondis pour rappeler les badges événementiels et univers K-Pop.
-- Mise en avant du Trend Decoder sur la homepage pour pousser la conversion premium.
+- Mise en avant du Trend Decoder sur la homepage pour favoriser l’engagement éditorial.
 
 ## Suivi qualité
 

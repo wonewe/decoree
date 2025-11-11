@@ -41,7 +41,7 @@ export default function JapaneseLandingPage() {
     <div className="space-y-12">
       <section className="section-container">
         <div className="rounded-3xl bg-gradient-to-br from-hanBlue/10 via-white to-dancheongYellow/20 p-10 shadow-lg lg:p-16">
-          <span className="badge-premium">{t("japaneseLanding.badge")}</span>
+          <span className="badge-label">{t("japaneseLanding.badge")}</span>
           <h1 className="mt-6 text-4xl font-bold text-dancheongNavy lg:text-5xl">
             {t("japaneseLanding.hero.title")}
           </h1>

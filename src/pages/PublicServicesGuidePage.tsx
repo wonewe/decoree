@@ -7,7 +7,7 @@ export default function PublicServicesGuidePage() {
   return (
     <section className="section-container space-y-8">
       <header className="space-y-4">
-        <span className="badge-premium bg-hanBlue/10 text-hanBlue">
+        <span className="badge-label bg-hanBlue/10 text-hanBlue">
           {t("nav.localSupport")}
         </span>
         <h1 className="text-4xl font-bold text-dancheongNavy">{t("localSupport.services.title")}</h1>

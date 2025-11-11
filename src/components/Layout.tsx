@@ -135,16 +135,6 @@ export default function Layout() {
                 </div>
               )}
             </div>
-            <NavLink
-              to="/subscribe"
-              className={({ isActive }) =>
-                `transition hover:text-hanBlue ${
-                  isActive ? "text-hanBlue" : "text-slate-600"
-                }`
-              }
-            >
-              {t("nav.subscribe")}
-            </NavLink>
             {isAdmin && (
               <NavLink
                 to="/admin"

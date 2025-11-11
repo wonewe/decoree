@@ -22,7 +22,6 @@ const translations: TranslationDictionary = {
       "nav.phrasebook": "Phrasebook personnalisé",
       "nav.cultureTest": "Test culture Corée",
       "nav.explore": "Explorer",
-      "nav.subscribe": "Abonnement Premium",
       "nav.admin": "Studio Décorée",
       "localSupport.services.title": "Guide des services publics",
       "localSupport.services.subtitle":
@@ -56,7 +55,7 @@ const translations: TranslationDictionary = {
       "hero.ribbon": "Decorée MVP",
       "hero.card.title": "Weekly Trend Decoder",
       "hero.card.subtitle": "Pop-up Han River Sunset Market",
-      "hero.card.caption": "Stripe, Firebase, Google Maps — prêts pour l'intégration finale.",
+      "hero.card.caption": "Firebase, Google Maps — prêts pour l'intégration finale.",
       "hero.spotlight.title": "Sélection Décorée",
       "hero.spotlight.tag.trend": "Trend Decoder",
       "hero.spotlight.tag.event": "Event Calendar",
@@ -64,7 +63,7 @@ const translations: TranslationDictionary = {
       "hero.spotlight.cta.trend": "Lire la tendance complète",
       "hero.spotlight.cta.event": "Réserver sa place",
       "hero.spotlight.cta.phrase": "Apprendre l'expression",
-      "hero.spotlight.disclaimer": "Les contenus premium sont réservés aux abonnés Decorée.",
+      "hero.spotlight.disclaimer": "Sélection éditoriale par Decorée.",
       "popupRadar.title": "Radar Seongsu Pop-up",
       "popupRadar.subtitle":
         "Plan de route en trois temps pour suivre les collaborations mode/design et cafés éphémères du quartier.",
@@ -122,8 +121,6 @@ const translations: TranslationDictionary = {
       "trends.subtitle": "Analyses hebdomadaires des tendances coréennes, en français.",
       "trends.empty": "Aucun Trend Decoder n'est disponible pour le moment. Revenez très vite.",
       "trends.error": "Impossible de charger le Trend Decoder.",
-      "trends.premiumBadge": "Premium",
-      "trends.unlock": "Débloquer via l'abonnement",
       "trends.sample": "Voir un extrait gratuit",
       "trends.readMore": "Lire le reportage",
       "trends.viewAll": "Voir toutes les tendances",
@@ -246,7 +243,7 @@ const translations: TranslationDictionary = {
       "cultureTest.results.trendsetter.highlights.2":
         "Ajoutez un café signature et une expo immersive pour nourrir votre feed.",
       "cultureTest.results.trendsetter.highlights.3":
-        "Suivez notre Trend Decoder pour ne rater aucun lancement collab.",
+        "Consultez le Trend Decoder pour suivre les lancements collab en direct.",
       "cultureTest.results.foodie.title": "Explorateur·rice K-Food",
       "cultureTest.results.foodie.description":
         "Vous cartographiez la Corée par le goût : marchés, pop-up food, tables néo-traditionnelles et desserts XXL. Chaque repas devient un récit.",
@@ -274,23 +271,6 @@ const translations: TranslationDictionary = {
         "Flânez dans les musées alternatifs et galeries dédiées à l'artisanat coréen.",
       "cultureTest.results.heritage.highlights.3":
         "Utilisez notre Trend Decoder pour dénicher les résidences artistiques ouvertes.",
-      "subscription.title": "Passez en Premium",
-      "subscription.subtitle":
-        "Accédez au Trend Decoder complet, à des guides exclusifs et à des conseils personnalisés.",
-      "subscription.price": "1,90€ / mois après l'essai gratuit de 7 jours",
-      "subscription.cta": "Activer l'abonnement",
-      "subscription.loading": "Redirection…",
-      "subscription.warning":
-        "Stripe nécessite un endpoint sécurisé côté serveur. Configurez `/api/create-checkout-session` ou mettez à jour `VITE_STRIPE_CHECKOUT_ENDPOINT`.",
-      "subscription.active":
-        "Premium activé pour cette session (pensez à confirmer via webhook côté serveur).",
-      "subscription.disabledNotice":
-        "Paiement en cours de préparation. Revenez bientôt pour activer Decorée Premium.",
-      "subscription.disabledMessage":
-        "Le paiement n'est pas encore disponible. Merci pour votre patience !",
-      "subscription.disabledCta": "Paiement en préparation",
-      "subscription.missingPrice":
-        "Aucun Price ID Stripe n'est configuré. Contactez l'équipe Décorée.",
       "footer.madeIn": "Conçu à Séoul pour les voyageurs français",
       "admin.title": "Studio Décorée",
       "admin.subtitle":
@@ -307,7 +287,7 @@ const translations: TranslationDictionary = {
       "admin.feedback.cleared": "Les contenus ajoutés depuis ce navigateur ont été supprimés.",
       "admin.trend.title": "Ajouter une tendance",
       "admin.trend.description":
-        "Complétez les champs puis cliquez sur “Enregistrer”. La tendance premium restera visible uniquement pour les utilisateurs connectés.",
+        "Complétez les champs puis cliquez sur “Enregistrer”. La tendance sera visible immédiatement pour les utilisateurs connectés.",
       "admin.trend.submit": "Enregistrer la tendance",
       "admin.event.title": "Ajouter un événement K-Culture",
       "admin.event.description":
@@ -331,7 +311,6 @@ const translations: TranslationDictionary = {
       "admin.form.intensity.highlight": "Highlight (immanquable)",
       "admin.form.intensity.insider": "Insider (initiés)",
       "admin.form.intensity.emerging": "Emergent (tendance naissante)",
-      "admin.form.isPremium": "Contenu premium",
       "admin.form.saving": "Enregistrement…",
       "admin.form.location": "Adresse / Station proche",
       "admin.form.price": "Tarif (ex: 49€ ou Entrée libre)",
@@ -391,10 +370,6 @@ const translations: TranslationDictionary = {
       "trendDetail.published": "Publié",
       "trendDetail.author.label": "Rédigé par",
       "trendDetail.backToList": "Retour aux tendances",
-      "trendDetail.lockedTitle": "Réservé aux abonnés Premium",
-      "trendDetail.lockedSubtitle":
-        "Ce reportage est accessible après activation de votre abonnement Decorée Premium.",
-      "trendDetail.unlockButton": "Activer le Premium",
       "eventDetail.notFound": "Événement introuvable",
       "eventDetail.notFoundSubtitle": "L'événement a peut-être été supprimé ou reporté.",
       "eventDetail.goBack": "Retour",
@@ -486,7 +461,6 @@ const translations: TranslationDictionary = {
       "nav.phrasebook": "맞춤형 회화",
       "nav.cultureTest": "한국 문화 테스트",
       "nav.explore": "콘텐츠 탐색",
-      "nav.subscribe": "프리미엄 구독",
       "nav.admin": "Decorée 스튜디오",
       "localSupport.services.title": "공공 서비스 가이드",
       "localSupport.services.subtitle":
@@ -518,7 +492,7 @@ const translations: TranslationDictionary = {
       "hero.ribbon": "Decorée MVP",
       "hero.card.title": "Weekly Trend Decoder",
       "hero.card.subtitle": "한강 선셋 마켓 팝업",
-      "hero.card.caption": "Stripe · Firebase · Google Maps 연동 준비 완료",
+      "hero.card.caption": "Firebase · Google Maps 연동 준비 완료",
       "hero.spotlight.title": "Decorée 추천",
       "hero.spotlight.tag.trend": "트렌드 리포트",
       "hero.spotlight.tag.event": "이벤트 캘린더",
@@ -526,7 +500,7 @@ const translations: TranslationDictionary = {
       "hero.spotlight.cta.trend": "자세히 읽기",
       "hero.spotlight.cta.event": "지금 예약하기",
       "hero.spotlight.cta.phrase": "표현 익히기",
-      "hero.spotlight.disclaimer": "프리미엄 콘텐츠는 Decorée 구독자에게 제공됩니다.",
+      "hero.spotlight.disclaimer": "Decorée가 직접 큐레이션한 추천입니다.",
       "popupRadar.title": "성수 팝업 레이더",
       "popupRadar.subtitle": "크리에이터 협업, 한정 컬렉션, 팝업 카페를 한 번에 체크하는 1일 코스.",
       "popupRadar.sections.overview.title": "왜 성수인가요?",
@@ -583,8 +557,6 @@ const translations: TranslationDictionary = {
       "trends.subtitle": "프랑스 여행자를 위한 심층 소비 트렌드 분석.",
       "trends.empty": "현재 공개된 트렌드 리포트가 없습니다. 곧 새로운 소식을 전해 드릴게요.",
       "trends.error": "트렌드 리포트를 불러오지 못했습니다.",
-      "trends.premiumBadge": "프리미엄",
-      "trends.unlock": "구독으로 전체 보기",
       "trends.sample": "무료 미리보기",
       "trends.readMore": "자세히 보기",
       "trends.viewAll": "모든 트렌드 보기",
@@ -700,7 +672,7 @@ const translations: TranslationDictionary = {
       "cultureTest.results.trendsetter.highlights.2":
         "무드 있는 시그니처 카페와 몰입형 전시를 일정에 추가하세요.",
       "cultureTest.results.trendsetter.highlights.3":
-        "Trend Decoder를 구독하면 가장 빠른 런칭 정보를 받을 수 있어요.",
+        "Trend Decoder 업데이트를 매주 확인해 가장 빠른 런칭을 캐치하세요.",
       "cultureTest.results.foodie.title": "K-푸드 탐험가",
       "cultureTest.results.foodie.description":
         "시장부터 네오-한식과 디저트까지 맛으로 여행을 설계합니다. 한 끼마다 이야기를 만들고 기록해요.",
@@ -728,21 +700,6 @@ const translations: TranslationDictionary = {
         "대안 전시관과 공예 갤러리를 여유롭게 둘러보세요.",
       "cultureTest.results.heritage.highlights.3":
         "Trend Decoder에서 레지던시·아티스트 이벤트를 확인하세요.",
-      "subscription.title": "프리미엄으로 업그레이드",
-      "subscription.subtitle":
-        "트렌드 전체 리포트와 독점 가이드, 맞춤 추천을 이용해 보세요.",
-      "subscription.price": "7일 무료 체험 후 월 1.90€",
-      "subscription.cta": "구독 시작하기",
-      "subscription.loading": "리디렉션 중…",
-      "subscription.warning":
-        "Stripe 결제는 서버(Cloud Functions 등)에 `/api/create-checkout-session` 엔드포인트를 설정해야 합니다.",
-      "subscription.active": "이 세션에서 프리미엄이 활성화되었습니다 (웹훅으로 최종 확인해야 합니다).",
-      "subscription.disabledNotice":
-        "결제 기능 준비 중입니다. 조금만 기다려 주세요!",
-      "subscription.disabledMessage":
-        "결제 기능이 아직 열려 있지 않습니다. 준비가 되는 대로 안내드릴게요.",
-      "subscription.disabledCta": "결제 준비중",
-      "subscription.missingPrice": "Stripe Price ID가 설정되지 않았습니다. 운영팀에 문의해 주세요.",
       "footer.madeIn": "서울에서 제작",
       "admin.title": "Decorée 콘텐츠 스튜디오",
       "admin.subtitle":
@@ -781,7 +738,6 @@ const translations: TranslationDictionary = {
       "admin.form.intensity.highlight": "하이라이트 (꼭 방문)",
       "admin.form.intensity.insider": "인사이더 (로컬 추천)",
       "admin.form.intensity.emerging": "이머징 (요즘 뜨는 곳)",
-      "admin.form.isPremium": "프리미엄 콘텐츠",
       "admin.form.saving": "저장 중…",
       "admin.form.location": "위치 / 인근 역",
       "admin.form.price": "가격 (예: 49€ 또는 무료)",
@@ -841,9 +797,6 @@ const translations: TranslationDictionary = {
       "trendDetail.published": "발행일",
       "trendDetail.author.label": "작성자",
       "trendDetail.backToList": "트렌드 목록으로",
-      "trendDetail.lockedTitle": "프리미엄 전용 콘텐츠",
-      "trendDetail.lockedSubtitle": "이 리포트는 Decorée 프리미엄을 활성화한 뒤 열람할 수 있습니다.",
-      "trendDetail.unlockButton": "프리미엄 활성화",
       "eventDetail.notFound": "이벤트를 찾을 수 없습니다",
       "eventDetail.notFoundSubtitle": "이벤트가 삭제되었거나 일정이 변경되었습니다.",
       "eventDetail.goBack": "뒤로가기",
@@ -931,7 +884,6 @@ const translations: TranslationDictionary = {
       "nav.phrasebook": "パーソナル会話帳",
       "nav.cultureTest": "韓国カルチャーテスト",
       "nav.explore": "ディスカバー",
-      "nav.subscribe": "プレミアム登録",
       "nav.admin": "Decoréeスタジオ",
       "localSupport.services.title": "公共サービスガイド",
       "localSupport.services.subtitle":
@@ -963,7 +915,7 @@ const translations: TranslationDictionary = {
       "hero.ribbon": "Decorée MVP",
       "hero.card.title": "Weekly Trend Decoder",
       "hero.card.subtitle": "漢江サンセットマーケット ポップアップ",
-      "hero.card.caption": "Stripe・Firebase・Google Mapsの連携準備OK。",
+      "hero.card.caption": "Firebase・Google Mapsの連携準備OK。",
       "hero.spotlight.title": "Decoréeおすすめ",
       "hero.spotlight.tag.trend": "トレンドレポート",
       "hero.spotlight.tag.event": "イベントカレンダー",
@@ -971,7 +923,7 @@ const translations: TranslationDictionary = {
       "hero.spotlight.cta.trend": "特集を読む",
       "hero.spotlight.cta.event": "席を予約する",
       "hero.spotlight.cta.phrase": "フレーズを学ぶ",
-      "hero.spotlight.disclaimer": "プレミアムコンテンツはDecorée会員限定です。",
+      "hero.spotlight.disclaimer": "Decorée編集チームによるセレクトです。",
       "popupRadar.title": "聖水ポップアップレーダー",
       "popupRadar.subtitle": "クリエイターコラボや限定カフェを1日で巡るためのルートガイド。",
       "popupRadar.sections.overview.title": "なぜ聖水？",
@@ -1028,8 +980,6 @@ const translations: TranslationDictionary = {
       "trends.subtitle": "日本人旅行者向けに、韓国の消費トレンドを深掘りします。",
       "trends.empty": "現在公開中のトレンドレポートはありません。少し後でもう一度チェックしてください。",
       "trends.error": "トレンドレポートを読み込めませんでした。",
-      "trends.premiumBadge": "プレミアム",
-      "trends.unlock": "購読して全て読む",
       "trends.sample": "無料サンプルを見る",
       "trends.readMore": "レポートを読む",
       "trends.viewAll": "すべてのトレンドを見る",
@@ -1145,7 +1095,7 @@ const translations: TranslationDictionary = {
       "cultureTest.results.trendsetter.highlights.2":
         "シグネチャーカフェと没入型展示を行程に追加。",
       "cultureTest.results.trendsetter.highlights.3":
-        "Trend Decoderを購読して最新ローンチ情報をキャッチ。",
+        "Trend Decoderの最新アップデートでローンチ情報をキャッチ。",
       "cultureTest.results.foodie.title": "Kフード探検家",
       "cultureTest.results.foodie.description":
         "市場からネオ韓食、デザートまで“食”で旅をデザイン。各食体験をストーリーとして記録します。",
@@ -1173,19 +1123,6 @@ const translations: TranslationDictionary = {
         "クラフト専門のギャラリーや代替スペースをゆっくり巡る。",
       "cultureTest.results.heritage.highlights.3":
         "Trend Decoderでレジデンスやアーティストイベントをチェック。",
-      "subscription.title": "プレミアムへアップグレード",
-      "subscription.subtitle":
-        "トレンドレポート全文、限定ガイド、パーソナルアドバイスへアクセスできます。",
-      "subscription.price": "7日間の無料トライアル後は月額1.90€",
-      "subscription.cta": "購読を開始",
-      "subscription.loading": "リダイレクト中…",
-      "subscription.warning":
-        "Stripe決済にはサーバー側で`/api/create-checkout-session`エンドポイントを設定してください。",
-      "subscription.active": "このセッションでプレミアムが有効になりました (Webhookで最終確認が必要です)。",
-      "subscription.disabledNotice": "決済機能を準備中です。もう少しお待ちください！",
-      "subscription.disabledMessage": "まだ決済はご利用いただけません。準備が整い次第お知らせします。",
-      "subscription.disabledCta": "決済準備中",
-      "subscription.missingPrice": "Stripe Price IDが設定されていません。運営チームへご連絡ください。",
       "footer.madeIn": "日本人旅行者のためにソウルでデザイン",
       "admin.title": "Decorée コンテンツスタジオ",
       "admin.subtitle":
@@ -1224,7 +1161,6 @@ const translations: TranslationDictionary = {
       "admin.form.intensity.highlight": "ハイライト (必訪)",
       "admin.form.intensity.insider": "インサイダー (ローカル推し)",
       "admin.form.intensity.emerging": "エマージング (注目上昇)",
-      "admin.form.isPremium": "プレミアムコンテンツ",
       "admin.form.saving": "保存中…",
       "admin.form.location": "住所 / 最寄り駅",
       "admin.form.price": "価格 (例: 49€または無料)",
@@ -1284,9 +1220,6 @@ const translations: TranslationDictionary = {
       "trendDetail.published": "公開日",
       "trendDetail.author.label": "著者",
       "trendDetail.backToList": "トレンド一覧へ",
-      "trendDetail.lockedTitle": "プレミアム限定",
-      "trendDetail.lockedSubtitle": "Decoréeプレミアムで閲覧できます。",
-      "trendDetail.unlockButton": "プレミアムを有効化",
       "eventDetail.notFound": "イベントが見つかりませんでした",
       "eventDetail.notFoundSubtitle": "削除されたか日程が変更された可能性があります。",
       "eventDetail.goBack": "戻る",
@@ -1375,7 +1308,6 @@ const translations: TranslationDictionary = {
       "nav.phrasebook": "Phrasebook",
       "nav.cultureTest": "Culture Test",
       "nav.explore": "Discover",
-      "nav.subscribe": "Premium Access",
       "nav.admin": "Decorée Studio",
       "localSupport.services.title": "Public Service Guide",
       "localSupport.services.subtitle":
@@ -1408,7 +1340,7 @@ const translations: TranslationDictionary = {
       "hero.ribbon": "Decorée MVP",
       "hero.card.title": "Weekly Trend Decoder",
       "hero.card.subtitle": "Han River Sunset Market pop-up",
-      "hero.card.caption": "Stripe, Firebase, Google Maps — integration ready.",
+      "hero.card.caption": "Firebase, Google Maps — integration ready.",
       "hero.spotlight.title": "Decorée picks",
       "hero.spotlight.tag.trend": "Trend Decoder",
       "hero.spotlight.tag.event": "Event Calendar",
@@ -1416,7 +1348,7 @@ const translations: TranslationDictionary = {
       "hero.spotlight.cta.trend": "Read full story",
       "hero.spotlight.cta.event": "Reserve your spot",
       "hero.spotlight.cta.phrase": "Learn the phrase",
-      "hero.spotlight.disclaimer": "Premium stories are reserved for Decorée members.",
+      "hero.spotlight.disclaimer": "Curated picks from the Decorée team.",
       "popupRadar.title": "Seongsu Pop-up Radar",
       "popupRadar.subtitle":
         "A three-stop loop to keep up with creator collaborations, concept cafés and limited launches in Seongsu.",
@@ -1474,8 +1406,6 @@ const translations: TranslationDictionary = {
       "trends.subtitle": "Curated insight on Korean culture trends, in English.",
       "trends.empty": "No trend reports are available right now. Check back soon.",
       "trends.error": "We couldn't load the Trend Decoder.",
-      "trends.premiumBadge": "Premium",
-      "trends.unlock": "Unlock with premium",
       "trends.sample": "View sample",
       "trends.readMore": "Read more",
       "trends.viewAll": "See all trends",
@@ -1596,7 +1526,7 @@ const translations: TranslationDictionary = {
       "cultureTest.results.trendsetter.highlights.2":
         "Schedule a signature café visit and an immersive exhibition.",
       "cultureTest.results.trendsetter.highlights.3":
-        "Subscribe to our Trend Decoder to catch collab drops first.",
+        "Use the Trend Decoder feed to catch collab drops first.",
       "cultureTest.results.foodie.title": "K-food explorer",
       "cultureTest.results.foodie.description":
         "Markets, modern hansik tables and oversized desserts map out your Korean journey.",
@@ -1637,10 +1567,6 @@ const translations: TranslationDictionary = {
       "trendDetail.published": "Published",
       "trendDetail.author.label": "Written by",
       "trendDetail.backToList": "Back to trends",
-      "trendDetail.lockedTitle": "Reserved for premium members",
-      "trendDetail.lockedSubtitle":
-        "Activate Decorée Premium to read this full report.",
-      "trendDetail.unlockButton": "Get premium access",
       "eventDetail.notFound": "Event not found",
       "eventDetail.notFoundSubtitle": "It may have been cancelled or rescheduled.",
       "eventDetail.goBack": "Go back",
@@ -1691,23 +1617,6 @@ const translations: TranslationDictionary = {
       "bookmarks.type.trend": "Trend report",
       "bookmarks.type.event": "Event",
       "bookmarks.type.popup": "Pop-up radar",
-      "subscription.title": "Upgrade to Premium",
-      "subscription.subtitle":
-        "Access the full Trend Decoder, exclusive guides and curated recommendations.",
-      "subscription.price": "1.90€ / month after 7-day free trial",
-      "subscription.cta": "Start subscription",
-      "subscription.loading": "Redirecting…",
-      "subscription.warning":
-        "Stripe requires a secure server endpoint. Configure `/api/create-checkout-session` or update `VITE_STRIPE_CHECKOUT_ENDPOINT`.",
-      "subscription.active":
-        "Premium is active for this session (finalise via server-side webhook).",
-      "subscription.disabledNotice":
-        "Payments are being set up. Check back soon to activate Decorée Premium.",
-      "subscription.disabledMessage":
-        "Payments are not available yet. We'll notify you when they're ready.",
-      "subscription.disabledCta": "Coming soon",
-      "subscription.missingPrice":
-        "No Stripe Price ID configured. Contact the Decorée team.",
       "footer.madeIn": "Designed in Seoul for global travellers",
       "admin.title": "Decorée Studio",
       "admin.subtitle":
@@ -1724,7 +1633,7 @@ const translations: TranslationDictionary = {
       "admin.feedback.cleared": "Local additions cleared.",
       "admin.trend.title": "Add a trend",
       "admin.trend.description":
-        "Fill the fields and click “Save”. Premium trends remain visible to signed-in users only.",
+        "Fill the fields and click “Save”. trends remain visible to signed-in users only.",
       "admin.trend.submit": "Save trend",
       "admin.event.title": "Add a K-culture event",
       "admin.event.description":
@@ -1748,7 +1657,6 @@ const translations: TranslationDictionary = {
       "admin.form.intensity.highlight": "Highlight (unmissable)",
       "admin.form.intensity.insider": "Insider (local pick)",
       "admin.form.intensity.emerging": "Emerging (trending soon)",
-      "admin.form.isPremium": "Premium content",
       "admin.form.saving": "Saving…",
       "admin.form.location": "Location / Nearby station",
       "admin.form.price": "Price (ex: 49€ or Free)",

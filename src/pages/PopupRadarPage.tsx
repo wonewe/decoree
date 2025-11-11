@@ -39,7 +39,7 @@ export default function PopupRadarPage() {
         <div className="hero-gradient hero-gradient-1 opacity-30" />
         <div className="hero-gradient hero-gradient-2 opacity-30" />
         <div className="section-container relative space-y-6">
-          <span className="badge-premium">{t("hero.highlights.popups.title")}</span>
+          <span className="badge-label">{t("hero.highlights.popups.title")}</span>
           <h1 className="text-4xl font-bold text-dancheongNavy md:text-5xl">
             {t("popupRadar.title")}
           </h1>

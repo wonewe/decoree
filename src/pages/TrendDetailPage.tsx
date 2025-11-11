@@ -3,7 +3,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import type { TrendReport } from "../data/trends";
 import { getTrendReportById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
-import { usePremiumAccess } from "../shared/premiumAccess";
 import { getAuthorProfile } from "../data/authors";
 import { formatDate } from "../shared/date";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
@@ -14,7 +13,6 @@ export default function TrendDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { t } = useI18n();
   const navigate = useNavigate();
-  const { hasPremiumAccess } = usePremiumAccess();
   const [status, setStatus] = useState<Status>("idle");
   const [report, setReport] = useState<TrendReport | null>(null);
 
@@ -103,50 +101,30 @@ export default function TrendDetailPage() {
       <div className="section-container">
         <div className="mb-6 flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-slate-500">
           <span className="rounded-full bg-slate-100 px-3 py-1">{tagList}</span>
-          {report.isPremium && <span className="badge-premium">{t("trends.premiumBadge")}</span>}
         </div>
 
-        {report.isPremium && !hasPremiumAccess ? (
-          <div className="rounded-3xl border border-dashed border-dancheongRed/40 bg-white p-8 text-center">
-            <h2 className="text-2xl font-semibold text-dancheongNavy">
-              {t("trendDetail.lockedTitle")}
-            </h2>
-            <p className="mt-3 text-sm text-slate-600">{t("trendDetail.lockedSubtitle")}</p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <Link to="/subscribe" className="primary-button">
-                {t("trendDetail.unlockButton")}
-              </Link>
-              <button onClick={() => navigate(-1)} className="secondary-button">
-                {t("trendDetail.goBack")}
-              </button>
+        <div className="prose prose-slate max-w-4xl">
+          {report.content.map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+          ))}
+        </div>
+        {author && (
+          <div className="mt-10 flex flex-col gap-4 rounded-3xl bg-white p-6 shadow md:flex-row md:items-center md:gap-6">
+            <img
+              src={author.avatarUrl}
+              alt={author.name}
+              loading="lazy"
+              className="h-20 w-20 flex-shrink-0 rounded-full object-cover shadow"
+            />
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                {t("trendDetail.author.label")}
+              </p>
+              <h3 className="text-xl font-semibold text-dancheongNavy">{author.name}</h3>
+              <p className="text-sm font-semibold text-slate-500">{author.title}</p>
+              <p className="text-sm text-slate-600">{author.bio}</p>
             </div>
           </div>
-        ) : (
-          <>
-            <div className="prose prose-slate max-w-4xl">
-              {report.content.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
-            </div>
-            {author && (
-              <div className="mt-10 flex flex-col gap-4 rounded-3xl bg-white p-6 shadow md:flex-row md:items-center md:gap-6">
-                <img
-                  src={author.avatarUrl}
-                  alt={author.name}
-                  loading="lazy"
-                  className="h-20 w-20 flex-shrink-0 rounded-full object-cover shadow"
-                />
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    {t("trendDetail.author.label")}
-                  </p>
-                  <h3 className="text-xl font-semibold text-dancheongNavy">{author.name}</h3>
-                  <p className="text-sm font-semibold text-slate-500">{author.title}</p>
-                  <p className="text-sm text-slate-600">{author.bio}</p>
-                </div>
-              </div>
-            )}
-          </>
         )}
 
         <aside className="mt-10 rounded-3xl bg-slate-50 p-6">
