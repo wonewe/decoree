@@ -1118,20 +1118,6 @@ export default function AdminPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
-          <LanguageMultiSelect
-            label="노출 언어 (복수 선택)"
-            helper="선택한 언어마다 이벤트 설명이 자동 번역되어 게시됩니다."
-            value={eventDraft.languages}
-            onChange={(languages) => setEventDraft((prev) => ({ ...prev, languages }))}
-          />
-          <p className="mt-2 text-xs text-slate-500">
-            여러 언어를 발행하면 ID는{" "}
-            <strong>{`lang-${normalizeBaseId(eventDraft.id || "event-id", eventDraft.language)}`}</strong>{" "}
-            형식으로 저장됩니다.
-          </p>
-        </div>
-
         <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
           제목
           <input
@@ -1347,6 +1333,20 @@ export default function AdminPage() {
               <option value="festival">Festival</option>
             </select>
           </label>
+        </div>
+
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
+          <LanguageMultiSelect
+            label="노출 언어 (복수 선택)"
+            helper="선택한 언어마다 이벤트 설명이 자동 번역되어 게시됩니다."
+            value={eventDraft.languages}
+            onChange={(languages) => setEventDraft((prev) => ({ ...prev, languages }))}
+          />
+          <p className="mt-2 text-xs text-slate-500">
+            여러 언어를 발행하면 ID는{" "}
+            <strong>{`lang-${normalizeBaseId(eventDraft.id || "event-id", eventDraft.language)}`}</strong>{" "}
+            형식으로 저장됩니다.
+          </p>
         </div>
 
         <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
