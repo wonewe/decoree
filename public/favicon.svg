@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <defs>
+    <linearGradient id="koraidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1f4dd8" />
+      <stop offset="100%" stop-color="#1ab0a5" />
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="20" fill="url(#koraidGradient)" />
+  <path
+    d="M35 22h10v52H35zm16 26 18-26h-12l-12 18zm0 0 18 26h-12l-12-18z"
+    fill="#fdfdfd"
+  />
+</svg>
