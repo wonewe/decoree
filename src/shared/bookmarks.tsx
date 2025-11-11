@@ -34,7 +34,7 @@ type BookmarkContextValue = {
   removeBookmark: (type: BookmarkType, id: string) => void;
 };
 
-const STORAGE_KEY = "decoree:bookmarks";
+const STORAGE_KEY = "koraid:bookmarks";
 
 const BookmarkContext = createContext<BookmarkContextValue | undefined>(undefined);
 

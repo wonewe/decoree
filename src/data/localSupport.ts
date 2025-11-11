@@ -109,20 +109,20 @@ export const COMMUNITY_BOARDS: CommunityBoard[] = [
       "Covoiturage concerts",
       "Calendrier sorties"
     ],
-    contact: "@decoree.hanyang"
+    contact: "@koraid.hanyang"
   },
   {
     id: "yonsei",
     name: "연세대 · Sinchon",
     summary: "Buddy system FR/KR et offres de stage.",
     highlights: ["Buddy brunch", "Partage de stages", "Clubs culture"],
-    contact: "@decoree.yonsei"
+    contact: "@koraid.yonsei"
   },
   {
     id: "busan-jeju",
     name: "부산 / 제주",
     summary: "Communauté expat pour sud de la Corée.",
     highlights: ["Tips ferry/vol", "Colocs disponibles", "Meetups plage"],
-    contact: "@decoree.busan"
+    contact: "@koraid.busan"
   }
 ];

@@ -10,8 +10,8 @@ export const AUTHOR_PROFILES: AuthorProfile[] = [
   {
     id: "jaewon-kim",
     name: "Jaewon Kim",
-    title: "Decorée Team Lead",
-    bio: "Find k-trends in Decorée!",
+    title: "koraid Team Lead",
+    bio: "Find k-trends in koraid!",
     avatarUrl:
       "https://res.cloudinary.com/dfbjpfrno/image/upload/v1762441482/IMG_6004_jewfzd.jpg"
   },
@@ -19,14 +19,14 @@ export const AUTHOR_PROFILES: AuthorProfile[] = [
     id: "Dongha-lee",
     name: "Dongha Lee",
     title: "Marketing Specialist",
-    bio: "French market Marketing Specialist at Decorée",
+    bio: "French market Marketing Specialist at koraid",
     avatarUrl: ""
   },
   {
     id: "Taeho-ahn",
     name: "Taeho Ahn",
     title: "Japanese Contents Editor",
-    bio: "Japanese Contents Editor at Decorée",
+    bio: "Japanese Contents Editor at koraid",
     avatarUrl: ""
   },
 ];

@@ -52,7 +52,7 @@ export const TREND_REPORTS: TrendReport[] = [
     imageUrl: BLANK_IMAGE,
     content: [
       "Needle & Beam reprend le format des listening bars new-yorkais avec une sélection de vinyles pressés à Séoul et un dessert bar inspiré des dramas.",
-      "Les places sont limitées : conseillez à vos lectrices/eurs de réserver le créneau de 19h via KakaoTalk. La newsletter Decorée partage un code priorité aux early birds.",
+      "Les places sont limitées : conseillez à vos lectrices/eurs de réserver le créneau de 19h via KakaoTalk. La newsletter koraid partage un code priorité aux early birds.",
       "Chaque dimanche matin, une session « vinyle à emporter » permet d'acquérir des pressages exclusifs à ramener dans sa valise."
     ],
     authorId: "jiwoo-k"

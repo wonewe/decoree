@@ -2,7 +2,7 @@ const { queryRef, executeQuery, mutationRef, executeMutation, validateArgs } = r
 
 const connectorConfig = {
   connector: 'example',
-  service: 'decoree',
+  service: 'koraid',
   location: 'asia-northeast3'
 };
 exports.connectorConfig = connectorConfig;

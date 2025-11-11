@@ -60,7 +60,7 @@ export default function Layout() {
       <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
           <NavLink to="/" className="text-xl font-bold text-hanBlue">
-            Decorée
+            koraid
           </NavLink>
           <nav className="hidden items-center gap-6 text-sm font-semibold md:flex">
             <div className="relative" ref={exploreRef}>
@@ -204,7 +204,7 @@ export default function Layout() {
       </main>
       <footer className="border-t border-slate-200 bg-white py-10">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 text-sm text-slate-600 md:flex-row md:items-center md:justify-between">
-          <span>© {new Date().getFullYear()} Decorée. {t("footer.madeIn")}.</span>
+          <span>© {new Date().getFullYear()} koraid. {t("footer.madeIn")}.</span>
           <div className="flex gap-4">
             <a href="https://www.instagram.com" className="hover:text-hanBlue" target="_blank" rel="noreferrer">
               Instagram
@@ -212,8 +212,8 @@ export default function Layout() {
             <a href="https://www.tiktok.com" className="hover:text-hanBlue" target="_blank" rel="noreferrer">
               TikTok
             </a>
-            <a href="mailto:hello@decoree.app" className="hover:text-hanBlue">
-              hello@decoree.app
+            <a href="mailto:Team@kor-aid.com" className="hover:text-hanBlue">
+              Team@kor-aid.com
             </a>
           </div>
         </div>

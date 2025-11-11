@@ -1582,7 +1582,7 @@ export default function AdminPage() {
       <header className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-dancheongNavy">Studio Décorée 관리자</h1>
+            <h1 className="text-3xl font-bold text-dancheongNavy">Studio koraid 관리자</h1>
             <p className="mt-2 text-sm text-slate-500">
               주간 트렌드, 이벤트, 프레이즈북 콘텐츠를 한 곳에서 관리하세요. 저장 이후에는
               실시간으로 웹사이트에 반영됩니다.

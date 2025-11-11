@@ -1,5 +1,5 @@
 specVersion: "v1"
-serviceId: "decoree"
+serviceId: "koraid"
 location: "asia-northeast3"
 schema:
   source: "./schema"
@@ -7,7 +7,7 @@ schema:
     postgresql:
       database: "fdcdb"
       cloudSql:
-        instanceId: "decoree-fdc"
+        instanceId: "koraid-fdc"
         # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
         # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
 connectorDirs: ["./example"]

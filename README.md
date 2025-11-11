@@ -1,6 +1,6 @@
-# Decorée – MVP Web App
+# koraid – MVP Web App
 
-Decorée est une application web monopage (SPA) pensée pour accompagner les voyageurs francophones (18-25 ans) lors de leurs séjours en Corée du Sud. Ce MVP couvre les fonctionnalités essentielles décrites dans le PRD : Trend Decoder hebdomadaire, calendrier d’événements K-Culture, phrasebook personnalisé et hub de support local (services publics, apps, communauté).
+koraid est une application web monopage (SPA) pensée pour accompagner les voyageurs francophones (18-25 ans) lors de leurs séjours en Corée du Sud. Ce MVP couvre les fonctionnalités essentielles décrites dans le PRD : Trend Decoder hebdomadaire, calendrier d’événements K-Culture, phrasebook personnalisé et hub de support local (services publics, apps, communauté).
 
 ## Démarrer le projet
 
@@ -36,8 +36,8 @@ npm run build
 - **Blog détaillé** : chaque tendance/événement dispose d’une page immersive (photo, contenu riche) avec astuces pratiques.
 - **Multilingue FR/KR** : bascule instantanée de la navigation, des CTA et contenus textes.
 - **Responsive** : layout Tailwind responsive (mobile-first), navigation sticky, cartes adaptatives.
-- **Decorée Studio (Admin)** : formulaire `/admin` pour ajouter des tendances, événements et expressions sans toucher au code. Les entrées sont stockées dans le navigateur (localStorage) puis fusionnées avec les données mockées.
-- **Sécurisation par login** : `/admin` est protégé par Firebase Authentication (email/mot de passe ou Google). Tout utilisateur peut créer un compte, mais seules les adresses listées dans `VITE_DECOREE_ADMIN_EMAILS` voient et accèdent au Studio.
+- **koraid Studio (Admin)** : formulaire `/admin` pour ajouter des tendances, événements et expressions sans toucher au code. Les entrées sont stockées dans le navigateur (localStorage) puis fusionnées avec les données mockées.
+- **Sécurisation par login** : `/admin` est protégé par Firebase Authentication (email/mot de passe ou Google). Tout utilisateur peut créer un compte, mais seules les adresses listées dans `VITE_KORAID_ADMIN_EMAILS` voient et accèdent au Studio.
 
 ## Intégrations futures
 
@@ -56,7 +56,7 @@ npm run build
    - Activez **Authentication → Email/Password**.
    - Activez également **Authentication → Google** si vous souhaitez permettre la connexion par Google.
    - Créez les comptes administrateurs qui doivent accéder au studio ou laissez-les utiliser la page `/signup`.
-3. Listez les emails autorisés dans `VITE_DECOREE_ADMIN_EMAILS` (séparés par des virgules). Ces comptes seront reconnus comme administrateurs et verront le lien “Studio Décorée”.
+3. Listez les emails autorisés dans `VITE_KORAID_ADMIN_EMAILS` (séparés par des virgules). Ces comptes seront reconnus comme administrateurs et verront le lien “Studio koraid”.
 4. Relancez `npm run dev` pour que Vite recharge la configuration. Rendez-vous sur `/login` ou `/signup` pour tester la connexion ; une fois authentifié, vous serez redirigé vers `/admin`.
 
 ## Mode contenu statique

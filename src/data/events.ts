@@ -98,7 +98,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     imageUrl: BLANK_IMAGE,
     longDescription: [
       "썸머 뮤직 페스트는 반포 야외무대에서 진행되는 야간 음악축제로, 로컬 인디 밴드와 DJ가 번갈아 무대를 채웁니다.",
-      "돗자리 대여와 푸드트럭이 운영되어 느긋한 피크닉 분위기를 즐길 수 있습니다. Decorée 구독자는 사운드 체크 투어에 참여 가능합니다."
+      "돗자리 대여와 푸드트럭이 운영되어 느긋한 피크닉 분위기를 즐길 수 있습니다. koraid 구독자는 사운드 체크 투어에 참여 가능합니다."
     ],
     tips: [
       "저녁 6시 이전에 도착해 선착순 좌석을 확보하세요.",
@@ -184,7 +184,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     imageUrl: BLANK_IMAGE,
     longDescription: [
       "Surf limited print runs, talk to indie editors and join mini-workshops on binding or Seoul neighbourhood storytelling.",
-      "Decorée curates an English-friendly circuit highlighting bilingual creators and ateliers shipping worldwide."
+      "koraid curates an English-friendly circuit highlighting bilingual creators and ateliers shipping worldwide."
     ],
     tips: [
       "Arrive early to secure tote bags and special edition prints.",
