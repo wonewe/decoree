@@ -9,28 +9,28 @@ export default function HeroSection() {
       title: t("hero.highlights.trends.title"),
       description: t("hero.highlights.trends.description"),
       to: "/trends",
-      image: BLANK_IMAGE,
+      image: "/main1.jpg",
       accent: "from-black/70 via-black/20 to-transparent"
     },
     {
       title: t("hero.highlights.events.title"),
       description: t("hero.highlights.events.description"),
       to: "/events",
-      image: BLANK_IMAGE,
+      image: "/main2.jpg",
       accent: "from-hanBlue/70 via-hanBlue/30 to-transparent"
     },
     {
       title: t("hero.highlights.phrasebook.title"),
       description: t("hero.highlights.phrasebook.description"),
       to: "/phrasebook",
-      image: BLANK_IMAGE,
+      image: "/main3.jpg",
       accent: "from-dancheongGreen/70 via-dancheongGreen/30 to-transparent"
     },
     {
       title: t("hero.highlights.popups.title"),
       description: t("hero.highlights.popups.description"),
       to: "/popups",
-      image: BLANK_IMAGE,
+      image: "/main4.jpg",
       accent: "from-dancheongYellow/70 via-dancheongYellow/30 to-transparent"
     }
   ] as const;
