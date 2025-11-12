@@ -44,7 +44,7 @@ export default function HeroSection() {
       <div className="section-container space-y-10 relative">
         <div className="flex flex-col gap-12 md:flex-row md:items-center md:justify-between">
           <div className="flex-1 space-y-6 hero-intro">
-            <span className="badge-label">{t("hero.ribbon")}</span>
+            {t("hero.ribbon") && <span className="badge-label">{t("hero.ribbon")}</span>}
             <h1 className="hero-fade text-4xl font-bold opacity-0 translate-y-8 sm:text-5xl md:text-6xl">
               {t("hero.title")}
             </h1>

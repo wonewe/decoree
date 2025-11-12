@@ -1,7 +1,7 @@
 import type { SupportedLanguage } from "../shared/i18n";
 import { BLANK_IMAGE } from "../shared/placeholders";
 
-export type EventCategory = "concert" | "traditional" | "pop-up" | "festival";
+export type EventCategory = "concert" | "traditional" | "atelier" | "theatre" | "festival";
 
 export type KCultureEvent = {
   id: string;
@@ -72,7 +72,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     date: "2024-07-18",
     time: "18:00",
     location: "Seongsu Silo Lab, Séoul",
-    category: "pop-up",
+    category: "atelier",
     price: "35€",
     imageUrl: BLANK_IMAGE,
     longDescription: [
@@ -114,7 +114,7 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     date: "2024-08-03",
     time: "14:00",
     location: "제주 서귀포 개인 다원",
-    category: "pop-up",
+    category: "atelier",
     price: "55,000원",
     bookingUrl: "https://example.com/jeju-tea",
     imageUrl: BLANK_IMAGE,
@@ -169,6 +169,28 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
       "ヒールの高い靴よりも歩きやすい靴を推奨します。",
         "写真撮影ポイントでは三脚の使用が禁止されているのでご注意ください."
       ]
+  },
+  {
+    id: "ko-seoul-musical-night",
+    language: "ko",
+    title: "대학로 뮤지컬 나이트 패스",
+    description:
+      "대학로 인기 연극·뮤지컬을 하루 패스로 관람하고, 백스테이지 투어까지 이어지는 패키지.",
+    date: "2024-09-15",
+    time: "17:00",
+    location: "서울 대학로 일대",
+    category: "theatre",
+    price: "89,000원",
+    bookingUrl: "https://example.com/seoul-musical-night",
+    imageUrl: BLANK_IMAGE,
+    longDescription: [
+      "저녁 5시에 대학로 아트홀에서 집결하여 공연 큐레이터의 하이라이트 설명을 듣습니다.",
+      "1부는 선택한 연극 또는 뮤지컬 관람, 2부는 무대 뒤에서 조명과 세트를 체험하는 백스테이지 투어가 이어집니다."
+    ],
+    tips: [
+      "좌석 업그레이드는 사전 신청 필수입니다.",
+      "투어 중 사진 촬영이 제한될 수 있으니 진행 스태프 안내를 따르세요."
+    ]
   },
   {
     id: "en-seoul-book-fair",

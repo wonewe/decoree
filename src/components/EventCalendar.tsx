@@ -8,7 +8,7 @@ import { useEventList } from "../hooks/useEventList";
 import { BookmarkButton } from "./bookmarks/BookmarkButton";
 import { formatDate } from "../shared/date";
 
-const CATEGORY_KEYS: EventCategory[] = ["concert", "traditional", "pop-up", "festival"];
+const CATEGORY_KEYS: EventCategory[] = ["concert", "traditional", "atelier", "theatre", "festival"];
 
 export default function EventCalendar() {
   const { t, language } = useI18n();
@@ -117,6 +117,16 @@ export default function EventCalendar() {
               key={event.id}
               className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
             >
+              {event.imageUrl && (
+                <div className="overflow-hidden rounded-2xl border border-slate-100">
+                  <img
+                    src={event.imageUrl}
+                    alt={event.title}
+                    className="h-48 w-full object-cover transition duration-200 ease-out hover:scale-[1.02]"
+                    loading="lazy"
+                  />
+                </div>
+              )}
               <div className="flex items-start justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
                 <span>
                   {formatDate(event.date)} · {event.time}

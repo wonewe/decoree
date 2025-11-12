@@ -1564,7 +1564,8 @@ export default function AdminPage() {
             >
               <option value="concert">Concert</option>
               <option value="traditional">Traditional</option>
-              <option value="pop-up">Pop-up</option>
+              <option value="atelier">Atelier</option>
+              <option value="theatre">Theatre</option>
               <option value="festival">Festival</option>
             </select>
           </label>
