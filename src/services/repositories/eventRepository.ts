@@ -17,7 +17,7 @@ import {
   filterByLanguage,
   stripLanguageMeta
 } from "./languageUtils";
-import { assertFirestoreAvailable, shouldUseStaticContent } from "./runtimeConfig";
+import { shouldUseStaticContent } from "./runtimeConfig";
 
 type WithTimestamps<T> = T & {
   createdAt?: Timestamp;
@@ -184,46 +184,73 @@ export async function getEventById(id: string) {
 }
 
 export async function addEvent(event: KCultureEvent) {
-  if (shouldUseStaticContent()) {
+  const saveLocally = () => {
     upsertLocalEvent(event);
     return mergeStaticEvents();
-  }
-  assertFirestoreAvailable("Adding an event");
-  const id = event.id;
-  const payload: KCultureEvent & { createdAt: Timestamp; updatedAt: Timestamp } = {
-    ...event,
-    language: event.language ?? DEFAULT_LANGUAGE,
-    createdAt: Timestamp.now(),
-    updatedAt: Timestamp.now()
   };
-  await setDoc(doc(eventCollection, id), payload, { merge: true });
-  return fetchEvents();
+
+  if (shouldUseStaticContent()) {
+    return saveLocally();
+  }
+
+  try {
+    const id = event.id;
+    const payload: KCultureEvent & { createdAt: Timestamp; updatedAt: Timestamp } = {
+      ...event,
+      language: event.language ?? DEFAULT_LANGUAGE,
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now()
+    };
+    await setDoc(doc(eventCollection, id), payload, { merge: true });
+    return fetchEvents();
+  } catch (error) {
+    console.warn("[events] addEvent failed on Firestore, falling back to local store.", error);
+    return saveLocally();
+  }
 }
 
 export async function updateEvent(event: KCultureEvent) {
-  if (shouldUseStaticContent()) {
+  const saveLocally = () => {
     upsertLocalEvent(event);
     return mergeStaticEvents();
+  };
+
+  if (shouldUseStaticContent()) {
+    return saveLocally();
   }
-  assertFirestoreAvailable("Updating an event");
-  await setDoc(
-    doc(eventCollection, event.id),
-    {
-      ...event,
-      language: event.language ?? DEFAULT_LANGUAGE,
-      updatedAt: Timestamp.now()
-    },
-    { merge: true }
-  );
-  return fetchEvents();
+
+  try {
+    await setDoc(
+      doc(eventCollection, event.id),
+      {
+        ...event,
+        language: event.language ?? DEFAULT_LANGUAGE,
+        updatedAt: Timestamp.now()
+      },
+      { merge: true }
+    );
+    return fetchEvents();
+  } catch (error) {
+    console.warn("[events] updateEvent failed on Firestore, falling back to local store.", error);
+    return saveLocally();
+  }
 }
 
 export async function deleteEvent(id: string) {
-  if (shouldUseStaticContent()) {
+  const deleteLocally = () => {
     markEventDeleted(id);
     return mergeStaticEvents();
+  };
+
+  if (shouldUseStaticContent()) {
+    return deleteLocally();
   }
-  assertFirestoreAvailable("Deleting an event");
-  await deleteDoc(doc(eventCollection, id));
-  return fetchEvents();
+
+  try {
+    await deleteDoc(doc(eventCollection, id));
+    return fetchEvents();
+  } catch (error) {
+    console.warn("[events] deleteEvent failed on Firestore, falling back to local store.", error);
+    return deleteLocally();
+  }
 }
