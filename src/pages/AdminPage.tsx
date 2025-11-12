@@ -43,6 +43,49 @@ type AdminMessage = {
 
 const LANG_OPTIONS: SupportedLanguage[] = ["fr", "ko", "ja", "en"];
 
+const DRAFT_STORAGE_KEYS = {
+  trend: "koraid:studio:draft:trend",
+  event: "koraid:studio:draft:event",
+  phrase: "koraid:studio:draft:phrase",
+  popup: "koraid:studio:draft:popup"
+} as const;
+
+const DRAFT_LIST_ID = {
+  trend: "__draft_trend",
+  event: "__draft_event",
+  phrase: "__draft_phrase",
+  popup: "__draft_popup"
+} as const;
+
+function readDraft<T>(key: string): T | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : null;
+  } catch (error) {
+    console.warn("Failed to read draft", error);
+    return null;
+  }
+}
+
+function writeDraft<T>(key: string, value: T) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.warn("Failed to save draft", error);
+  }
+}
+
+function clearDraft(key: string) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.removeItem(key);
+  } catch (error) {
+    console.warn("Failed to clear draft", error);
+  }
+}
+
 type TrendDraft = {
   id: string;
   language: SupportedLanguage;
@@ -400,6 +443,10 @@ export default function AdminPage() {
   const [eventDraft, setEventDraft] = useState<EventDraft>(createEmptyEventDraft);
   const [phraseDraft, setPhraseDraft] = useState<PhraseDraft>(createEmptyPhraseDraft);
   const [popupDraft, setPopupDraft] = useState<PopupDraft>(createEmptyPopupDraft);
+  const [trendDraftCache, setTrendDraftCache] = useState<TrendDraft | null>(null);
+  const [eventDraftCache, setEventDraftCache] = useState<EventDraft | null>(null);
+  const [phraseDraftCache, setPhraseDraftCache] = useState<PhraseDraft | null>(null);
+  const [popupDraftCache, setPopupDraftCache] = useState<PopupDraft | null>(null);
 
   const [selectedTrendId, setSelectedTrendId] = useState<string | null>(null);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
@@ -410,6 +457,10 @@ export default function AdminPage() {
   const [savingEvent, setSavingEvent] = useState(false);
   const [savingPhrase, setSavingPhrase] = useState(false);
   const [savingPopup, setSavingPopup] = useState(false);
+  const [hasTrendDraft, setHasTrendDraft] = useState(false);
+  const [hasEventDraft, setHasEventDraft] = useState(false);
+  const [hasPhraseDraft, setHasPhraseDraft] = useState(false);
+  const [hasPopupDraft, setHasPopupDraft] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -429,21 +480,64 @@ export default function AdminPage() {
         setPhrases(phraseData);
         setPopups(popupData);
 
-        if (trendData.length > 0) {
-          setSelectedTrendId(trendData[0].id);
-          setTrendDraft(trendToDraft(trendData[0]));
+        const storedTrendDraft = readDraft<TrendDraft>(DRAFT_STORAGE_KEYS.trend);
+        if (storedTrendDraft) {
+          setTrendDraftCache(storedTrendDraft);
+          setHasTrendDraft(true);
+          setSelectedTrendId(DRAFT_LIST_ID.trend);
+          setTrendDraft(storedTrendDraft);
+        } else {
+          setTrendDraftCache(null);
+          setHasTrendDraft(false);
+          if (trendData.length > 0) {
+            setSelectedTrendId(trendData[0].id);
+            setTrendDraft(trendToDraft(trendData[0]));
+          }
         }
-        if (eventData.length > 0) {
-          setSelectedEventId(eventData[0].id);
-          setEventDraft(eventToDraft(eventData[0]));
+
+        const storedEventDraft = readDraft<EventDraft>(DRAFT_STORAGE_KEYS.event);
+        if (storedEventDraft) {
+          setEventDraftCache(storedEventDraft);
+          setHasEventDraft(true);
+          setSelectedEventId(DRAFT_LIST_ID.event);
+          setEventDraft(storedEventDraft);
+        } else {
+          setEventDraftCache(null);
+          setHasEventDraft(false);
+          if (eventData.length > 0) {
+            setSelectedEventId(eventData[0].id);
+            setEventDraft(eventToDraft(eventData[0]));
+          }
         }
-        if (phraseData.length > 0) {
-          setSelectedPhraseId(phraseData[0].id);
-          setPhraseDraft(phraseToDraft(phraseData[0]));
+
+        const storedPhraseDraft = readDraft<PhraseDraft>(DRAFT_STORAGE_KEYS.phrase);
+        if (storedPhraseDraft) {
+          setPhraseDraftCache(storedPhraseDraft);
+          setHasPhraseDraft(true);
+          setSelectedPhraseId(DRAFT_LIST_ID.phrase);
+          setPhraseDraft(storedPhraseDraft);
+        } else {
+          setPhraseDraftCache(null);
+          setHasPhraseDraft(false);
+          if (phraseData.length > 0) {
+            setSelectedPhraseId(phraseData[0].id);
+            setPhraseDraft(phraseToDraft(phraseData[0]));
+          }
         }
-        if (popupData.length > 0) {
-          setSelectedPopupId(popupData[0].id);
-          setPopupDraft(popupToDraft(popupData[0]));
+
+        const storedPopupDraft = readDraft<PopupDraft>(DRAFT_STORAGE_KEYS.popup);
+        if (storedPopupDraft) {
+          setPopupDraftCache(storedPopupDraft);
+          setHasPopupDraft(true);
+          setSelectedPopupId(DRAFT_LIST_ID.popup);
+          setPopupDraft(storedPopupDraft);
+        } else {
+          setPopupDraftCache(null);
+          setHasPopupDraft(false);
+          if (popupData.length > 0) {
+            setSelectedPopupId(popupData[0].id);
+            setPopupDraft(popupToDraft(popupData[0]));
+          }
         }
       } catch (error) {
         console.error("Failed to load admin content", error);
@@ -542,6 +636,9 @@ export default function AdminPage() {
           ? `${createdCount}개 언어 버전이 추가되었습니다.`
           : `${updatedCount}개 언어 버전이 업데이트되었습니다.`;
       setMessage({ tone: "success", text: successText });
+      clearDraft(DRAFT_STORAGE_KEYS.trend);
+      setTrendDraftCache(null);
+      setHasTrendDraft(false);
     } catch (error) {
       console.error("Failed to save trend", error);
       setMessage({
@@ -561,10 +658,28 @@ export default function AdminPage() {
       setMessage({ tone: "error", text: "삭제할 항목을 먼저 선택해주세요." });
       return;
     }
-    const confirmed = window.confirm("정말로 이 트렌드를 삭제하시겠어요?");
+    const isDraft = id === DRAFT_LIST_ID.trend;
+    const confirmed = window.confirm(
+      isDraft ? "임시저장을 삭제하시겠어요?" : "정말로 이 트렌드를 삭제하시겠어요?"
+    );
     if (!confirmed) return;
     setSavingTrend(true);
     try {
+      if (isDraft) {
+        clearDraft(DRAFT_STORAGE_KEYS.trend);
+        setTrendDraftCache(null);
+        setHasTrendDraft(false);
+        const fallback = trends[0];
+        if (fallback) {
+          setSelectedTrendId(fallback.id);
+          setTrendDraft(trendToDraft(fallback));
+        } else {
+          setSelectedTrendId(null);
+          setTrendDraft(createEmptyTrendDraft());
+        }
+        setMessage({ tone: "success", text: "임시저장을 삭제했습니다." });
+        return;
+      }
       const updated = await deleteTrendReport(id);
       setTrends(updated);
       if (updated.length > 0) {
@@ -584,6 +699,13 @@ export default function AdminPage() {
     } finally {
       setSavingTrend(false);
     }
+  };
+  const handleTrendDraftSave = () => {
+    writeDraft(DRAFT_STORAGE_KEYS.trend, trendDraft);
+    setTrendDraftCache(trendDraft);
+    setHasTrendDraft(true);
+    setSelectedTrendId(DRAFT_LIST_ID.trend);
+    setMessage({ tone: "info", text: "트렌드 임시저장을 완료했습니다." });
   };
 
   const handleEventSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -650,6 +772,9 @@ export default function AdminPage() {
           ? `${createdCount}개 언어 버전이 추가되었습니다.`
           : `${updatedCount}개 언어 버전이 업데이트되었습니다.`;
       setMessage({ tone: "success", text: successText });
+      clearDraft(DRAFT_STORAGE_KEYS.event);
+      setEventDraftCache(null);
+      setHasEventDraft(false);
     } catch (error) {
       console.error("Failed to save event", error);
       setMessage({
@@ -669,10 +794,28 @@ export default function AdminPage() {
       setMessage({ tone: "error", text: "삭제할 항목을 먼저 선택해주세요." });
       return;
     }
-    const confirmed = window.confirm("정말로 이 이벤트를 삭제하시겠어요?");
+    const isDraft = id === DRAFT_LIST_ID.event;
+    const confirmed = window.confirm(
+      isDraft ? "이벤트 임시저장을 삭제하시겠어요?" : "정말로 이 이벤트를 삭제하시겠어요?"
+    );
     if (!confirmed) return;
     setSavingEvent(true);
     try {
+      if (isDraft) {
+        clearDraft(DRAFT_STORAGE_KEYS.event);
+        setEventDraftCache(null);
+        setHasEventDraft(false);
+        const fallback = events[0];
+        if (fallback) {
+          setSelectedEventId(fallback.id);
+          setEventDraft(eventToDraft(fallback));
+        } else {
+          setSelectedEventId(null);
+          setEventDraft(createEmptyEventDraft());
+        }
+        setMessage({ tone: "success", text: "이벤트 임시저장을 삭제했습니다." });
+        return;
+      }
       const updated = await deleteEvent(id);
       setEvents(updated);
       if (updated.length > 0) {
@@ -692,6 +835,13 @@ export default function AdminPage() {
     } finally {
       setSavingEvent(false);
     }
+  };
+  const handleEventDraftSave = () => {
+    writeDraft(DRAFT_STORAGE_KEYS.event, eventDraft);
+    setEventDraftCache(eventDraft);
+    setHasEventDraft(true);
+    setSelectedEventId(DRAFT_LIST_ID.event);
+    setMessage({ tone: "info", text: "이벤트 임시저장을 완료했습니다." });
   };
 
   const handlePhraseSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -758,6 +908,9 @@ export default function AdminPage() {
           ? `${createdCount}개 언어 버전이 추가되었습니다.`
           : `${updatedCount}개 언어 버전이 업데이트되었습니다.`;
       setMessage({ tone: "success", text: successText });
+      clearDraft(DRAFT_STORAGE_KEYS.phrase);
+      setPhraseDraftCache(null);
+      setHasPhraseDraft(false);
     } catch (error) {
       console.error("Failed to save phrase", error);
       setMessage({
@@ -775,10 +928,28 @@ export default function AdminPage() {
       setMessage({ tone: "error", text: "삭제할 항목을 먼저 선택해주세요." });
       return;
     }
-    const confirmed = window.confirm("정말로 이 표현을 삭제하시겠어요?");
+    const isDraft = id === DRAFT_LIST_ID.phrase;
+    const confirmed = window.confirm(
+      isDraft ? "표현 임시저장을 삭제하시겠어요?" : "정말로 이 표현을 삭제하시겠어요?"
+    );
     if (!confirmed) return;
     setSavingPhrase(true);
     try {
+      if (isDraft) {
+        clearDraft(DRAFT_STORAGE_KEYS.phrase);
+        setPhraseDraftCache(null);
+        setHasPhraseDraft(false);
+        const fallback = phrases[0];
+        if (fallback) {
+          setSelectedPhraseId(fallback.id);
+          setPhraseDraft(phraseToDraft(fallback));
+        } else {
+          setSelectedPhraseId(null);
+          setPhraseDraft(createEmptyPhraseDraft());
+        }
+        setMessage({ tone: "success", text: "표현 임시저장을 삭제했습니다." });
+        return;
+      }
       const updated = await deletePhrase(id);
       setPhrases(updated);
       if (updated.length > 0) {
@@ -798,6 +969,13 @@ export default function AdminPage() {
     } finally {
       setSavingPhrase(false);
     }
+  };
+  const handlePhraseDraftSave = () => {
+    writeDraft(DRAFT_STORAGE_KEYS.phrase, phraseDraft);
+    setPhraseDraftCache(phraseDraft);
+    setHasPhraseDraft(true);
+    setSelectedPhraseId(DRAFT_LIST_ID.phrase);
+    setMessage({ tone: "info", text: "표현 임시저장을 완료했습니다." });
   };
 
   const handlePopupSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -864,6 +1042,9 @@ export default function AdminPage() {
           ? `${createdCount}개 언어 버전이 추가되었습니다.`
           : `${updatedCount}개 언어 버전이 업데이트되었습니다.`;
       setMessage({ tone: "success", text: successText });
+      clearDraft(DRAFT_STORAGE_KEYS.popup);
+      setPopupDraftCache(null);
+      setHasPopupDraft(false);
     } catch (error) {
       console.error("Failed to save popup", error);
       setMessage({
@@ -881,10 +1062,28 @@ export default function AdminPage() {
       setMessage({ tone: "error", text: "삭제할 항목을 먼저 선택해주세요." });
       return;
     }
-    const confirmed = window.confirm("정말로 이 팝업을 삭제하시겠어요?");
+    const isDraft = id === DRAFT_LIST_ID.popup;
+    const confirmed = window.confirm(
+      isDraft ? "팝업 임시저장을 삭제하시겠어요?" : "정말로 이 팝업을 삭제하시겠어요?"
+    );
     if (!confirmed) return;
     setSavingPopup(true);
     try {
+      if (isDraft) {
+        clearDraft(DRAFT_STORAGE_KEYS.popup);
+        setPopupDraftCache(null);
+        setHasPopupDraft(false);
+        const fallback = popups[0];
+        if (fallback) {
+          setSelectedPopupId(fallback.id);
+          setPopupDraft(popupToDraft(fallback));
+        } else {
+          setSelectedPopupId(null);
+          setPopupDraft(createEmptyPopupDraft());
+        }
+        setMessage({ tone: "success", text: "팝업 임시저장을 삭제했습니다." });
+        return;
+      }
       const updated = await deletePopup(id);
       setPopups(updated);
       if (updated.length > 0) {
@@ -904,6 +1103,13 @@ export default function AdminPage() {
     } finally {
       setSavingPopup(false);
     }
+  };
+  const handlePopupDraftSave = () => {
+    writeDraft(DRAFT_STORAGE_KEYS.popup, popupDraft);
+    setPopupDraftCache(popupDraft);
+    setHasPopupDraft(true);
+    setSelectedPopupId(DRAFT_LIST_ID.popup);
+    setMessage({ tone: "info", text: "팝업 임시저장을 완료했습니다." });
   };
 
   const sectionTabClass = (section: ActiveSection) =>
@@ -1001,6 +1207,17 @@ export default function AdminPage() {
           </button>
         </div>
         <div className="space-y-2">
+          {hasTrendDraft && trendDraftCache && (
+            renderListButton(
+              DRAFT_LIST_ID.trend,
+              `[임시저장] ${trendDraftCache.title || trendDraftCache.id || "제목 미정"}`,
+              selectedTrendId === DRAFT_LIST_ID.trend,
+              () => {
+                setSelectedTrendId(DRAFT_LIST_ID.trend);
+                setTrendDraft(trendDraftCache);
+              }
+            )
+          )}
           {trends.map((report) => {
             const author = AUTHOR_PROFILES.find((profile) => profile.id === report.authorId);
             const label = `[${getLanguageLabel(report.language ?? "en")}] ${report.title}${
@@ -1212,6 +1429,13 @@ export default function AdminPage() {
         <div className="flex justify-end gap-3">
           <button
             type="button"
+            onClick={handleTrendDraftSave}
+            className="rounded-full border border-hanBlue/40 px-5 py-2 text-sm font-semibold text-hanBlue hover:bg-hanBlue/10"
+          >
+            임시저장
+          </button>
+          <button
+            type="button"
             onClick={() => {
               setSelectedTrendId(null);
               setTrendDraft(createEmptyTrendDraft());
@@ -1249,6 +1473,17 @@ export default function AdminPage() {
           </button>
         </div>
         <div className="space-y-2">
+          {hasEventDraft && eventDraftCache && (
+            renderListButton(
+              DRAFT_LIST_ID.event,
+              `[임시저장] ${eventDraftCache.title || eventDraftCache.id || "제목 미정"}`,
+              selectedEventId === DRAFT_LIST_ID.event,
+              () => {
+                setSelectedEventId(DRAFT_LIST_ID.event);
+                setEventDraft(eventDraftCache);
+              }
+            )
+          )}
           {events.map((event) =>
             renderListButton(
               event.id,
@@ -1461,6 +1696,13 @@ export default function AdminPage() {
         <div className="flex justify-end gap-3">
           <button
             type="button"
+            onClick={handleEventDraftSave}
+            className="rounded-full border border-hanBlue/40 px-5 py-2 text-sm font-semibold text-hanBlue hover:bg-hanBlue/10"
+          >
+            임시저장
+          </button>
+          <button
+            type="button"
             onClick={() => {
               setSelectedEventId(null);
               setEventDraft(createEmptyEventDraft());
@@ -1498,6 +1740,17 @@ export default function AdminPage() {
           </button>
         </div>
         <div className="space-y-2">
+          {hasPhraseDraft && phraseDraftCache && (
+            renderListButton(
+              DRAFT_LIST_ID.phrase,
+              `[임시저장] ${phraseDraftCache.korean || phraseDraftCache.id || "표현 미정"}`,
+              selectedPhraseId === DRAFT_LIST_ID.phrase,
+              () => {
+                setSelectedPhraseId(DRAFT_LIST_ID.phrase);
+                setPhraseDraft(phraseDraftCache);
+              }
+            )
+          )}
           {phrases.map((phrase) =>
             renderListButton(
               phrase.id,
@@ -1643,6 +1896,13 @@ export default function AdminPage() {
         <div className="flex justify-end gap-3">
           <button
             type="button"
+            onClick={handlePhraseDraftSave}
+            className="rounded-full border border-hanBlue/40 px-5 py-2 text-sm font-semibold text-hanBlue hover:bg-hanBlue/10"
+          >
+            임시저장
+          </button>
+          <button
+            type="button"
             onClick={() => {
               setSelectedPhraseId(null);
               setPhraseDraft(createEmptyPhraseDraft());
@@ -1680,6 +1940,17 @@ export default function AdminPage() {
           </button>
         </div>
         <div className="space-y-2">
+          {hasPopupDraft && popupDraftCache && (
+            renderListButton(
+              DRAFT_LIST_ID.popup,
+              `[임시저장] ${popupDraftCache.title || popupDraftCache.id || "팝업 미정"}`,
+              selectedPopupId === DRAFT_LIST_ID.popup,
+              () => {
+                setSelectedPopupId(DRAFT_LIST_ID.popup);
+                setPopupDraft(popupDraftCache);
+              }
+            )
+          )}
           {popups.map((popup) =>
             renderListButton(
               popup.id,
@@ -1894,6 +2165,13 @@ export default function AdminPage() {
         </label>
 
         <div className="flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={handlePopupDraftSave}
+            className="rounded-full border border-hanBlue/40 px-5 py-2 text-sm font-semibold text-hanBlue hover:bg-hanBlue/10"
+          >
+            임시저장
+          </button>
           <button
             type="button"
             onClick={() => {
