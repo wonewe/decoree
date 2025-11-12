@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import type { KCultureEvent } from "../data/events";
 import { getEventById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
-import { formatDate } from "../shared/date";
+import { formatDateRange } from "../shared/date";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
 
 type Status = "idle" | "loading" | "success" | "not-found" | "error";
@@ -56,8 +56,7 @@ export default function EventDetailPage() {
     );
   }
 
-  const date = new Date(event.date);
-  const formattedDate = formatDate(event.date);
+  const formattedDate = formatDateRange(event.startDate, event.endDate);
   const bookmarkItem = {
     id: event.id,
     type: "event" as const,

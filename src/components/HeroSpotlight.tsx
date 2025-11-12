@@ -5,7 +5,7 @@ import { K_CULTURE_EVENTS } from "../data/events";
 import { PHRASES } from "../data/phrases";
 import { useI18n } from "../shared/i18n";
 import { BLANK_IMAGE } from "../shared/placeholders";
-import { formatDate } from "../shared/date";
+import { formatDate, formatDateRange } from "../shared/date";
 
 type SpotlightKey = "trend" | "event" | "phrase";
 
@@ -49,7 +49,7 @@ export default function HeroSpotlight() {
         tag: t("hero.spotlight.tag.event"),
         title: event.title,
         description: event.description,
-        meta: `${formatDate(event.date)} • ${event.location}`,
+        meta: `${formatDateRange(event.startDate, event.endDate)} • ${event.location}`,
         imageUrl: event.imageUrl,
         cta: t("hero.spotlight.cta.event"),
         to: `/events/${event.id}`

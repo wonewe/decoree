@@ -9,3 +9,16 @@ export function formatDate(dateInput: string | number | Date | null | undefined)
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}. ${month}. ${day}`;
 }
+
+export function formatDateRange(
+  startInput: string | null | undefined,
+  endInput: string | null | undefined
+) {
+  if (!startInput && !endInput) return "";
+  const start = formatDate(startInput);
+  const end = formatDate(endInput);
+  if (!end || end === start) {
+    return start;
+  }
+  return `${start} ~ ${end}`;
+}

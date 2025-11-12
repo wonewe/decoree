@@ -8,7 +8,8 @@ export type KCultureEvent = {
   language: SupportedLanguage;
   title: string;
   description: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   time: string;
   location: string;
   category: EventCategory;
@@ -26,7 +27,8 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     title: "Aespa Hyperline Tour - Séoul",
     description:
       "Concert K-pop avec zones VR immersives avant le show et guides francophones sur place.",
-    date: "2024-07-13",
+    startDate: "2024-07-13",
+    endDate: "2024-07-13",
     time: "19:30",
     location: "KSPO Dome, Séoul",
     category: "concert",
@@ -47,7 +49,8 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     title: "Nuit Hanbok & Photowalk",
     description:
       "Tour nocturne de Bukchon avec location de hanbok premium et photographe francophone.",
-    date: "2024-07-15",
+    startDate: "2024-07-15",
+    endDate: "2024-07-15",
     time: "20:00",
     location: "Bukchon Hanok Village, Séoul",
     category: "traditional",
@@ -69,7 +72,8 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     title: "Atelier Makgeolli x Fromage",
     description:
       "Masterclass d'accords makgeolli et fromages français animée par un brasseur coréen.",
-    date: "2024-07-18",
+    startDate: "2024-07-18",
+    endDate: "2024-07-18",
     time: "18:00",
     location: "Seongsu Silo Lab, Séoul",
     category: "atelier",
@@ -90,7 +94,8 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     title: "한강 썸머 뮤직 페스트",
     description:
       "한강 수변 무대에서 열리는 여름 음악 축제. 로컬 밴드와 디제이 라인업이 밤새 이어집니다.",
-    date: "2024-07-27",
+    startDate: "2024-07-27",
+    endDate: "2024-07-28",
     time: "18:30",
     location: "한강 반포 야외무대",
     category: "festival",
@@ -111,7 +116,8 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     title: "제주 녹차 블렌딩 클래스",
     description:
       "비밀스러운 다원에서 진행되는 차 블렌딩 클래스. 향과 색을 직접 조합해 나만의 티백을 완성합니다.",
-    date: "2024-08-03",
+    startDate: "2024-08-03",
+    endDate: "2024-08-03",
     time: "14:00",
     location: "제주 서귀포 개인 다원",
     category: "atelier",
@@ -133,7 +139,8 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     title: "大阪Kカルチャーマーケット",
     description:
       "大阪・中之島で開催される韓国カルチャー複合イベント。トークショーとフードゾーンを同時に展開。",
-    date: "2024-08-10",
+    startDate: "2024-08-10",
+    endDate: "2024-08-11",
     time: "11:00",
     location: "大阪 中之島バンクス",
     category: "festival",
@@ -155,7 +162,8 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     title: "京都・韓服ライティングウォーク",
     description:
       "京都の寺院で韓服を着て楽しむ夜間ライトアップ散策。韓国茶サロン付きの限定プログラム。",
-    date: "2024-09-07",
+    startDate: "2024-09-07",
+    endDate: "2024-09-07",
     time: "19:00",
     location: "京都 東山エリア",
     category: "traditional",
@@ -176,7 +184,8 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     title: "대학로 뮤지컬 나이트 패스",
     description:
       "대학로 인기 연극·뮤지컬을 하루 패스로 관람하고, 백스테이지 투어까지 이어지는 패키지.",
-    date: "2024-09-15",
+    startDate: "2024-09-15",
+    endDate: "2024-09-17",
     time: "17:00",
     location: "서울 대학로 일대",
     category: "theatre",
@@ -198,7 +207,8 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     title: "Seoul Indie Book Fair",
     description:
       "Pop-up fair gathering independent Korean publishers, risograph artists and travel zines.",
-    date: "2024-08-24",
+    startDate: "2024-08-24",
+    endDate: "2024-08-25",
     time: "13:00",
     location: "Dongdaemun Design Plaza, Seoul",
     category: "festival",
@@ -219,7 +229,8 @@ export const K_CULTURE_EVENTS: KCultureEvent[] = [
     title: "Busan Sunset Jazz Cruise",
     description:
       "Evening cruise along Busan’s coastline featuring local jazz ensembles and rooftop tastings.",
-    date: "2024-09-05",
+    startDate: "2024-09-05",
+    endDate: "2024-09-05",
     time: "18:30",
     location: "Busan Marina Pier",
     category: "concert",

@@ -24,8 +24,12 @@ type WithTimestamps<T> = T & {
   updatedAt?: Timestamp;
 };
 
-const fallbackEvents = K_CULTURE_EVENTS.map((event) => stripLanguageMeta(ensureLanguage(event)));
+const fallbackEvents = K_CULTURE_EVENTS.map((event) => normalizeEvent(event));
 const fallbackEventIds = new Set(fallbackEvents.map((event) => event.id));
+
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
 
 const LOCAL_EVENT_OVERRIDES_KEY = "koraid:events:overrides";
 const LOCAL_EVENT_DELETED_KEY = "koraid:events:deleted";
@@ -71,7 +75,19 @@ function writeDeletedIds(ids: string[]) {
 }
 
 function normalizeEvent(event: KCultureEvent) {
-  return stripLanguageMeta(ensureLanguage(event));
+  const normalized = stripLanguageMeta(ensureLanguage(event));
+  return {
+    ...normalized,
+    startDate: normalized.startDate ?? normalized.endDate ?? todayIso(),
+    endDate: normalized.endDate ?? normalized.startDate ?? todayIso()
+  };
+}
+
+function sortEvents(events: KCultureEvent[]) {
+  return [...events].sort(
+    (a, b) =>
+      new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+  );
 }
 
 function mergeStaticEvents(language?: SupportedLanguage) {
@@ -85,7 +101,7 @@ function mergeStaticEvents(language?: SupportedLanguage) {
 
   const extraEvents = overrides.filter((event) => !fallbackEventIds.has(event.id));
   const merged = [...baseEvents, ...extraEvents];
-  return filterByLanguage(merged, language);
+  return sortEvents(filterByLanguage(merged, language));
 }
 
 function upsertLocalEvent(event: KCultureEvent) {
@@ -132,18 +148,18 @@ export async function fetchEvents(language?: SupportedLanguage): Promise<KCultur
     return mergeStaticEvents(language);
   }
   try {
-    const snapshot = await getDocs(query(eventCollection, orderBy("date", "asc")));
+    const snapshot = await getDocs(query(eventCollection, orderBy("startDate", "asc")));
     if (snapshot.empty) {
-      return filterByLanguage(fallbackEvents, language);
+      return mergeStaticEvents(language);
     }
     const events = snapshot.docs.map((docSnap) => {
       const data = docSnap.data() as WithTimestamps<KCultureEvent>;
       return toEvent({ ...data, id: docSnap.id });
     });
-    return filterByLanguage(events, language);
+    return sortEvents(filterByLanguage(events, language));
   } catch (error) {
     console.error("Failed to fetch events, fallback to static data.", error);
-    return filterByLanguage(fallbackEvents, language);
+    return mergeStaticEvents(language);
   }
 }
 

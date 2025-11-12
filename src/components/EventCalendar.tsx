@@ -6,7 +6,7 @@ import { EventCardSkeleton } from "./events/EventCardSkeleton";
 import { EventEmptyState } from "./events/EventEmptyState";
 import { useEventList } from "../hooks/useEventList";
 import { BookmarkButton } from "./bookmarks/BookmarkButton";
-import { formatDate } from "../shared/date";
+import { formatDateRange } from "../shared/date";
 
 const CATEGORY_KEYS: EventCategory[] = ["concert", "traditional", "atelier", "theatre", "festival"];
 
@@ -18,22 +18,20 @@ export default function EventCalendar() {
   const { status, events, error } = useEventList(language);
 
   const filteredEvents = useMemo(() => {
+    const startFilter = startDate ? new Date(startDate).getTime() : null;
+    const endFilter = endDate ? new Date(endDate).getTime() : null;
+
     return events.filter((event) => {
       if (activeCategory !== "all" && event.category !== activeCategory) {
         return false;
       }
-      const eventTimestamp = new Date(event.date).getTime();
-      if (startDate) {
-        const startTimestamp = new Date(startDate).getTime();
-        if (Number.isFinite(startTimestamp) && eventTimestamp < startTimestamp) {
-          return false;
-        }
+      const eventStart = new Date(event.startDate).getTime();
+      const eventEnd = new Date(event.endDate || event.startDate).getTime();
+      if (startFilter !== null && Number.isFinite(startFilter) && eventEnd < startFilter) {
+        return false;
       }
-      if (endDate) {
-        const endTimestamp = new Date(endDate).getTime();
-        if (Number.isFinite(endTimestamp) && eventTimestamp > endTimestamp) {
-          return false;
-        }
+      if (endFilter !== null && Number.isFinite(endFilter) && eventStart > endFilter) {
+        return false;
       }
       return true;
     });
@@ -129,7 +127,7 @@ export default function EventCalendar() {
               )}
               <div className="flex items-start justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
                 <span>
-                  {formatDate(event.date)} · {event.time}
+                  {formatDateRange(event.startDate, event.endDate)} · {event.time}
                 </span>
                 <span>{t(`event.eventCategory.${event.category}`)}</span>
               </div>

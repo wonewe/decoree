@@ -108,7 +108,8 @@ type EventDraft = {
   languages: SupportedLanguage[];
   title: string;
   description: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   time: string;
   location: string;
   category: EventCategory;
@@ -222,7 +223,8 @@ function createEmptyEventDraft(): EventDraft {
     languages: ["en"],
     title: "",
     description: "",
-    date: todayIso(),
+    startDate: todayIso(),
+    endDate: todayIso(),
     time: "19:00",
     location: "",
     category: "concert",
@@ -241,7 +243,8 @@ function eventToDraft(event: KCultureEvent): EventDraft {
     languages: [event.language ?? "en"],
     title: event.title,
     description: event.description,
-    date: event.date ?? todayIso(),
+    startDate: event.startDate ?? todayIso(),
+    endDate: event.endDate ?? event.startDate ?? todayIso(),
     time: event.time,
     location: event.location,
     category: event.category,
@@ -269,7 +272,8 @@ function draftToEvent(draft: EventDraft): KCultureEvent {
     language: draft.language,
     title: draft.title.trim(),
     description: draft.description.trim(),
-    date: draft.date,
+    startDate: draft.startDate,
+    endDate: draft.endDate || draft.startDate,
     time: draft.time.trim(),
     location: draft.location.trim(),
     category: draft.category,
@@ -1608,13 +1612,22 @@ export default function AdminPage() {
 
         <div className="grid gap-4 md:grid-cols-3">
           <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            날짜
+            시작 날짜
             <input
               type="date"
-              value={eventDraft.date}
-              onChange={(e) => setEventDraft((prev) => ({ ...prev, date: e.target.value }))}
+              value={eventDraft.startDate}
+              onChange={(e) => setEventDraft((prev) => ({ ...prev, startDate: e.target.value }))}
               className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
               required
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            종료 날짜
+            <input
+              type="date"
+              value={eventDraft.endDate}
+              onChange={(e) => setEventDraft((prev) => ({ ...prev, endDate: e.target.value }))}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
             />
           </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
