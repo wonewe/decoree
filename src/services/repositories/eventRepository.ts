@@ -104,6 +104,15 @@ function mergeStaticEvents(language?: SupportedLanguage) {
   return sortEvents(filterByLanguage(merged, language));
 }
 
+function getLocalEventById(id: string): KCultureEvent | null {
+  const overrides = readLocalOverrides();
+  const deletedIds = new Set(readDeletedIds());
+  if (deletedIds.has(id)) return null;
+  const override = overrides.find((event) => event.id === id);
+  if (override) return normalizeEvent(override);
+  return fallbackEvents.find((event) => event.id === id) ?? null;
+}
+
 function upsertLocalEvent(event: KCultureEvent) {
   const overrides = readLocalOverrides();
   const normalized = normalizeEvent(event);
@@ -165,12 +174,7 @@ export async function fetchEvents(language?: SupportedLanguage): Promise<KCultur
 
 export async function getEventById(id: string) {
   if (shouldUseStaticContent()) {
-    const overrides = readLocalOverrides();
-    const deletedIds = new Set(readDeletedIds());
-    if (deletedIds.has(id)) return null;
-    const override = overrides.find((event) => event.id === id);
-    if (override) return normalizeEvent(override);
-    return fallbackEvents.find((event) => event.id === id) ?? null;
+    return getLocalEventById(id);
   }
   try {
     const snapshot = await getDoc(doc(eventCollection, id));
@@ -179,8 +183,9 @@ export async function getEventById(id: string) {
     }
   } catch (error) {
     console.error("Unable to fetch event by id", error);
+    return getLocalEventById(id);
   }
-  return fallbackEvents.find((event) => event.id === id) ?? null;
+  return getLocalEventById(id);
 }
 
 export async function addEvent(event: KCultureEvent) {
