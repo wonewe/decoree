@@ -808,8 +808,13 @@ export default function AdminEditorPage() {
     setMessage(null);
 
     try {
+      // ID 검증
+      if (!trendDraft.id || !trendDraft.id.trim()) {
+        throw new Error("ID는 필수입니다. 영문 소문자와 하이픈을 사용하여 입력해주세요.");
+      }
+
       const finalImageUrl = trendImageFile
-        ? (await uploadAdminAsset(trendImageFile, { collection: "trends", entityId: trendDraft.id, assetType: "image" })).downloadUrl
+        ? (await uploadAdminAsset(trendImageFile, { collection: "trends", entityId: trendDraft.id.trim(), assetType: "image" })).downloadUrl
         : trendDraft.imageUrl.trim();
 
       if (!finalImageUrl) {
@@ -873,8 +878,13 @@ export default function AdminEditorPage() {
     setMessage(null);
 
     try {
+      // ID 검증
+      if (!eventDraft.id || !eventDraft.id.trim()) {
+        throw new Error("ID는 필수입니다. 영문 소문자와 하이픈을 사용하여 입력해주세요.");
+      }
+
       const finalImageUrl = eventImageFile
-        ? (await uploadAdminAsset(eventImageFile, { collection: "events", entityId: eventDraft.id, assetType: "image" })).downloadUrl
+        ? (await uploadAdminAsset(eventImageFile, { collection: "events", entityId: eventDraft.id.trim(), assetType: "image" })).downloadUrl
         : eventDraft.imageUrl.trim();
 
       if (!finalImageUrl) {
@@ -936,6 +946,11 @@ export default function AdminEditorPage() {
     setMessage(null);
 
     try {
+      // ID 검증
+      if (!phraseDraft.id || !phraseDraft.id.trim()) {
+        throw new Error("ID는 필수입니다. 영문 소문자와 하이픈을 사용하여 입력해주세요.");
+      }
+
       const basePhrase = draftToPhrase(phraseDraft);
       const targetLanguages = resolveTargetLanguages(phraseDraft.languages, phraseDraft.language);
 
@@ -980,12 +995,17 @@ export default function AdminEditorPage() {
     setMessage(null);
 
     try {
+      // ID 검증
+      if (!popupDraft.id || !popupDraft.id.trim()) {
+        throw new Error("ID는 필수입니다. 영문 소문자와 하이픈을 사용하여 입력해주세요.");
+      }
+
       const finalPosterUrl = popupPosterFile
-        ? (await uploadAdminAsset(popupPosterFile, { collection: "popups", entityId: popupDraft.id, assetType: "poster" })).downloadUrl
+        ? (await uploadAdminAsset(popupPosterFile, { collection: "popups", entityId: popupDraft.id.trim(), assetType: "poster" })).downloadUrl
         : popupDraft.posterUrl.trim();
 
       const finalHeroUrl = popupHeroFile
-        ? (await uploadAdminAsset(popupHeroFile, { collection: "popups", entityId: popupDraft.id, assetType: "hero" })).downloadUrl
+        ? (await uploadAdminAsset(popupHeroFile, { collection: "popups", entityId: popupDraft.id.trim(), assetType: "hero" })).downloadUrl
         : popupDraft.heroImageUrl.trim() || finalPosterUrl;
 
       if (!finalPosterUrl) {
