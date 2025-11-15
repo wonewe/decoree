@@ -514,8 +514,13 @@ export default function AdminEditorPage() {
     setTrendImageFile(file);
     setTrendImagePreview((prev) => {
       revokePreviewUrl(prev);
-      if (!file) return null;
-      return URL.createObjectURL(file);
+      if (!file) {
+        console.log("이미지 파일 선택 해제");
+        return null;
+      }
+      const blobUrl = URL.createObjectURL(file);
+      console.log("이미지 파일 선택됨:", file.name, "Blob URL:", blobUrl);
+      return blobUrl;
     });
   }, []);
 
@@ -531,8 +536,13 @@ export default function AdminEditorPage() {
     setEventImageFile(file);
     setEventImagePreview((prev) => {
       revokePreviewUrl(prev);
-      if (!file) return null;
-      return URL.createObjectURL(file);
+      if (!file) {
+        console.log("이미지 파일 선택 해제");
+        return null;
+      }
+      const blobUrl = URL.createObjectURL(file);
+      console.log("이미지 파일 선택됨:", file.name, "Blob URL:", blobUrl);
+      return blobUrl;
     });
   }, []);
 
@@ -548,8 +558,13 @@ export default function AdminEditorPage() {
     setPopupPosterFile(file);
     setPopupPosterPreview((prev) => {
       revokePreviewUrl(prev);
-      if (!file) return null;
-      return URL.createObjectURL(file);
+      if (!file) {
+        console.log("포스터 이미지 파일 선택 해제");
+        return null;
+      }
+      const blobUrl = URL.createObjectURL(file);
+      console.log("포스터 이미지 파일 선택됨:", file.name, "Blob URL:", blobUrl);
+      return blobUrl;
     });
   }, []);
 
@@ -565,8 +580,13 @@ export default function AdminEditorPage() {
     setPopupHeroFile(file);
     setPopupHeroPreview((prev) => {
       revokePreviewUrl(prev);
-      if (!file) return null;
-      return URL.createObjectURL(file);
+      if (!file) {
+        console.log("히어로 이미지 파일 선택 해제");
+        return null;
+      }
+      const blobUrl = URL.createObjectURL(file);
+      console.log("히어로 이미지 파일 선택됨:", file.name, "Blob URL:", blobUrl);
+      return blobUrl;
     });
   }, []);
 
@@ -957,6 +977,12 @@ export default function AdminEditorPage() {
 
   const renderTrendForm = () => {
     const currentTrendImagePreview = trendImagePreview ?? trendDraft.imageUrl;
+    
+    const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+      console.error("이미지 로드 실패:", e.currentTarget.src);
+      // 이미지 로드 실패 시 빈 이미지로 대체
+      e.currentTarget.style.display = "none";
+    };
 
     return (
       <form onSubmit={handleTrendSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
@@ -1154,6 +1180,8 @@ export default function AdminEditorPage() {
                 src={currentTrendImagePreview}
                 alt={trendDraft.title || "Trend image preview"}
                 className="h-56 w-full object-cover"
+                onError={handleImageError}
+                onLoad={() => console.log("이미지 로드 성공:", currentTrendImagePreview)}
               />
             </div>
             <p className="text-xs text-slate-500">저장 시 모든 언어 버전에 동일한 이미지가 반영됩니다.</p>
@@ -1226,6 +1254,11 @@ export default function AdminEditorPage() {
 
   const renderEventForm = () => {
     const currentEventImagePreview = eventImagePreview ?? eventDraft.imageUrl;
+    
+    const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+      console.error("이미지 로드 실패:", e.currentTarget.src);
+      e.currentTarget.style.display = "none";
+    };
 
     return (
       <form onSubmit={handleEventSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
@@ -1450,6 +1483,8 @@ export default function AdminEditorPage() {
                 src={currentEventImagePreview}
                 alt={eventDraft.title || "Event image preview"}
                 className="h-56 w-full object-cover"
+                onError={handleImageError}
+                onLoad={() => console.log("이미지 로드 성공:", currentEventImagePreview)}
               />
             </div>
             <p className="text-xs text-slate-500">
@@ -1660,6 +1695,11 @@ export default function AdminEditorPage() {
   const renderPopupForm = () => {
     const currentPopupPosterPreview = popupPosterPreview ?? popupDraft.posterUrl;
     const currentPopupHeroPreview = popupHeroPreview ?? popupDraft.heroImageUrl;
+    
+    const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+      console.error("이미지 로드 실패:", e.currentTarget.src);
+      e.currentTarget.style.display = "none";
+    };
 
     return (
       <form onSubmit={handlePopupSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
@@ -1878,6 +1918,8 @@ export default function AdminEditorPage() {
                     src={currentPopupPosterPreview}
                     alt="Poster preview"
                     className="h-56 w-full object-cover"
+                    onError={handleImageError}
+                    onLoad={() => console.log("이미지 로드 성공:", currentPopupPosterPreview)}
                   />
                 </div>
               </div>
@@ -1890,6 +1932,8 @@ export default function AdminEditorPage() {
                     src={currentPopupHeroPreview}
                     alt="Hero preview"
                     className="h-56 w-full object-cover"
+                    onError={handleImageError}
+                    onLoad={() => console.log("이미지 로드 성공:", currentPopupHeroPreview)}
                   />
                 </div>
               </div>
