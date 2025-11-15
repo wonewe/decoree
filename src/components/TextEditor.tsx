@@ -1,10 +1,16 @@
 import { useRef, useEffect, useCallback, useState } from "react";
+import { uploadAdminAsset } from "../services/storageService";
 
 type TextEditorProps = {
   label: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  // 이미지 업로드를 위한 옵션
+  imageUploadOptions?: {
+    collection: "events" | "trends" | "phrases" | "popups" | (string & {});
+    entityId?: string;
+  };
 };
 
 /**
@@ -17,10 +23,12 @@ export default function TextEditor({
   label,
   value: initialValue,
   onChange,
-  placeholder
+  placeholder,
+  imageUploadOptions
 }: TextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [editorHeight, setEditorHeight] = useState(300);
+  const [uploading, setUploading] = useState(false);
   const isInitializedRef = useRef(false);
   const onChangeRef = useRef(onChange);
 
@@ -29,17 +37,29 @@ export default function TextEditor({
     onChangeRef.current = onChange;
   }, [onChange]);
 
-  // 초기값 설정 (한 번만)
+  // 초기값 설정 (한 번만) - HTML 콘텐츠로 설정
   useEffect(() => {
     if (editorRef.current && !isInitializedRef.current && initialValue) {
-      editorRef.current.textContent = initialValue;
+      // HTML 콘텐츠가 있는지 확인 (이미지 태그 포함)
+      if (initialValue.includes("<img") || initialValue.includes("<p>") || initialValue.includes("<h2>")) {
+        editorRef.current.innerHTML = initialValue;
+      } else {
+        // 일반 텍스트인 경우 줄바꿈을 <p> 태그로 변환
+        const paragraphs = initialValue.split(/\n+/).filter(p => p.trim());
+        if (paragraphs.length > 0) {
+          editorRef.current.innerHTML = paragraphs.map(p => `<p>${p.trim()}</p>`).join("");
+        } else {
+          editorRef.current.textContent = initialValue;
+        }
+      }
       isInitializedRef.current = true;
     }
   }, [initialValue]);
 
   const handleInput = useCallback(() => {
     if (!editorRef.current) return;
-    const content = editorRef.current.innerText || editorRef.current.textContent || "";
+    // HTML 콘텐츠를 저장 (이미지 포함)
+    const content = editorRef.current.innerHTML || "";
     onChangeRef.current(content);
   }, []);
 
@@ -52,6 +72,95 @@ export default function TextEditor({
     }
   }, [handleInput]);
 
+  // 이미지 삽입 함수
+  const insertImage = useCallback(async (file: File) => {
+    if (!editorRef.current || !imageUploadOptions) return;
+
+    setUploading(true);
+    try {
+      // 이미지 업로드
+      const { downloadUrl } = await uploadAdminAsset(file, {
+        collection: imageUploadOptions.collection,
+        entityId: imageUploadOptions.entityId,
+        assetType: "inline"
+      });
+
+      // 커서 위치에 이미지 삽입
+      const selection = window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+
+        const img = document.createElement("img");
+        img.src = downloadUrl;
+        img.alt = file.name;
+        img.style.maxWidth = "100%";
+        img.style.height = "auto";
+        img.style.display = "block";
+        img.style.margin = "1rem 0";
+
+        const imgContainer = document.createElement("p");
+        imgContainer.style.margin = "1rem 0";
+        imgContainer.appendChild(img);
+
+        range.insertNode(imgContainer);
+        range.setStartAfter(imgContainer);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      } else {
+        // 커서가 없으면 끝에 삽입
+        const img = document.createElement("img");
+        img.src = downloadUrl;
+        img.alt = file.name;
+        img.style.maxWidth = "100%";
+        img.style.height = "auto";
+        img.style.display = "block";
+        img.style.margin = "1rem 0";
+
+        const imgContainer = document.createElement("p");
+        imgContainer.style.margin = "1rem 0";
+        imgContainer.appendChild(img);
+
+        editorRef.current.appendChild(imgContainer);
+      }
+
+      handleInput();
+    } catch (error) {
+      console.error("이미지 업로드 실패:", error);
+      alert("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      setUploading(false);
+    }
+  }, [imageUploadOptions, handleInput]);
+
+  // 드래그 앤 드롭 처리
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = "copy";
+    }
+  }, []);
+
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!imageUploadOptions) {
+      alert("이미지 업로드가 이 에디터에서 지원되지 않습니다.");
+      return;
+    }
+
+    const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith("image/"));
+    if (files.length === 0) {
+      return;
+    }
+
+    // 첫 번째 이미지만 업로드 (여러 개는 나중에 지원 가능)
+    await insertImage(files[0]);
+  }, [imageUploadOptions, insertImage]);
+
   const applyFormat = useCallback((command: string, formatValue?: string) => {
     if (!editorRef.current) return;
     editorRef.current.focus();
@@ -59,7 +168,7 @@ export default function TextEditor({
   }, []);
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 relative">
       <div className="flex items-center justify-between">
         <label className="text-sm font-semibold text-dancheongNavy">{label}</label>
         <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-2 py-1">
@@ -134,15 +243,24 @@ export default function TextEditor({
         contentEditable
         onInput={handleInput}
         onPaste={handlePaste}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
         style={{
           minHeight: `${editorHeight}px`,
           maxHeight: "600px",
           overflowY: "auto"
         }}
-        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-relaxed focus:border-hanBlue focus:outline-none focus:ring-2 focus:ring-hanBlue/20"
+        className={`w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-relaxed focus:border-hanBlue focus:outline-none focus:ring-2 focus:ring-hanBlue/20 ${
+          imageUploadOptions ? "hover:border-hanBlue/50" : ""
+        } ${uploading ? "opacity-50 pointer-events-none" : ""}`}
         data-placeholder={placeholder}
         suppressContentEditableWarning
       />
+      {uploading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-xl">
+          <div className="text-sm text-slate-600">이미지 업로드 중...</div>
+        </div>
+      )}
       <style>{`
         [contenteditable][data-placeholder]:empty:before {
           content: attr(data-placeholder);
@@ -158,6 +276,13 @@ export default function TextEditor({
         [contenteditable] p {
           margin: 0.5rem 0;
           line-height: 1.6;
+        }
+        [contenteditable] img {
+          max-width: 100%;
+          height: auto;
+          display: block;
+          margin: 1rem 0;
+          border-radius: 0.5rem;
         }
       `}</style>
     </div>

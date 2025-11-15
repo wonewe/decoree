@@ -26,9 +26,10 @@ service firebase.storage {
       allow read: if true;
     }
     
-    // 다른 모든 경로는 거부
-    match /{allPaths=**} {
-      allow read, write: if false;
+    // studio/로 시작하는 모든 경로 허용 (유연성을 위해)
+    match /studio/{allPaths=**} {
+      allow write: if request.auth != null;
+      allow read: if true;
     }
   }
 }

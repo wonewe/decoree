@@ -168,6 +168,12 @@ function createEmptyTrendDraft(): TrendDraft {
 }
 
 function trendToDraft(report: TrendReport): TrendDraft {
+  // content가 HTML 요소를 포함하는지 확인
+  const hasHtml = report.content.some(item => item.includes("<img") || item.includes("<p>") || item.includes("<h2>"));
+  const contentInput = hasHtml 
+    ? report.content.join("") // HTML인 경우 그대로 합치기
+    : report.content.join("\n\n"); // 텍스트인 경우 줄바꿈으로 합치기
+
   return {
     id: report.id,
     language: report.language ?? "en",
@@ -181,7 +187,7 @@ function trendToDraft(report: TrendReport): TrendDraft {
     intensity: report.intensity,
     publishedAt: report.publishedAt ?? todayIso(),
     imageUrl: report.imageUrl,
-    contentInput: report.content.join("\n\n")
+    contentInput
   };
 }
 
@@ -191,10 +197,26 @@ function draftToTrend(draft: TrendDraft): TrendReport {
     .map((item) => item.trim())
     .filter(Boolean);
 
-  const content = draft.contentInput
-    .split(/\n+/)
-    .map((item) => item.trim())
-    .filter(Boolean);
+  // HTML 콘텐츠가 있으면 그대로 사용, 없으면 기존 방식대로 텍스트를 문단으로 분리
+  let content: string[];
+  if (draft.contentInput.includes("<img") || draft.contentInput.includes("<p>") || draft.contentInput.includes("<h2>")) {
+    // HTML 콘텐츠인 경우, 각 문단/이미지를 배열 요소로 분리
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = draft.contentInput;
+    const elements = Array.from(tempDiv.children);
+    content = elements.map(el => el.outerHTML);
+    // 텍스트 노드도 포함
+    const textNodes = Array.from(tempDiv.childNodes)
+      .filter(node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
+      .map(node => node.textContent?.trim() || "");
+    content = [...content, ...textNodes].filter(Boolean);
+  } else {
+    // 일반 텍스트인 경우 기존 방식대로 처리
+    content = draft.contentInput
+      .split(/\n+/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
 
   return {
     id: draft.id.trim(),
@@ -233,6 +255,12 @@ function createEmptyEventDraft(): EventDraft {
 }
 
 function eventToDraft(event: KCultureEvent): EventDraft {
+  // longDescription이 HTML 요소를 포함하는지 확인
+  const hasHtml = event.longDescription.some(item => item.includes("<img") || item.includes("<p>") || item.includes("<h2>"));
+  const longDescriptionInput = hasHtml 
+    ? event.longDescription.join("") // HTML인 경우 그대로 합치기
+    : event.longDescription.join("\n\n"); // 텍스트인 경우 줄바꿈으로 합치기
+
   return {
     id: event.id,
     language: event.language ?? "en",
@@ -247,16 +275,32 @@ function eventToDraft(event: KCultureEvent): EventDraft {
     price: event.price,
     bookingUrl: event.bookingUrl ?? "",
     imageUrl: event.imageUrl,
-    longDescriptionInput: event.longDescription.join("\n\n"),
+    longDescriptionInput,
     tipsInput: event.tips.join("\n")
   };
 }
 
 function draftToEvent(draft: EventDraft): KCultureEvent {
-  const longDescription = draft.longDescriptionInput
-    .split(/\n+/)
-    .map((item) => item.trim())
-    .filter(Boolean);
+  // HTML 콘텐츠가 있으면 그대로 사용, 없으면 기존 방식대로 텍스트를 문단으로 분리
+  let longDescription: string[];
+  if (draft.longDescriptionInput.includes("<img") || draft.longDescriptionInput.includes("<p>") || draft.longDescriptionInput.includes("<h2>")) {
+    // HTML 콘텐츠인 경우, 각 문단/이미지를 배열 요소로 분리
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = draft.longDescriptionInput;
+    const elements = Array.from(tempDiv.children);
+    longDescription = elements.map(el => el.outerHTML);
+    // 텍스트 노드도 포함
+    const textNodes = Array.from(tempDiv.childNodes)
+      .filter(node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
+      .map(node => node.textContent?.trim() || "");
+    longDescription = [...longDescription, ...textNodes].filter(Boolean);
+  } else {
+    // 일반 텍스트인 경우 기존 방식대로 처리
+    longDescription = draft.longDescriptionInput
+      .split(/\n+/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
 
   const tips = draft.tipsInput
     .split(/\n+/)
@@ -340,6 +384,12 @@ function createEmptyPopupDraft(): PopupDraft {
 }
 
 function popupToDraft(popup: PopupEvent): PopupDraft {
+  // details가 HTML 요소를 포함하는지 확인
+  const hasHtml = popup.details.some(item => item.includes("<img") || item.includes("<p>") || item.includes("<h2>"));
+  const detailsInput = hasHtml 
+    ? popup.details.join("") // HTML인 경우 그대로 합치기
+    : popup.details.join("\n\n"); // 텍스트인 경우 줄바꿈으로 합치기
+
   return {
     id: popup.id,
     language: popup.language ?? "en",
@@ -354,7 +404,7 @@ function popupToDraft(popup: PopupEvent): PopupDraft {
     tagsInput: popup.tags.join(", "),
     description: popup.description,
     highlightsInput: popup.highlights.join("\n"),
-    detailsInput: popup.details.join("\n\n"),
+    detailsInput,
     reservationUrl: popup.reservationUrl ?? ""
   };
 }
@@ -368,10 +418,28 @@ function draftToPopup(draft: PopupDraft): PopupEvent {
     .split(/\n+/)
     .map((item) => item.trim())
     .filter(Boolean);
-  const details = draft.detailsInput
-    .split(/\n+/)
-    .map((item) => item.trim())
-    .filter(Boolean);
+  
+  // HTML 콘텐츠가 있으면 그대로 사용, 없으면 기존 방식대로 텍스트를 문단으로 분리
+  let details: string[];
+  if (draft.detailsInput.includes("<img") || draft.detailsInput.includes("<p>") || draft.detailsInput.includes("<h2>")) {
+    // HTML 콘텐츠인 경우, 각 문단/이미지를 배열 요소로 분리
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = draft.detailsInput;
+    const elements = Array.from(tempDiv.children);
+    details = elements.map(el => el.outerHTML);
+    // 텍스트 노드도 포함
+    const textNodes = Array.from(tempDiv.childNodes)
+      .filter(node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
+      .map(node => node.textContent?.trim() || "");
+    details = [...details, ...textNodes].filter(Boolean);
+  } else {
+    // 일반 텍스트인 경우 기존 방식대로 처리
+    details = draft.detailsInput
+      .split(/\n+/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
   return {
     id: draft.id.trim(),
     language: draft.language,
@@ -1219,7 +1287,11 @@ export default function AdminEditorPage() {
           label="본문 문단 (줄바꿈으로 구분)"
           value={trendDraft.contentInput}
           onChange={(value) => setTrendDraft((prev) => ({ ...prev, contentInput: value }))}
-          placeholder="문단마다 한 줄을 비워두면 가독성이 올라갑니다."
+          placeholder="문단마다 한 줄을 비워두면 가독성이 올라갑니다. 이미지를 드래그 앤 드롭하여 삽입할 수 있습니다."
+          imageUploadOptions={{
+            collection: "trends",
+            entityId: trendDraft.id || undefined
+          }}
         />
 
         <div className="flex justify-end gap-3">
@@ -1497,6 +1569,11 @@ export default function AdminEditorPage() {
           label="상세 설명 (줄바꿈으로 문단 구분)"
           value={eventDraft.longDescriptionInput}
           onChange={(value) => setEventDraft((prev) => ({ ...prev, longDescriptionInput: value }))}
+          placeholder="이미지를 드래그 앤 드롭하여 삽입할 수 있습니다."
+          imageUploadOptions={{
+            collection: "events",
+            entityId: eventDraft.id || undefined
+          }}
         />
 
         <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
@@ -1976,6 +2053,11 @@ export default function AdminEditorPage() {
           label="상세 설명 (줄바꿈으로 문단 구분)"
           value={popupDraft.detailsInput}
           onChange={(value) => setPopupDraft((prev) => ({ ...prev, detailsInput: value }))}
+          placeholder="이미지를 드래그 앤 드롭하여 삽입할 수 있습니다."
+          imageUploadOptions={{
+            collection: "popups",
+            entityId: popupDraft.id || undefined
+          }}
         />
 
         <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
