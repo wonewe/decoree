@@ -341,6 +341,8 @@ function draftToEvent(draft: EventDraft): KCultureEvent {
     .map((item) => item.trim())
     .filter(Boolean);
 
+  const trimmedBookingUrl = draft.bookingUrl.trim();
+  
   return {
     id: draft.id.trim(),
     language: draft.language,
@@ -352,7 +354,7 @@ function draftToEvent(draft: EventDraft): KCultureEvent {
     location: draft.location.trim(),
     category: draft.category,
     price: draft.price.trim(),
-    bookingUrl: draft.bookingUrl.trim() || undefined,
+    ...(trimmedBookingUrl ? { bookingUrl: trimmedBookingUrl } : {}),
     imageUrl: draft.imageUrl.trim(),
     longDescription,
     tips
@@ -488,6 +490,8 @@ function draftToPopup(draft: PopupDraft): PopupEvent {
     details = [draft.detailsInput || ""];
   }
 
+  const trimmedReservationUrl = draft.reservationUrl.trim();
+  
   return {
     id: draft.id.trim(),
     language: draft.language,
@@ -502,7 +506,7 @@ function draftToPopup(draft: PopupDraft): PopupEvent {
     description: draft.description.trim(),
     highlights,
     details,
-    reservationUrl: draft.reservationUrl.trim() || undefined
+    ...(trimmedReservationUrl ? { reservationUrl: trimmedReservationUrl } : {})
   };
 }
 
