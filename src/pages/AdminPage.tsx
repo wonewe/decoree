@@ -1,5 +1,5 @@
 import { FirebaseError } from "firebase/app";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
 import type { TrendReport, TrendIntensity } from "../data/trends";
 import type { KCultureEvent, EventCategory } from "../data/events";
 import type { Phrase, PhraseCategory } from "../data/phrases";
@@ -33,6 +33,7 @@ import {
   translatePopupContent,
   translateTrendReportContent
 } from "../services/translation/contentLocalizationService";
+import { uploadAdminAsset } from "../services/storageService";
 
 type ActiveSection = "trends" | "events" | "phrases" | "popups";
 
@@ -444,9 +445,17 @@ export default function AdminPage() {
   const [popups, setPopups] = useState<PopupEvent[]>([]);
 
   const [trendDraft, setTrendDraft] = useState<TrendDraft>(createEmptyTrendDraft);
+  const [trendImageFile, setTrendImageFile] = useState<File | null>(null);
+  const [trendImagePreview, setTrendImagePreview] = useState<string | null>(null);
   const [eventDraft, setEventDraft] = useState<EventDraft>(createEmptyEventDraft);
+  const [eventImageFile, setEventImageFile] = useState<File | null>(null);
+  const [eventImagePreview, setEventImagePreview] = useState<string | null>(null);
   const [phraseDraft, setPhraseDraft] = useState<PhraseDraft>(createEmptyPhraseDraft);
   const [popupDraft, setPopupDraft] = useState<PopupDraft>(createEmptyPopupDraft);
+  const [popupPosterFile, setPopupPosterFile] = useState<File | null>(null);
+  const [popupPosterPreview, setPopupPosterPreview] = useState<string | null>(null);
+  const [popupHeroFile, setPopupHeroFile] = useState<File | null>(null);
+  const [popupHeroPreview, setPopupHeroPreview] = useState<string | null>(null);
   const [trendDraftCache, setTrendDraftCache] = useState<TrendDraft | null>(null);
   const [eventDraftCache, setEventDraftCache] = useState<EventDraft | null>(null);
   const [phraseDraftCache, setPhraseDraftCache] = useState<PhraseDraft | null>(null);
@@ -465,6 +474,80 @@ export default function AdminPage() {
   const [hasEventDraft, setHasEventDraft] = useState(false);
   const [hasPhraseDraft, setHasPhraseDraft] = useState(false);
   const [hasPopupDraft, setHasPopupDraft] = useState(false);
+
+  const revokePreviewUrl = (url: string | null) => {
+    if (url && url.startsWith("blob:")) {
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  const clearTrendImageSelection = useCallback(() => {
+    setTrendImageFile(null);
+    setTrendImagePreview((prev) => {
+      revokePreviewUrl(prev);
+      return null;
+    });
+  }, []);
+
+  const applyTrendImageFile = useCallback((file: File | null) => {
+    setTrendImageFile(file);
+    setTrendImagePreview((prev) => {
+      revokePreviewUrl(prev);
+      if (!file) return null;
+      return URL.createObjectURL(file);
+    });
+  }, []);
+
+  const clearEventImageSelection = useCallback(() => {
+    setEventImageFile(null);
+    setEventImagePreview((prev) => {
+      revokePreviewUrl(prev);
+      return null;
+    });
+  }, []);
+
+  const applyEventImageFile = useCallback((file: File | null) => {
+    setEventImageFile(file);
+    setEventImagePreview((prev) => {
+      revokePreviewUrl(prev);
+      if (!file) return null;
+      return URL.createObjectURL(file);
+    });
+  }, []);
+
+  const clearPopupPosterSelection = useCallback(() => {
+    setPopupPosterFile(null);
+    setPopupPosterPreview((prev) => {
+      revokePreviewUrl(prev);
+      return null;
+    });
+  }, []);
+
+  const applyPopupPosterFile = useCallback((file: File | null) => {
+    setPopupPosterFile(file);
+    setPopupPosterPreview((prev) => {
+      revokePreviewUrl(prev);
+      if (!file) return null;
+      return URL.createObjectURL(file);
+    });
+  }, []);
+
+  const clearPopupHeroSelection = useCallback(() => {
+    setPopupHeroFile(null);
+    setPopupHeroPreview((prev) => {
+      revokePreviewUrl(prev);
+      return null;
+    });
+  }, []);
+
+  const applyPopupHeroFile = useCallback((file: File | null) => {
+    setPopupHeroFile(file);
+    setPopupHeroPreview((prev) => {
+      revokePreviewUrl(prev);
+      if (!file) return null;
+      return URL.createObjectURL(file);
+    });
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -489,12 +572,14 @@ export default function AdminPage() {
           setTrendDraftCache(storedTrendDraft);
           setHasTrendDraft(true);
           setSelectedTrendId(DRAFT_LIST_ID.trend);
+          clearTrendImageSelection();
           setTrendDraft(storedTrendDraft);
         } else {
           setTrendDraftCache(null);
           setHasTrendDraft(false);
           if (trendData.length > 0) {
             setSelectedTrendId(trendData[0].id);
+            clearTrendImageSelection();
             setTrendDraft(trendToDraft(trendData[0]));
           }
         }
@@ -504,12 +589,14 @@ export default function AdminPage() {
           setEventDraftCache(storedEventDraft);
           setHasEventDraft(true);
           setSelectedEventId(DRAFT_LIST_ID.event);
+          clearEventImageSelection();
           setEventDraft(storedEventDraft);
         } else {
           setEventDraftCache(null);
           setHasEventDraft(false);
           if (eventData.length > 0) {
             setSelectedEventId(eventData[0].id);
+            clearEventImageSelection();
             setEventDraft(eventToDraft(eventData[0]));
           }
         }
@@ -534,12 +621,16 @@ export default function AdminPage() {
           setPopupDraftCache(storedPopupDraft);
           setHasPopupDraft(true);
           setSelectedPopupId(DRAFT_LIST_ID.popup);
+          clearPopupPosterSelection();
+          clearPopupHeroSelection();
           setPopupDraft(storedPopupDraft);
         } else {
           setPopupDraftCache(null);
           setHasPopupDraft(false);
           if (popupData.length > 0) {
             setSelectedPopupId(popupData[0].id);
+            clearPopupPosterSelection();
+            clearPopupHeroSelection();
             setPopupDraft(popupToDraft(popupData[0]));
           }
         }
@@ -562,7 +653,21 @@ export default function AdminPage() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [
+    clearTrendImageSelection,
+    clearEventImageSelection,
+    clearPopupPosterSelection,
+    clearPopupHeroSelection
+  ]);
+
+  useEffect(() => {
+    return () => {
+      revokePreviewUrl(trendImagePreview);
+      revokePreviewUrl(eventImagePreview);
+      revokePreviewUrl(popupPosterPreview);
+      revokePreviewUrl(popupHeroPreview);
+    };
+  }, [trendImagePreview, eventImagePreview, popupPosterPreview, popupHeroPreview]);
 
   const resetMessage = () => setMessage(null);
 
@@ -584,26 +689,55 @@ export default function AdminPage() {
       setMessage({ tone: "error", text: "ID는 반드시 입력해야 합니다." });
       return;
     }
+    if (!payload.imageUrl && !trendImageFile) {
+      setMessage({ tone: "error", text: "대표 이미지 URL을 입력하거나 파일을 업로드해주세요." });
+      return;
+    }
     const targetLanguages = resolveTargetLanguages(trendDraft.languages, payload.language);
     setSavingTrend(true);
     try {
+      let resolvedImageUrl = payload.imageUrl;
+      if (trendImageFile) {
+        const uploadResult = await uploadAdminAsset(trendImageFile, {
+          collection: "trends",
+          entityId: payload.id,
+          language: payload.language,
+          assetType: "cover"
+        });
+        resolvedImageUrl = uploadResult.downloadUrl;
+      }
+
+      if (!resolvedImageUrl) {
+        setMessage({
+          tone: "error",
+          text: "이미지 업로드가 완료되지 않았습니다. 다시 시도해주세요."
+        });
+        return;
+      }
+
+      const basePayload = {
+        ...payload,
+        imageUrl: resolvedImageUrl
+      };
+
       const localizedPayloads: TrendReport[] = [];
       for (const lang of targetLanguages) {
         const localizedId = buildLocalizedId(
-          payload.id,
-          payload.language,
+          basePayload.id,
+          basePayload.language,
           lang,
           targetLanguages.length
         );
-        if (lang === payload.language) {
-          localizedPayloads.push({ ...payload, id: localizedId, language: lang });
+        if (lang === basePayload.language) {
+          localizedPayloads.push({ ...basePayload, id: localizedId, language: lang });
           continue;
         }
-        const translated = await translateTrendReportContent(payload, lang);
+        const translated = await translateTrendReportContent(basePayload, lang);
         localizedPayloads.push({
-          ...(translated ?? { ...payload }),
+          ...(translated ?? { ...basePayload }),
           id: localizedId,
-          language: lang
+          language: lang,
+          imageUrl: resolvedImageUrl
         });
       }
 
@@ -623,10 +757,11 @@ export default function AdminPage() {
       const refreshed = await fetchTrendReports();
       setTrends(refreshed);
       const preferredId =
-        localizedPayloads.find((entry) => entry.language === payload.language)?.id ??
+        localizedPayloads.find((entry) => entry.language === basePayload.language)?.id ??
         localizedPayloads[0]?.id;
       const saved = refreshed.find((item) => item.id === preferredId);
       if (saved) {
+        clearTrendImageSelection();
         setTrendDraft({
           ...trendToDraft(saved),
           languages: targetLanguages
@@ -643,6 +778,7 @@ export default function AdminPage() {
       clearDraft(DRAFT_STORAGE_KEYS.trend);
       setTrendDraftCache(null);
       setHasTrendDraft(false);
+      clearTrendImageSelection();
     } catch (error) {
       console.error("Failed to save trend", error);
       setMessage({
@@ -674,6 +810,7 @@ export default function AdminPage() {
         setTrendDraftCache(null);
         setHasTrendDraft(false);
         const fallback = trends[0];
+        clearTrendImageSelection();
         if (fallback) {
           setSelectedTrendId(fallback.id);
           setTrendDraft(trendToDraft(fallback));
@@ -686,6 +823,7 @@ export default function AdminPage() {
       }
       const updated = await deleteTrendReport(id);
       setTrends(updated);
+      clearTrendImageSelection();
       if (updated.length > 0) {
         setSelectedTrendId(updated[0].id);
         setTrendDraft(trendToDraft(updated[0]));
@@ -715,14 +853,42 @@ export default function AdminPage() {
   const handleEventSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     resetMessage();
-    const payload = draftToEvent(eventDraft);
-    if (!payload.id) {
+    const draftPayload = draftToEvent(eventDraft);
+    if (!draftPayload.id) {
       setMessage({ tone: "error", text: "ID는 반드시 입력해야 합니다." });
       return;
     }
-    const targetLanguages = resolveTargetLanguages(eventDraft.languages, payload.language);
+    if (!draftPayload.imageUrl && !eventImageFile) {
+      setMessage({ tone: "error", text: "이미지 URL을 입력하거나 파일을 업로드해주세요." });
+      return;
+    }
+    const targetLanguages = resolveTargetLanguages(eventDraft.languages, draftPayload.language);
     setSavingEvent(true);
     try {
+      let resolvedImageUrl = draftPayload.imageUrl;
+      if (eventImageFile) {
+        const uploadResult = await uploadAdminAsset(eventImageFile, {
+          collection: "events",
+          entityId: draftPayload.id,
+          language: draftPayload.language,
+          assetType: "cover"
+        });
+        resolvedImageUrl = uploadResult.downloadUrl;
+      }
+
+      if (!resolvedImageUrl) {
+        setMessage({
+          tone: "error",
+          text: "이미지 업로드가 완료되지 않았습니다. 다시 시도해주세요."
+        });
+        return;
+      }
+
+      const payload = {
+        ...draftPayload,
+        imageUrl: resolvedImageUrl
+      };
+
       const localizedPayloads: KCultureEvent[] = [];
       for (const lang of targetLanguages) {
         const localizedId = buildLocalizedId(
@@ -739,7 +905,8 @@ export default function AdminPage() {
         localizedPayloads.push({
           ...(translated ?? { ...payload }),
           id: localizedId,
-          language: lang
+          language: lang,
+          imageUrl: resolvedImageUrl
         });
       }
 
@@ -763,6 +930,7 @@ export default function AdminPage() {
         localizedPayloads[0]?.id;
       const saved = refreshed.find((item) => item.id === preferredId);
       if (saved) {
+        clearEventImageSelection();
         setEventDraft({
           ...eventToDraft(saved),
           languages: targetLanguages
@@ -779,6 +947,7 @@ export default function AdminPage() {
       clearDraft(DRAFT_STORAGE_KEYS.event);
       setEventDraftCache(null);
       setHasEventDraft(false);
+      clearEventImageSelection();
     } catch (error) {
       console.error("Failed to save event", error);
       setMessage({
@@ -810,6 +979,7 @@ export default function AdminPage() {
         setEventDraftCache(null);
         setHasEventDraft(false);
         const fallback = events[0];
+        clearEventImageSelection();
         if (fallback) {
           setSelectedEventId(fallback.id);
           setEventDraft(eventToDraft(fallback));
@@ -822,6 +992,7 @@ export default function AdminPage() {
       }
       const updated = await deleteEvent(id);
       setEvents(updated);
+      clearEventImageSelection();
       if (updated.length > 0) {
         setSelectedEventId(updated[0].id);
         setEventDraft(eventToDraft(updated[0]));
@@ -990,26 +1161,68 @@ export default function AdminPage() {
       setMessage({ tone: "error", text: "ID는 반드시 입력해야 합니다." });
       return;
     }
+    if (!payload.posterUrl && !popupPosterFile) {
+      setMessage({ tone: "error", text: "포스터 URL을 입력하거나 파일을 업로드해주세요." });
+      return;
+    }
     const targetLanguages = resolveTargetLanguages(popupDraft.languages, payload.language);
     setSavingPopup(true);
     try {
+      let resolvedPosterUrl = payload.posterUrl;
+      if (popupPosterFile) {
+        const uploadResult = await uploadAdminAsset(popupPosterFile, {
+          collection: "popups",
+          entityId: payload.id,
+          language: payload.language,
+          assetType: "poster"
+        });
+        resolvedPosterUrl = uploadResult.downloadUrl;
+      }
+
+      let resolvedHeroUrl = payload.heroImageUrl;
+      if (popupHeroFile) {
+        const uploadResult = await uploadAdminAsset(popupHeroFile, {
+          collection: "popups",
+          entityId: payload.id,
+          language: payload.language,
+          assetType: "hero"
+        });
+        resolvedHeroUrl = uploadResult.downloadUrl;
+      }
+
+      if (!resolvedPosterUrl) {
+        setMessage({
+          tone: "error",
+          text: "이미지 업로드가 완료되지 않았습니다. 다시 시도해주세요."
+        });
+        return;
+      }
+
+      const basePayload: PopupEvent = {
+        ...payload,
+        posterUrl: resolvedPosterUrl,
+        heroImageUrl: resolvedHeroUrl || resolvedPosterUrl
+      };
+
       const localizedPayloads: PopupEvent[] = [];
       for (const lang of targetLanguages) {
         const localizedId = buildLocalizedId(
-          payload.id,
-          payload.language,
+          basePayload.id,
+          basePayload.language,
           lang,
           targetLanguages.length
         );
-        if (lang === payload.language) {
-          localizedPayloads.push({ ...payload, id: localizedId, language: lang });
+        if (lang === basePayload.language) {
+          localizedPayloads.push({ ...basePayload, id: localizedId, language: lang });
           continue;
         }
-        const translated = await translatePopupContent(payload, lang);
+        const translated = await translatePopupContent(basePayload, lang);
         localizedPayloads.push({
-          ...(translated ?? { ...payload }),
+          ...(translated ?? { ...basePayload }),
           id: localizedId,
-          language: lang
+          language: lang,
+          posterUrl: resolvedPosterUrl,
+          heroImageUrl: resolvedHeroUrl || resolvedPosterUrl
         });
       }
 
@@ -1033,6 +1246,8 @@ export default function AdminPage() {
         localizedPayloads[0]?.id;
       const saved = refreshed.find((item) => item.id === preferredId);
       if (saved) {
+        clearPopupPosterSelection();
+        clearPopupHeroSelection();
         setPopupDraft({
           ...popupToDraft(saved),
           languages: targetLanguages
@@ -1049,6 +1264,8 @@ export default function AdminPage() {
       clearDraft(DRAFT_STORAGE_KEYS.popup);
       setPopupDraftCache(null);
       setHasPopupDraft(false);
+      clearPopupPosterSelection();
+      clearPopupHeroSelection();
     } catch (error) {
       console.error("Failed to save popup", error);
       setMessage({
@@ -1078,6 +1295,8 @@ export default function AdminPage() {
         setPopupDraftCache(null);
         setHasPopupDraft(false);
         const fallback = popups[0];
+        clearPopupPosterSelection();
+        clearPopupHeroSelection();
         if (fallback) {
           setSelectedPopupId(fallback.id);
           setPopupDraft(popupToDraft(fallback));
@@ -1090,6 +1309,8 @@ export default function AdminPage() {
       }
       const updated = await deletePopup(id);
       setPopups(updated);
+      clearPopupPosterSelection();
+      clearPopupHeroSelection();
       if (updated.length > 0) {
         setSelectedPopupId(updated[0].id);
         setPopupDraft(popupToDraft(updated[0]));
@@ -1194,8 +1415,205 @@ export default function AdminPage() {
     );
   };
 
-  const renderTrendsSection = () => (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
+  type EnhancedTextEditorProps = {
+    label: string;
+    value: string;
+    onChange: (value: string) => void;
+    placeholder?: string;
+  };
+
+  const EnhancedTextEditor = memo(({
+    label,
+    value,
+    onChange,
+    placeholder
+  }: EnhancedTextEditorProps) => {
+    const editorRef = useRef<HTMLDivElement>(null);
+    const [editorHeight, setEditorHeight] = useState(300);
+    // initialValueRef는 컴포넌트가 처음 마운트될 때만 설정되도록 useMemo 사용
+    const initialValueRef = useRef<string | null>(null);
+    const lastSentValueRef = useRef<string>("");
+    const changeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isMountedRef = useRef(false);
+
+    // 초기값을 한 번만 설정
+    if (initialValueRef.current === null) {
+      initialValueRef.current = value;
+      lastSentValueRef.current = value;
+    }
+
+    const syncToParent = useCallback(() => {
+      if (!editorRef.current) return;
+      const content = editorRef.current.innerText || editorRef.current.textContent || "";
+      
+      // 마지막으로 보낸 값과 다를 때만 onChange 호출
+      if (content !== lastSentValueRef.current) {
+        // onChange를 debounce하여 불필요한 리렌더링 방지
+        if (changeTimeoutRef.current) {
+          clearTimeout(changeTimeoutRef.current);
+        }
+        changeTimeoutRef.current = setTimeout(() => {
+          // lastSentValueRef를 먼저 업데이트하여 상위 컴포넌트 리렌더링 시 문제 방지
+          lastSentValueRef.current = content;
+          // requestAnimationFrame을 사용하여 다음 프레임에 onChange 호출
+          requestAnimationFrame(() => {
+            onChange(content);
+            changeTimeoutRef.current = null;
+          });
+        }, 300);
+      }
+    }, [onChange]);
+
+    const applyFormat = useCallback((command: string, formatValue?: string) => {
+      if (!editorRef.current) return;
+      editorRef.current.focus();
+      document.execCommand(command, false, formatValue);
+      syncToParent();
+    }, [syncToParent]);
+
+    const handleInput = useCallback(() => {
+      syncToParent();
+    }, [syncToParent]);
+
+    const handlePaste = useCallback((e: React.ClipboardEvent) => {
+      e.preventDefault();
+      const text = e.clipboardData.getData("text/plain");
+      if (editorRef.current) {
+        document.execCommand("insertText", false, text);
+        syncToParent();
+      }
+    }, [syncToParent]);
+
+    const handleBlur = useCallback(() => {
+      syncToParent();
+    }, [syncToParent]);
+
+    // 초기값 설정 (마운트 시 한 번만)
+    useEffect(() => {
+      if (editorRef.current && !isMountedRef.current && initialValueRef.current !== null) {
+        editorRef.current.textContent = initialValueRef.current;
+        isMountedRef.current = true;
+      }
+      return () => {
+        if (changeTimeoutRef.current) {
+          clearTimeout(changeTimeoutRef.current);
+        }
+      };
+    }, []);
+
+    // value prop 변경을 완전히 무시 - 에디터는 uncontrolled로 동작
+    // 외부에서 값이 변경되어도 에디터는 절대 업데이트하지 않음
+
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-semibold text-dancheongNavy">{label}</label>
+          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-2 py-1">
+            <button
+              type="button"
+              onClick={() => applyFormat("bold")}
+              className="rounded px-2 py-1 text-xs font-bold text-slate-700 hover:bg-slate-100"
+              title="굵게 (Ctrl+B)"
+            >
+              B
+            </button>
+            <button
+              type="button"
+              onClick={() => applyFormat("italic")}
+              className="rounded px-2 py-1 text-xs italic text-slate-700 hover:bg-slate-100"
+              title="기울임 (Ctrl+I)"
+            >
+              I
+            </button>
+            <button
+              type="button"
+              onClick={() => applyFormat("underline")}
+              className="rounded px-2 py-1 text-xs underline text-slate-700 hover:bg-slate-100"
+              title="밑줄 (Ctrl+U)"
+            >
+              U
+            </button>
+            <div className="h-4 w-px bg-slate-200" />
+            <button
+              type="button"
+              onClick={() => applyFormat("formatBlock", "h2")}
+              className="rounded px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+              title="제목"
+            >
+              H2
+            </button>
+            <button
+              type="button"
+              onClick={() => applyFormat("formatBlock", "p")}
+              className="rounded px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
+              title="본문"
+            >
+              P
+            </button>
+            <div className="h-4 w-px bg-slate-200" />
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-slate-500">높이</span>
+              <button
+                type="button"
+                onClick={() => setEditorHeight((prev) => Math.max(200, prev - 40))}
+                className="rounded px-1 py-0.5 text-xs text-slate-600 hover:bg-slate-100"
+                disabled={editorHeight <= 200}
+              >
+                −
+              </button>
+              <span className="w-10 text-center text-xs font-semibold text-dancheongNavy">{editorHeight}px</span>
+              <button
+                type="button"
+                onClick={() => setEditorHeight((prev) => Math.min(600, prev + 40))}
+                className="rounded px-1 py-0.5 text-xs text-slate-600 hover:bg-slate-100"
+                disabled={editorHeight >= 600}
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          ref={editorRef}
+          contentEditable
+          onInput={handleInput}
+          onPaste={handlePaste}
+          onBlur={handleBlur}
+          style={{
+            minHeight: `${editorHeight}px`,
+            maxHeight: "600px",
+            overflowY: "auto"
+          }}
+          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-relaxed focus:border-hanBlue focus:outline-none focus:ring-2 focus:ring-hanBlue/20"
+          data-placeholder={placeholder}
+          suppressContentEditableWarning
+        />
+        <style>{`
+          [contenteditable][data-placeholder]:empty:before {
+            content: attr(data-placeholder);
+            color: #94a3b8;
+            pointer-events: none;
+          }
+          [contenteditable] h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0.75rem 0 0.5rem 0;
+            color: #1e293b;
+          }
+          [contenteditable] p {
+            margin: 0.5rem 0;
+            line-height: 1.6;
+          }
+        `}</style>
+      </div>
+    );
+  });
+
+  const renderTrendsSection = () => {
+    const currentTrendImagePreview = trendImagePreview ?? trendDraft.imageUrl;
+
+    return (
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
       <aside className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-dancheongNavy">주간 트렌드 목록</h3>
@@ -1204,6 +1622,7 @@ export default function AdminPage() {
             onClick={() => {
               setSelectedTrendId(null);
               setTrendDraft(createEmptyTrendDraft());
+              clearTrendImageSelection();
             }}
             className="text-sm font-semibold text-hanBlue hover:underline"
           >
@@ -1218,6 +1637,7 @@ export default function AdminPage() {
               selectedTrendId === DRAFT_LIST_ID.trend,
               () => {
                 setSelectedTrendId(DRAFT_LIST_ID.trend);
+                clearTrendImageSelection();
                 setTrendDraft(trendDraftCache);
               }
             )
@@ -1229,6 +1649,7 @@ export default function AdminPage() {
             }`;
             return renderListButton(report.id, label, selectedTrendId === report.id, () => {
               setSelectedTrendId(report.id);
+              clearTrendImageSelection();
               setTrendDraft(trendToDraft(report));
             });
           })}
@@ -1381,17 +1802,65 @@ export default function AdminPage() {
               required
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            대표 이미지 URL
-            <input
-              type="url"
-              value={trendDraft.imageUrl}
-              onChange={(e) => setTrendDraft((prev) => ({ ...prev, imageUrl: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-              required
-            />
-          </label>
+          <div className="space-y-3">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              대표 이미지 URL
+              <input
+                type="url"
+                value={trendDraft.imageUrl}
+                onChange={(e) => setTrendDraft((prev) => ({ ...prev, imageUrl: e.target.value }))}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                placeholder="https://"
+              />
+            </label>
+            <div className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              <span>이미지 파일 업로드 (선택)</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null;
+                  applyTrendImageFile(file);
+                  if (e.target) {
+                    e.target.value = "";
+                  }
+                }}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-hanBlue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+              />
+              {trendImageFile && (
+                <div className="flex items-center justify-between gap-2 text-xs font-normal">
+                  <span className="truncate text-slate-500">{trendImageFile.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => applyTrendImageFile(null)}
+                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  >
+                    선택 해제
+                  </button>
+                </div>
+              )}
+              <p className="text-xs font-normal text-slate-500">
+                Studio에 업로드하면 Firebase Storage URL이 자동으로 생성됩니다.
+              </p>
+            </div>
+          </div>
         </div>
+
+        {currentTrendImagePreview && (
+          <div className="space-y-2 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-4">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              이미지 미리보기
+            </span>
+            <div className="overflow-hidden rounded-xl border border-slate-100">
+              <img
+                src={currentTrendImagePreview}
+                alt={trendDraft.title || "Trend image preview"}
+                className="h-56 w-full object-cover"
+              />
+            </div>
+            <p className="text-xs text-slate-500">저장 시 모든 언어 버전에 동일한 이미지가 반영됩니다.</p>
+          </div>
+        )}
 
         <div className="grid gap-4 md:grid-cols-2">
           <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
@@ -1420,15 +1889,12 @@ export default function AdminPage() {
           </label>
         </div>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-          본문 문단 (줄바꿈으로 구분)
-          <textarea
-            value={trendDraft.contentInput}
-            onChange={(e) => setTrendDraft((prev) => ({ ...prev, contentInput: e.target.value }))}
-            className="h-48 rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            placeholder="문단마다 한 줄을 비워두면 가독성이 올라갑니다."
-          />
-        </label>
+        <EnhancedTextEditor
+          label="본문 문단 (줄바꿈으로 구분)"
+          value={trendDraft.contentInput}
+          onChange={(value) => setTrendDraft((prev) => ({ ...prev, contentInput: value }))}
+          placeholder="문단마다 한 줄을 비워두면 가독성이 올라갑니다."
+        />
 
         <div className="flex justify-end gap-3">
           <button
@@ -1443,6 +1909,7 @@ export default function AdminPage() {
             onClick={() => {
               setSelectedTrendId(null);
               setTrendDraft(createEmptyTrendDraft());
+              clearTrendImageSelection();
             }}
             className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
           >
@@ -1459,283 +1926,337 @@ export default function AdminPage() {
       </form>
     </div>
   );
+  };
 
-  const renderEventsSection = () => (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
-      <aside className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-dancheongNavy">K-Culture 이벤트</h3>
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedEventId(null);
-              setEventDraft(createEmptyEventDraft());
-            }}
-            className="text-sm font-semibold text-hanBlue hover:underline"
-          >
-            새 이벤트 작성
-          </button>
-        </div>
-        <div className="space-y-2">
-          {hasEventDraft && eventDraftCache && (
-            renderListButton(
-              DRAFT_LIST_ID.event,
-              `[임시저장] ${eventDraftCache.title || eventDraftCache.id || "제목 미정"}`,
-              selectedEventId === DRAFT_LIST_ID.event,
-              () => {
-                setSelectedEventId(DRAFT_LIST_ID.event);
-                setEventDraft(eventDraftCache);
-              }
-            )
-          )}
-          {events.map((event) =>
-            renderListButton(
-              event.id,
-              `[${getLanguageLabel(event.language ?? "fr")}] ${event.title}`,
-              selectedEventId === event.id,
-              () => {
-                setSelectedEventId(event.id);
-                setEventDraft(eventToDraft(event));
-              }
-            )
-          )}
-          {events.length === 0 && (
-            <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
-              아직 등록된 이벤트가 없습니다. 오른쪽 양식을 채워 새 이벤트를 추가하세요.
-            </p>
-          )}
-        </div>
-      </aside>
+  const renderEventsSection = () => {
+    const currentEventImagePreview = eventImagePreview ?? eventDraft.imageUrl;
 
-      <form onSubmit={handleEventSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold text-dancheongNavy">
-            {selectedEventId ? "이벤트 수정" : "새 이벤트 등록"}
-          </h3>
-          {selectedEventId && (
+    return (
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
+        <aside className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-dancheongNavy">K-Culture 이벤트</h3>
             <button
               type="button"
-              onClick={() => handleEventDelete(selectedEventId)}
-              className="text-sm font-semibold text-rose-600 hover:text-rose-700"
+              onClick={() => {
+                setSelectedEventId(null);
+                setEventDraft(createEmptyEventDraft());
+                clearEventImageSelection();
+              }}
+              className="text-sm font-semibold text-hanBlue hover:underline"
             >
-              삭제
+              새 이벤트 작성
             </button>
+          </div>
+          <div className="space-y-2">
+            {hasEventDraft && eventDraftCache && (
+              renderListButton(
+                DRAFT_LIST_ID.event,
+                `[임시저장] ${eventDraftCache.title || eventDraftCache.id || "제목 미정"}`,
+                selectedEventId === DRAFT_LIST_ID.event,
+                () => {
+                  setSelectedEventId(DRAFT_LIST_ID.event);
+                  clearEventImageSelection();
+                  setEventDraft(eventDraftCache);
+                }
+              )
+            )}
+            {events.map((event) =>
+              renderListButton(
+                event.id,
+                `[${getLanguageLabel(event.language ?? "fr")}] ${event.title}`,
+                selectedEventId === event.id,
+                () => {
+                  clearEventImageSelection();
+                  setSelectedEventId(event.id);
+                  setEventDraft(eventToDraft(event));
+                }
+              )
+            )}
+            {events.length === 0 && (
+              <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
+                아직 등록된 이벤트가 없습니다. 오른쪽 양식을 채워 새 이벤트를 추가하세요.
+              </p>
+            )}
+          </div>
+        </aside>
+
+        <form onSubmit={handleEventSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-semibold text-dancheongNavy">
+              {selectedEventId ? "이벤트 수정" : "새 이벤트 등록"}
+            </h3>
+            {selectedEventId && (
+              <button
+                type="button"
+                onClick={() => handleEventDelete(selectedEventId)}
+                className="text-sm font-semibold text-rose-600 hover:text-rose-700"
+              >
+                삭제
+              </button>
+            )}
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              언어
+              <select
+                value={eventDraft.language}
+                onChange={(e) =>
+                  setEventDraft((prev) => ({
+                    ...prev,
+                    language: e.target.value as SupportedLanguage,
+                    languages: syncLanguagesOnSourceChange(
+                      prev.languages,
+                      e.target.value as SupportedLanguage
+                    )
+                  }))
+                }
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              >
+                {LANG_OPTIONS.map((lang) => (
+                  <option key={lang} value={lang}>
+                    {getLanguageLabel(lang)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              ID
+              <input
+                type="text"
+                value={eventDraft.id}
+                onChange={(e) => setEventDraft((prev) => ({ ...prev, id: e.target.value }))}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                required
+              />
+            </label>
+            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              카테고리
+              <select
+                value={eventDraft.category}
+                onChange={(e) =>
+                  setEventDraft((prev) => ({ ...prev, category: e.target.value as EventCategory }))
+                }
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              >
+                <option value="concert">Concert</option>
+                <option value="traditional">Traditional</option>
+                <option value="atelier">Atelier</option>
+                <option value="theatre">Theatre</option>
+                <option value="festival">Festival</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
+            <LanguageMultiSelect
+              label="노출 언어 (복수 선택)"
+              helper="선택한 언어마다 이벤트 설명이 자동 번역되어 게시됩니다."
+              value={eventDraft.languages}
+              onChange={(languages) => setEventDraft((prev) => ({ ...prev, languages }))}
+            />
+            <p className="mt-2 text-xs text-slate-500">
+              여러 언어를 발행하면 ID는{" "}
+              <strong>{`lang-${normalizeBaseId(eventDraft.id || "event-id", eventDraft.language)}`}</strong>{" "}
+              형식으로 저장됩니다.
+            </p>
+          </div>
+
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            제목
+            <input
+              type="text"
+              value={eventDraft.title}
+              onChange={(e) => setEventDraft((prev) => ({ ...prev, title: e.target.value }))}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              required
+            />
+          </label>
+
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            요약 설명
+            <textarea
+              value={eventDraft.description}
+              onChange={(e) => setEventDraft((prev) => ({ ...prev, description: e.target.value }))}
+              className="h-24 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              required
+            />
+          </label>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              시작 날짜
+              <input
+                type="date"
+                value={eventDraft.startDate}
+                onChange={(e) => setEventDraft((prev) => ({ ...prev, startDate: e.target.value }))}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                required
+              />
+            </label>
+            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              종료 날짜
+              <input
+                type="date"
+                value={eventDraft.endDate}
+                onChange={(e) => setEventDraft((prev) => ({ ...prev, endDate: e.target.value }))}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              />
+            </label>
+            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              시간
+              <input
+                type="time"
+                value={eventDraft.time}
+                onChange={(e) => setEventDraft((prev) => ({ ...prev, time: e.target.value }))}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                required
+              />
+            </label>
+            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              참가비 / 티켓
+              <input
+                type="text"
+                value={eventDraft.price}
+                onChange={(e) => setEventDraft((prev) => ({ ...prev, price: e.target.value }))}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                placeholder="예: 29 000 KRW, Entrée libre"
+                required
+              />
+            </label>
+          </div>
+
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            장소
+            <input
+              type="text"
+              value={eventDraft.location}
+              onChange={(e) => setEventDraft((prev) => ({ ...prev, location: e.target.value }))}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              required
+            />
+          </label>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-3">
+              <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+                대표 이미지 URL
+                <input
+                  type="url"
+                  value={eventDraft.imageUrl}
+                  onChange={(e) => setEventDraft((prev) => ({ ...prev, imageUrl: e.target.value }))}
+                  className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                  placeholder="https://"
+                />
+              </label>
+              <div className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+                <span>이미지 파일 업로드 (선택)</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] ?? null;
+                    applyEventImageFile(file);
+                    if (e.target) {
+                      e.target.value = "";
+                    }
+                  }}
+                  className="rounded-xl border border-slate-200 px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-hanBlue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+                />
+                {eventImageFile && (
+                  <div className="flex items-center justify-between gap-2 text-xs font-normal">
+                    <span className="truncate text-slate-500">{eventImageFile.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => applyEventImageFile(null)}
+                      className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                    >
+                      선택 해제
+                    </button>
+                  </div>
+                )}
+                <p className="text-xs font-normal text-slate-500">
+                  파일을 업로드하면 Firebase Storage에 저장되어 Cloudinary 차단 없이 노출됩니다.
+                </p>
+              </div>
+            </div>
+            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              예약 링크 (선택)
+              <input
+                type="url"
+                value={eventDraft.bookingUrl}
+                onChange={(e) => setEventDraft((prev) => ({ ...prev, bookingUrl: e.target.value }))}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                placeholder="https://"
+              />
+            </label>
+          </div>
+
+          {currentEventImagePreview && (
+            <div className="space-y-2 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-4">
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                이미지 미리보기
+              </span>
+              <div className="overflow-hidden rounded-xl border border-slate-100">
+                <img
+                  src={currentEventImagePreview}
+                  alt={eventDraft.title || "Event image preview"}
+                  className="h-56 w-full object-cover"
+                />
+              </div>
+              <p className="text-xs text-slate-500">
+                저장 시 이 이미지 URL이 모든 언어 버전에 함께 적용됩니다.
+              </p>
+            </div>
           )}
-        </div>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            언어
-            <select
-              value={eventDraft.language}
-              onChange={(e) =>
-                setEventDraft((prev) => ({
-                  ...prev,
-                  language: e.target.value as SupportedLanguage,
-                  languages: syncLanguagesOnSourceChange(
-                    prev.languages,
-                    e.target.value as SupportedLanguage
-                  )
-                }))
-              }
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            >
-              {LANG_OPTIONS.map((lang) => (
-                <option key={lang} value={lang}>
-                  {getLanguageLabel(lang)}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            ID
-            <input
-              type="text"
-              value={eventDraft.id}
-              onChange={(e) => setEventDraft((prev) => ({ ...prev, id: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-              required
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            카테고리
-            <select
-              value={eventDraft.category}
-              onChange={(e) =>
-                setEventDraft((prev) => ({ ...prev, category: e.target.value as EventCategory }))
-              }
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            >
-              <option value="concert">Concert</option>
-              <option value="traditional">Traditional</option>
-              <option value="atelier">Atelier</option>
-              <option value="theatre">Theatre</option>
-              <option value="festival">Festival</option>
-            </select>
-          </label>
-        </div>
-
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
-          <LanguageMultiSelect
-            label="노출 언어 (복수 선택)"
-            helper="선택한 언어마다 이벤트 설명이 자동 번역되어 게시됩니다."
-            value={eventDraft.languages}
-            onChange={(languages) => setEventDraft((prev) => ({ ...prev, languages }))}
-          />
-          <p className="mt-2 text-xs text-slate-500">
-            여러 언어를 발행하면 ID는{" "}
-            <strong>{`lang-${normalizeBaseId(eventDraft.id || "event-id", eventDraft.language)}`}</strong>{" "}
-            형식으로 저장됩니다.
-          </p>
-        </div>
-
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-          제목
-          <input
-            type="text"
-            value={eventDraft.title}
-            onChange={(e) => setEventDraft((prev) => ({ ...prev, title: e.target.value }))}
-            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            required
-          />
-        </label>
-
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-          요약 설명
-          <textarea
-            value={eventDraft.description}
-            onChange={(e) => setEventDraft((prev) => ({ ...prev, description: e.target.value }))}
-            className="h-24 rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            required
-          />
-        </label>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            시작 날짜
-            <input
-              type="date"
-              value={eventDraft.startDate}
-              onChange={(e) => setEventDraft((prev) => ({ ...prev, startDate: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-              required
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            종료 날짜
-            <input
-              type="date"
-              value={eventDraft.endDate}
-              onChange={(e) => setEventDraft((prev) => ({ ...prev, endDate: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            시간
-            <input
-              type="time"
-              value={eventDraft.time}
-              onChange={(e) => setEventDraft((prev) => ({ ...prev, time: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-              required
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            참가비 / 티켓
-            <input
-              type="text"
-              value={eventDraft.price}
-              onChange={(e) => setEventDraft((prev) => ({ ...prev, price: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-              placeholder="예: 29 000 KRW, Entrée libre"
-              required
-            />
-          </label>
-        </div>
-
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-          장소
-          <input
-            type="text"
-            value={eventDraft.location}
-            onChange={(e) => setEventDraft((prev) => ({ ...prev, location: e.target.value }))}
-            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            required
-          />
-        </label>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            대표 이미지 URL
-            <input
-              type="url"
-              value={eventDraft.imageUrl}
-              onChange={(e) => setEventDraft((prev) => ({ ...prev, imageUrl: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-              required
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            예약 링크 (선택)
-            <input
-              type="url"
-              value={eventDraft.bookingUrl}
-              onChange={(e) => setEventDraft((prev) => ({ ...prev, bookingUrl: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-              placeholder="https://"
-            />
-          </label>
-        </div>
-
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-          상세 설명 (줄바꿈으로 문단 구분)
-          <textarea
+          <EnhancedTextEditor
+            label="상세 설명 (줄바꿈으로 문단 구분)"
             value={eventDraft.longDescriptionInput}
-            onChange={(e) =>
-              setEventDraft((prev) => ({ ...prev, longDescriptionInput: e.target.value }))
-            }
-            className="h-40 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            onChange={(value) => setEventDraft((prev) => ({ ...prev, longDescriptionInput: value }))}
           />
-        </label>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-          팁 & 추천 (줄바꿈으로 구분)
-          <textarea
-            value={eventDraft.tipsInput}
-            onChange={(e) => setEventDraft((prev) => ({ ...prev, tipsInput: e.target.value }))}
-            className="h-32 rounded-xl border border-slate-200 px-3 py-2 text-sm"
-          />
-        </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            팁 & 추천 (줄바꿈으로 구분)
+            <textarea
+              value={eventDraft.tipsInput}
+              onChange={(e) => setEventDraft((prev) => ({ ...prev, tipsInput: e.target.value }))}
+              className="h-32 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            />
+          </label>
 
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={handleEventDraftSave}
-            className="rounded-full border border-hanBlue/40 px-5 py-2 text-sm font-semibold text-hanBlue hover:bg-hanBlue/10"
-          >
-            임시저장
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedEventId(null);
-              setEventDraft(createEmptyEventDraft());
-            }}
-            className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
-          >
-            새로 작성
-          </button>
-          <button
-            type="submit"
-            disabled={savingEvent}
-            className="rounded-full bg-hanBlue px-6 py-2 text-sm font-semibold text-white shadow transition hover:bg-dancheongNavy disabled:cursor-not-allowed disabled:bg-slate-400"
-          >
-            {savingEvent ? "저장 중..." : "저장하기"}
-          </button>
-        </div>
-      </form>
-    </div>
-  );
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={handleEventDraftSave}
+              className="rounded-full border border-hanBlue/40 px-5 py-2 text-sm font-semibold text-hanBlue hover:bg-hanBlue/10"
+            >
+              임시저장
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedEventId(null);
+                setEventDraft(createEmptyEventDraft());
+                clearEventImageSelection();
+              }}
+              className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+            >
+              새로 작성
+            </button>
+            <button
+              type="submit"
+              disabled={savingEvent}
+              className="rounded-full bg-hanBlue px-6 py-2 text-sm font-semibold text-white shadow transition hover:bg-dancheongNavy disabled:cursor-not-allowed disabled:bg-slate-400"
+            >
+              {savingEvent ? "저장 중..." : "저장하기"}
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  };
 
   const renderPhrasesSection = () => (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
@@ -1937,8 +2458,12 @@ export default function AdminPage() {
     </div>
   );
 
-  const renderPopupsSection = () => (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+  const renderPopupsSection = () => {
+    const currentPopupPosterPreview = popupPosterPreview ?? popupDraft.posterUrl;
+    const currentPopupHeroPreview = popupHeroPreview ?? popupDraft.heroImageUrl;
+
+    return (
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
       <aside className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-dancheongNavy">팝업 레이더</h3>
@@ -1947,6 +2472,8 @@ export default function AdminPage() {
             onClick={() => {
               setSelectedPopupId(null);
               setPopupDraft(createEmptyPopupDraft());
+              clearPopupPosterSelection();
+              clearPopupHeroSelection();
             }}
             className="text-sm font-semibold text-hanBlue hover:underline"
           >
@@ -1961,6 +2488,8 @@ export default function AdminPage() {
               selectedPopupId === DRAFT_LIST_ID.popup,
               () => {
                 setSelectedPopupId(DRAFT_LIST_ID.popup);
+                clearPopupPosterSelection();
+                clearPopupHeroSelection();
                 setPopupDraft(popupDraftCache);
               }
             )
@@ -1972,6 +2501,8 @@ export default function AdminPage() {
               selectedPopupId === popup.id,
               () => {
                 setSelectedPopupId(popup.id);
+                  clearPopupPosterSelection();
+                  clearPopupHeroSelection();
                 setPopupDraft(popupToDraft(popup));
               }
             )
@@ -2107,26 +2638,125 @@ export default function AdminPage() {
         </label>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            포스터 이미지 URL
-            <input
-              type="url"
-              value={popupDraft.posterUrl}
-              onChange={(e) => setPopupDraft((prev) => ({ ...prev, posterUrl: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-              required
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            상세 헤더 이미지 URL (선택)
-            <input
-              type="url"
-              value={popupDraft.heroImageUrl}
-              onChange={(e) => setPopupDraft((prev) => ({ ...prev, heroImageUrl: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            />
-          </label>
+          <div className="space-y-3">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              포스터 이미지 URL
+              <input
+                type="url"
+                value={popupDraft.posterUrl}
+                onChange={(e) => setPopupDraft((prev) => ({ ...prev, posterUrl: e.target.value }))}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                placeholder="https://"
+              />
+            </label>
+            <div className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              <span>포스터 파일 업로드 (선택)</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null;
+                  applyPopupPosterFile(file);
+                  if (e.target) {
+                    e.target.value = "";
+                  }
+                }}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-hanBlue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+              />
+              {popupPosterFile && (
+                <div className="flex items-center justify-between gap-2 text-xs font-normal">
+                  <span className="truncate text-slate-500">{popupPosterFile.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => applyPopupPosterFile(null)}
+                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  >
+                    선택 해제
+                  </button>
+                </div>
+              )}
+              <p className="text-xs font-normal text-slate-500">
+                파일을 업로드하면 Firebase Storage URL이 자동으로 설정됩니다.
+              </p>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              상세 헤더 이미지 URL (선택)
+              <input
+                type="url"
+                value={popupDraft.heroImageUrl}
+                onChange={(e) => setPopupDraft((prev) => ({ ...prev, heroImageUrl: e.target.value }))}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                placeholder="https://"
+              />
+            </label>
+            <div className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              <span>헤더 이미지 파일 업로드 (선택)</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] ?? null;
+                  applyPopupHeroFile(file);
+                  if (e.target) {
+                    e.target.value = "";
+                  }
+                }}
+                className="rounded-xl border border-slate-200 px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-hanBlue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+              />
+              {popupHeroFile && (
+                <div className="flex items-center justify-between gap-2 text-xs font-normal">
+                  <span className="truncate text-slate-500">{popupHeroFile.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => applyPopupHeroFile(null)}
+                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  >
+                    선택 해제
+                  </button>
+                </div>
+              )}
+              <p className="text-xs font-normal text-slate-500">
+                비워두면 포스터 이미지와 동일한 URL이 적용됩니다.
+              </p>
+            </div>
+          </div>
         </div>
+
+        {(currentPopupPosterPreview || currentPopupHeroPreview) && (
+          <div className="grid gap-4 md:grid-cols-2">
+            {currentPopupPosterPreview && (
+              <div className="space-y-2 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-4">
+                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  포스터 미리보기
+                </span>
+                <div className="overflow-hidden rounded-xl border border-slate-100">
+                  <img
+                    src={currentPopupPosterPreview}
+                    alt={popupDraft.title || "Popup poster preview"}
+                    className="h-56 w-full object-cover"
+                  />
+                </div>
+              </div>
+            )}
+            {currentPopupHeroPreview && (
+              <div className="space-y-2 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-4">
+                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  헤더 미리보기
+                </span>
+                <div className="overflow-hidden rounded-xl border border-slate-100">
+                  <img
+                    src={currentPopupHeroPreview}
+                    alt={popupDraft.title || "Popup hero preview"}
+                    className="h-56 w-full object-cover"
+                  />
+                </div>
+                <p className="text-xs text-slate-500">헤더가 비어 있으면 포스터 이미지가 재사용됩니다.</p>
+              </div>
+            )}
+          </div>
+        )}
 
         <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
           태그 (쉼표로 구분)
@@ -2158,14 +2788,11 @@ export default function AdminPage() {
               className="h-32 rounded-xl border border-slate-200 px-3 py-2 text-sm"
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
-            상세 설명
-            <textarea
-              value={popupDraft.detailsInput}
-              onChange={(e) => setPopupDraft((prev) => ({ ...prev, detailsInput: e.target.value }))}
-              className="h-32 rounded-xl border border-slate-200 px-3 py-2 text-sm"
-            />
-          </label>
+          <EnhancedTextEditor
+            label="상세 설명"
+            value={popupDraft.detailsInput}
+            onChange={(value) => setPopupDraft((prev) => ({ ...prev, detailsInput: value }))}
+          />
         </div>
 
         <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
@@ -2191,6 +2818,8 @@ export default function AdminPage() {
             onClick={() => {
               setSelectedPopupId(null);
               setPopupDraft(createEmptyPopupDraft());
+              clearPopupPosterSelection();
+              clearPopupHeroSelection();
             }}
             className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
           >
@@ -2207,6 +2836,7 @@ export default function AdminPage() {
       </form>
     </div>
   );
+  };
 
   return (
     <main className="section-container space-y-10">

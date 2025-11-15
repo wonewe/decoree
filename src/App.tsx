@@ -5,7 +5,8 @@ import TrendsPage from "./pages/TrendsPage";
 import EventsPage from "./pages/EventsPage";
 import PhrasebookPage from "./pages/PhrasebookPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import AdminPage from "./pages/AdminPage";
+import AdminListPage from "./pages/AdminListPage";
+import AdminEditorPage from "./pages/AdminEditorPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import RequireAuth from "./components/RequireAuth";
@@ -55,7 +56,15 @@ export default function App() {
           path="/admin"
           element={
             <RequireAuth requireAdmin>
-              <AdminPage />
+              <AdminListPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/admin/edit/:type/:id?"
+          element={
+            <RequireAuth requireAdmin>
+              <AdminEditorPage />
             </RequireAuth>
           }
         />

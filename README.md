@@ -52,10 +52,11 @@ npm run build
 
 ## Configuration de l’authentification
 
-1. Dupliquez `.env.example` en `.env` puis complétez les variables `VITE_FIREBASE_*` avec la configuration de votre projet Firebase.
+1. Dupliquez `.env.example` en `.env` puis complétez les variables `VITE_FIREBASE_*` (y compris `VITE_FIREBASE_STORAGE_BUCKET`) avec la configuration de votre projet Firebase.
 2. Dans la console Firebase :
    - Activez **Authentication → Email/Password**.
    - Activez également **Authentication → Google** si vous souhaitez permettre la connexion par Google.
+   - Activez **Storage** et vérifiez que le bucket par défaut (ex : `votre-projet.appspot.com`) correspond à `VITE_FIREBASE_STORAGE_BUCKET`. Ajustez les règles de sécurité pour autoriser l’upload depuis les comptes authentifiés du Studio.
    - Créez les comptes administrateurs qui doivent accéder au studio ou laissez-les utiliser la page `/signup`.
 3. Listez les emails autorisés dans `VITE_KORAID_ADMIN_EMAILS` (séparés par des virgules). Ces comptes seront reconnus comme administrateurs et verront le lien “Studio koraid”.
 4. Relancez `npm run dev` pour que Vite recharge la configuration. Rendez-vous sur `/login` ou `/signup` pour tester la connexion ; une fois authentifié, vous serez redirigé vers `/admin`.
@@ -64,6 +65,12 @@ npm run build
 
 - Chaque formulaire du Studio permet de sélectionner plusieurs langues de publication ; le contenu est automatiquement traduit en FR/KO/JA/EN et synchronisé avec l’ID `lang-id`.
 - La traduction automatique est activée par défaut. Pour la désactiver (et gérer les traductions manuellement), définissez `VITE_STUDIO_AUTO_TRANSLATE=false` dans `.env`.
+
+## Gestion des médias Studio
+
+- Les formulaires “K-Culture 이벤트”, “주간 트렌드” et “팝업 레이더” acceptent désormais l’upload direct d’images. Les fichiers sont envoyés vers Firebase Storage et l’URL générée est réutilisée sur toutes les langues.
+- Assurez-vous que vos règles Storage autorisent la lecture publique (`allow read: if true;`) et l’écriture pour les utilisateurs authentifiés du Studio (`allow write: if request.auth != null;` comme point de départ).
+- Si Cloudinary est bloqué sur certaines connexions, laissez le champ URL vide et uploadez un fichier local : le Studio se chargera de générer le lien sécurisé.
 
 ## Mode contenu statique
 

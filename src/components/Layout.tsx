@@ -152,6 +152,14 @@ export default function Layout() {
             <LanguageSwitcher />
             {user ? (
               <div className="flex items-center gap-2">
+                {isAdmin && (
+                  <NavLink
+                    to="/admin"
+                    className="inline-flex rounded-full border border-hanBlue px-3 py-2 text-xs font-semibold text-hanBlue transition hover:bg-hanBlue hover:text-white md:hidden"
+                  >
+                    {t("nav.admin")}
+                  </NavLink>
+                )}
                 <NavLink
                   to="/profile"
                   className="inline-flex rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-hanBlue hover:text-hanBlue"
