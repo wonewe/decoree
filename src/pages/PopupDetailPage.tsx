@@ -92,9 +92,25 @@ export default function PopupDetailPage() {
               </ul>
             </div>
             <div className="prose prose-slate max-w-none">
-              {popup.details.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
+              {popup.details.map((paragraph, index) => {
+                // HTML 태그가 포함되어 있으면 HTML로 렌더링
+                const isHtml = paragraph.includes("<img") || paragraph.includes("<p>") || paragraph.includes("<h2>") || paragraph.includes("&nbsp;");
+                if (isHtml) {
+                  return (
+                    <div
+                      key={index}
+                      dangerouslySetInnerHTML={{ __html: paragraph }}
+                      className="mb-4 [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3"
+                    />
+                  );
+                }
+                // 일반 텍스트인 경우
+                return (
+                  <p key={index} className="mb-4">
+                    {paragraph}
+                  </p>
+                );
+              })}
             </div>
           </div>
           <aside className="space-y-4 rounded-3xl bg-white p-6 shadow">

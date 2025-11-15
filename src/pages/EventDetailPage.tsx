@@ -102,11 +102,25 @@ export default function EventDetailPage() {
       <div className="section-container">
         <div className="grid gap-12 md:grid-cols-[2fr,1fr]">
           <div className="space-y-6">
-            {event.longDescription.map((paragraph, index) => (
-              <p key={index} className="text-lg leading-relaxed text-slate-700">
-                {paragraph}
-              </p>
-            ))}
+            {event.longDescription.map((paragraph, index) => {
+              // HTML 태그가 포함되어 있으면 HTML로 렌더링
+              const isHtml = paragraph.includes("<img") || paragraph.includes("<p>") || paragraph.includes("<h2>") || paragraph.includes("&nbsp;");
+              if (isHtml) {
+                return (
+                  <div
+                    key={index}
+                    dangerouslySetInnerHTML={{ __html: paragraph }}
+                    className="mb-4 text-lg leading-relaxed text-slate-700 [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3"
+                  />
+                );
+              }
+              // 일반 텍스트인 경우
+              return (
+                <p key={index} className="mb-4 text-lg leading-relaxed text-slate-700">
+                  {paragraph}
+                </p>
+              );
+            })}
 
             {event.tips.length > 0 && (
               <div className="rounded-3xl bg-hanBlue/5 p-6">
