@@ -20,7 +20,21 @@ let storageInstance: ReturnType<typeof getStorage> | null = null;
 function getStorageInstance() {
   if (storageInstance) return storageInstance;
   const app = getFirebaseApp();
-  storageInstance = getStorage(app);
+  
+  // Try to get bucket from app config first, then fallback to env variable
+  const appConfig = app.options;
+  const storageBucket = appConfig.storageBucket || import.meta.env.VITE_FIREBASE_STORAGE_BUCKET;
+  
+  if (!storageBucket) {
+    throw new Error(
+      "Firebase Storage bucket is not configured. Please set VITE_FIREBASE_STORAGE_BUCKET in your .env file. " +
+      "The bucket name can be in the format: your-project-id.appspot.com or your-project-id.firebasestorage.app"
+    );
+  }
+  
+  // If bucket is already in app config, getStorage(app) will use it automatically
+  // But we explicitly pass it to be safe
+  storageInstance = getStorage(app, storageBucket);
   return storageInstance;
 }
 

@@ -20,6 +20,13 @@ export function getFirebaseApp() {
     );
   }
 
+  if (!config.storageBucket) {
+    throw new Error(
+      "Firebase Storage bucket is not configured. Please set VITE_FIREBASE_STORAGE_BUCKET in your .env file. " +
+      "The bucket name is usually in the format: your-project-id.appspot.com"
+    );
+  }
+
   app = initializeApp(config);
   return app;
 }
