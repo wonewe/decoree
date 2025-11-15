@@ -755,7 +755,7 @@ const translations: TranslationDictionary = {
       "auth.badge": "보안 전용",
       "auth.title": "koraid 로그인",
       "auth.subtitle":
-        "로그인하여 관심 콘텐츠를 저장하세요. 스튜디오는 운영진만 접근할 수 있습니다.",
+        "로그인하여 관심 콘텐츠를 저장하세요.",
       "auth.email": "이메일",
       "auth.password": "비밀번호",
       "auth.submit": "로그인",
@@ -774,7 +774,7 @@ const translations: TranslationDictionary = {
       "auth.goToLogin": "로그인",
       "auth.signupTitle": "koraid 계정 만들기",
       "auth.signupSubtitle":
-        "koraid 계정을 만들고 관심 콘텐츠를 모아보세요. 스튜디오 권한은 운영진에게 문의하세요.",
+        "koraid 계정을 만들고 관심 콘텐츠를 모아보세요.",
       "auth.passwordConfirm": "비밀번호 확인",
       "auth.createAccount": "계정 생성",
       "auth.signingUp": "가입 처리 중…",
