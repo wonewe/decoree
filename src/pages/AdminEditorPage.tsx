@@ -170,9 +170,15 @@ function createEmptyTrendDraft(): TrendDraft {
 function trendToDraft(report: TrendReport): TrendDraft {
   // content가 HTML 요소를 포함하는지 확인
   const hasHtml = report.content.some(item => item.includes("<img") || item.includes("<p>") || item.includes("<h2>"));
-  const contentInput = hasHtml 
-    ? report.content.join("") // HTML인 경우 그대로 합치기
-    : report.content.join("\n\n"); // 텍스트인 경우 줄바꿈으로 합치기
+  let contentInput: string;
+  
+  if (hasHtml) {
+    // HTML인 경우 그대로 합치기 (각 요소는 이미 완전한 HTML)
+    contentInput = report.content.join("");
+  } else {
+    // 텍스트인 경우 줄바꿈으로 합치기
+    contentInput = report.content.join("\n\n");
+  }
 
   return {
     id: report.id,
@@ -187,7 +193,7 @@ function trendToDraft(report: TrendReport): TrendDraft {
     intensity: report.intensity,
     publishedAt: report.publishedAt ?? todayIso(),
     imageUrl: report.imageUrl,
-    contentInput
+    contentInput: contentInput || ""
   };
 }
 
@@ -200,22 +206,36 @@ function draftToTrend(draft: TrendDraft): TrendReport {
   // HTML 콘텐츠가 있으면 그대로 사용, 없으면 기존 방식대로 텍스트를 문단으로 분리
   let content: string[];
   if (draft.contentInput.includes("<img") || draft.contentInput.includes("<p>") || draft.contentInput.includes("<h2>")) {
-    // HTML 콘텐츠인 경우, 각 문단/이미지를 배열 요소로 분리
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = draft.contentInput;
-    const elements = Array.from(tempDiv.children);
-    content = elements.map(el => el.outerHTML);
-    // 텍스트 노드도 포함
-    const textNodes = Array.from(tempDiv.childNodes)
-      .filter(node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
-      .map(node => node.textContent?.trim() || "");
-    content = [...content, ...textNodes].filter(Boolean);
+    // HTML 콘텐츠인 경우, 각 요소를 분리
+    try {
+      if (typeof document !== "undefined") {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = draft.contentInput;
+        const elements = Array.from(tempDiv.children);
+        content = elements.map(el => el.outerHTML).filter(Boolean);
+        // 빈 배열이면 원본을 그대로 사용
+        if (content.length === 0) {
+          content = [draft.contentInput];
+        }
+      } else {
+        // 서버 사이드에서는 원본을 그대로 사용
+        content = [draft.contentInput];
+      }
+    } catch (error) {
+      console.warn("HTML 파싱 실패, 원본 사용:", error);
+      content = [draft.contentInput];
+    }
   } else {
     // 일반 텍스트인 경우 기존 방식대로 처리
     content = draft.contentInput
       .split(/\n+/)
       .map((item) => item.trim())
       .filter(Boolean);
+  }
+
+  // 빈 배열 방지
+  if (content.length === 0) {
+    content = [draft.contentInput || ""];
   }
 
   return {
@@ -275,7 +295,7 @@ function eventToDraft(event: KCultureEvent): EventDraft {
     price: event.price,
     bookingUrl: event.bookingUrl ?? "",
     imageUrl: event.imageUrl,
-    longDescriptionInput,
+    longDescriptionInput: longDescriptionInput || "",
     tipsInput: event.tips.join("\n")
   };
 }
@@ -284,22 +304,36 @@ function draftToEvent(draft: EventDraft): KCultureEvent {
   // HTML 콘텐츠가 있으면 그대로 사용, 없으면 기존 방식대로 텍스트를 문단으로 분리
   let longDescription: string[];
   if (draft.longDescriptionInput.includes("<img") || draft.longDescriptionInput.includes("<p>") || draft.longDescriptionInput.includes("<h2>")) {
-    // HTML 콘텐츠인 경우, 각 문단/이미지를 배열 요소로 분리
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = draft.longDescriptionInput;
-    const elements = Array.from(tempDiv.children);
-    longDescription = elements.map(el => el.outerHTML);
-    // 텍스트 노드도 포함
-    const textNodes = Array.from(tempDiv.childNodes)
-      .filter(node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
-      .map(node => node.textContent?.trim() || "");
-    longDescription = [...longDescription, ...textNodes].filter(Boolean);
+    // HTML 콘텐츠인 경우, 각 요소를 분리
+    try {
+      if (typeof document !== "undefined") {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = draft.longDescriptionInput;
+        const elements = Array.from(tempDiv.children);
+        longDescription = elements.map(el => el.outerHTML).filter(Boolean);
+        // 빈 배열이면 원본을 그대로 사용
+        if (longDescription.length === 0) {
+          longDescription = [draft.longDescriptionInput];
+        }
+      } else {
+        // 서버 사이드에서는 원본을 그대로 사용
+        longDescription = [draft.longDescriptionInput];
+      }
+    } catch (error) {
+      console.warn("HTML 파싱 실패, 원본 사용:", error);
+      longDescription = [draft.longDescriptionInput];
+    }
   } else {
     // 일반 텍스트인 경우 기존 방식대로 처리
     longDescription = draft.longDescriptionInput
       .split(/\n+/)
       .map((item) => item.trim())
       .filter(Boolean);
+  }
+
+  // 빈 배열 방지
+  if (longDescription.length === 0) {
+    longDescription = [draft.longDescriptionInput || ""];
   }
 
   const tips = draft.tipsInput
@@ -404,7 +438,7 @@ function popupToDraft(popup: PopupEvent): PopupDraft {
     tagsInput: popup.tags.join(", "),
     description: popup.description,
     highlightsInput: popup.highlights.join("\n"),
-    detailsInput,
+    detailsInput: detailsInput || "",
     reservationUrl: popup.reservationUrl ?? ""
   };
 }
@@ -422,22 +456,36 @@ function draftToPopup(draft: PopupDraft): PopupEvent {
   // HTML 콘텐츠가 있으면 그대로 사용, 없으면 기존 방식대로 텍스트를 문단으로 분리
   let details: string[];
   if (draft.detailsInput.includes("<img") || draft.detailsInput.includes("<p>") || draft.detailsInput.includes("<h2>")) {
-    // HTML 콘텐츠인 경우, 각 문단/이미지를 배열 요소로 분리
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = draft.detailsInput;
-    const elements = Array.from(tempDiv.children);
-    details = elements.map(el => el.outerHTML);
-    // 텍스트 노드도 포함
-    const textNodes = Array.from(tempDiv.childNodes)
-      .filter(node => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
-      .map(node => node.textContent?.trim() || "");
-    details = [...details, ...textNodes].filter(Boolean);
+    // HTML 콘텐츠인 경우, 각 요소를 분리
+    try {
+      if (typeof document !== "undefined") {
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = draft.detailsInput;
+        const elements = Array.from(tempDiv.children);
+        details = elements.map(el => el.outerHTML).filter(Boolean);
+        // 빈 배열이면 원본을 그대로 사용
+        if (details.length === 0) {
+          details = [draft.detailsInput];
+        }
+      } else {
+        // 서버 사이드에서는 원본을 그대로 사용
+        details = [draft.detailsInput];
+      }
+    } catch (error) {
+      console.warn("HTML 파싱 실패, 원본 사용:", error);
+      details = [draft.detailsInput];
+    }
   } else {
     // 일반 텍스트인 경우 기존 방식대로 처리
     details = draft.detailsInput
       .split(/\n+/)
       .map((item) => item.trim())
       .filter(Boolean);
+  }
+
+  // 빈 배열 방지
+  if (details.length === 0) {
+    details = [draft.detailsInput || ""];
   }
 
   return {
@@ -769,6 +817,14 @@ export default function AdminEditorPage() {
       }
 
       const baseTrend = draftToTrend({ ...trendDraft, imageUrl: finalImageUrl });
+      console.log("저장할 트렌드 데이터:", baseTrend);
+      console.log("content 배열:", baseTrend.content);
+      
+      // content가 비어있으면 에러
+      if (!baseTrend.content || baseTrend.content.length === 0) {
+        throw new Error("본문 내용이 필요합니다.");
+      }
+      
       const targetLanguages = resolveTargetLanguages(trendDraft.languages, trendDraft.language);
 
       const payloads: TrendReport[] = [];
@@ -826,6 +882,14 @@ export default function AdminEditorPage() {
       }
 
       const baseEvent = draftToEvent({ ...eventDraft, imageUrl: finalImageUrl });
+      console.log("저장할 이벤트 데이터:", baseEvent);
+      console.log("longDescription 배열:", baseEvent.longDescription);
+      
+      // longDescription이 비어있으면 에러
+      if (!baseEvent.longDescription || baseEvent.longDescription.length === 0) {
+        throw new Error("상세 설명이 필요합니다.");
+      }
+      
       const targetLanguages = resolveTargetLanguages(eventDraft.languages, eventDraft.language);
 
       const payloads: KCultureEvent[] = [];
@@ -929,6 +993,14 @@ export default function AdminEditorPage() {
       }
 
       const basePopup = draftToPopup({ ...popupDraft, posterUrl: finalPosterUrl, heroImageUrl: finalHeroUrl });
+      console.log("저장할 팝업 데이터:", basePopup);
+      console.log("details 배열:", basePopup.details);
+      
+      // details가 비어있으면 에러
+      if (!basePopup.details || basePopup.details.length === 0) {
+        throw new Error("상세 설명이 필요합니다.");
+      }
+      
       const targetLanguages = resolveTargetLanguages(popupDraft.languages, popupDraft.language);
 
       const payloads: PopupEvent[] = [];
