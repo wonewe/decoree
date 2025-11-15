@@ -200,6 +200,7 @@ export async function addEvent(event: KCultureEvent) {
 
   try {
     const id = event.id;
+    console.log("[events] addEvent: 저장할 이벤트 ID:", id, "제목:", event.title);
     const payload: KCultureEvent & { createdAt: Timestamp; updatedAt: Timestamp } = {
       ...event,
       language: event.language ?? DEFAULT_LANGUAGE,
@@ -207,7 +208,9 @@ export async function addEvent(event: KCultureEvent) {
       updatedAt: Timestamp.now()
     };
     await setDoc(doc(eventCollection, id), payload, { merge: true });
-    return fetchEvents();
+    const fetched = await fetchEvents();
+    console.log("[events] addEvent: 저장 후 이벤트 개수:", fetched.length, "ID 목록:", fetched.map(e => e.id));
+    return fetched;
   } catch (error) {
     console.warn("[events] addEvent failed on Firestore, falling back to local store.", error);
     return saveLocally();

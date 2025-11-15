@@ -46,6 +46,17 @@
   //     ]
   //   },
   // ]
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "events",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "startDate",
+          "mode": "ASCENDING"
+        }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }
