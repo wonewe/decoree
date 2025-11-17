@@ -1,10 +1,6 @@
-import { FormEvent, useEffect, useState, useCallback } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
-import type { TrendReport, TrendIntensity } from "../data/trends";
-import type { KCultureEvent, EventCategory } from "../data/events";
-import type { Phrase, PhraseCategory } from "../data/phrases";
-import type { PopupEvent, PopupStatus } from "../data/popups";
 import { AUTHOR_PROFILES } from "../data/authors";
 import {
   addEvent,
@@ -36,560 +32,41 @@ import {
 } from "../services/translation/contentLocalizationService";
 import { uploadAdminAsset } from "../services/storageService";
 import TextEditor from "../components/TextEditor";
-
-type ContentType = "trends" | "events" | "phrases" | "popups";
-
-type AdminMessage = {
-  tone: "success" | "error" | "info";
-  text: string;
-};
-
-const LANG_OPTIONS: SupportedLanguage[] = ["fr", "ko", "ja", "en"];
-
-const DRAFT_STORAGE_KEYS = {
-  trend: "koraid:studio:draft:trend",
-  event: "koraid:studio:draft:event",
-  phrase: "koraid:studio:draft:phrase",
-  popup: "koraid:studio:draft:popup"
-} as const;
-
-function readDraft<T>(key: string): T | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : null;
-  } catch (error) {
-    console.warn("Failed to read draft", error);
-    return null;
-  }
-}
-
-function writeDraft<T>(key: string, value: T) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(key, JSON.stringify(value));
-  } catch (error) {
-    console.warn("Failed to save draft", error);
-  }
-}
-
-function clearDraft(key: string) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.removeItem(key);
-  } catch (error) {
-    console.warn("Failed to clear draft", error);
-  }
-}
-
-type TrendDraft = {
-  id: string;
-  language: SupportedLanguage;
-  languages: SupportedLanguage[];
-  authorId: string;
-  title: string;
-  summary: string;
-  details: string;
-  neighborhood: string;
-  tagsInput: string;
-  intensity: TrendIntensity;
-  publishedAt: string;
-  imageUrl: string;
-  contentInput: string;
-};
-
-type EventDraft = {
-  id: string;
-  language: SupportedLanguage;
-  languages: SupportedLanguage[];
-  title: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  time: string;
-  location: string;
-  category: EventCategory;
-  price: string;
-  bookingUrl: string;
-  imageUrl: string;
-  longDescriptionInput: string;
-  tipsInput: string;
-};
-
-type PhraseDraft = {
-  id: string;
-  language: SupportedLanguage;
-  languages: SupportedLanguage[];
-  korean: string;
-  transliteration: string;
-  translation: string;
-  culturalNote: string;
-  category: PhraseCategory;
-};
-
-type PopupDraft = {
-  id: string;
-  language: SupportedLanguage;
-  languages: SupportedLanguage[];
-  title: string;
-  brand: string;
-  window: string;
-  status: PopupStatus;
-  location: string;
-  posterUrl: string;
-  heroImageUrl: string;
-  tagsInput: string;
-  description: string;
-  highlightsInput: string;
-  detailsInput: string;
-  reservationUrl: string;
-};
-
-function todayIso() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function createEmptyTrendDraft(): TrendDraft {
-  return {
-    id: "",
-    language: "en",
-    languages: ["en"],
-    authorId: AUTHOR_PROFILES[0]?.id ?? "",
-    title: "",
-    summary: "",
-    details: "",
-    neighborhood: "",
-    tagsInput: "",
-    intensity: "highlight",
-    publishedAt: todayIso(),
-    imageUrl: "",
-    contentInput: ""
-  };
-}
-
-function trendToDraft(report: TrendReport): TrendDraft {
-  // content가 HTML 요소를 포함하는지 확인
-  const hasHtml = report.content.some(item => item.includes("<img") || item.includes("<p>") || item.includes("<h2>"));
-  let contentInput: string;
-  
-  if (hasHtml) {
-    // HTML인 경우 그대로 합치기 (각 요소는 이미 완전한 HTML)
-    contentInput = report.content.join("");
-  } else {
-    // 텍스트인 경우 줄바꿈으로 합치기
-    contentInput = report.content.join("\n\n");
-  }
-
-  return {
-    id: report.id,
-    language: report.language ?? "en",
-    languages: [report.language ?? "en"],
-    authorId: report.authorId ?? AUTHOR_PROFILES[0]?.id ?? "",
-    title: report.title,
-    summary: report.summary,
-    details: report.details,
-    neighborhood: report.neighborhood,
-    tagsInput: report.tags.join(", "),
-    intensity: report.intensity,
-    publishedAt: report.publishedAt ?? todayIso(),
-    imageUrl: report.imageUrl,
-    contentInput: contentInput || ""
-  };
-}
-
-function draftToTrend(draft: TrendDraft): TrendReport {
-  const tags = draft.tagsInput
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-
-  // HTML 콘텐츠가 있으면 그대로 사용, 없으면 기존 방식대로 텍스트를 문단으로 분리
-  let content: string[];
-  if (draft.contentInput.includes("<img") || draft.contentInput.includes("<p>") || draft.contentInput.includes("<h2>")) {
-    // HTML 콘텐츠인 경우, 각 요소를 분리
-    try {
-      if (typeof document !== "undefined") {
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = draft.contentInput;
-        const elements = Array.from(tempDiv.children);
-        content = elements.map(el => el.outerHTML).filter(Boolean);
-        // 빈 배열이면 원본을 그대로 사용
-        if (content.length === 0) {
-          content = [draft.contentInput];
-        }
-      } else {
-        // 서버 사이드에서는 원본을 그대로 사용
-        content = [draft.contentInput];
-      }
-    } catch (error) {
-      console.warn("HTML 파싱 실패, 원본 사용:", error);
-      content = [draft.contentInput];
-    }
-  } else {
-    // 일반 텍스트인 경우 기존 방식대로 처리
-    content = draft.contentInput
-      .split(/\n+/)
-      .map((item) => item.trim())
-      .filter(Boolean);
-  }
-
-  // 빈 배열 방지
-  if (content.length === 0) {
-    content = [draft.contentInput || ""];
-  }
-
-  return {
-    id: draft.id.trim(),
-    language: draft.language,
-    authorId: draft.authorId,
-    title: draft.title.trim(),
-    summary: draft.summary.trim(),
-    details: draft.details.trim(),
-    neighborhood: draft.neighborhood.trim(),
-    tags,
-    intensity: draft.intensity,
-    publishedAt: draft.publishedAt || todayIso(),
-    imageUrl: draft.imageUrl.trim(),
-    content
-  };
-}
-
-function createEmptyEventDraft(): EventDraft {
-  return {
-    id: "",
-    language: "en",
-    languages: ["en"],
-    title: "",
-    description: "",
-    startDate: todayIso(),
-    endDate: todayIso(),
-    time: "19:00",
-    location: "",
-    category: "concert",
-    price: "",
-    bookingUrl: "",
-    imageUrl: "",
-    longDescriptionInput: "",
-    tipsInput: ""
-  };
-}
-
-function eventToDraft(event: KCultureEvent): EventDraft {
-  // longDescription이 HTML 요소를 포함하는지 확인
-  const hasHtml = event.longDescription.some(item => item.includes("<img") || item.includes("<p>") || item.includes("<h2>"));
-  const longDescriptionInput = hasHtml 
-    ? event.longDescription.join("") // HTML인 경우 그대로 합치기
-    : event.longDescription.join("\n\n"); // 텍스트인 경우 줄바꿈으로 합치기
-
-  return {
-    id: event.id,
-    language: event.language ?? "en",
-    languages: [event.language ?? "en"],
-    title: event.title,
-    description: event.description,
-    startDate: event.startDate ?? todayIso(),
-    endDate: event.endDate ?? event.startDate ?? todayIso(),
-    time: event.time,
-    location: event.location,
-    category: event.category,
-    price: event.price,
-    bookingUrl: event.bookingUrl ?? "",
-    imageUrl: event.imageUrl,
-    longDescriptionInput: longDescriptionInput || "",
-    tipsInput: event.tips.join("\n")
-  };
-}
-
-function draftToEvent(draft: EventDraft): KCultureEvent {
-  // HTML 콘텐츠가 있으면 그대로 사용, 없으면 기존 방식대로 텍스트를 문단으로 분리
-  let longDescription: string[];
-  if (draft.longDescriptionInput.includes("<img") || draft.longDescriptionInput.includes("<p>") || draft.longDescriptionInput.includes("<h2>")) {
-    // HTML 콘텐츠인 경우, 각 요소를 분리
-    try {
-      if (typeof document !== "undefined") {
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = draft.longDescriptionInput;
-        const elements = Array.from(tempDiv.children);
-        longDescription = elements.map(el => el.outerHTML).filter(Boolean);
-        // 빈 배열이면 원본을 그대로 사용
-        if (longDescription.length === 0) {
-          longDescription = [draft.longDescriptionInput];
-        }
-      } else {
-        // 서버 사이드에서는 원본을 그대로 사용
-        longDescription = [draft.longDescriptionInput];
-      }
-    } catch (error) {
-      console.warn("HTML 파싱 실패, 원본 사용:", error);
-      longDescription = [draft.longDescriptionInput];
-    }
-  } else {
-    // 일반 텍스트인 경우 기존 방식대로 처리
-    longDescription = draft.longDescriptionInput
-      .split(/\n+/)
-      .map((item) => item.trim())
-      .filter(Boolean);
-  }
-
-  // 빈 배열 방지
-  if (longDescription.length === 0) {
-    longDescription = [draft.longDescriptionInput || ""];
-  }
-
-  const tips = draft.tipsInput
-    .split(/\n+/)
-    .map((item) => item.trim())
-    .filter(Boolean);
-
-  const trimmedBookingUrl = draft.bookingUrl.trim();
-  
-  return {
-    id: draft.id.trim(),
-    language: draft.language,
-    title: draft.title.trim(),
-    description: draft.description.trim(),
-    startDate: draft.startDate,
-    endDate: draft.endDate || draft.startDate,
-    time: draft.time.trim(),
-    location: draft.location.trim(),
-    category: draft.category,
-    price: draft.price.trim(),
-    ...(trimmedBookingUrl ? { bookingUrl: trimmedBookingUrl } : {}),
-    imageUrl: draft.imageUrl.trim(),
-    longDescription,
-    tips
-  };
-}
-
-function createEmptyPhraseDraft(): PhraseDraft {
-  return {
-    id: "",
-    language: "en",
-    languages: ["en"],
-    korean: "",
-    transliteration: "",
-    translation: "",
-    culturalNote: "",
-    category: "food"
-  };
-}
-
-function phraseToDraft(phrase: Phrase): PhraseDraft {
-  return {
-    id: phrase.id,
-    language: phrase.language ?? "en",
-    languages: [phrase.language ?? "en"],
-    korean: phrase.korean,
-    transliteration: phrase.transliteration,
-    translation: phrase.translation,
-    culturalNote: phrase.culturalNote,
-    category: phrase.category
-  };
-}
-
-function draftToPhrase(draft: PhraseDraft): Phrase {
-  return {
-    id: draft.id.trim(),
-    language: draft.language,
-    korean: draft.korean.trim(),
-    transliteration: draft.transliteration.trim(),
-    translation: draft.translation.trim(),
-    culturalNote: draft.culturalNote.trim(),
-    category: draft.category
-  };
-}
-
-function createEmptyPopupDraft(): PopupDraft {
-  return {
-    id: "",
-    language: "en",
-    languages: ["en"],
-    title: "",
-    brand: "",
-    window: "2024.06.01 - 06.30",
-    status: "now",
-    location: "",
-    posterUrl: "",
-    heroImageUrl: "",
-    tagsInput: "",
-    description: "",
-    highlightsInput: "",
-    detailsInput: "",
-    reservationUrl: ""
-  };
-}
-
-function popupToDraft(popup: PopupEvent): PopupDraft {
-  // details가 HTML 요소를 포함하는지 확인
-  const hasHtml = popup.details.some(item => item.includes("<img") || item.includes("<p>") || item.includes("<h2>"));
-  const detailsInput = hasHtml 
-    ? popup.details.join("") // HTML인 경우 그대로 합치기
-    : popup.details.join("\n\n"); // 텍스트인 경우 줄바꿈으로 합치기
-
-  return {
-    id: popup.id,
-    language: popup.language ?? "en",
-    languages: [popup.language ?? "en"],
-    title: popup.title,
-    brand: popup.brand,
-    window: popup.window,
-    status: popup.status,
-    location: popup.location,
-    posterUrl: popup.posterUrl,
-    heroImageUrl: popup.heroImageUrl,
-    tagsInput: popup.tags.join(", "),
-    description: popup.description,
-    highlightsInput: popup.highlights.join("\n"),
-    detailsInput: detailsInput || "",
-    reservationUrl: popup.reservationUrl ?? ""
-  };
-}
-
-function draftToPopup(draft: PopupDraft): PopupEvent {
-  const tags = draft.tagsInput
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-  const highlights = draft.highlightsInput
-    .split(/\n+/)
-    .map((item) => item.trim())
-    .filter(Boolean);
-  
-  // HTML 콘텐츠가 있으면 그대로 사용, 없으면 기존 방식대로 텍스트를 문단으로 분리
-  let details: string[];
-  if (draft.detailsInput.includes("<img") || draft.detailsInput.includes("<p>") || draft.detailsInput.includes("<h2>")) {
-    // HTML 콘텐츠인 경우, 각 요소를 분리
-    try {
-      if (typeof document !== "undefined") {
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = draft.detailsInput;
-        const elements = Array.from(tempDiv.children);
-        details = elements.map(el => el.outerHTML).filter(Boolean);
-        // 빈 배열이면 원본을 그대로 사용
-        if (details.length === 0) {
-          details = [draft.detailsInput];
-        }
-      } else {
-        // 서버 사이드에서는 원본을 그대로 사용
-        details = [draft.detailsInput];
-      }
-    } catch (error) {
-      console.warn("HTML 파싱 실패, 원본 사용:", error);
-      details = [draft.detailsInput];
-    }
-  } else {
-    // 일반 텍스트인 경우 기존 방식대로 처리
-    details = draft.detailsInput
-      .split(/\n+/)
-      .map((item) => item.trim())
-      .filter(Boolean);
-  }
-
-  // 빈 배열 방지
-  if (details.length === 0) {
-    details = [draft.detailsInput || ""];
-  }
-
-  const trimmedReservationUrl = draft.reservationUrl.trim();
-  
-  return {
-    id: draft.id.trim(),
-    language: draft.language,
-    title: draft.title.trim(),
-    brand: draft.brand.trim(),
-    window: draft.window.trim(),
-    status: draft.status,
-    location: draft.location.trim(),
-    posterUrl: draft.posterUrl.trim(),
-    heroImageUrl: draft.heroImageUrl.trim() || draft.posterUrl.trim(),
-    tags,
-    description: draft.description.trim(),
-    highlights,
-    details,
-    ...(trimmedReservationUrl ? { reservationUrl: trimmedReservationUrl } : {})
-  };
-}
-
-function resolveTargetLanguages(
-  selected: SupportedLanguage[] | undefined,
-  baseLanguage: SupportedLanguage
-) {
-  const fallback = selected && selected.length > 0 ? selected : [baseLanguage];
-  return Array.from(new Set(fallback));
-}
-
-function normalizeBaseId(id: string, baseLanguage: SupportedLanguage) {
-  const prefix = `${baseLanguage}-`;
-  if (id.startsWith(prefix)) {
-    return id.slice(prefix.length);
-  }
-  return id;
-}
-
-function buildLocalizedId(
-  baseId: string,
-  baseLanguage: SupportedLanguage,
-  language: SupportedLanguage,
-  totalLanguages: number
-) {
-  if (totalLanguages <= 1) {
-    return baseId.trim();
-  }
-  const canonical = normalizeBaseId(baseId.trim(), baseLanguage) || baseId.trim();
-  return `${language}-${canonical}`;
-}
-
-function syncLanguagesOnSourceChange(
-  languages: SupportedLanguage[] | undefined,
-  nextLanguage: SupportedLanguage
-) {
-  if (!languages || languages.length === 0) return [nextLanguage];
-  if (languages.length === 1) return [nextLanguage];
-  return languages;
-}
-
-type LanguageMultiSelectProps = {
-  label: string;
-  helper?: string;
-  value: SupportedLanguage[];
-  onChange: (next: SupportedLanguage[]) => void;
-};
-
-const LanguageMultiSelect = ({ label, helper, value, onChange }: LanguageMultiSelectProps) => {
-  const toggleLanguage = (lang: SupportedLanguage) => {
-    onChange(
-      value.includes(lang)
-        ? value.filter((item) => item !== lang)
-        : [...value, lang]
-    );
-  };
-
-  return (
-    <div className="flex flex-col gap-2">
-      <span className="text-sm font-semibold text-dancheongNavy">{label}</span>
-      <div className="flex flex-wrap gap-2">
-        {LANG_OPTIONS.map((lang) => {
-          const isActive = value.includes(lang);
-          return (
-            <button
-              key={lang}
-              type="button"
-              onClick={() => toggleLanguage(lang)}
-              className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
-                isActive
-                  ? "bg-hanBlue text-white shadow"
-                  : "border border-slate-200 bg-white text-slate-600 hover:border-hanBlue hover:text-hanBlue"
-              }`}
-            >
-              {getLanguageLabel(lang)}
-            </button>
-          );
-        })}
-      </div>
-      {helper && <p className="text-xs text-slate-500">{helper}</p>}
-    </div>
-  );
-};
+import type {
+  ContentType,
+  AdminMessage,
+  TrendDraft,
+  EventDraft,
+  PhraseDraft,
+  PopupDraft,
+  TrendReport,
+  KCultureEvent,
+  Phrase,
+  PopupEvent,
+  TrendIntensity,
+  EventCategory,
+  PhraseCategory,
+  PopupStatus
+} from "../admin/types";
+import { DRAFT_STORAGE_KEYS, LANG_OPTIONS } from "../admin/constants";
+import { readDraft, writeDraft, clearDraft } from "../admin/utils/draftStorage";
+import {
+  createEmptyTrendDraft,
+  trendToDraft,
+  draftToTrend,
+  createEmptyEventDraft,
+  eventToDraft,
+  draftToEvent,
+  createEmptyPhraseDraft,
+  phraseToDraft,
+  draftToPhrase,
+  createEmptyPopupDraft,
+  popupToDraft,
+  draftToPopup
+} from "../admin/utils/draftConverters";
+import { resolveTargetLanguages, buildLocalizedId, syncLanguagesOnSourceChange, normalizeBaseId } from "../admin/utils/languageUtils";
+import { LanguageMultiSelect } from "../admin/components/LanguageMultiSelect";
+import { useImageUpload } from "../admin/hooks/useImageUpload";
 
 export default function AdminEditorPage() {
   const { type, id } = useParams<{ type: ContentType; id?: string }>();
@@ -601,124 +78,16 @@ export default function AdminEditorPage() {
 
   // State for each content type
   const [trendDraft, setTrendDraft] = useState<TrendDraft>(createEmptyTrendDraft);
-  const [trendImageFile, setTrendImageFile] = useState<File | null>(null);
-  const [trendImagePreview, setTrendImagePreview] = useState<string | null>(null);
+  const trendImage = useImageUpload(trendDraft.imageUrl);
 
   const [eventDraft, setEventDraft] = useState<EventDraft>(createEmptyEventDraft);
-  const [eventImageFile, setEventImageFile] = useState<File | null>(null);
-  const [eventImagePreview, setEventImagePreview] = useState<string | null>(null);
+  const eventImage = useImageUpload(eventDraft.imageUrl);
 
   const [phraseDraft, setPhraseDraft] = useState<PhraseDraft>(createEmptyPhraseDraft);
 
   const [popupDraft, setPopupDraft] = useState<PopupDraft>(createEmptyPopupDraft);
-  const [popupPosterFile, setPopupPosterFile] = useState<File | null>(null);
-  const [popupPosterPreview, setPopupPosterPreview] = useState<string | null>(null);
-  const [popupHeroFile, setPopupHeroFile] = useState<File | null>(null);
-  const [popupHeroPreview, setPopupHeroPreview] = useState<string | null>(null);
-
-  const revokePreviewUrl = (url: string | null) => {
-    if (url && url.startsWith("blob:")) {
-      URL.revokeObjectURL(url);
-    }
-  };
-
-  const clearTrendImageSelection = useCallback(() => {
-    setTrendImageFile(null);
-    setTrendImagePreview((prev) => {
-      revokePreviewUrl(prev);
-      return null;
-    });
-  }, []);
-
-  const applyTrendImageFile = useCallback((file: File | null) => {
-    setTrendImageFile(file);
-    setTrendImagePreview((prev) => {
-      revokePreviewUrl(prev);
-      if (!file) {
-        console.log("이미지 파일 선택 해제");
-        return null;
-      }
-      const blobUrl = URL.createObjectURL(file);
-      console.log("이미지 파일 선택됨:", file.name, "Blob URL:", blobUrl);
-      return blobUrl;
-    });
-  }, []);
-
-  const clearEventImageSelection = useCallback(() => {
-    setEventImageFile(null);
-    setEventImagePreview((prev) => {
-      revokePreviewUrl(prev);
-      return null;
-    });
-  }, []);
-
-  const applyEventImageFile = useCallback((file: File | null) => {
-    setEventImageFile(file);
-    setEventImagePreview((prev) => {
-      revokePreviewUrl(prev);
-      if (!file) {
-        console.log("이미지 파일 선택 해제");
-        return null;
-      }
-      const blobUrl = URL.createObjectURL(file);
-      console.log("이미지 파일 선택됨:", file.name, "Blob URL:", blobUrl);
-      return blobUrl;
-    });
-  }, []);
-
-  const clearPopupPosterSelection = useCallback(() => {
-    setPopupPosterFile(null);
-    setPopupPosterPreview((prev) => {
-      revokePreviewUrl(prev);
-      return null;
-    });
-  }, []);
-
-  const applyPopupPosterFile = useCallback((file: File | null) => {
-    setPopupPosterFile(file);
-    setPopupPosterPreview((prev) => {
-      revokePreviewUrl(prev);
-      if (!file) {
-        console.log("포스터 이미지 파일 선택 해제");
-        return null;
-      }
-      const blobUrl = URL.createObjectURL(file);
-      console.log("포스터 이미지 파일 선택됨:", file.name, "Blob URL:", blobUrl);
-      return blobUrl;
-    });
-  }, []);
-
-  const clearPopupHeroSelection = useCallback(() => {
-    setPopupHeroFile(null);
-    setPopupHeroPreview((prev) => {
-      revokePreviewUrl(prev);
-      return null;
-    });
-  }, []);
-
-  const applyPopupHeroFile = useCallback((file: File | null) => {
-    setPopupHeroFile(file);
-    setPopupHeroPreview((prev) => {
-      revokePreviewUrl(prev);
-      if (!file) {
-        console.log("히어로 이미지 파일 선택 해제");
-        return null;
-      }
-      const blobUrl = URL.createObjectURL(file);
-      console.log("히어로 이미지 파일 선택됨:", file.name, "Blob URL:", blobUrl);
-      return blobUrl;
-    });
-  }, []);
-
-  // Cleanup preview URLs on unmount
-  useEffect(() => {
-    return () => {
-      revokePreviewUrl(trendImagePreview);
-      revokePreviewUrl(eventImagePreview);
-      revokePreviewUrl(popupPosterPreview);
-      revokePreviewUrl(popupHeroPreview);
-    };
-  }, [trendImagePreview, eventImagePreview, popupPosterPreview, popupHeroPreview]);
+  const popupPoster = useImageUpload(popupDraft.posterUrl);
+  const popupHero = useImageUpload(popupDraft.heroImageUrl);
 
   // Load content based on type and id
   useEffect(() => {
@@ -817,8 +186,8 @@ export default function AdminEditorPage() {
         throw new Error("ID는 필수입니다. 영문 소문자와 하이픈을 사용하여 입력해주세요.");
       }
 
-      const finalImageUrl = trendImageFile
-        ? (await uploadAdminAsset(trendImageFile, { collection: "trends", entityId: trendDraft.id.trim(), assetType: "image" })).downloadUrl
+      const finalImageUrl = trendImage.file
+        ? (await uploadAdminAsset(trendImage.file, { collection: "trends", entityId: trendDraft.id.trim(), assetType: "image" })).downloadUrl
         : trendDraft.imageUrl.trim();
 
       if (!finalImageUrl) {
@@ -866,7 +235,7 @@ export default function AdminEditorPage() {
         navigate("/admin");
       }
 
-      clearTrendImageSelection();
+      trendImage.clearSelection();
     } catch (error) {
       console.error("Failed to save trend", error);
       const errorMessage = error instanceof FirebaseError ? error.message : "트렌드 저장 중 오류가 발생했습니다.";
@@ -887,8 +256,8 @@ export default function AdminEditorPage() {
         throw new Error("ID는 필수입니다. 영문 소문자와 하이픈을 사용하여 입력해주세요.");
       }
 
-      const finalImageUrl = eventImageFile
-        ? (await uploadAdminAsset(eventImageFile, { collection: "events", entityId: eventDraft.id.trim(), assetType: "image" })).downloadUrl
+      const finalImageUrl = eventImage.file
+        ? (await uploadAdminAsset(eventImage.file, { collection: "events", entityId: eventDraft.id.trim(), assetType: "image" })).downloadUrl
         : eventDraft.imageUrl.trim();
 
       if (!finalImageUrl) {
@@ -934,7 +303,7 @@ export default function AdminEditorPage() {
         navigate("/admin");
       }
 
-      clearEventImageSelection();
+      eventImage.clearSelection();
     } catch (error) {
       console.error("Failed to save event", error);
       const errorMessage = error instanceof FirebaseError ? error.message : "이벤트 저장 중 오류가 발생했습니다.";
@@ -1004,12 +373,12 @@ export default function AdminEditorPage() {
         throw new Error("ID는 필수입니다. 영문 소문자와 하이픈을 사용하여 입력해주세요.");
       }
 
-      const finalPosterUrl = popupPosterFile
-        ? (await uploadAdminAsset(popupPosterFile, { collection: "popups", entityId: popupDraft.id.trim(), assetType: "poster" })).downloadUrl
+      const finalPosterUrl = popupPoster.file
+        ? (await uploadAdminAsset(popupPoster.file, { collection: "popups", entityId: popupDraft.id.trim(), assetType: "poster" })).downloadUrl
         : popupDraft.posterUrl.trim();
 
-      const finalHeroUrl = popupHeroFile
-        ? (await uploadAdminAsset(popupHeroFile, { collection: "popups", entityId: popupDraft.id.trim(), assetType: "hero" })).downloadUrl
+      const finalHeroUrl = popupHero.file
+        ? (await uploadAdminAsset(popupHero.file, { collection: "popups", entityId: popupDraft.id.trim(), assetType: "hero" })).downloadUrl
         : popupDraft.heroImageUrl.trim() || finalPosterUrl;
 
       if (!finalPosterUrl) {
@@ -1056,8 +425,8 @@ export default function AdminEditorPage() {
         navigate("/admin");
       }
 
-      clearPopupPosterSelection();
-      clearPopupHeroSelection();
+      popupPoster.clearSelection();
+      popupHero.clearSelection();
     } catch (error) {
       console.error("Failed to save popup", error);
       const errorMessage = error instanceof FirebaseError ? error.message : "팝업 저장 중 오류가 발생했습니다.";
@@ -1140,7 +509,7 @@ export default function AdminEditorPage() {
   }
 
   const renderTrendForm = () => {
-    const currentTrendImagePreview = trendImagePreview ?? trendDraft.imageUrl;
+    const currentTrendImagePreview = trendImage.preview;
     
     const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
       console.error("이미지 로드 실패:", e.currentTarget.src);
@@ -1308,19 +677,19 @@ export default function AdminEditorPage() {
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files?.[0] ?? null;
-                  applyTrendImageFile(file);
+                  trendImage.applyFile(file);
                   if (e.target) {
                     e.target.value = "";
                   }
                 }}
                 className="rounded-xl border border-slate-200 px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-hanBlue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
               />
-              {trendImageFile && (
+              {trendImage.file && (
                 <div className="flex items-center justify-between gap-2 text-xs font-normal">
-                  <span className="truncate text-slate-500">{trendImageFile.name}</span>
+                  <span className="truncate text-slate-500">{trendImage.file.name}</span>
                   <button
                     type="button"
-                    onClick={() => applyTrendImageFile(null)}
+                    onClick={() => trendImage.applyFile(null)}
                     className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
                   >
                     선택 해제
@@ -1402,7 +771,7 @@ export default function AdminEditorPage() {
             type="button"
             onClick={() => {
               setTrendDraft(createEmptyTrendDraft());
-              clearTrendImageSelection();
+              trendImage.clearSelection();
             }}
             className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
           >
@@ -1421,7 +790,7 @@ export default function AdminEditorPage() {
   };
 
   const renderEventForm = () => {
-    const currentEventImagePreview = eventImagePreview ?? eventDraft.imageUrl;
+    const currentEventImagePreview = eventImage.preview;
     
     const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
       console.error("이미지 로드 실패:", e.currentTarget.src);
@@ -1605,19 +974,19 @@ export default function AdminEditorPage() {
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files?.[0] ?? null;
-                  applyEventImageFile(file);
+                  eventImage.applyFile(file);
                   if (e.target) {
                     e.target.value = "";
                   }
                 }}
                 className="rounded-xl border border-slate-200 px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-hanBlue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
               />
-              {eventImageFile && (
+              {eventImage.file && (
                 <div className="flex items-center justify-between gap-2 text-xs font-normal">
-                  <span className="truncate text-slate-500">{eventImageFile.name}</span>
+                  <span className="truncate text-slate-500">{eventImage.file.name}</span>
                   <button
                     type="button"
-                    onClick={() => applyEventImageFile(null)}
+                    onClick={() => eventImage.applyFile(null)}
                     className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
                   >
                     선택 해제
@@ -1693,7 +1062,7 @@ export default function AdminEditorPage() {
             type="button"
             onClick={() => {
               setEventDraft(createEmptyEventDraft());
-              clearEventImageSelection();
+              eventImage.clearSelection();
             }}
             className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
           >
@@ -1866,8 +1235,8 @@ export default function AdminEditorPage() {
   };
 
   const renderPopupForm = () => {
-    const currentPopupPosterPreview = popupPosterPreview ?? popupDraft.posterUrl;
-    const currentPopupHeroPreview = popupHeroPreview ?? popupDraft.heroImageUrl;
+    const currentPopupPosterPreview = popupPoster.preview;
+    const currentPopupHeroPreview = popupHero.preview;
     
     const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
       console.error("이미지 로드 실패:", e.currentTarget.src);
@@ -2016,19 +1385,19 @@ export default function AdminEditorPage() {
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files?.[0] ?? null;
-                  applyPopupPosterFile(file);
+                  popupPoster.applyFile(file);
                   if (e.target) {
                     e.target.value = "";
                   }
                 }}
                 className="rounded-xl border border-slate-200 px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-hanBlue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
               />
-              {popupPosterFile && (
+              {popupPoster.file && (
                 <div className="flex items-center justify-between gap-2 text-xs font-normal">
-                  <span className="truncate text-slate-500">{popupPosterFile.name}</span>
+                  <span className="truncate text-slate-500">{popupPoster.file.name}</span>
                   <button
                     type="button"
-                    onClick={() => applyPopupPosterFile(null)}
+                    onClick={() => popupPoster.applyFile(null)}
                     className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
                   >
                     선택 해제
@@ -2055,19 +1424,19 @@ export default function AdminEditorPage() {
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files?.[0] ?? null;
-                  applyPopupHeroFile(file);
+                  popupHero.applyFile(file);
                   if (e.target) {
                     e.target.value = "";
                   }
                 }}
                 className="rounded-xl border border-slate-200 px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-hanBlue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
               />
-              {popupHeroFile && (
+              {popupHero.file && (
                 <div className="flex items-center justify-between gap-2 text-xs font-normal">
-                  <span className="truncate text-slate-500">{popupHeroFile.name}</span>
+                  <span className="truncate text-slate-500">{popupHero.file.name}</span>
                   <button
                     type="button"
-                    onClick={() => applyPopupHeroFile(null)}
+                    onClick={() => popupHero.applyFile(null)}
                     className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
                   >
                     선택 해제
@@ -2179,8 +1548,8 @@ export default function AdminEditorPage() {
             type="button"
             onClick={() => {
               setPopupDraft(createEmptyPopupDraft());
-              clearPopupPosterSelection();
-              clearPopupHeroSelection();
+              popupPoster.clearSelection();
+              popupHero.clearSelection();
             }}
             className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
           >
