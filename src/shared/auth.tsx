@@ -31,6 +31,8 @@ type AuthContextValue = {
   logout: () => Promise<void>;
   isAdmin: boolean;
   isAdminEmail: (email: string) => boolean;
+  isKoraidTeam: boolean;
+  isKoraidTeamMember: (email: string) => boolean;
   firebaseError: string | null;
   lastErrorCode: string | null;
   clearLastError: () => void;
@@ -39,13 +41,22 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-function parseAdminEmails(): string[] {
-  const raw = import.meta.env.VITE_KORAID_ADMIN_EMAILS;
+function parseEmailList(raw?: string): string[] {
   if (!raw) return [];
   return raw
     .split(",")
     .map((item: string) => item.trim().toLowerCase())
     .filter(Boolean);
+}
+
+function parseAdminEmails(): string[] {
+  return parseEmailList(import.meta.env.VITE_KORAID_ADMIN_EMAILS);
+}
+
+function parseTeamEmails(): string[] {
+  const teamEmails = parseEmailList(import.meta.env.VITE_KORAID_TEAM_EMAILS);
+  if (teamEmails.length > 0) return teamEmails;
+  return parseAdminEmails();
 }
 
 function extractErrorCode(error: unknown): string {
@@ -65,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
   const [lastErrorCode, setLastErrorCode] = useState<string | null>(null);
   const adminEmails = useMemo(() => parseAdminEmails(), []);
+  const teamEmails = useMemo(() => parseTeamEmails(), []);
 
   const isAdminEmail = useCallback(
     (email: string) => {
@@ -73,6 +85,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return adminEmails.includes(email.toLowerCase());
     },
     [adminEmails]
+  );
+
+  const isKoraidTeamMember = useCallback(
+    (email: string) => {
+      if (!email) return false;
+      if (teamEmails.length === 0) return false;
+      return teamEmails.includes(email.toLowerCase());
+    },
+    [teamEmails]
   );
 
   const captureError = (error: unknown) => {
@@ -177,6 +198,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
     isAdmin: !!(user && isAdminEmail(user.email ?? "")),
     isAdminEmail,
+    isKoraidTeam: !!(user && isKoraidTeamMember(user.email ?? "")),
+    isKoraidTeamMember,
     firebaseError,
     lastErrorCode,
     clearLastError,

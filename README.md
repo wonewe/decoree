@@ -53,13 +53,14 @@ npm run build
 ## Configuration de l’authentification
 
 1. Dupliquez `.env.example` en `.env` puis complétez les variables `VITE_FIREBASE_*` (y compris `VITE_FIREBASE_STORAGE_BUCKET`) avec la configuration de votre projet Firebase.
-2. Dans la console Firebase :
+2. Dans la console Firebase :
    - Activez **Authentication → Email/Password**.
    - Activez également **Authentication → Google** si vous souhaitez permettre la connexion par Google.
-   - Activez **Storage** et vérifiez que le bucket par défaut (ex : `votre-projet.appspot.com`) correspond à `VITE_FIREBASE_STORAGE_BUCKET`. Ajustez les règles de sécurité pour autoriser l’upload depuis les comptes authentifiés du Studio.
+   - Activez **Storage** et vérifiez que le bucket par défaut (ex : `votre-projet.appspot.com`) correspond à `VITE_FIREBASE_STORAGE_BUCKET`. Ajustez les règles de sécurité pour autoriser l'upload depuis les comptes authentifiés du Studio.
    - Créez les comptes administrateurs qui doivent accéder au studio ou laissez-les utiliser la page `/signup`.
 3. Listez les emails autorisés dans `VITE_KORAID_ADMIN_EMAILS` (séparés par des virgules). Ces comptes seront reconnus comme administrateurs et verront le lien “Studio koraid”.
-4. Relancez `npm run dev` pour que Vite recharge la configuration. Rendez-vous sur `/login` ou `/signup` pour tester la connexion ; une fois authentifié, vous serez redirigé vers `/admin`.
+4. Pour donner accès aux pages “Local Support” pendant la phase “préparation en cours”, définissez `VITE_KORAID_TEAM_EMAILS` avec les adresses koraid (séparées par des virgules). Si cette liste est vide, seuls les admins restent autorisés.
+5. Relancez `npm run dev` pour que Vite recharge la configuration. Rendez-vous sur `/login` ou `/signup` pour tester la connexion ; une fois authentifié, vous serez redirigé vers `/admin`.
 
 ## Studio multi-langues
 

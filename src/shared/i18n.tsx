@@ -32,6 +32,9 @@ const translations: TranslationDictionary = {
       "localSupport.community.title": "Communauté étudiants & expats",
       "localSupport.community.subtitle":
         "Forums par université/ville pour Q&A, retours d'expérience et meetups.",
+      "localSupport.gate.title": "Page en préparation",
+      "localSupport.gate.description":
+        "Cette section est en cours de finalisation.",
       "auth.login": "Connexion",
       "auth.logout": "Déconnexion",
       "auth.signup": "Créer un compte",
@@ -472,6 +475,9 @@ const translations: TranslationDictionary = {
       "localSupport.community.title": "유학생 커뮤니티",
       "localSupport.community.subtitle":
         "학교·도시별 게시판에서 Q&A, 후기를 공유하고 모임을 찾을 수 있습니다.",
+      "localSupport.gate.title": "이 페이지는 준비 중입니다",
+      "localSupport.gate.description":
+        "현재 로컬 지원 기능을 정비하고 있어요.",
       "auth.login": "로그인",
       "auth.logout": "로그아웃",
       "auth.signup": "회원가입",
@@ -896,6 +902,9 @@ const translations: TranslationDictionary = {
       "localSupport.community.title": "留学生コミュニティ",
       "localSupport.community.subtitle":
         "大学・都市別掲示板でQ&Aや体験談を共有し、交流をサポートします。",
+      "localSupport.gate.title": "このページは準備中です",
+      "localSupport.gate.description":
+        "ローカルサポート機能を整備しています。",
       "auth.login": "ログイン",
       "auth.logout": "ログアウト",
       "auth.signup": "アカウント作成",
@@ -1321,6 +1330,9 @@ const translations: TranslationDictionary = {
       "localSupport.community.title": "Student & Expat Community",
       "localSupport.community.subtitle":
         "Boards by city/university for Q&A, reviews and meet-ups (e.g. Hanyang Univ. French community).",
+      "localSupport.gate.title": "This page is being prepared",
+      "localSupport.gate.description":
+        "We're pausing the local support experience while we polish it.",
       "auth.login": "Log in",
       "auth.logout": "Log out",
       "auth.signup": "Create account",
