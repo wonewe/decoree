@@ -1,9 +1,10 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useI18n } from "../shared/i18n";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useHeaderAuth } from "../hooks/useHeaderAuth";
 import { usePageTracking } from "../hooks/usePageTracking";
+import { Helmet } from "react-helmet-async";
 
 const exploreLinks = [
   { path: "/trends", labelKey: "nav.trends" },
@@ -33,6 +34,20 @@ export default function Layout() {
   const isExploreActive = exploreLinks.some((link) => location.pathname.startsWith(link.path));
   const isSupportActive = supportLinks.some((link) => location.pathname.startsWith(link.path));
 
+  const siteOrigin =
+    import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
+    (typeof window !== "undefined" ? window.location.origin : "https://example.com");
+
+  const canonicalUrl = useMemo(() => {
+    const cleanPath = location.pathname || "/";
+    return `${siteOrigin}${cleanPath}`;
+  }, [location.pathname, siteOrigin]);
+
+  const isNoIndex = useMemo(
+    () => /^\/(admin|studio|internal)/i.test(location.pathname),
+    [location.pathname]
+  );
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (exploreRef.current && !exploreRef.current.contains(event.target as Node)) {
@@ -57,6 +72,11 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-100 to-white text-slate-900">
+      <Helmet>
+        <link rel="canonical" href={canonicalUrl} />
+        {isNoIndex && <meta name="robots" content="noindex, nofollow" />}
+      </Helmet>
+
       <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
           <NavLink to="/" className="text-xl font-bold text-hanBlue">
