@@ -96,13 +96,19 @@ export default function HeroSection() {
       <div className="absolute inset-0">
         <video
           ref={videoRef}
-          className="h-full w-full object-cover"
+          className="hidden h-full w-full object-cover sm:block"
           src="/hero-seoul-timelapse.mp4"
           autoPlay
           loop
           muted
           playsInline
           preload="auto"
+          aria-hidden="true"
+        />
+        <img
+          src="/main1.jpg"
+          alt=""
+          className="h-full w-full object-cover sm:hidden"
           aria-hidden="true"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-white"></div>
@@ -115,7 +121,7 @@ export default function HeroSection() {
         type="button"
         onClick={toggleVideoPlayback}
         aria-pressed={isVideoPaused}
-        className="absolute right-6 top-6 z-30 inline-flex h-11 w-11 items-center justify-center rounded-full bg-black/65 text-white backdrop-blur-sm transition hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80"
+        className="absolute right-6 top-6 z-30 hidden h-11 w-11 items-center justify-center rounded-full bg-black/65 text-white backdrop-blur-sm transition hover:bg-black/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/80 sm:inline-flex"
       >
         <span className="sr-only">{isVideoPaused ? "영상 재생" : "영상 일시정지"}</span>
         {isVideoPaused ? (
