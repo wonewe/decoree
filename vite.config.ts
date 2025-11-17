@@ -23,14 +23,18 @@ export default defineConfig(({ mode }) => {
 
   const localizedRoutes = SUPPORTED_LANGS.map((lang) => `/${lang}`);
 
+  const routeEntries = [...baseRoutes, ...localizedRoutes].map((path) => ({
+    url: path,
+    changefreq: "weekly" as const,
+    priority: 0.7
+  }));
+
   return {
     plugins: [
       react(),
       sitemap({
         hostname: siteUrl,
-        routes: [...baseRoutes, ...localizedRoutes],
-        changefreq: "weekly",
-        priority: 0.7,
+        routes: routeEntries,
         sitemapName: "sitemap",
         outDir: "dist"
       })
