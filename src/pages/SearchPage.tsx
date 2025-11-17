@@ -140,7 +140,7 @@ export default function SearchPage() {
     return () => {
       cancelled = true;
     };
-  }, [language, trimmedQuery, hasQuery]);
+  }, [language, trimmedQuery]);
 
   const grouped = useMemo(() => {
     const byType: Record<SearchResult["type"], SearchResult[]> = {
