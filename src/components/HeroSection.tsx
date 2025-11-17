@@ -1,9 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { useI18n } from "../shared/i18n";
 import { BLANK_IMAGE } from "../shared/placeholders";
 
 export default function HeroSection() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [animationKey, setAnimationKey] = useState(() => Date.now());
+
+  useEffect(() => {
+    // Force re-mount on load and language change so fade-in runs after refresh as well.
+    const timer = requestAnimationFrame(() => setAnimationKey(Date.now()));
+    return () => cancelAnimationFrame(timer);
+  }, [language]);
   const highlights = [
     {
       title: t("hero.highlights.trends.title"),
@@ -36,35 +46,66 @@ export default function HeroSection() {
   ] as const;
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-dancheongYellow/40 via-white to-dancheongGreen/10">
+    <section className="relative overflow-hidden bg-gradient-to-br from-dancheongYellow/40 via-white to-dancheongGreen/10 py-16 md:py-24">
       <div className="pointer-events-none absolute inset-0">
         <div className="hero-gradient hero-gradient-1"></div>
         <div className="hero-gradient hero-gradient-2"></div>
       </div>
-      <div className="section-container space-y-10 relative">
-        <div className="flex flex-col gap-12 md:flex-row md:items-center md:justify-between">
-          <div className="flex-1 space-y-6 hero-intro">
+      <div className="section-container relative space-y-14 md:space-y-16">
+        <div
+          key={`${language}-${animationKey}`}
+          className="flex flex-col items-center gap-14 md:flex-col md:items-center md:justify-center"
+        >
+          <div className="flex-1 space-y-6 hero-intro text-center">
             {t("hero.ribbon") && <span className="badge-label">{t("hero.ribbon")}</span>}
             <h1 className="hero-fade text-4xl font-bold opacity-0 translate-y-8 sm:text-5xl md:text-6xl">
               {t("hero.title")}
             </h1>
-            <p className="hero-fade hero-delay-1 max-w-xl text-lg text-slate-600 opacity-0 translate-y-8">
+            <p className="hero-fade hero-delay-1 mx-auto max-w-2xl text-lg text-slate-600 opacity-0 translate-y-8">
               {t("hero.subtitle")}
             </p>
-            <div className="flex flex-wrap items-center gap-4">
-              <Link
-                to="/trends"
-                className="hero-fade hero-delay-2 primary-button opacity-0 translate-y-8"
-              >
-                {t("hero.cta.primary")}
-              </Link>
-              <Link
-                to="/events"
-                className="hero-fade hero-delay-3 secondary-button opacity-0 translate-y-8"
-              >
-                {t("hero.cta.secondary")}
-              </Link>
-            </div>
+            <form
+              className="hero-fade hero-delay-2 mx-auto flex w-full max-w-5xl flex-col gap-4 opacity-0 translate-y-8"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const trimmed = searchTerm.trim();
+                navigate(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : "/search");
+              }}
+            >
+              <div className="relative overflow-hidden rounded-full border border-white/60 bg-white/90 shadow-xl backdrop-blur-sm ring-1 ring-slate-200/60 focus-within:ring-2 focus-within:ring-hanBlue/50">
+                <input
+                  id="hero-search"
+                  type="search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder={t("hero.search.placeholder")}
+                  className="w-full rounded-full bg-transparent px-6 py-4 pr-28 text-base text-slate-800 outline-none placeholder:text-slate-400"
+                />
+                <div className="absolute inset-y-2 right-2 flex items-center gap-2">
+                  <button
+                    type="submit"
+                    className="inline-flex h-full items-center justify-center rounded-full bg-gradient-to-r from-hanBlue to-dancheongGreen px-5 text-sm font-semibold text-white shadow-lg transition hover:brightness-105 disabled:opacity-60"
+                    disabled={!searchTerm.trim()}
+                  >
+                    <span className="sr-only">{t("hero.search.cta")}</span>
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 24 24"
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <circle cx="11" cy="11" r="6" className="opacity-90" />
+                      <line x1="15.5" y1="15.5" x2="20" y2="20" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p className="hero-fade hero-delay-3 text-xs text-slate-500">
+                {t("hero.search.helper")}
+              </p>
+            </form>
           </div>
         </div>
         <section className="space-y-4 rounded-3xl border border-white/40 bg-white/30 p-5 shadow-lg backdrop-blur">
