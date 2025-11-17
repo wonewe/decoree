@@ -23,6 +23,7 @@ import AppTutorialHubPage from "./pages/AppTutorialHubPage";
 import AppTutorialDetailPage from "./pages/AppTutorialDetailPage";
 import StudentCommunityPage from "./pages/StudentCommunityPage";
 import CommunityBoardDetailPage from "./pages/CommunityBoardDetailPage";
+import SearchPage from "./pages/SearchPage";
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/:lang(fr|ko|ja|en)" element={<LocalizedLandingPage />} />
         <Route path="/trends" element={<TrendsPage />} />
         <Route path="/trends/:id" element={<TrendDetailPage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/events/:id" element={<EventDetailPage />} />
         <Route path="/phrasebook" element={<PhrasebookPage />} />
