@@ -56,7 +56,7 @@ export default function PopupDetailPage() {
   };
 
   const mapEmbedUrl = popup.location
-    ? `https://maps.google.com/maps?q=${encodeURIComponent(popup.location)}&output=embed`
+    ? `https://www.google.com/maps?output=embed&q=${encodeURIComponent(popup.location)}`
     : null;
 
   return (
@@ -97,8 +97,7 @@ export default function PopupDetailPage() {
             </div>
             <div className="prose prose-slate max-w-none">
               {popup.details.map((paragraph, index) => {
-                // HTML 태그가 포함되어 있으면 HTML로 렌더링
-                const isHtml = paragraph.includes("<img") || paragraph.includes("<p>") || paragraph.includes("<h2>") || paragraph.includes("&nbsp;");
+                const isHtml = /<\\/?[a-z][^>]*>/i.test(paragraph);
                 if (isHtml) {
                   return (
                     <div
@@ -108,7 +107,6 @@ export default function PopupDetailPage() {
                     />
                   );
                 }
-                // 일반 텍스트인 경우
                 return (
                   <p key={index} className="mb-4">
                     {paragraph}
@@ -121,6 +119,7 @@ export default function PopupDetailPage() {
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Brand</h3>
               <p className="text-lg font-semibold text-dancheongNavy">{popup.brand}</p>
+              </div>
             </div>
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Status</h3>
@@ -140,14 +139,15 @@ export default function PopupDetailPage() {
                     title={`map-${popup.id}`}
                     src={mapEmbedUrl}
                     width="100%"
-                    height="200"
+                    height="220"
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
+                    allowFullScreen
                     className="block"
                   />
                 </div>
                 <a
-                  href={`https://maps.google.com/?q=${encodeURIComponent(popup.location)}`}
+                  href={`https://www.google.com/maps?q=${encodeURIComponent(popup.location)}`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-xs font-semibold text-hanBlue hover:underline"
