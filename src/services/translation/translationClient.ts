@@ -41,7 +41,7 @@ export async function translateText({
     return translationCache.get(cacheKey)!;
   }
 
-  // Prefer proxy translation (server-side key) if configured
+  // Prefer server-side proxy translation if available
   if (TRANSLATION_PROXY_URL) {
     try {
       const translated = await translateViaProxy(trimmed, sourceLanguage, targetLanguage);
@@ -104,41 +104,12 @@ export async function translateBatch(
   return { values, hasChanged };
 }
 
-async function translateWithGPT(
-  text: string,
-  sourceLanguage: SupportedLanguage | undefined,
-  targetLanguage: SupportedLanguage
-): Promise<string> {
-  throw new Error("Client-side GPT translation is disabled for security.");
-}
-
-<<<<<<< HEAD
-  const body = {
-    model: "gpt-4o-mini",
-    messages: [
-      {
-        role: "system",
-        content:
-          "You are a professional translator. Return only the translated text without quotes or extra commentary."
-      },
-      {
-        role: "user",
-        content: `Translate this text${sourceLanguage ? ` from ${sourceLanguage}` : ""} to ${targetLanguage}:\n${text}`
-      }
-    ],
-    temperature: 0.2,
-    max_tokens: Math.min(2048, Math.max(64, Math.ceil(text.length * 1.5)))
-  };
-
-  const response = await fetch(OPENAI_COMPLETIONS_URL, {
-=======
 async function translateViaProxy(
   text: string,
   sourceLanguage: SupportedLanguage | undefined,
   targetLanguage: SupportedLanguage
 ): Promise<string> {
   const response = await fetch(TRANSLATION_PROXY_URL!, {
->>>>>>> 037e63a (fix api key)
     method: "POST",
     headers: {
       "Content-Type": "application/json"
