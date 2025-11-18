@@ -1,9 +1,16 @@
 import type { SupportedLanguage } from "../../shared/i18n";
 
 const GOOGLE_ENDPOINT = "https://translate.googleapis.com/translate_a/single";
+const envProxy =
+  typeof import.meta.env.VITE_TRANSLATION_PROXY_URL === "string"
+    ? import.meta.env.VITE_TRANSLATION_PROXY_URL.trim()
+    : "";
 const TRANSLATION_PROXY_URL =
-  import.meta.env.VITE_TRANSLATION_PROXY_URL ||
-  (typeof window !== "undefined" ? "/api/translate" : undefined);
+  envProxy !== ""
+    ? envProxy
+    : typeof window !== "undefined"
+    ? "/api/translate"
+    : undefined;
 const REQUIRE_PROXY = import.meta.env.VITE_REQUIRE_TRANSLATION_PROXY !== "false";
 const OPENAI_MODEL = "gpt-4o-mini";
 
