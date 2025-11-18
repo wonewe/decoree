@@ -1,8 +1,8 @@
 import type { SupportedLanguage } from "../../shared/i18n";
 
 const GOOGLE_ENDPOINT = "https://translate.googleapis.com/translate_a/single";
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
-const OPENAI_COMPLETIONS_URL = "https://api.openai.com/v1/chat/completions";
+const TRANSLATION_PROXY_URL = import.meta.env.VITE_TRANSLATION_PROXY_URL;
+const OPENAI_MODEL = "gpt-4o-mini";
 
 const translationCache = new Map<string, string>();
 
@@ -41,14 +41,14 @@ export async function translateText({
     return translationCache.get(cacheKey)!;
   }
 
-  // Prefer GPT translation if API key is available
-  if (OPENAI_API_KEY) {
+  // Prefer proxy translation (server-side key) if configured
+  if (TRANSLATION_PROXY_URL) {
     try {
-      const translated = await translateWithGPT(trimmed, sourceLanguage, targetLanguage);
+      const translated = await translateViaProxy(trimmed, sourceLanguage, targetLanguage);
       translationCache.set(cacheKey, translated);
       return translated;
     } catch (error) {
-      console.warn("OpenAI translation failed, falling back to Google:", error);
+      console.warn("Proxy translation failed, falling back to Google:", error);
     }
   }
 
@@ -109,11 +109,10 @@ async function translateWithGPT(
   sourceLanguage: SupportedLanguage | undefined,
   targetLanguage: SupportedLanguage
 ): Promise<string> {
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${OPENAI_API_KEY}`
-  };
+  throw new Error("Client-side GPT translation is disabled for security.");
+}
 
+<<<<<<< HEAD
   const body = {
     model: "gpt-4o-mini",
     messages: [
@@ -132,18 +131,32 @@ async function translateWithGPT(
   };
 
   const response = await fetch(OPENAI_COMPLETIONS_URL, {
+=======
+async function translateViaProxy(
+  text: string,
+  sourceLanguage: SupportedLanguage | undefined,
+  targetLanguage: SupportedLanguage
+): Promise<string> {
+  const response = await fetch(TRANSLATION_PROXY_URL!, {
+>>>>>>> 037e63a (fix api key)
     method: "POST",
-    headers,
-    body: JSON.stringify(body)
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: OPENAI_MODEL,
+      text,
+      sourceLanguage,
+      targetLanguage
+    })
   });
 
   if (!response.ok) {
     const message = await response.text();
-    throw new Error(`OpenAI translate failed (${response.status}): ${message}`);
+    throw new Error(`Proxy translate failed (${response.status}): ${message}`);
   }
 
   const payload = await response.json();
-  const translated =
-    payload?.choices?.[0]?.message?.content?.trim() || text;
+  const translated = payload?.translated ?? text;
   return translated;
 }
