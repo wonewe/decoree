@@ -39,12 +39,12 @@ export default function PopupRadarPreview() {
                 className="h-60 w-full object-cover opacity-90 transition duration-500 group-hover:scale-105"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
               <div className="relative flex flex-1 flex-col justify-end p-4">
                 <span className="inline-flex w-fit rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide">
                   {popup.status === "now" ? t("popupRadar.status.now") : t("popupRadar.status.soon")}
                 </span>
-                <h3 className="mt-3 line-clamp-2 text-lg font-semibold">{popup.title}</h3>
+                <h3 className="mt-3 line-clamp-2 text-lg font-semibold drop-shadow">{popup.title}</h3>
                 <p className="text-sm text-white/80 line-clamp-2">{popup.location}</p>
                 <p className="mt-1 text-xs text-white/70 line-clamp-2">{popup.description}</p>
               </div>
