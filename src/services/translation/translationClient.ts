@@ -16,8 +16,22 @@ const buildCacheKey = (text: string, source?: string, target?: string) =>
 
 const sanitizeTranslatedText = (text: string) =>
   (text || "")
+    // Normalize common block/line breaks to newline
     .replace(/<(br|\/p|\/div)\s*>/gi, "\n")
-    .replace(/<\/?(div|p|span|strong|em|b|i)[^>]*>/gi, " ")
+    .replace(/<\s*(p|div)[^>]*>/gi, "\n")
+    // Strip remaining HTML tags
+    .replace(/<[^>]+>/g, " ")
+    // Collapse whitespace/newlines
+    .replace(/\s+\n/g, "\n")
+    .replace(/\n{2,}/g, "\n")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+const stripHtmlForRequest = (text: string) =>
+  (text || "")
+    .replace(/<(br|\/p|\/div)\s*>/gi, "\n")
+    .replace(/<\s*(p|div)[^>]*>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
     .replace(/\s+\n/g, "\n")
     .replace(/\n{2,}/g, "\n")
     .replace(/\s{2,}/g, " ")
@@ -35,6 +49,7 @@ export async function translateText({
   targetLanguage
 }: TranslateTextParams): Promise<string> {
   const trimmed = text ?? "";
+  const normalizedInput = stripHtmlForRequest(trimmed);
   if (!trimmed.trim()) return trimmed;
   if (!targetLanguage) return trimmed;
   if (sourceLanguage && sourceLanguage === targetLanguage) return trimmed;
