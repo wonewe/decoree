@@ -18,7 +18,6 @@ async function translateFields(
   if (!STUDIO_AUTO_TRANSLATE_ENABLED) return null;
   if (!sourceLanguage || sourceLanguage === targetLanguage) return null;
   const result = await translateBatch(texts, sourceLanguage, targetLanguage);
-  if (!result.hasChanged) return null;
   return result.values;
 }
 
