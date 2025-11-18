@@ -134,20 +134,24 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
           {previewedEvents.map((event) => (
             <article
               key={event.id}
-              className="group relative flex h-full flex-col overflow-hidden rounded-[28px] bg-white text-dancheongNavy shadow-lg ring-1 ring-slate-100 transition duration-300 hover:-translate-y-1"
+              className="group relative flex h-full flex-col overflow-hidden rounded-[28px] bg-white text-dancheongNavy shadow-lg ring-1 ring-slate-100 transition-transform duration-200 hover:-translate-y-1 hover:shadow-xl"
             >
-              {event.imageUrl && (
-                <div className="relative h-56 w-full overflow-hidden">
+              <div className="relative h-64 w-full overflow-hidden bg-slate-100">
+                {event.imageUrl ? (
                   <img
                     src={event.imageUrl}
                     alt={event.title}
                     className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
-                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/65 to-transparent" />
-                </div>
-              )}
-              <div className="flex h-full flex-col justify-end gap-3 p-5">
+                ) : (
+                  <div className="flex h-full items-center justify-center text-sm text-slate-400">
+                    No image
+                  </div>
+                )}
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
+              </div>
+              <div className="flex h-full flex-col justify-between gap-3 p-5">
                 <div className="flex items-start justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
                   <span>
                     {formatDateRange(event.startDate, event.endDate)} · {event.time}
