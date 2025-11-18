@@ -1,7 +1,8 @@
 import type { SupportedLanguage } from "../../shared/i18n";
 
 const GOOGLE_ENDPOINT = "https://translate.googleapis.com/translate_a/single";
-const TRANSLATION_PROXY_URL = import.meta.env.VITE_TRANSLATION_PROXY_URL;
+const TRANSLATION_PROXY_URL =
+  import.meta.env.VITE_TRANSLATION_PROXY_URL || (typeof window !== "undefined" ? "/api/translate" : undefined);
 const OPENAI_MODEL = "gpt-4o-mini";
 
 const translationCache = new Map<string, string>();
