@@ -9,7 +9,7 @@ export default function HomePage() {
     <>
       <HeroSection />
       <WeeklyTrendDecoder />
-      <EventCalendar />
+      <EventCalendar preview />
       <PopupRadarPreview />
       <PersonalizedPhrasebook />
     </>

@@ -10,7 +10,11 @@ import { formatDateRange } from "../shared/date";
 
 const CATEGORY_KEYS: EventCategory[] = ["concert", "traditional", "atelier", "theatre", "festival"];
 
-export default function EventCalendar() {
+type EventCalendarProps = {
+  preview?: boolean;
+};
+
+export default function EventCalendar({ preview = false }: EventCalendarProps) {
   const { t, language } = useI18n();
   const [activeCategory, setActiveCategory] = useState<EventCategory | "all">("all");
   const [startDate, setStartDate] = useState("");
@@ -37,80 +41,97 @@ export default function EventCalendar() {
     });
   }, [events, activeCategory, startDate, endDate]);
 
-  const showGrid = status === "success" && filteredEvents.length > 0;
-  const showEmpty = status === "success" && filteredEvents.length === 0;
+  const previewedEvents = preview ? filteredEvents.slice(0, 4) : filteredEvents;
+  const showFilters = !preview;
+  const showGrid = status === "success" && previewedEvents.length > 0;
+  const showEmpty = status === "success" && previewedEvents.length === 0;
   const showError = status === "error";
 
   return (
-    <section className="section-container space-y-8">
-      <div className="space-y-4">
-        <h2 className="text-3xl font-bold text-dancheongNavy">{t("events.title")}</h2>
-        <p className="max-w-2xl text-slate-600">{t("events.subtitle")}</p>
+    <section className="section-container space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="space-y-2">
+          <span className="badge-label bg-hanBlue/10 text-hanBlue">{t("events.title")}</span>
+          <h2 className="text-3xl font-bold text-dancheongNavy">{t("events.title")}</h2>
+          <p className="max-w-2xl text-slate-600">{t("events.subtitle")}</p>
+        </div>
+        {preview && (
+          <Link
+            to="/events"
+            className="rounded-full border border-hanBlue px-4 py-2 text-sm font-semibold text-hanBlue transition hover:bg-hanBlue hover:text-white"
+          >
+            {t("eventDetail.backToList")}
+          </Link>
+        )}
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        <FilterButton
-          label={t("events.filter.all")}
-          active={activeCategory === "all"}
-          onClick={() => setActiveCategory("all")}
-        />
-        {CATEGORY_KEYS.map((category) => (
+      {showFilters && (
+        <div className="flex flex-wrap gap-3">
           <FilterButton
-            key={category}
-            label={t(`event.eventCategory.${category}`)}
-            active={activeCategory === category}
-            onClick={() => setActiveCategory(category)}
+            label={t("events.filter.all")}
+            active={activeCategory === "all"}
+            onClick={() => setActiveCategory("all")}
           />
-        ))}
-      </div>
+          {CATEGORY_KEYS.map((category) => (
+            <FilterButton
+              key={category}
+              label={t(`event.eventCategory.${category}`)}
+              active={activeCategory === category}
+              onClick={() => setActiveCategory(category)}
+            />
+          ))}
+        </div>
+      )}
 
       {status === "loading" && (
         <div className="grid gap-6 md:grid-cols-2">
-          {Array.from({ length: 2 }).map((_, index) => (
+          {Array.from({ length: preview ? 4 : 2 }).map((_, index) => (
             <EventCardSkeleton key={index} />
           ))}
         </div>
       )}
 
-      <div className="space-y-3 rounded-3xl bg-white p-4 shadow">
-        <div className="text-sm font-semibold uppercase tracking-wide text-slate-400">
-          {t("events.dateFilter.title")}
+      {showFilters && (
+        <div className="space-y-3 rounded-3xl bg-white p-4 shadow">
+          <div className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+            {t("events.dateFilter.title")}
+          </div>
+          <div className="grid gap-4 md:grid-cols-[repeat(2,minmax(0,1fr))_auto]">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+              {t("events.dateFilter.start")}
+              <input
+                type="date"
+                value={startDate}
+                onChange={(event) => setStartDate(event.target.value)}
+                className="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+              />
+            </label>
+            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+              {t("events.dateFilter.end")}
+              <input
+                type="date"
+                value={endDate}
+                onChange={(event) => setEndDate(event.target.value)}
+                className="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+              />
+            </label>
+            <button
+              type="button"
+              onClick={() => {
+                setStartDate("");
+                setEndDate("");
+              }}
+              className="self-end rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-dancheongRed hover:text-dancheongRed"
+            >
+              {t("events.dateFilter.reset")}
+            </button>
+          </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-[repeat(2,minmax(0,1fr))_auto]">
-          <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
-            {t("events.dateFilter.start")}
-            <input
-              type="date"
-              value={startDate}
-              onChange={(event) => setStartDate(event.target.value)}
-              className="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
-            />
-          </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
-            {t("events.dateFilter.end")}
-            <input
-              type="date"
-              value={endDate}
-              onChange={(event) => setEndDate(event.target.value)}
-              className="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
-            />
-          </label>
-          <button
-            type="button"
-            onClick={() => {
-              setStartDate("");
-              setEndDate("");
-            }}
-            className="self-end rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-dancheongRed hover:text-dancheongRed"
-          >
-            {t("events.dateFilter.reset")}
-          </button>
-        </div>
-      </div>
+      )}
 
       {showGrid && (
         <div className="grid gap-4 lg:grid-cols-3">
-          {filteredEvents.map((event) => (
+          {previewedEvents.map((event) => (
             <article
               key={event.id}
               className="group relative flex h-full flex-col overflow-hidden rounded-[28px] bg-slate-900 text-white shadow-lg transition duration-300 hover:-translate-y-1"
