@@ -22,7 +22,7 @@ const supportLinks = [
 ] as const;
 
 export default function Layout() {
-  const { t } = useI18n();
+  const { t, setLanguage } = useI18n();
   const { user, isAdmin, handleLogout, isProcessing, error: authError, dismissError } =
     useHeaderAuth();
   const location = useLocation();
