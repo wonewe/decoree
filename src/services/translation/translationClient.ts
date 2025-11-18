@@ -1,6 +1,8 @@
 import type { SupportedLanguage } from "../../shared/i18n";
 
 const GOOGLE_ENDPOINT = "https://translate.googleapis.com/translate_a/single";
+const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+const OPENAI_COMPLETIONS_URL = "https://api.openai.com/v1/chat/completions";
 
 const translationCache = new Map<string, string>();
 
@@ -37,6 +39,17 @@ export async function translateText({
   const cacheKey = buildCacheKey(trimmed, sourceCode, targetCode);
   if (translationCache.has(cacheKey)) {
     return translationCache.get(cacheKey)!;
+  }
+
+  // Prefer GPT translation if API key is available
+  if (OPENAI_API_KEY) {
+    try {
+      const translated = await translateWithGPT(trimmed, sourceLanguage, targetLanguage);
+      translationCache.set(cacheKey, translated);
+      return translated;
+    } catch (error) {
+      console.warn("OpenAI translation failed, falling back to Google:", error);
+    }
   }
 
   const params = new URLSearchParams({
@@ -89,4 +102,48 @@ export async function translateBatch(
   );
   const hasChanged = values.some((value, index) => value !== texts[index]);
   return { values, hasChanged };
+}
+
+async function translateWithGPT(
+  text: string,
+  sourceLanguage: SupportedLanguage | undefined,
+  targetLanguage: SupportedLanguage
+): Promise<string> {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${OPENAI_API_KEY}`
+  };
+
+  const body = {
+    model: "gpt-4o-mini",
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are a professional translator. Return only the translated text without quotes or extra commentary."
+      },
+      {
+        role: "user",
+        content: `Translate this text${sourceLanguage ? ` from ${sourceLanguage}` : ""} to ${targetLanguage}:\n${text}`
+      }
+    ],
+    temperature: 0.2,
+    max_tokens: Math.max(64, Math.ceil(text.length * 1.5))
+  };
+
+  const response = await fetch(OPENAI_COMPLETIONS_URL, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body)
+  });
+
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(`OpenAI translate failed (${response.status}): ${message}`);
+  }
+
+  const payload = await response.json();
+  const translated =
+    payload?.choices?.[0]?.message?.content?.trim() || text;
+  return translated;
 }
