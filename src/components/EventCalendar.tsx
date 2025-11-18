@@ -113,58 +113,59 @@ export default function EventCalendar() {
           {filteredEvents.map((event) => (
             <article
               key={event.id}
-              className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              className="group relative flex h-full flex-col overflow-hidden rounded-[28px] bg-slate-900 text-white shadow-lg transition duration-300 hover:-translate-y-1"
             >
               {event.imageUrl && (
-                <div className="overflow-hidden rounded-2xl border border-slate-100">
-                  <img
-                    src={event.imageUrl}
-                    alt={event.title}
-                    className="h-48 w-full object-cover transition duration-200 ease-out hover:scale-[1.02]"
-                    loading="lazy"
+                <img
+                  src={event.imageUrl}
+                  alt={event.title}
+                  className="h-56 w-full object-cover opacity-90 transition duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
+              <div className="relative flex h-full flex-col justify-end gap-3 p-5">
+                <div className="flex items-start justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-white/80">
+                  <span>
+                    {formatDateRange(event.startDate, event.endDate)} · {event.time}
+                  </span>
+                  <span>{t(`event.eventCategory.${event.category}`)}</span>
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-white drop-shadow">{event.title}</h3>
+                  <p className="text-sm text-white/80 line-clamp-3">{event.description}</p>
+                </div>
+                <div className="flex flex-col gap-1 text-sm text-white/80">
+                  <span className="line-clamp-1">{event.location}</span>
+                  <span className="font-semibold text-white">{event.price}</span>
+                </div>
+                <div className="mt-1 flex flex-wrap items-center gap-3 text-sm font-semibold">
+                  <Link to={`/events/${event.id}`} className="text-hanBlue hover:underline">
+                    {t("eventDetail.readMore")} →
+                  </Link>
+                  {event.bookingUrl && (
+                    <a
+                      href={event.bookingUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-white/80 hover:text-hanBlue"
+                    >
+                      {t("eventDetail.bookingCta")}
+                    </a>
+                  )}
+                  <BookmarkButton
+                    size="sm"
+                    item={{
+                      id: event.id,
+                      type: "event",
+                      title: event.title,
+                      summary: event.description,
+                      imageUrl: event.imageUrl,
+                      location: event.location,
+                      href: `/events/${event.id}`
+                    }}
                   />
                 </div>
-              )}
-              <div className="flex items-start justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
-                <span>
-                  {formatDateRange(event.startDate, event.endDate)} · {event.time}
-                </span>
-                <span>{t(`event.eventCategory.${event.category}`)}</span>
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-dancheongNavy">{event.title}</h3>
-                <p className="text-sm text-slate-600 line-clamp-3">{event.description}</p>
-              </div>
-              <div className="flex flex-col gap-1 text-sm text-slate-500">
-                <span>{event.location}</span>
-                <span className="font-semibold text-slate-700">{event.price}</span>
-              </div>
-              <div className="mt-auto flex flex-wrap items-center gap-3 text-sm font-semibold">
-                <Link to={`/events/${event.id}`} className="text-hanBlue hover:underline">
-                  {t("eventDetail.readMore")} →
-                </Link>
-                {event.bookingUrl && (
-                  <a
-                    href={event.bookingUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-slate-500 hover:text-hanBlue"
-                  >
-                    {t("eventDetail.bookingCta")}
-                  </a>
-                )}
-                <BookmarkButton
-                  size="sm"
-                  item={{
-                    id: event.id,
-                    type: "event",
-                    title: event.title,
-                    summary: event.description,
-                    imageUrl: event.imageUrl,
-                    location: event.location,
-                    href: `/events/${event.id}`
-                  }}
-                />
               </div>
             </article>
           ))}

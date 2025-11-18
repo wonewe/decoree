@@ -55,8 +55,9 @@ export default function PopupDetailPage() {
     href: `/popups/${popup.id}`
   };
 
-  const mapEmbedUrl = popup.location
-    ? `https://www.google.com/maps?output=embed&q=${encodeURIComponent(popup.location)}`
+  const mapQuery = popup.mapQuery && popup.mapQuery.trim().length > 0 ? popup.mapQuery : popup.location;
+  const mapEmbedUrl = mapQuery
+    ? `https://www.google.com/maps?output=embed&q=${encodeURIComponent(mapQuery)}`
     : null;
 
   const renderDetails = () => (

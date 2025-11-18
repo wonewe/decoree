@@ -11,6 +11,7 @@ export type KCultureEvent = {
   endDate: string;
   time: string;
   location: string;
+  mapQuery?: string;
   category: EventCategory;
   price: string;
   bookingUrl?: string;
