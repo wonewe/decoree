@@ -157,6 +157,14 @@ async function translateViaProxy(
   }
 
   const payload = await response.json();
-  const translated = payload?.translated ?? text;
+  const translated =
+    typeof payload?.translated === "string" && payload.translated.trim()
+      ? payload.translated.trim()
+      : null;
+
+  if (!translated) {
+    throw new Error("Proxy translate missing translated field");
+  }
+
   return translated;
 }
