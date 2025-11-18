@@ -55,10 +55,31 @@ export default function PopupDetailPage() {
     href: `/popups/${popup.id}`
   };
 
-  const encodedLocation = popup.location ? encodeURIComponent(popup.location) : null;
-  const mapEmbedUrl = encodedLocation
-    ? `https://maps.google.com/maps?q=${encodedLocation}&output=embed`
+  const mapEmbedUrl = popup.location
+    ? `https://www.google.com/maps?output=embed&q=${encodeURIComponent(popup.location)}`
     : null;
+
+  const renderDetails = () => (
+    <div className="prose prose-slate max-w-none">
+      {popup.details.map((paragraph, index) => {
+        const isHtml = /<\/?[a-z][^>]*>/i.test(paragraph);
+        if (isHtml) {
+          return (
+            <div
+              key={index}
+              dangerouslySetInnerHTML={{ __html: paragraph }}
+              className="mb-4 [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3"
+            />
+          );
+        }
+        return (
+          <p key={index} className="mb-4">
+            {paragraph}
+          </p>
+        );
+      })}
+    </div>
+  );
 
   return (
     <article className="bg-white">
@@ -96,31 +117,12 @@ export default function PopupDetailPage() {
                 ))}
               </ul>
             </div>
-            <div className="prose prose-slate max-w-none">
-              {popup.details.map((paragraph, index) => {
-                const isHtml = /<\\/?[a-z][^>]*>/i.test(paragraph);
-                if (isHtml) {
-                  return (
-                    <div
-                      key={index}
-                      dangerouslySetInnerHTML={{ __html: paragraph }}
-                      className="mb-4 [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3"
-                    />
-                  );
-                }
-                return (
-                  <p key={index} className="mb-4">
-                    {paragraph}
-                  </p>
-                );
-              })}
-            </div>
+            {renderDetails()}
           </div>
           <aside className="space-y-4 rounded-3xl bg-white p-6 shadow">
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Brand</h3>
               <p className="text-lg font-semibold text-dancheongNavy">{popup.brand}</p>
-              </div>
             </div>
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Status</h3>
@@ -150,7 +152,7 @@ export default function PopupDetailPage() {
                 <a
                   href={`https://www.google.com/maps?q=${encodeURIComponent(popup.location)}`}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noreferrer"
                   className="text-xs font-semibold text-hanBlue hover:underline"
                 >
                   지도 크게 보기 ↗
@@ -159,13 +161,21 @@ export default function PopupDetailPage() {
             )}
             <div className="flex flex-wrap gap-2">
               {popup.tags.map((tag) => (
-                <span key={tag} className="rounded-full bg-hanBlue/10 px-3 py-1 text-xs font-semibold text-hanBlue">
+                <span
+                  key={tag}
+                  className="rounded-full bg-hanBlue/10 px-3 py-1 text-xs font-semibold text-hanBlue"
+                >
                   #{tag}
                 </span>
               ))}
             </div>
             {popup.reservationUrl && (
-              <a href={popup.reservationUrl} target="_blank" rel="noreferrer" className="primary-button block text-center">
+              <a
+                href={popup.reservationUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="primary-button block text-center"
+              >
                 {t("popupRadar.cards.cta")}
               </a>
             )}
