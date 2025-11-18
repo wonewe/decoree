@@ -130,35 +130,37 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
       )}
 
       {showGrid && (
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {previewedEvents.map((event) => (
             <article
               key={event.id}
-              className="group relative flex h-full flex-col overflow-hidden rounded-[28px] bg-slate-900 text-white shadow-lg transition duration-300 hover:-translate-y-1"
+              className="group relative flex h-full flex-col overflow-hidden rounded-[28px] bg-white text-dancheongNavy shadow-lg ring-1 ring-slate-100 transition duration-300 hover:-translate-y-1"
             >
               {event.imageUrl && (
-                <img
-                  src={event.imageUrl}
-                  alt={event.title}
-                  className="h-56 w-full object-cover opacity-90 transition duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
+                <div className="relative h-56 w-full overflow-hidden">
+                  <img
+                    src={event.imageUrl}
+                    alt={event.title}
+                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/65 to-transparent" />
+                </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
-              <div className="relative flex h-full flex-col justify-end gap-3 p-5">
-                <div className="flex items-start justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-white/80">
+              <div className="flex h-full flex-col justify-end gap-3 p-5">
+                <div className="flex items-start justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
                   <span>
                     {formatDateRange(event.startDate, event.endDate)} · {event.time}
                   </span>
                   <span>{t(`event.eventCategory.${event.category}`)}</span>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-white drop-shadow">{event.title}</h3>
-                  <p className="text-sm text-white/80 line-clamp-3">{event.description}</p>
+                  <h3 className="text-lg font-semibold text-dancheongNavy">{event.title}</h3>
+                  <p className="text-sm text-slate-600 line-clamp-3">{event.description}</p>
                 </div>
-                <div className="flex flex-col gap-1 text-sm text-white/80">
+                <div className="flex flex-col gap-1 text-sm text-slate-600">
                   <span className="line-clamp-1">{event.location}</span>
-                  <span className="font-semibold text-white">{event.price}</span>
+                  <span className="font-semibold text-dancheongNavy">{event.price}</span>
                 </div>
                 <div className="mt-1 flex flex-wrap items-center gap-3 text-sm font-semibold">
                   <Link to={`/events/${event.id}`} className="text-hanBlue hover:underline">
@@ -169,7 +171,7 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
                       href={event.bookingUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-white/80 hover:text-hanBlue"
+                      className="text-slate-500 hover:text-hanBlue"
                     >
                       {t("eventDetail.bookingCta")}
                     </a>
