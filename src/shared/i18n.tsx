@@ -67,23 +67,23 @@ const translations: TranslationDictionary = {
       "hero.spotlight.cta.event": "Réserver sa place",
       "hero.spotlight.cta.phrase": "Apprendre l'expression",
       "hero.spotlight.disclaimer": "Sélection éditoriale par koraid.",
-      "popupRadar.title": "Radar Seongsu Pop-up",
+      "popupRadar.title": "Pop-up Radar",
       "popupRadar.subtitle":
-        "Plan de route en trois temps pour suivre les collaborations mode/design et cafés éphémères du quartier.",
-      "popupRadar.sections.overview.title": "Pourquoi Seongsu ?",
+        "Parcours national des pop-ups : collabs mode/beauty, cafés éphémères et éditions limitées.",
+      "popupRadar.sections.overview.title": "Pop-ups en Corée",
       "popupRadar.sections.overview.body":
-        "Anciennes usines transformées en ateliers créatifs, pop-ups de sneakers, roasteries de quartier… Seongsu concentre les lancements les plus rapides de Séoul.",
+        "Séoul, 부산, 제주 등 주요 도시의 팝업을 한 곳에 모았습니다. 기간과 위치를 확인하고 놓치지 마세요.",
       "popupRadar.sections.timeline.title": "Parcours du jour",
-      "popupRadar.sections.timeline.note": "Les horaires changent chaque semaine : vérifiez les stories Insta des marques listées.",
-      "popupRadar.sections.timeline.items.morning.title": "Matin – cafés & collabs",
+      "popupRadar.sections.timeline.note": "Les horaires changent souvent : vérifiez toujours les canaux officiels.",
+      "popupRadar.sections.timeline.items.morning.title": "Matin – file d’attente & drops",
       "popupRadar.sections.timeline.items.morning.body":
-        "Commencez chez Layered Seongsu pour les desserts, puis filez chez Ader Error Factory pour les sorties capsules (ouvert 11h).",
-      "popupRadar.sections.timeline.items.afternoon.title": "Après-midi – studios & ateliers",
+        "Ouverture des pop-ups très demandés pour sécuriser les éditions limitées.",
+      "popupRadar.sections.timeline.items.afternoon.title": "Après-midi – expo & expérience",
       "popupRadar.sections.timeline.items.afternoon.body":
-        "Visitez Stand Oil Archive, puis participez à un atelier sérigraphie chez Open Studio (réservation via Kakao).",
-      "popupRadar.sections.timeline.items.evening.title": "Soir – rooftop & marché",
+        "Visitez les pop-ups type gallery/expérience pour découvrir les collections et stories de marque.",
+      "popupRadar.sections.timeline.items.evening.title": "Soir – café & lounge",
       "popupRadar.sections.timeline.items.evening.body":
-        "Terminez à OR.EO rooftop pour les cocktails sans alcool avant de faire un tour au marché nocturne Common Ground.",
+        "Terminez dans un pop-up café/lounge pour récupérer, découvrir les playlists et le merchandising.",
       "popupRadar.sections.tips.title": "Tips rapides",
       "popupRadar.sections.tips.items.1": "Gardez une carte T-money chargée : beaucoup de pop-ups demandent un paiement sans cash.",
       "popupRadar.sections.tips.items.2": "Les files ouvrent ~30 min avant les drops. Arrivez tôt avec un numéro de passage.",
@@ -361,6 +361,9 @@ const translations: TranslationDictionary = {
       "auth.adminOnlyDescription":
         "Cette section est réservée aux comptes approuvés. Contactez l'équipe koraid pour obtenir un accès Studio.",
       "auth.adminOnlyCta": "Retour à l'accueil",
+      "languagePrompt.title": "Sélectionnez votre langue",
+      "languagePrompt.description": "Nous avons détecté la langue de votre appareil : {lang}",
+      "languagePrompt.skip": "Conserver la langue actuelle",
       "trendDetail.notFound": "Tendance introuvable",
       "trendDetail.notFoundSubtitle": "Le lien consulté n'est plus actif ou a été déplacé.",
       "trendDetail.goBack": "Retour",
@@ -508,22 +511,19 @@ const translations: TranslationDictionary = {
       "hero.spotlight.cta.event": "지금 예약하기",
       "hero.spotlight.cta.phrase": "표현 익히기",
       "hero.spotlight.disclaimer": "koraid가 직접 큐레이션한 추천입니다.",
-      "popupRadar.title": "성수 팝업 레이더",
-      "popupRadar.subtitle": "크리에이터 협업, 한정 컬렉션, 팝업 카페를 한 번에 체크하는 1일 코스.",
-      "popupRadar.sections.overview.title": "왜 성수인가요?",
+      "popupRadar.title": "팝업 레이더",
+      "popupRadar.subtitle": "전국의 크리에이터 협업, 한정 컬렉션, 팝업 카페를 한눈에 모아보세요.",
+      "popupRadar.sections.overview.title": "지금 뜨는 팝업",
       "popupRadar.sections.overview.body":
-        "공장지대가 스튜디오와 편집숍으로 변신한 성수는 한정판 드롭과 팝업이 가장 먼저 열리는 지역입니다.",
-      "popupRadar.sections.timeline.title": "추천 타임라인",
-      "popupRadar.sections.timeline.note": "브랜드별 운영 시간이 자주 바뀌니 인스타 스토리를 꼭 확인하세요.",
-      "popupRadar.sections.timeline.items.morning.title": "AM – 카페 & 드롭 체크",
-      "popupRadar.sections.timeline.items.morning.body":
-        "레이어드 성수에서 디저트로 시작하고, 11시에 오픈하는 아더에러 팩토리에서 최신 캡슐을 둘러보세요.",
-      "popupRadar.sections.timeline.items.afternoon.title": "PM – 스튜디오 & 클래스",
-      "popupRadar.sections.timeline.items.afternoon.body":
-        "스탠드오일 아카이브를 방문한 뒤 Open Studio 실크스크린 클래스(카카오 예약)를 체험하세요.",
-      "popupRadar.sections.timeline.items.evening.title": "EVENING – 루프탑 & 마켓",
-      "popupRadar.sections.timeline.items.evening.body":
-        "OR.EO 루프탑에서 논알코올 칵테일을 즐기고, 커먼그라운드 야시장으로 마무리하세요.",
+        "서울·부산·제주 등 주요 도시에 열리는 팝업을 기간/위치별로 정리했습니다. 운영 시간과 재고는 브랜드 채널을 확인하세요.",
+      "popupRadar.sections.timeline.title": "추천 루트",
+      "popupRadar.sections.timeline.note": "운영·재고가 자주 바뀌니 방문 전 공식 채널을 꼭 확인하세요.",
+      "popupRadar.sections.timeline.items.morning.title": "AM – 오픈런 & 드롭",
+      "popupRadar.sections.timeline.items.morning.body": "인기 협업 팝업 오픈 시간에 맞춰 한정판을 먼저 확보하세요.",
+      "popupRadar.sections.timeline.items.afternoon.title": "PM – 전시/체험존",
+      "popupRadar.sections.timeline.items.afternoon.body": "갤러리형/체험형 팝업에서 브랜드 스토리를 천천히 둘러보세요.",
+      "popupRadar.sections.timeline.items.evening.title": "EVENING – 카페/라운지",
+      "popupRadar.sections.timeline.items.evening.body": "카페형 팝업이나 라운지에서 마무리하며 굿즈를 확인하세요.",
       "popupRadar.sections.tips.title": "빠른 팁",
       "popupRadar.sections.tips.items.1": "T-money 카드 잔액을 충분히 충전해 두면 대부분의 팝업에서 바로 결제 가능합니다.",
       "popupRadar.sections.tips.items.2": "드롭 대기줄은 오픈 30분 전에 시작합니다. 번호표를 받은 뒤 주변 카페에서 기다리세요.",
@@ -792,6 +792,9 @@ const translations: TranslationDictionary = {
       "auth.adminOnlyDescription":
         "이 페이지는 지정된 관리자만 볼 수 있습니다. 권한이 필요하다면 koraid 운영팀에 문의해 주세요.",
       "auth.adminOnlyCta": "홈으로 돌아가기",
+      "languagePrompt.title": "언어를 선택해 주세요",
+      "languagePrompt.description": "기기 언어에 맞춰 추천했어요: {lang}",
+      "languagePrompt.skip": "현재 언어 유지",
       "trendDetail.notFound": "트렌드를 찾을 수 없습니다",
       "trendDetail.notFoundSubtitle": "링크가 만료되었거나 다른 위치로 이동했습니다.",
       "trendDetail.goBack": "뒤로가기",
@@ -1219,6 +1222,9 @@ const translations: TranslationDictionary = {
       "auth.adminOnlyDescription":
         "このページは指定された管理者のみアクセスできます。権限が必要な場合はkoraid運営へお問い合わせください。",
       "auth.adminOnlyCta": "ホームに戻る",
+      "languagePrompt.title": "言語を選択してください",
+      "languagePrompt.description": "端末の言語に合わせておすすめしました: {lang}",
+      "languagePrompt.skip": "今の言語を使う",
       "trendDetail.notFound": "トレンドを見つけられませんでした",
       "trendDetail.notFoundSubtitle": "リンクが無効になったか移動された可能性があります。",
       "trendDetail.goBack": "戻る",
@@ -1719,7 +1725,10 @@ const translations: TranslationDictionary = {
       "auth.adminOnlyTitle": "Admin access required",
       "auth.adminOnlyDescription":
         "This page is restricted to approved admins. Reach out to koraid HQ if you need access.",
-      "auth.adminOnlyCta": "Return home"
+      "auth.adminOnlyCta": "Return home",
+      "languagePrompt.title": "Choose your language",
+      "languagePrompt.description": "We detected your device language: {lang}",
+      "languagePrompt.skip": "Keep current language"
     }
   }
 };
@@ -1757,6 +1766,13 @@ function detectInitialLanguage(): SupportedLanguage {
   const navigatorLang = normalizeLanguage(window.navigator.language?.slice(0, 2));
   if (navigatorLang) return navigatorLang;
 
+  return "fr";
+}
+
+export function getNavigatorSuggestedLanguage(): SupportedLanguage {
+  if (typeof window === "undefined") return "fr";
+  const navigatorLang = normalizeLanguage(window.navigator.language?.slice(0, 2));
+  if (navigatorLang) return navigatorLang;
   return "fr";
 }
 

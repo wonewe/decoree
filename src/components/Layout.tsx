@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useHeaderAuth } from "../hooks/useHeaderAuth";
 import { usePageTracking } from "../hooks/usePageTracking";
 import { Helmet } from "react-helmet-async";
+import LanguagePrompt from "./LanguagePrompt";
 
 const exploreLinks = [
   { path: "/trends", labelKey: "nav.trends" },
@@ -72,6 +73,7 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-100 to-white text-slate-900">
+      <LanguagePrompt onSelect={setLanguage} />
       <Helmet>
         <link rel="canonical" href={canonicalUrl} />
         {isNoIndex && <meta name="robots" content="noindex, nofollow" />}
