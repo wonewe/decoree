@@ -443,6 +443,7 @@ export default function AdminPage() {
   const [events, setEvents] = useState<KCultureEvent[]>([]);
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [popups, setPopups] = useState<PopupEvent[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [trendDraft, setTrendDraft] = useState<TrendDraft>(createEmptyTrendDraft);
   const [trendImageFile, setTrendImageFile] = useState<File | null>(null);
@@ -474,6 +475,63 @@ export default function AdminPage() {
   const [hasEventDraft, setHasEventDraft] = useState(false);
   const [hasPhraseDraft, setHasPhraseDraft] = useState(false);
   const [hasPopupDraft, setHasPopupDraft] = useState(false);
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+
+  const matchesSearch = useCallback(
+    (...fields: Array<string | undefined | null>) => {
+      if (!normalizedSearch) return true;
+      return fields
+        .filter(Boolean)
+        .some((field) => field!.toLowerCase().includes(normalizedSearch));
+    },
+    [normalizedSearch]
+  );
+
+  const filteredTrends = useMemo(
+    () =>
+      normalizedSearch
+        ? trends.filter((t) =>
+            matchesSearch(
+              t.title,
+              t.id,
+              t.summary,
+              t.neighborhood,
+              t.tags?.join(" ")
+            )
+          )
+        : trends,
+    [matchesSearch, normalizedSearch, trends]
+  );
+
+  const filteredEvents = useMemo(
+    () =>
+      normalizedSearch
+        ? events.filter((ev) =>
+            matchesSearch(ev.title, ev.id, ev.description, ev.location, ev.category)
+          )
+        : events,
+    [events, matchesSearch, normalizedSearch]
+  );
+
+  const filteredPhrases = useMemo(
+    () =>
+      normalizedSearch
+        ? phrases.filter((p) =>
+            matchesSearch(p.translation, p.id, p.korean, p.transliteration, p.culturalNote)
+          )
+        : phrases,
+    [matchesSearch, normalizedSearch, phrases]
+  );
+
+  const filteredPopups = useMemo(
+    () =>
+      normalizedSearch
+        ? popups.filter((p) =>
+            matchesSearch(p.title, p.id, p.brand, p.location, p.tags?.join(" "))
+          )
+        : popups,
+    [matchesSearch, normalizedSearch, popups]
+  );
 
   const revokePreviewUrl = (url: string | null) => {
     if (url && url.startsWith("blob:")) {
@@ -1630,6 +1688,13 @@ export default function AdminPage() {
           </button>
         </div>
         <div className="space-y-2">
+          <input
+            type="search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="트렌드/이벤트/팝업/회화 검색"
+            className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+          />
           {hasTrendDraft && trendDraftCache && (
             renderListButton(
               DRAFT_LIST_ID.trend,
@@ -1642,7 +1707,7 @@ export default function AdminPage() {
               }
             )
           )}
-          {trends.map((report) => {
+          {filteredTrends.map((report) => {
             const author = AUTHOR_PROFILES.find((profile) => profile.id === report.authorId);
             const label = `[${getLanguageLabel(report.language ?? "en")}] ${report.title}${
               author ? ` · ${author.name}` : ""
@@ -1961,7 +2026,7 @@ export default function AdminPage() {
                 }
               )
             )}
-            {events.map((event) =>
+            {filteredEvents.map((event) =>
               renderListButton(
                 event.id,
                 `[${getLanguageLabel(event.language ?? "fr")}] ${event.title}`,
@@ -2286,7 +2351,7 @@ export default function AdminPage() {
               }
             )
           )}
-          {phrases.map((phrase) =>
+          {filteredPhrases.map((phrase) =>
             renderListButton(
               phrase.id,
               `[${getLanguageLabel(phrase.language ?? "fr")}] ${phrase.korean}`,
@@ -2494,7 +2559,7 @@ export default function AdminPage() {
               }
             )
           )}
-          {popups.map((popup) =>
+          {filteredPopups.map((popup) =>
             renderListButton(
               popup.id,
               `[${getLanguageLabel(popup.language ?? "fr")}] ${popup.title} · ${popup.brand}`,
