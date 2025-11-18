@@ -128,7 +128,7 @@ async function translateWithGPT(
       }
     ],
     temperature: 0.2,
-    max_tokens: Math.max(64, Math.ceil(text.length * 1.5))
+    max_tokens: Math.min(2048, Math.max(64, Math.ceil(text.length * 1.5)))
   };
 
   const response = await fetch(OPENAI_COMPLETIONS_URL, {
