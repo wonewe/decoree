@@ -2,7 +2,9 @@ import type { SupportedLanguage } from "../../shared/i18n";
 
 const GOOGLE_ENDPOINT = "https://translate.googleapis.com/translate_a/single";
 const TRANSLATION_PROXY_URL =
-  import.meta.env.VITE_TRANSLATION_PROXY_URL || (typeof window !== "undefined" ? "/api/translate" : undefined);
+  import.meta.env.VITE_TRANSLATION_PROXY_URL ||
+  (typeof window !== "undefined" ? "/api/translate" : undefined);
+const REQUIRE_PROXY = import.meta.env.VITE_REQUIRE_TRANSLATION_PROXY !== "false";
 const OPENAI_MODEL = "gpt-4o-mini";
 
 const translationCache = new Map<string, string>();
@@ -44,13 +46,13 @@ export async function translateText({
 
   // Prefer server-side proxy translation if available
   if (TRANSLATION_PROXY_URL) {
-    try {
-      const translated = await translateViaProxy(trimmed, sourceLanguage, targetLanguage);
-      translationCache.set(cacheKey, translated);
-      return translated;
-    } catch (error) {
-      console.warn("Proxy translation failed, falling back to Google:", error);
-    }
+    const translated = await translateViaProxy(trimmed, sourceLanguage, targetLanguage);
+    translationCache.set(cacheKey, translated);
+    return translated;
+  }
+
+  if (REQUIRE_PROXY) {
+    throw new Error("Translation proxy is required but not configured.");
   }
 
   const params = new URLSearchParams({
@@ -61,23 +63,18 @@ export async function translateText({
     q: trimmed
   });
 
-  try {
-    const response = await fetch(`${GOOGLE_ENDPOINT}?${params.toString()}`);
-    if (!response.ok) {
-      throw new Error(`Translate request failed (${response.status})`);
-    }
-
-    const payload = await response.json();
-    const translated =
-      Array.isArray(payload?.[0]) && Array.isArray(payload[0][0])
-        ? payload[0].map((segment: [string]) => segment[0]).join("")
-        : trimmed;
-    translationCache.set(cacheKey, translated);
-    return translated;
-  } catch (error) {
-    console.warn("Translation request failed", error);
-    return trimmed;
+  const response = await fetch(`${GOOGLE_ENDPOINT}?${params.toString()}`);
+  if (!response.ok) {
+    throw new Error(`Translate request failed (${response.status})`);
   }
+
+  const payload = await response.json();
+  const translated =
+    Array.isArray(payload?.[0]) && Array.isArray(payload[0][0])
+      ? payload[0].map((segment: [string]) => segment[0]).join("")
+      : trimmed;
+  translationCache.set(cacheKey, translated);
+  return translated;
 }
 
 export type TranslationBatchResult = {
