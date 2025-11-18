@@ -150,7 +150,7 @@ export default function PopupDetailPage() {
                 <a
                   href={`https://www.google.com/maps?q=${encodeURIComponent(popup.location)}`}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="text-xs font-semibold text-hanBlue hover:underline"
                 >
                   지도 크게 보기 ↗
