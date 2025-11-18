@@ -134,9 +134,9 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
           {previewedEvents.map((event) => (
             <article
               key={event.id}
-              className="group relative flex h-full flex-col overflow-hidden rounded-[28px] bg-white text-dancheongNavy shadow-lg ring-1 ring-slate-100 transition-transform duration-200 hover:-translate-y-1 hover:shadow-xl"
+              className="group relative flex h-full flex-col overflow-hidden rounded-3xl bg-white text-dancheongNavy shadow-lg ring-1 ring-slate-100 transition-transform duration-200 hover:-translate-y-1 hover:shadow-xl"
             >
-              <div className="relative h-64 w-full overflow-hidden bg-slate-100">
+              <div className="relative h-56 w-full overflow-hidden bg-slate-100">
                 {event.imageUrl ? (
                   <img
                     src={event.imageUrl}
@@ -149,18 +149,20 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
                     No image
                   </div>
                 )}
-                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/60 to-transparent" />
               </div>
-              <div className="flex h-full flex-col justify-between gap-3 p-5">
-                <div className="flex items-start justify-between gap-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <div className="flex h-full flex-col justify-between gap-3 p-4">
+                <div className="flex items-start justify-between gap-3 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                   <span>
                     {formatDateRange(event.startDate, event.endDate)} · {event.time}
                   </span>
                   <span>{t(`event.eventCategory.${event.category}`)}</span>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-dancheongNavy">{event.title}</h3>
-                  <p className="text-sm text-slate-600 line-clamp-3">{event.description}</p>
+                  <h3 className="text-lg font-semibold text-dancheongNavy line-clamp-2">
+                    {event.title}
+                  </h3>
+                  <p className="text-sm text-slate-600 line-clamp-2">{event.description}</p>
                 </div>
                 <div className="flex flex-col gap-1 text-sm text-slate-600">
                   <span className="line-clamp-1">{event.location}</span>
