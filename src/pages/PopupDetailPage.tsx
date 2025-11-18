@@ -55,6 +55,10 @@ export default function PopupDetailPage() {
     href: `/popups/${popup.id}`
   };
 
+  const mapEmbedUrl = popup.location
+    ? `https://maps.google.com/maps?q=${encodeURIComponent(popup.location)}&output=embed`
+    : null;
+
   return (
     <article className="bg-white">
       <div className="relative h-[320px] w-full overflow-hidden">
@@ -128,6 +132,30 @@ export default function PopupDetailPage() {
               <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Location</h3>
               <p className="text-sm text-slate-600">{popup.location}</p>
             </div>
+            {mapEmbedUrl && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Map</h3>
+                <div className="overflow-hidden rounded-2xl border border-slate-200">
+                  <iframe
+                    title={`map-${popup.id}`}
+                    src={mapEmbedUrl}
+                    width="100%"
+                    height="200"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="block"
+                  />
+                </div>
+                <a
+                  href={`https://maps.google.com/?q=${encodeURIComponent(popup.location)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs font-semibold text-hanBlue hover:underline"
+                >
+                  지도 크게 보기 ↗
+                </a>
+              </div>
+            )}
             <div className="flex flex-wrap gap-2">
               {popup.tags.map((tag) => (
                 <span key={tag} className="rounded-full bg-hanBlue/10 px-3 py-1 text-xs font-semibold text-hanBlue">
