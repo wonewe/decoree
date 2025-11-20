@@ -1,46 +1,38 @@
-import * as functions from "firebase-functions/v1";
-import * as admin from "firebase-admin";
+import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
+import { updateEvents } from './updateEvents';
 
 admin.initializeApp();
 
-const N8N_WEBHOOK_URL =
-  "https://afraid-teeth-itch.loca.lt/webhook/koraid-alert";
+// Scheduled function (Cron)
+// Run every day at midnight Seoul time
+export const scheduledEventUpdate = functions.pubsub
+  .schedule('0 0 * * *')
+  .timeZone('Asia/Seoul')
+  .onRun(async (context) => {
+    const today = new Date();
+    const nextMonth = new Date();
+    nextMonth.setMonth(today.getMonth() + 1);
 
-type FetchFn = (
-  input: RequestInfo | URL,
-  init?: RequestInit
-) => Promise<Response>;
-const fetchFn: FetchFn = (...args: Parameters<typeof fetch>) => fetch(...args);
+    const formatDate = (date: Date) => date.toISOString().split('T')[0].replace(/-/g, '');
 
-export const koraidContentAlert = functions.firestore
-  .document("trends/{docId}")
-  .onWrite(
-    async (
-      change: functions.Change<functions.firestore.DocumentSnapshot>,
-      context: functions.EventContext
-    ) => {
-      const docId = context.params.docId as string;
+    const startDate = formatDate(today);
+    const endDate = formatDate(nextMonth);
 
-      const before = change.before.exists ? change.before.data() : null;
-      const after = change.after.exists ? change.after.data() : null;
-      const type = before ? "update" : "create";
+    await updateEvents(startDate, endDate);
+    return null;
+  });
 
-      try {
-        const res = await fetchFn(N8N_WEBHOOK_URL, {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({
-            category: "trends",
-            docId,
-            type,
-            before,
-            after,
-            timestamp: Date.now(),
-          }),
-        });
-        console.log("n8n webhook response status:", res.status);
-      } catch (err) {
-        console.error("Error calling n8n webhook:", err);
-      }
-    }
-  );
+// Manual trigger for testing (HTTP)
+export const manualEventUpdate = functions.https.onRequest(async (req, res) => {
+  const startDate = req.query.stdate as string || '20240101';
+  const endDate = req.query.eddate as string || '20240131';
+
+  try {
+    await updateEvents(startDate, endDate);
+    res.send(`Events updated from ${startDate} to ${endDate}`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error updating events');
+  }
+});
