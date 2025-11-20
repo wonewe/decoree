@@ -1,8 +1,9 @@
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect, useCallback, useState, type ReactNode } from "react";
 import { uploadAdminAsset } from "../services/storageService";
 
 type TextEditorProps = {
   label: string;
+  labelActions?: ReactNode;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -21,6 +22,7 @@ type TextEditorProps = {
  */
 export default function TextEditor({
   label,
+  labelActions,
   value: initialValue,
   onChange,
   placeholder,
@@ -169,8 +171,11 @@ export default function TextEditor({
 
   return (
     <div className="flex flex-col gap-3 relative">
-      <div className="flex items-center justify-between">
-        <label className="text-sm font-semibold text-dancheongNavy">{label}</label>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <label className="text-sm font-semibold text-dancheongNavy">{label}</label>
+          {labelActions && <div className="flex items-center gap-2">{labelActions}</div>}
+        </div>
         <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-2 py-1">
           <button
             type="button"

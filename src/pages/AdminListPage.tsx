@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { TrendReport } from "../data/trends";
 import type { KCultureEvent } from "../data/events";
@@ -32,6 +32,7 @@ export default function AdminListPage() {
     total: number;
     processed: number;
   } | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleUpdateEvents = async () => {
     if (!confirm("KOPIS에서 최신 이벤트를 가져와 갱신하시겠습니까?")) return;
@@ -134,6 +135,46 @@ export default function AdminListPage() {
       }`;
   };
 
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
+  const filteredTrends = useMemo(() => {
+    if (!normalizedQuery) return trends;
+    return trends.filter((trend) => {
+      const target = `${trend.title} ${trend.summary} ${trend.details} ${trend.id} ${trend.neighborhood}`.toLowerCase();
+      return target.includes(normalizedQuery);
+    });
+  }, [normalizedQuery, trends]);
+
+  const filteredEvents = useMemo(() => {
+    if (!normalizedQuery) return events;
+    return events.filter((event) => {
+      const target = `${event.title} ${event.description} ${event.location} ${event.category} ${event.id}`.toLowerCase();
+      return target.includes(normalizedQuery);
+    });
+  }, [normalizedQuery, events]);
+
+  const filteredPhrases = useMemo(() => {
+    if (!normalizedQuery) return phrases;
+    return phrases.filter((phrase) => {
+      const target = `${phrase.korean} ${phrase.translation} ${phrase.category} ${phrase.id}`.toLowerCase();
+      return target.includes(normalizedQuery);
+    });
+  }, [normalizedQuery, phrases]);
+
+  const filteredPopups = useMemo(() => {
+    if (!normalizedQuery) return popups;
+    return popups.filter((popup) => {
+      const target = `${popup.title} ${popup.brand} ${popup.location} ${popup.description} ${popup.id}`.toLowerCase();
+      return target.includes(normalizedQuery);
+    });
+  }, [normalizedQuery, popups]);
+
+  const renderEmptyState = (message: string) => (
+    <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
+      {message}
+    </p>
+  );
+
   const renderContentList = () => {
     if (loading) {
       return (
@@ -156,13 +197,13 @@ export default function AdminListPage() {
                 새 트렌드 작성
               </button>
             </div>
-            {trends.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
-                아직 등록된 트렌드가 없습니다.
-              </p>
+            {filteredTrends.length === 0 ? (
+              renderEmptyState(
+                trends.length === 0 ? "아직 등록된 트렌드가 없습니다." : "검색 결과가 없습니다."
+              )
             ) : (
               <div className="space-y-2">
-                {trends.map((trend) => {
+                {filteredTrends.map((trend) => {
                   const author = AUTHOR_PROFILES.find((p) => p.id === trend.authorId);
                   return (
                     <button
@@ -236,14 +277,13 @@ export default function AdminListPage() {
               </div>
             )}
 
-            {
-              events.length === 0 ? (
-                <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
-                  아직 등록된 이벤트가 없습니다.
-                </p>
-              ) : (
-                <div className="space-y-2">
-                  {events.map((event) => (
+            {filteredEvents.length === 0 ? (
+              renderEmptyState(
+                events.length === 0 ? "아직 등록된 이벤트가 없습니다." : "검색 결과가 없습니다."
+              )
+            ) : (
+              <div className="space-y-2">
+                {filteredEvents.map((event) => (
                     <button
                       key={event.id}
                       onClick={() => navigate(`/admin/edit/events/${event.id}`)}
@@ -268,10 +308,9 @@ export default function AdminListPage() {
                         <span className="ml-4 text-xs text-slate-400">{event.id}</span>
                       </div>
                     </button>
-                  ))}
-                </div>
-              )
-            }
+                ))}
+              </div>
+            )}
           </div >
         );
 
@@ -287,13 +326,13 @@ export default function AdminListPage() {
                 새 프레이즈 작성
               </button>
             </div>
-            {phrases.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
-                아직 등록된 프레이즈가 없습니다.
-              </p>
+            {filteredPhrases.length === 0 ? (
+              renderEmptyState(
+                phrases.length === 0 ? "아직 등록된 프레이즈가 없습니다." : "검색 결과가 없습니다."
+              )
             ) : (
               <div className="space-y-2">
-                {phrases.map((phrase) => (
+                {filteredPhrases.map((phrase) => (
                   <button
                     key={phrase.id}
                     onClick={() => navigate(`/admin/edit/phrases/${phrase.id}`)}
@@ -331,13 +370,13 @@ export default function AdminListPage() {
                 새 팝업 작성
               </button>
             </div>
-            {popups.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
-                아직 등록된 팝업이 없습니다.
-              </p>
+            {filteredPopups.length === 0 ? (
+              renderEmptyState(
+                popups.length === 0 ? "아직 등록된 팝업이 없습니다." : "검색 결과가 없습니다."
+              )
             ) : (
               <div className="space-y-2">
-                {popups.map((popup) => (
+                {filteredPopups.map((popup) => (
                   <button
                     key={popup.id}
                     onClick={() => navigate(`/admin/edit/popups/${popup.id}`)}
@@ -413,6 +452,32 @@ export default function AdminListPage() {
       </header>
 
       <section className="rounded-3xl bg-white p-8 shadow">
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <div className="flex-1">
+            <label className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Studio 검색
+            </label>
+            <div className="mt-1 flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2">
+              <span className="text-slate-400">🔍</span>
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="제목, ID, 장소 등을 입력하세요"
+                className="w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="text-xs font-semibold text-slate-400 hover:text-slate-600"
+                >
+                  지우기
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
         {renderContentList()}
       </section>
     </main>

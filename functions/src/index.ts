@@ -2,6 +2,7 @@ import { onSchedule } from "firebase-functions/v2/scheduler";
 import { onRequest, onCall, HttpsError } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import { updateEvents } from "./updateEvents";
+export { generateEventContent } from "./generateEventContent";
 
 if (!admin.apps.length) {
   admin.initializeApp();

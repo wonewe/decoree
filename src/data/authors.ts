@@ -29,6 +29,20 @@ export const AUTHOR_PROFILES: AuthorProfile[] = [
     bio: "Japanese Contents Editor at koraid",
     avatarUrl: ""
   },
+  {
+    id: "Eunseo-Baek",
+    name: "Eunseo Baek",
+    title: "Contents Editor",
+    bio: "Contents Editor at koraid",
+    avatarUrl: ""
+  },
+  {
+    id: "Yumin-Lim",
+    name: "Yumin Lim",
+    title: "Contents Editor",
+    bio: "Contents Editor at koraid",
+    avatarUrl: ""
+  },
 ];
 
 export function getAuthorProfile(authorId: string | undefined) {
