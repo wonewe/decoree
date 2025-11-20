@@ -5,6 +5,7 @@ import { BaseEvent } from "../types/event";
  * Remove spaces, special characters, and convert to lowercase
  */
 const normalizeTitle = (title: string): string => {
+  if (!title) return "";
   return title
     .toLowerCase()
     .replace(/\s+/g, "")

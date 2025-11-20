@@ -1,6 +1,5 @@
 import { fetchEventList, fetchEventDetail } from "./services/kopis";
 import { normalizeEventData } from "./services/transform";
-import { fetchKcisaEvents } from "./services/kcisa";
 import { normalizeKcisaData } from "./services/kcisaTransform";
 import { deduplicateEvents } from "./services/deduplication";
 import { translateEvent } from "./services/translate";
@@ -26,13 +25,33 @@ export const updateEvents = async (
   try {
     // 1. Fetch from both KOPIS and KCISA
     console.log("Fetching from KOPIS...");
-    // Fetch up to 300 events (approx 1 month volume)
-    const kopisListItems = await fetchEventList(startDate, endDate, 1, 300);
-    console.log(`Found ${kopisListItems.length} events from KOPIS.`);
 
-    console.log("Fetching from KCISA...");
-    const kcisaEvents = await fetchKcisaEvents("", "", 100, 1);
-    console.log(`Found ${kcisaEvents.length} events from KCISA.`);
+    // KOPIS API limit is 100 rows per request.
+    // To fetch 300 events, we need to make multiple requests.
+    const targetTotal = 300;
+    const rowsPerPage = 100;
+    const totalPages = Math.ceil(targetTotal / rowsPerPage);
+
+    let kopisListItems: any[] = [];
+
+    for (let page = 1; page <= totalPages; page++) {
+      console.log(`Fetching KOPIS page ${page}/${totalPages}...`);
+      const items = await fetchEventList(startDate, endDate, page, rowsPerPage);
+      kopisListItems = [...kopisListItems, ...items];
+
+      // If we got fewer items than requested, we've reached the end
+      if (items.length < rowsPerPage) {
+        break;
+      }
+    }
+
+    console.log(`Found total ${kopisListItems.length} events from KOPIS.`);
+
+    // console.log("Fetching from KCISA...");
+    // // Use http to avoid potential DNS/SSL issues
+    // const kcisaEvents = await fetchKcisaEvents("", "", 100, 1);
+    // console.log(`Found ${kcisaEvents.length} events from KCISA.`);
+    const kcisaEvents: any[] = []; // Temporarily disabled
 
     // 2. Process KOPIS events (需요 details)
     const kopisBaseEvents: BaseEvent[] = [];

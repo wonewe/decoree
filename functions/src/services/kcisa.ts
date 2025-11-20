@@ -1,7 +1,7 @@
 import axios from "axios";
 import { KcisaEvent } from "../types/event";
 
-const KCISA_API_URL = "https://api.kcisa.kr/openapi/CNV_060/request";
+const KCISA_API_URL = "http://api.kcisa.kr/openapi/CNV_060/request";
 
 /**
  * Fetch events from KCISA Culture Portal API

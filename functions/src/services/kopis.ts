@@ -1,6 +1,6 @@
 import axios from "axios";
-import {KopisEventDetail, KopisEventListItem} from "../types/event";
-import {parseXML} from "./transform";
+import { KopisEventDetail, KopisEventListItem } from "../types/event";
+import { parseXML } from "./transform";
 
 const KOPIS_BASE_URL = "http://www.kopis.or.kr/openApi/restful";
 const API_KEY = process.env.KOPIS_API_KEY;
@@ -26,6 +26,10 @@ export const fetchEventList = async (
       },
       responseType: "text", // KOPIS returns XML
     });
+
+    console.log(`[KOPIS DEBUG] Request params: startDate=${startDate}, endDate=${endDate}, rows=${rows}`);
+    console.log(`[KOPIS DEBUG] Raw response length: ${response.data.length}`);
+    console.log(`[KOPIS DEBUG] Raw response snippet: ${response.data.substring(0, 500)}`);
 
     const parsed = parseXML(response.data);
     const dbs = parsed?.dbs;
