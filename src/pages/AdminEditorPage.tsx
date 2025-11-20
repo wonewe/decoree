@@ -848,10 +848,6 @@ export default function AdminEditorPage() {
       e.currentTarget.style.display = "none";
     };
 
-    const canUseAiGenerator = Boolean(
-      eventDraft.title && eventDraft.location && eventDraft.startDate && eventDraft.time && eventDraft.price
-    );
-
     return (
       <form onSubmit={handleEventSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
         <div className="flex items-center justify-between">
