@@ -39,11 +39,14 @@ export const uploadKopisImage = async (
       },
     });
 
-    // Make file publicly accessible
+    // Make file publicly accessible and get download URL
     await file.makePublic();
 
-    // Return public URL
-    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filename}`;
+    // Generate proper Firebase Storage download URL
+    const bucketName = bucket.name;
+    const encodedPath = encodeURIComponent(filename);
+    const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodedPath}?alt=media`;
+
     console.log(`Uploaded image for ${eventId}: ${publicUrl}`);
     return publicUrl;
   } catch (error) {

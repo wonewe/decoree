@@ -26,30 +26,74 @@ export default function AdminListPage() {
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [popups, setPopups] = useState<PopupEvent[]>([]);
   const [updating, setUpdating] = useState(false);
+  const [syncProgress, setSyncProgress] = useState<{
+    message: string;
+    progress: number;
+    total: number;
+    processed: number;
+  } | null>(null);
 
   const handleUpdateEvents = async () => {
-    if (!confirm("KOPIS에서 최신 이벤트를 가져와 갱신하시겠습니까? (약 1-2분 소요)")) return;
+    if (!confirm("KOPIS에서 최신 이벤트를 가져와 갱신하시겠습니까?")) return;
 
     setUpdating(true);
+    setSyncProgress({ message: "이벤트 업데이트를 시작합니다...", progress: 0, total: 0, processed: 0 });
+
     try {
       // Dynamically import to avoid loading Firebase SDK unless needed
       const { getFunctions } = await import("../services/firebase");
       const { httpsCallable } = await import("firebase/functions");
+      const { doc, onSnapshot, getFirestore } = await import("firebase/firestore");
+      const { getFirebaseApp } = await import("../services/firebase");
 
       const functions = await getFunctions();
       const triggerUpdate = httpsCallable(functions, 'triggerEventUpdate');
 
-      await triggerUpdate({});
-      alert("이벤트 갱신이 완료되었습니다!");
+      // Call Cloud Function
+      const result = await triggerUpdate({}) as { data: { success: boolean; syncId: string; message: string } };
+      const { syncId } = result.data;
 
-      // Refresh list
-      const eventsData = await fetchEvents();
-      setEvents(eventsData);
+      // Subscribe to sync status updates
+      const app = getFirebaseApp();
+      const db = getFirestore(app);
+      const syncDocRef = doc(db, "sync_status", syncId);
+
+      const unsubscribe = onSnapshot(syncDocRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setSyncProgress({
+            message: data.message || "처리 중...",
+            progress: data.progress || 0,
+            total: data.total || 0,
+            processed: data.processed || 0,
+          });
+
+          // Check if completed
+          if (data.status === "completed") {
+            setTimeout(async () => {
+              unsubscribe();
+              setSyncProgress(null);
+              setUpdating(false);
+
+              // Refresh events list
+              const eventsData = await fetchEvents();
+              setEvents(eventsData);
+
+              alert("이벤트 갱신이 완료되었습니다!");
+            }, 1000); // Show 100% for 1 second before closing
+          } else if (data.status === "error") {
+            unsubscribe();
+            setSyncProgress(null);
+            setUpdating(false);
+            alert(`이벤트 갱신에 실패했습니다: ${data.error || "알 수 없는 오류"}`);
+          }
+        }
+      });
     } catch (error) {
       console.error("Update failed:", error);
-      alert("이벤트 갱신에 실패했습니다. 로그를 확인해주세요.");
-    } finally {
+      setSyncProgress(null);
       setUpdating(false);
+      alert("이벤트 갱신에 실패했습니다. 로그를 확인해주세요.");
     }
   };
 
@@ -170,6 +214,27 @@ export default function AdminListPage() {
                 새 이벤트 작성
               </button>
             </div>
+
+            {/* Progress Bar */}
+            {syncProgress && (
+              <div className="rounded-xl border border-hanBlue/30 bg-hanBlue/5 p-4 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-dancheongNavy">{syncProgress.message}</span>
+                  <span className="text-hanBlue font-semibold">{syncProgress.progress}%</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className="h-full rounded-full bg-hanBlue transition-all duration-300"
+                    style={{ width: `${syncProgress.progress}%` }}
+                  />
+                </div>
+                {syncProgress.total > 0 && (
+                  <p className="text-xs text-slate-600">
+                    {syncProgress.processed} / {syncProgress.total} 이벤트 처리됨
+                  </p>
+                )}
+              </div>
+            )}
 
             {
               events.length === 0 ? (

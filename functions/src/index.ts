@@ -20,12 +20,14 @@ export const scheduledEventUpdate = onSchedule(
   },
   async () => {
     const today = new Date();
+    const lastMonth = new Date();
+    lastMonth.setMonth(today.getMonth() - 1);
     const nextMonth = new Date();
     nextMonth.setMonth(today.getMonth() + 1);
 
     const formatDate = (date: Date) => date.toISOString().split("T")[0].replace(/-/g, "");
 
-    const startDate = formatDate(today);
+    const startDate = formatDate(lastMonth);
     const endDate = formatDate(nextMonth);
 
     await updateEvents(startDate, endDate);
@@ -41,10 +43,12 @@ export const manualEventUpdate = onRequest(
     const formatDate = (date: Date) => date.toISOString().split("T")[0].replace(/-/g, "");
 
     const today = new Date();
+    const lastMonth = new Date();
+    lastMonth.setMonth(today.getMonth() - 1);
     const nextMonth = new Date();
     nextMonth.setMonth(today.getMonth() + 1);
 
-    const defaultStart = formatDate(today);
+    const defaultStart = formatDate(lastMonth);
     const defaultEnd = formatDate(nextMonth);
 
     const startDate = (req.query.stdate as string) || defaultStart;
@@ -73,21 +77,27 @@ export const triggerEventUpdate = onCall(
     const formatDate = (date: Date) => date.toISOString().split("T")[0].replace(/-/g, "");
 
     const today = new Date();
+    const lastMonth = new Date();
+    lastMonth.setMonth(today.getMonth() - 1);
     const nextMonth = new Date();
     nextMonth.setMonth(today.getMonth() + 1);
 
-    const startDate = data.startDate || formatDate(today);
+    const startDate = data.startDate || formatDate(lastMonth);
     const endDate = data.endDate || formatDate(nextMonth);
 
+    // Generate unique sync ID for progress tracking
+    const syncId = `sync_${Date.now()}_${request.auth.uid}`;
+
     // Start update in background (don't await)
-    updateEvents(startDate, endDate).catch((error) => {
+    updateEvents(startDate, endDate, syncId).catch((error) => {
       console.error("Background event update failed:", error);
     });
 
-    // Return immediately to prevent timeout
+    // Return immediately with syncId for progress tracking
     return {
       success: true,
-      message: `이벤트 업데이트를 시작했습니다. ${startDate}부터 ${endDate}까지의 이벤트를 가져옵니다. 완료까지 약 2-3분 소요됩니다.`,
+      syncId,
+      message: `이벤트 업데이트를 시작했습니다. ${startDate}부터 ${endDate}까지의 이벤트를 가져옵니다.`,
     };
   }
 );
