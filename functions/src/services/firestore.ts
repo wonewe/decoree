@@ -7,7 +7,7 @@ if (!admin.apps.length) {
 }
 
 const db = admin.firestore();
-const COLLECTION_NAME = "k_culture_events";
+const COLLECTION_NAME = "events";
 
 export const saveEventToFirestore = async (
   baseEventId: string,
@@ -15,18 +15,28 @@ export const saveEventToFirestore = async (
 ) => {
   const batch = db.batch();
 
-  localizedEvents.forEach((event) => {
-    // Document ID format: {lang}-{eventId}
-    const docId = `${event.lang}-${baseEventId}`;
+  // First, fetch existing documents to preserve createdAt timestamps
+  const docIds = localizedEvents.map((event) => `${event.language}-${baseEventId}`);
+  const existingDocs = await Promise.all(
+    docIds.map((docId) => db.collection(COLLECTION_NAME).doc(docId).get())
+  );
+
+  localizedEvents.forEach((event, index) => {
+    const docId = `${event.language}-${baseEventId}`;
     const docRef = db.collection(COLLECTION_NAME).doc(docId);
+    const existingDoc = existingDocs[index];
 
     const eventData = {
       ...event,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      // Preserve original createdAt if exists, otherwise create new one
+      createdAt: existingDoc.exists && existingDoc.data()?.createdAt
+        ? existingDoc.data()!.createdAt
+        : admin.firestore.FieldValue.serverTimestamp(),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
-    batch.set(docRef, eventData, { merge: true });
+    // Use set without merge to completely overwrite with latest data
+    batch.set(docRef, eventData);
   });
 
   await batch.commit();

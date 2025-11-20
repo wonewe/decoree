@@ -29,7 +29,7 @@ export const updateEvents = async (
       }
 
       // 3. Normalize (Base Event)
-      const baseEvent = normalizeEventData(detail, baseLang);
+      const baseEvent = normalizeEventData(detail);
 
       // 4. Translate
       // We need to translate to all target languages.
@@ -44,10 +44,11 @@ export const updateEvents = async (
         const trans = translations[lang];
         return {
           ...baseEvent,
-          lang: lang,
+          language: lang, // Add language field for frontend
           title: trans.title,
-          summary: trans.summary,
-          content: trans.content,
+          description: trans.description,
+          longDescription: trans.longDescription,
+          tips: trans.tips,
         };
       });
 
