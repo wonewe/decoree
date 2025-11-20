@@ -25,6 +25,33 @@ export default function AdminListPage() {
   const [events, setEvents] = useState<KCultureEvent[]>([]);
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [popups, setPopups] = useState<PopupEvent[]>([]);
+  const [updating, setUpdating] = useState(false);
+
+  const handleUpdateEvents = async () => {
+    if (!confirm("KOPIS에서 최신 이벤트를 가져와 갱신하시겠습니까? (약 1-2분 소요)")) return;
+
+    setUpdating(true);
+    try {
+      // Dynamically import to avoid loading Firebase SDK unless needed
+      const { getFunctions } = await import("../services/firebase");
+      const { httpsCallable } = await import("firebase/functions");
+
+      const functions = await getFunctions();
+      const triggerUpdate = httpsCallable(functions, 'triggerEventUpdate');
+
+      await triggerUpdate({});
+      alert("이벤트 갱신이 완료되었습니다!");
+
+      // Refresh list
+      const eventsData = await fetchEvents();
+      setEvents(eventsData);
+    } catch (error) {
+      console.error("Update failed:", error);
+      alert("이벤트 갱신에 실패했습니다. 로그를 확인해주세요.");
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   useEffect(() => {
     if (!isAdmin) {
@@ -57,11 +84,10 @@ export default function AdminListPage() {
   }, []);
 
   const sectionTabClass = (section: ContentType) => {
-    return `rounded-full px-4 py-2 text-sm font-semibold transition ${
-      activeSection === section
-        ? "bg-hanBlue text-white shadow"
-        : "border border-slate-200 bg-white text-slate-600 hover:border-hanBlue hover:text-hanBlue"
-    }`;
+    return `rounded-full px-4 py-2 text-sm font-semibold transition ${activeSection === section
+      ? "bg-hanBlue text-white shadow"
+      : "border border-slate-200 bg-white text-slate-600 hover:border-hanBlue hover:text-hanBlue"
+      }`;
   };
 
   const renderContentList = () => {
@@ -128,8 +154,15 @@ export default function AdminListPage() {
       case "events":
         return (
           <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-dancheongNavy">K-Culture 이벤트</h3>
+            <h3 className="text-lg font-semibold text-dancheongNavy">K-Culture 이벤트</h3>
+            <div className="flex gap-2">
+              <button
+                onClick={handleUpdateEvents}
+                disabled={updating}
+                className="rounded-full border border-hanBlue px-4 py-2 text-sm font-semibold text-hanBlue transition hover:bg-hanBlue/10 disabled:opacity-50"
+              >
+                {updating ? "갱신 중..." : "이벤트 갱신"}
+              </button>
               <button
                 onClick={() => navigate("/admin/edit/events")}
                 className="rounded-full bg-hanBlue px-4 py-2 text-sm font-semibold text-white transition hover:bg-hanBlue/90"
@@ -137,41 +170,44 @@ export default function AdminListPage() {
                 새 이벤트 작성
               </button>
             </div>
-            {events.length === 0 ? (
-              <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
-                아직 등록된 이벤트가 없습니다.
-              </p>
-            ) : (
-              <div className="space-y-2">
-                {events.map((event) => (
-                  <button
-                    key={event.id}
-                    onClick={() => navigate(`/admin/edit/events/${event.id}`)}
-                    className="w-full rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:border-hanBlue hover:shadow-md"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
-                            {getLanguageLabel(event.language)}
-                          </span>
-                          <span className="text-xs text-slate-500">{event.category}</span>
+
+            {
+              events.length === 0 ? (
+                <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
+                  아직 등록된 이벤트가 없습니다.
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {events.map((event) => (
+                    <button
+                      key={event.id}
+                      onClick={() => navigate(`/admin/edit/events/${event.id}`)}
+                      className="w-full rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:border-hanBlue hover:shadow-md"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+                              {getLanguageLabel(event.language)}
+                            </span>
+                            <span className="text-xs text-slate-500">{event.category}</span>
+                          </div>
+                          <h4 className="mt-1 font-semibold text-dancheongNavy">{event.title}</h4>
+                          <p className="mt-1 text-sm text-slate-600 line-clamp-2">
+                            {event.description}
+                          </p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            {event.startDate} · {event.location}
+                          </p>
                         </div>
-                        <h4 className="mt-1 font-semibold text-dancheongNavy">{event.title}</h4>
-                        <p className="mt-1 text-sm text-slate-600 line-clamp-2">
-                          {event.description}
-                        </p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          {event.startDate} · {event.location}
-                        </p>
+                        <span className="ml-4 text-xs text-slate-400">{event.id}</span>
                       </div>
-                      <span className="ml-4 text-xs text-slate-400">{event.id}</span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+                    </button>
+                  ))}
+                </div>
+              )
+            }
+          </div >
         );
 
       case "phrases":

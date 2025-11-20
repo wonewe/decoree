@@ -1,46 +1,80 @@
-import * as functions from "firebase-functions/v1";
+import { onSchedule } from "firebase-functions/v2/scheduler";
+import { onRequest, onCall, HttpsError } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
+import { updateEvents } from "./updateEvents";
 
-admin.initializeApp();
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
 
-const N8N_WEBHOOK_URL =
-  "https://afraid-teeth-itch.loca.lt/webhook/koraid-alert";
+// Scheduled function (Cron)
+// Run every day at midnight Seoul time
+export const scheduledEventUpdate = onSchedule(
+  {
+    schedule: "0 0 * * *",
+    timeZone: "Asia/Seoul",
+  },
+  async () => {
+    const today = new Date();
+    const nextMonth = new Date();
+    nextMonth.setMonth(today.getMonth() + 1);
 
-type FetchFn = (
-  input: RequestInfo | URL,
-  init?: RequestInit
-) => Promise<Response>;
-const fetchFn: FetchFn = (...args: Parameters<typeof fetch>) => fetch(...args);
+    const formatDate = (date: Date) => date.toISOString().split("T")[0].replace(/-/g, "");
 
-export const koraidContentAlert = functions.firestore
-  .document("trends/{docId}")
-  .onWrite(
-    async (
-      change: functions.Change<functions.firestore.DocumentSnapshot>,
-      context: functions.EventContext
-    ) => {
-      const docId = context.params.docId as string;
+    const startDate = formatDate(today);
+    const endDate = formatDate(nextMonth);
 
-      const before = change.before.exists ? change.before.data() : null;
-      const after = change.after.exists ? change.after.data() : null;
-      const type = before ? "update" : "create";
+    await updateEvents(startDate, endDate);
+  }
+);
 
-      try {
-        const res = await fetchFn(N8N_WEBHOOK_URL, {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({
-            category: "trends",
-            docId,
-            type,
-            before,
-            after,
-            timestamp: Date.now(),
-          }),
-        });
-        console.log("n8n webhook response status:", res.status);
-      } catch (err) {
-        console.error("Error calling n8n webhook:", err);
-      }
-    }
-  );
+// Manual trigger for testing (HTTP)
+// Usage: https://us-central1-<project-id>.cloudfunctions.net/manualEventUpdate?stdate=20240101&eddate=20240131
+// If no params provided, defaults to Today -> Next Month
+export const manualEventUpdate = onRequest(async (req, res) => {
+  const formatDate = (date: Date) => date.toISOString().split("T")[0].replace(/-/g, "");
+
+  const today = new Date();
+  const nextMonth = new Date();
+  nextMonth.setMonth(today.getMonth() + 1);
+
+  const defaultStart = formatDate(today);
+  const defaultEnd = formatDate(nextMonth);
+
+  const startDate = (req.query.stdate as string) || defaultStart;
+  const endDate = (req.query.eddate as string) || defaultEnd;
+
+  try {
+    await updateEvents(startDate, endDate);
+    res.send(`Successfully triggered event update from ${startDate} to ${endDate}`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error updating events");
+  }
+});
+
+// Callable function for Frontend (Studio)
+export const triggerEventUpdate = onCall({ cors: true }, async (request) => {
+  // Ensure user is authenticated
+  if (!request.auth) {
+    throw new HttpsError("unauthenticated", "The function must be called while authenticated.");
+  }
+
+  const data = request.data;
+  const formatDate = (date: Date) => date.toISOString().split("T")[0].replace(/-/g, "");
+
+  const today = new Date();
+  const nextMonth = new Date();
+  nextMonth.setMonth(today.getMonth() + 1);
+
+  const startDate = data.startDate || formatDate(today);
+  const endDate = data.endDate || formatDate(nextMonth);
+
+  try {
+    await updateEvents(startDate, endDate);
+    return { success: true, message: `Events updated from ${startDate} to ${endDate}` };
+  } catch (error) {
+    console.error("Error in triggerEventUpdate:", error);
+    throw new HttpsError("internal", "Failed to update events", error);
+  }
+});

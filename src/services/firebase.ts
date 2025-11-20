@@ -30,3 +30,9 @@ export function getFirebaseApp() {
   app = initializeApp(config);
   return app;
 }
+
+export async function getFunctions() {
+  const app = getFirebaseApp();
+  const { getFunctions } = await import("firebase/functions");
+  return getFunctions(app, "us-central1"); // Ensure region matches your deployment
+}
