@@ -78,12 +78,13 @@ export default function AdminEditorPage() {
   const [saving, setSaving] = useState(false);
   const [aiGenerating, setAiGenerating] = useState(false);
   const handleEventContentGeneration = async () => {
-    if (!eventDraft.title || !eventDraft.location) {
+    if (!eventDraft.title || !eventDraft.location || !eventDraft.startDate || !eventDraft.time || !eventDraft.price) {
       setMessage({
         tone: "error",
-        text: "AI 생성을 위해 제목과 장소를 먼저 입력해 주세요."
+        text: "AI 생성을 위해 제목, 장소, 시작일, 시간, 가격을 모두 입력해 주세요."
       });
       return;
+    }
     }
 
     setAiGenerating(true);
