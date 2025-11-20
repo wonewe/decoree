@@ -2,6 +2,7 @@ import { fetchEventList, fetchEventDetail } from "./services/kopis";
 import { normalizeEventData } from "./services/transform";
 import { translateEvent } from "./services/translate";
 import { saveEventToFirestore } from "./services/firestore";
+import { uploadKopisImage } from "./services/storage";
 import { LocalizedEvent, SupportedLanguage } from "./types/event";
 
 export const updateEvents = async (
@@ -31,7 +32,11 @@ export const updateEvents = async (
       // 3. Normalize (Base Event)
       const baseEvent = normalizeEventData(detail);
 
-      // 4. Translate
+      // 4. Upload poster image to Firebase Storage
+      const uploadedImageUrl = await uploadKopisImage(baseEvent.imageUrl, eventId);
+      baseEvent.imageUrl = uploadedImageUrl; // Replace with Storage URL
+
+      // 5. Translate
       // We need to translate to all target languages.
       // The baseEvent is technically in "KOPIS original language" (likely Korean mixed with English).
       // But the requirement says "User inputs in Base Language".
@@ -39,7 +44,7 @@ export const updateEvents = async (
       // We will translate to ALL required languages.
       const translations = await translateEvent(baseEvent, targetLangs);
 
-      // 5. Prepare Localized Events
+      // 6. Prepare Localized Events
       const localizedEvents: LocalizedEvent[] = targetLangs.map((lang) => {
         const trans = translations[lang];
         return {
@@ -52,7 +57,7 @@ export const updateEvents = async (
         };
       });
 
-      // 6. Save to Firestore
+      // 7. Save to Firestore
       await saveEventToFirestore(eventId, localizedEvents);
     }
 
