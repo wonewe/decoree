@@ -113,6 +113,7 @@ type EventDraft = {
   endDate: string;
   time: string;
   location: string;
+  mapQuery: string;
   category: EventCategory;
   price: string;
   bookingUrl: string;
@@ -141,6 +142,7 @@ type PopupDraft = {
   window: string;
   status: PopupStatus;
   location: string;
+  mapQuery: string;
   posterUrl: string;
   heroImageUrl: string;
   tagsInput: string;
@@ -228,6 +230,7 @@ function createEmptyEventDraft(): EventDraft {
     endDate: todayIso(),
     time: "19:00",
     location: "",
+    mapQuery: "",
     category: "concert",
     price: "",
     bookingUrl: "",
@@ -248,6 +251,7 @@ function eventToDraft(event: KCultureEvent): EventDraft {
     endDate: event.endDate ?? event.startDate ?? todayIso(),
     time: event.time,
     location: event.location,
+    mapQuery: event.mapQuery ?? event.location,
     category: event.category,
     price: event.price,
     bookingUrl: event.bookingUrl ?? "",
@@ -277,6 +281,7 @@ function draftToEvent(draft: EventDraft): KCultureEvent {
     endDate: draft.endDate || draft.startDate,
     time: draft.time.trim(),
     location: draft.location.trim(),
+    mapQuery: (draft.mapQuery || draft.location).trim(),
     category: draft.category,
     price: draft.price.trim(),
     bookingUrl: draft.bookingUrl.trim() || undefined,
@@ -334,6 +339,7 @@ function createEmptyPopupDraft(): PopupDraft {
     window: "2024.06.01 - 06.30",
     status: "now",
     location: "",
+    mapQuery: "",
     posterUrl: "",
     heroImageUrl: "",
     tagsInput: "",
@@ -351,11 +357,12 @@ function popupToDraft(popup: PopupEvent): PopupDraft {
     languages: [popup.language ?? "en"],
     title: popup.title,
     brand: popup.brand,
-    window: popup.window,
-    status: popup.status,
-    location: popup.location,
-    posterUrl: popup.posterUrl,
-    heroImageUrl: popup.heroImageUrl,
+  window: popup.window,
+  status: popup.status,
+  location: popup.location,
+  mapQuery: popup.mapQuery ?? popup.location,
+  posterUrl: popup.posterUrl,
+  heroImageUrl: popup.heroImageUrl,
     tagsInput: popup.tags.join(", "),
     description: popup.description,
     highlightsInput: popup.highlights.join("\n"),
@@ -385,6 +392,7 @@ function draftToPopup(draft: PopupDraft): PopupEvent {
     window: draft.window.trim(),
     status: draft.status,
     location: draft.location.trim(),
+    mapQuery: (draft.mapQuery || draft.location).trim(),
     posterUrl: draft.posterUrl.trim(),
     heroImageUrl: draft.heroImageUrl.trim() || draft.posterUrl.trim(),
     tags,
@@ -2202,6 +2210,19 @@ export default function AdminPage() {
               required
             />
           </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            지도 검색어 (지도 퍼스트뷰 개선용)
+            <input
+              type="text"
+              value={eventDraft.mapQuery}
+              onChange={(e) => setEventDraft((prev) => ({ ...prev, mapQuery: e.target.value }))}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              placeholder="예: 광화문 DDP pop-up, 성수동 무신사 스튜디오"
+            />
+            <span className="text-xs font-normal text-slate-500">
+              지도를 열 때 우선 검색할 키워드입니다. 비워두면 장소 값으로 검색합니다.
+            </span>
+          </label>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-3">
@@ -2700,6 +2721,20 @@ export default function AdminPage() {
             className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
             required
           />
+        </label>
+
+        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          지도 검색어 (선택)
+          <input
+            type="text"
+            value={popupDraft.mapQuery}
+            onChange={(e) => setPopupDraft((prev) => ({ ...prev, mapQuery: e.target.value }))}
+            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            placeholder="지도가 잘 나오도록 장소명/주소를 입력하세요"
+          />
+          <span className="text-xs font-normal text-slate-500">
+            입력하지 않으면 위치 필드로 지도 검색을 시도합니다.
+          </span>
         </label>
 
         <div className="grid gap-4 md:grid-cols-2">

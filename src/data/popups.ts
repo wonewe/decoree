@@ -10,6 +10,7 @@ export type PopupEvent = {
   window: string;
   status: PopupStatus;
   location: string;
+  mapQuery?: string;
   posterUrl: string;
   heroImageUrl: string;
   tags: string[];

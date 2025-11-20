@@ -55,6 +55,36 @@ export default function PopupDetailPage() {
     href: `/popups/${popup.id}`
   };
 
+  const mapQuery = (popup.mapQuery && popup.mapQuery.trim()) || popup.location;
+  const mapEmbedUrl = mapQuery
+    ? `https://www.google.com/maps?output=embed&q=${encodeURIComponent(mapQuery)}`
+    : null;
+  const mapLink = mapQuery
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
+    : null;
+
+  const renderDetails = () => (
+    <div className="prose prose-slate max-w-none">
+      {popup.details.map((paragraph, index) => {
+        const isHtml = /<\/?[a-z][^>]*>/i.test(paragraph);
+        if (isHtml) {
+          return (
+            <div
+              key={index}
+              dangerouslySetInnerHTML={{ __html: paragraph }}
+              className="mb-4 [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3"
+            />
+          );
+        }
+        return (
+          <p key={index} className="mb-4">
+            {paragraph}
+          </p>
+        );
+      })}
+    </div>
+  );
+
   return (
     <article className="bg-white">
       <div className="relative h-[320px] w-full overflow-hidden">
@@ -91,27 +121,7 @@ export default function PopupDetailPage() {
                 ))}
               </ul>
             </div>
-            <div className="prose prose-slate max-w-none">
-              {popup.details.map((paragraph, index) => {
-                // HTML 태그가 포함되어 있으면 HTML로 렌더링
-                const isHtml = paragraph.includes("<img") || paragraph.includes("<p>") || paragraph.includes("<h2>") || paragraph.includes("&nbsp;");
-                if (isHtml) {
-                  return (
-                    <div
-                      key={index}
-                      dangerouslySetInnerHTML={{ __html: paragraph }}
-                      className="mb-4 [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3"
-                    />
-                  );
-                }
-                // 일반 텍스트인 경우
-                return (
-                  <p key={index} className="mb-4">
-                    {paragraph}
-                  </p>
-                );
-              })}
-            </div>
+            {renderDetails()}
           </div>
           <aside className="space-y-4 rounded-3xl bg-white p-6 shadow">
             <div>
@@ -128,15 +138,50 @@ export default function PopupDetailPage() {
               <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Location</h3>
               <p className="text-sm text-slate-600">{popup.location}</p>
             </div>
+            {mapEmbedUrl && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Map</h3>
+                <div className="overflow-hidden rounded-2xl border border-slate-200">
+                  <iframe
+                    title={`map-${popup.id}`}
+                    src={mapEmbedUrl}
+                    width="100%"
+                    height="220"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    allowFullScreen
+                    className="block"
+                  />
+                </div>
+                {mapLink && (
+                  <a
+                    href={mapLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs font-semibold text-hanBlue hover:underline"
+                  >
+                    지도 크게 보기 ↗
+                  </a>
+                )}
+              </div>
+            )}
             <div className="flex flex-wrap gap-2">
               {popup.tags.map((tag) => (
-                <span key={tag} className="rounded-full bg-hanBlue/10 px-3 py-1 text-xs font-semibold text-hanBlue">
+                <span
+                  key={tag}
+                  className="rounded-full bg-hanBlue/10 px-3 py-1 text-xs font-semibold text-hanBlue"
+                >
                   #{tag}
                 </span>
               ))}
             </div>
             {popup.reservationUrl && (
-              <a href={popup.reservationUrl} target="_blank" rel="noreferrer" className="primary-button block text-center">
+              <a
+                href={popup.reservationUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="primary-button block text-center"
+              >
                 {t("popupRadar.cards.cta")}
               </a>
             )}

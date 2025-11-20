@@ -66,6 +66,13 @@ export default function EventDetailPage() {
     location: event.location,
     href: `/events/${event.id}`
   };
+  const mapQuery = (event.mapQuery && event.mapQuery.trim()) || event.location;
+  const mapEmbedUrl = mapQuery
+    ? `https://www.google.com/maps?output=embed&q=${encodeURIComponent(mapQuery)}`
+    : null;
+  const mapLink = mapQuery
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
+    : null;
 
   return (
     <article className="bg-white">
@@ -104,7 +111,7 @@ export default function EventDetailPage() {
           <div className="space-y-6">
             {event.longDescription.map((paragraph, index) => {
               // HTML 태그가 포함되어 있으면 HTML로 렌더링
-              const isHtml = paragraph.includes("<img") || paragraph.includes("<p>") || paragraph.includes("<h2>") || paragraph.includes("&nbsp;");
+              const isHtml = /<[^>]+>/.test(paragraph);
               if (isHtml) {
                 return (
                   <div
@@ -167,6 +174,37 @@ export default function EventDetailPage() {
               >
                 {t("eventDetail.bookingCta")}
               </a>
+            )}
+            {mapEmbedUrl && (
+              <div className="mt-4 space-y-2">
+                <div className="overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
+                  <iframe
+                    title={`${event.title} map`}
+                    src={mapEmbedUrl}
+                    className="h-56 w-full border-0"
+                    loading="lazy"
+                    allowFullScreen
+                  />
+                </div>
+                <div className="text-xs text-slate-500">
+                  <span className="font-semibold text-slate-700">Map:</span>{" "}
+                  {mapQuery}
+                  {mapLink && (
+                    <>
+                      {" "}
+                      ·{" "}
+                      <a
+                        href={mapLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-hanBlue hover:underline"
+                      >
+                        Google Maps에서 열기
+                      </a>
+                    </>
+                  )}
+                </div>
+              </div>
             )}
           </aside>
         </div>
