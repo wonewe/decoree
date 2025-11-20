@@ -45,9 +45,9 @@ export interface BaseEvent {
 }
 
 export interface LocalizedEvent extends BaseEvent {
-    lang: 'ko' | 'en' | 'fr' | 'ja';
+    lang: "ko" | "en" | "fr" | "ja";
     createdAt?: any; // Firestore Timestamp
     updatedAt?: any; // Firestore Timestamp
 }
 
-export type SupportedLanguage = 'ko' | 'en' | 'fr' | 'ja';
+export type SupportedLanguage = "ko" | "en" | "fr" | "ja";
