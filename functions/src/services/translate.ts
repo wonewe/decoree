@@ -3,8 +3,9 @@ import { BaseEvent, SupportedLanguage } from "../types/event";
 
 interface TranslatedFields {
   title: string;
-  summary: string;
-  content: string;
+  description: string;
+  longDescription: string[];
+  tips: string[];
 }
 
 export const translateEvent = async (
@@ -19,8 +20,9 @@ export const translateEvent = async (
     targetLangs.forEach((lang) => {
       results[lang] = {
         title: event.title,
-        summary: event.summary,
-        content: event.content,
+        description: event.description,
+        longDescription: event.longDescription,
+        tips: event.tips,
       };
     });
     return results;
@@ -31,15 +33,6 @@ export const translateEvent = async (
   });
 
   for (const lang of targetLangs) {
-    if (lang === "ko") {
-      // Assuming input is Korean (KOPIS default), just copy.
-      // If input is NOT Korean, we might need to translate to Korean too.
-      // For now, let's assume KOPIS gives Korean data mostly.
-      // BUT the requirements say "Base Language" is input.
-      // If base is English, we need to translate to Korean.
-      // Let's just ask GPT to translate to the target language regardless.
-    }
-
     try {
       const completion = await openai.chat.completions.create({
         model: "gpt-4o", // or gpt-3.5-turbo
@@ -47,20 +40,23 @@ export const translateEvent = async (
           {
             role: "system",
             content: `You are a professional translator for K-Culture events. 
-            Translate the following JSON fields (title, summary, content) into ${lang}.
+            Translate the following JSON fields (title, description, longDescription, tips) into ${lang}.
             Rules:
-            1. Maintain context.
+            1. Maintain context and cultural nuances.
             2. If text is long, translate by paragraph.
             3. DO NOT translate prices (KRW), dates, or specific place names unless there is a standard official translation.
-            4. Keep official English titles if available.
-            5. Return ONLY valid JSON format: {"title": "...", "summary": "...", "content": "..."}`,
+            4. Keep official English titles if available for ${lang === "en" ? "title" : "reference"}.
+            5. longDescription is an array of paragraphs - keep it as an array.
+            6. tips is an array of helpful information - keep it as an array.
+            7. Return ONLY valid JSON format: {"title": "...", "description": "...", "longDescription": ["...", "..."], "tips": ["...", "..."]}`,
           },
           {
             role: "user",
             content: JSON.stringify({
               title: event.title,
-              summary: event.summary,
-              content: event.content,
+              description: event.description,
+              longDescription: event.longDescription,
+              tips: event.tips,
             }),
           },
         ],
@@ -78,8 +74,9 @@ export const translateEvent = async (
       // Fallback to original
       results[lang] = {
         title: event.title,
-        summary: event.summary,
-        content: event.content,
+        description: event.description,
+        longDescription: event.longDescription,
+        tips: event.tips,
       };
     }
   }

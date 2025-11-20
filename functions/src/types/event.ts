@@ -33,19 +33,19 @@ export interface BaseEvent {
     id: string;
     category: string;
     title: string;
-    summary: string;
+    description: string; // Short description (from sty)
     startDate: string;
     endDate: string;
     time: string;
     price: string;
-    place: string;
-    mainImage: string;
-    detailImages: string[];
-    content: string;
+    location: string; // Changed from 'place'
+    imageUrl: string; // Changed from 'mainImage'
+    longDescription: string[]; // Array for detailed content
+    tips: string[]; // Additional tips/info
 }
 
 export interface LocalizedEvent extends BaseEvent {
-    lang: "ko" | "en" | "fr" | "ja";
+    language: "ko" | "en" | "fr" | "ja"; // Frontend expects 'language' not 'lang'
     createdAt?: any; // Firestore Timestamp
     updatedAt?: any; // Firestore Timestamp
 }

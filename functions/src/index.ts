@@ -9,10 +9,14 @@ if (!admin.apps.length) {
 
 // Scheduled function (Cron)
 // Run every day at midnight Seoul time
+// Scheduled function (Cron)
+// Run every day at midnight Seoul time
 export const scheduledEventUpdate = onSchedule(
   {
     schedule: "0 0 * * *",
     timeZone: "Asia/Seoul",
+    timeoutSeconds: 540,
+    memory: "1GiB",
   },
   async () => {
     const today = new Date();
@@ -31,50 +35,59 @@ export const scheduledEventUpdate = onSchedule(
 // Manual trigger for testing (HTTP)
 // Usage: https://us-central1-<project-id>.cloudfunctions.net/manualEventUpdate?stdate=20240101&eddate=20240131
 // If no params provided, defaults to Today -> Next Month
-export const manualEventUpdate = onRequest(async (req, res) => {
-  const formatDate = (date: Date) => date.toISOString().split("T")[0].replace(/-/g, "");
+export const manualEventUpdate = onRequest(
+  { timeoutSeconds: 300, memory: "1GiB" },
+  async (req, res) => {
+    const formatDate = (date: Date) => date.toISOString().split("T")[0].replace(/-/g, "");
 
-  const today = new Date();
-  const nextMonth = new Date();
-  nextMonth.setMonth(today.getMonth() + 1);
+    const today = new Date();
+    const nextMonth = new Date();
+    nextMonth.setMonth(today.getMonth() + 1);
 
-  const defaultStart = formatDate(today);
-  const defaultEnd = formatDate(nextMonth);
+    const defaultStart = formatDate(today);
+    const defaultEnd = formatDate(nextMonth);
 
-  const startDate = (req.query.stdate as string) || defaultStart;
-  const endDate = (req.query.eddate as string) || defaultEnd;
+    const startDate = (req.query.stdate as string) || defaultStart;
+    const endDate = (req.query.eddate as string) || defaultEnd;
 
-  try {
-    await updateEvents(startDate, endDate);
-    res.send(`Successfully triggered event update from ${startDate} to ${endDate}`);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Error updating events");
+    try {
+      await updateEvents(startDate, endDate);
+      res.send(`Successfully triggered event update from ${startDate} to ${endDate}`);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Error updating events");
+    }
   }
-});
+);
 
 // Callable function for Frontend (Studio)
-export const triggerEventUpdate = onCall({ cors: true }, async (request) => {
-  // Ensure user is authenticated
-  if (!request.auth) {
-    throw new HttpsError("unauthenticated", "The function must be called while authenticated.");
+export const triggerEventUpdate = onCall(
+  { cors: true, timeoutSeconds: 300, memory: "1GiB" },
+  async (request) => {
+    // Ensure user is authenticated
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "The function must be called while authenticated.");
+    }
+
+    const data = request.data;
+    const formatDate = (date: Date) => date.toISOString().split("T")[0].replace(/-/g, "");
+
+    const today = new Date();
+    const nextMonth = new Date();
+    nextMonth.setMonth(today.getMonth() + 1);
+
+    const startDate = data.startDate || formatDate(today);
+    const endDate = data.endDate || formatDate(nextMonth);
+
+    // Start update in background (don't await)
+    updateEvents(startDate, endDate).catch((error) => {
+      console.error("Background event update failed:", error);
+    });
+
+    // Return immediately to prevent timeout
+    return {
+      success: true,
+      message: `이벤트 업데이트를 시작했습니다. ${startDate}부터 ${endDate}까지의 이벤트를 가져옵니다. 완료까지 약 2-3분 소요됩니다.`,
+    };
   }
-
-  const data = request.data;
-  const formatDate = (date: Date) => date.toISOString().split("T")[0].replace(/-/g, "");
-
-  const today = new Date();
-  const nextMonth = new Date();
-  nextMonth.setMonth(today.getMonth() + 1);
-
-  const startDate = data.startDate || formatDate(today);
-  const endDate = data.endDate || formatDate(nextMonth);
-
-  try {
-    await updateEvents(startDate, endDate);
-    return { success: true, message: `Events updated from ${startDate} to ${endDate}` };
-  } catch (error) {
-    console.error("Error in triggerEventUpdate:", error);
-    throw new HttpsError("internal", "Failed to update events", error);
-  }
-});
+);
