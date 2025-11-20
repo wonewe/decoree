@@ -31,6 +31,7 @@ import {
   translateTrendReportContent
 } from "../services/translation/contentLocalizationService";
 import { uploadAdminAsset } from "../services/storageService";
+import { generateEventContentWithAI } from "../services/aiContentService";
 import TextEditor from "../components/TextEditor";
 import type {
   ContentType,
@@ -75,6 +76,55 @@ export default function AdminEditorPage() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<AdminMessage | null>(null);
   const [saving, setSaving] = useState(false);
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const handleEventContentGeneration = async () => {
+    if (!eventDraft.title || !eventDraft.location) {
+      setMessage({
+        tone: "error",
+        text: "AI 생성을 위해 제목과 장소를 먼저 입력해 주세요."
+      });
+      return;
+    }
+
+    setAiGenerating(true);
+    setMessage(null);
+    try {
+      const result = await generateEventContentWithAI({
+        title: eventDraft.title,
+        language: eventDraft.language,
+        category: eventDraft.category,
+        location: eventDraft.location,
+        startDate: eventDraft.startDate,
+        endDate: eventDraft.endDate,
+        time: eventDraft.time,
+        price: eventDraft.price,
+        description: eventDraft.description,
+        longDescription: eventDraft.longDescriptionInput,
+        tips: eventDraft.tipsInput
+      });
+
+      setEventDraft((prev) => ({
+        ...prev,
+        description: result.description || prev.description,
+        longDescriptionInput:
+          result.longDescription?.length ? result.longDescription.join("\n\n") : prev.longDescriptionInput,
+        tipsInput: result.tips?.length ? result.tips.join("\n") : prev.tipsInput
+      }));
+
+      setMessage({
+        tone: "info",
+        text: "AI가 상세 내용을 채웠어요. 저장 전에 한 번 더 확인해 주세요."
+      });
+    } catch (error) {
+      console.error("Failed to generate AI content", error);
+      setMessage({
+        tone: "error",
+        text: "AI 내용 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+      });
+    } finally {
+      setAiGenerating(false);
+    }
+  };
 
   // State for each content type
   const [trendDraft, setTrendDraft] = useState<TrendDraft>(createEmptyTrendDraft);
@@ -516,6 +566,10 @@ export default function AdminEditorPage() {
       // 이미지 로드 실패 시 빈 이미지로 대체
       e.currentTarget.style.display = "none";
     };
+
+    const canUseAiGenerator = Boolean(
+      eventDraft.title && eventDraft.location && eventDraft.startDate && eventDraft.time && eventDraft.price
+    );
 
     return (
       <form onSubmit={handleTrendSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
@@ -1032,6 +1086,16 @@ export default function AdminEditorPage() {
 
         <TextEditor
           label="상세 설명 (줄바꿈으로 문단 구분)"
+          labelActions={
+            <button
+              type="button"
+              onClick={handleEventContentGeneration}
+              disabled={aiGenerating || !canUseAiGenerator}
+              className="rounded-full border border-hanBlue/30 px-3 py-1 text-xs font-semibold text-hanBlue transition hover:bg-hanBlue/10 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400"
+            >
+              {aiGenerating ? "AI 생성 중..." : "AI로 내용 채우기"}
+            </button>
+          }
           value={eventDraft.longDescriptionInput}
           onChange={(value) => setEventDraft((prev) => ({ ...prev, longDescriptionInput: value }))}
           placeholder="이미지를 드래그 앤 드롭하여 삽입할 수 있습니다."
