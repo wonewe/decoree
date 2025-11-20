@@ -55,9 +55,12 @@ export default function PopupDetailPage() {
     href: `/popups/${popup.id}`
   };
 
-  const mapQuery = popup.mapQuery && popup.mapQuery.trim().length > 0 ? popup.mapQuery : popup.location;
+  const mapQuery = (popup.mapQuery && popup.mapQuery.trim()) || popup.location;
   const mapEmbedUrl = mapQuery
     ? `https://www.google.com/maps?output=embed&q=${encodeURIComponent(mapQuery)}`
+    : null;
+  const mapLink = mapQuery
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
     : null;
 
   const renderDetails = () => (
@@ -150,14 +153,16 @@ export default function PopupDetailPage() {
                     className="block"
                   />
                 </div>
-                <a
-                  href={`https://www.google.com/maps?q=${encodeURIComponent(popup.location)}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-xs font-semibold text-hanBlue hover:underline"
-                >
-                  지도 크게 보기 ↗
-                </a>
+                {mapLink && (
+                  <a
+                    href={mapLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs font-semibold text-hanBlue hover:underline"
+                  >
+                    지도 크게 보기 ↗
+                  </a>
+                )}
               </div>
             )}
             <div className="flex flex-wrap gap-2">
