@@ -1,8 +1,8 @@
-import {fetchEventList, fetchEventDetail} from "../services/kopis";
-import {normalizeEventData} from "../services/transform";
-import {translateEvent} from "../services/translate";
-import {saveEventToFirestore} from "../services/firestore";
-import {LocalizedEvent, SupportedLanguage} from "../types/event";
+import { fetchEventList, fetchEventDetail } from "./services/kopis";
+import { normalizeEventData } from "./services/transform";
+import { translateEvent } from "./services/translate";
+import { saveEventToFirestore } from "./services/firestore";
+import { LocalizedEvent, SupportedLanguage } from "./types/event";
 
 export const updateEvents = async (
   startDate: string,

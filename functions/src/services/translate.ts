@@ -1,14 +1,10 @@
 import OpenAI from "openai";
-import {BaseEvent, SupportedLanguage} from "../types/event";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { BaseEvent, SupportedLanguage } from "../types/event";
 
 interface TranslatedFields {
-    title: string;
-    summary: string;
-    content: string;
+  title: string;
+  summary: string;
+  content: string;
 }
 
 export const translateEvent = async (
@@ -29,6 +25,10 @@ export const translateEvent = async (
     });
     return results;
   }
+
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
 
   for (const lang of targetLangs) {
     if (lang === "ko") {
@@ -64,7 +64,7 @@ export const translateEvent = async (
             }),
           },
         ],
-        response_format: {type: "json_object"},
+        response_format: { type: "json_object" },
       });
 
       const content = completion.choices[0].message.content;

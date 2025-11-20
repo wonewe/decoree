@@ -1,9 +1,11 @@
-import {onSchedule} from "firebase-functions/v2/scheduler";
-import {onRequest, onCall, HttpsError} from "firebase-functions/v2/https";
+import { onSchedule } from "firebase-functions/v2/scheduler";
+import { onRequest, onCall, HttpsError } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
-import {updateEvents} from "./updateEvents";
+import { updateEvents } from "./updateEvents";
 
-admin.initializeApp();
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
 
 // Scheduled function (Cron)
 // Run every day at midnight Seoul time
@@ -12,7 +14,7 @@ export const scheduledEventUpdate = onSchedule(
     schedule: "0 0 * * *",
     timeZone: "Asia/Seoul",
   },
-  async (event) => {
+  async () => {
     const today = new Date();
     const nextMonth = new Date();
     nextMonth.setMonth(today.getMonth() + 1);
@@ -52,7 +54,7 @@ export const manualEventUpdate = onRequest(async (req, res) => {
 });
 
 // Callable function for Frontend (Studio)
-export const triggerEventUpdate = onCall(async (request) => {
+export const triggerEventUpdate = onCall({ cors: true }, async (request) => {
   // Ensure user is authenticated
   if (!request.auth) {
     throw new HttpsError("unauthenticated", "The function must be called while authenticated.");
@@ -70,7 +72,7 @@ export const triggerEventUpdate = onCall(async (request) => {
 
   try {
     await updateEvents(startDate, endDate);
-    return {success: true, message: `Events updated from ${startDate} to ${endDate}`};
+    return { success: true, message: `Events updated from ${startDate} to ${endDate}` };
   } catch (error) {
     console.error("Error in triggerEventUpdate:", error);
     throw new HttpsError("internal", "Failed to update events", error);

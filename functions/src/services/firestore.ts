@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import {LocalizedEvent, SupportedLanguage} from "../types/event";
+import { LocalizedEvent } from "../types/event";
 
 // Initialize Firebase Admin if not already initialized
 if (!admin.apps.length) {
@@ -26,7 +26,7 @@ export const saveEventToFirestore = async (
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     };
 
-    batch.set(docRef, eventData, {merge: true});
+    batch.set(docRef, eventData, { merge: true });
   });
 
   await batch.commit();
