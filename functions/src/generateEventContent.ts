@@ -73,17 +73,6 @@ Rules:
         response_format: { type: "json_object" }
       });
 
-      const content = completion.choices[0]?.message?.content;
-      if (!content) {
-        throw new Error("OpenAI 응답이 비어 있습니다.");
-      }
-
-      const parsed = JSON.parse(content) as {
-        description?: string;
-        longDescription?: string[] | string;
-        tips?: string[] | string;
-      };
-
       const normalizeArray = (value?: string[] | string) => {
         if (!value) return [];
         if (Array.isArray(value)) {
@@ -91,6 +80,24 @@ Rules:
         }
         return value.trim() ? [value.trim()] : [];
       };
+
+      const content = completion.choices[0]?.message?.content;
+      if (!content) {
+        throw new Error("OpenAI 응답이 비어 있습니다.");
+      }
+
+      let parsed: {
+        description?: string;
+        longDescription?: string[] | string;
+        tips?: string[] | string;
+      };
+
+      try {
+        parsed = JSON.parse(content);
+      } catch (parseError) {
+        console.error("Failed to parse OpenAI JSON response:", content, parseError);
+        throw new HttpsError("internal", "AI가 유효하지 않은 형식의 콘텐츠를 반환했습니다.");
+      }
 
       return {
         description: parsed.description ?? "",
