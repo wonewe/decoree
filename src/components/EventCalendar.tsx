@@ -48,8 +48,8 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
   const showError = status === "error";
 
   return (
-    <section className="section-container space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <section className="section-container space-y-8">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-2">
           <span className="badge-label bg-hanBlue/10 text-hanBlue">{t("events.title")}</span>
           <h2 className="text-3xl font-bold text-dancheongNavy">{t("events.title")}</h2>
@@ -58,7 +58,7 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
         {preview && (
           <Link
             to="/events"
-            className="rounded-full border border-hanBlue px-4 py-2 text-sm font-semibold text-hanBlue transition hover:bg-hanBlue hover:text-white"
+            className="rounded-full border border-hanBlue px-6 py-2.5 text-sm font-semibold text-hanBlue transition hover:bg-hanBlue hover:text-white"
           >
             {t("eventDetail.backToList")}
           </Link>
@@ -84,15 +84,15 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
       )}
 
       {status === "loading" && (
-        <div className="grid gap-6 md:grid-cols-2">
-          {Array.from({ length: preview ? 4 : 2 }).map((_, index) => (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: preview ? 4 : 8 }).map((_, index) => (
             <EventCardSkeleton key={index} />
           ))}
         </div>
       )}
 
       {showFilters && (
-        <div className="space-y-3 rounded-3xl bg-white p-4 shadow">
+        <div className="space-y-3 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
           <div className="text-sm font-semibold uppercase tracking-wide text-slate-400">
             {t("events.dateFilter.title")}
           </div>
@@ -121,7 +121,7 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
                 setStartDate("");
                 setEndDate("");
               }}
-              className="self-end rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-dancheongRed hover:text-dancheongRed"
+              className="self-end rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-600 transition hover:border-dancheongRed hover:text-dancheongRed"
             >
               {t("events.dateFilter.reset")}
             </button>
@@ -130,70 +130,89 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
       )}
 
       {showGrid && (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {previewedEvents.map((event) => (
             <article
               key={event.id}
-              className="group relative flex h-full flex-col overflow-hidden rounded-3xl bg-white text-dancheongNavy shadow-lg ring-1 ring-slate-100 transition-transform duration-200 hover:-translate-y-1 hover:shadow-xl"
+              className="group relative flex h-full flex-col overflow-hidden rounded-3xl bg-white text-dancheongNavy shadow-sm ring-1 ring-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
-              <div className="relative h-56 w-full overflow-hidden bg-slate-100">
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
                 {event.imageUrl ? (
                   <img
                     src={event.imageUrl}
                     alt={event.title}
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-105"
                     loading="lazy"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-sm text-slate-400">
-                    No image
+                  <div className="flex h-full flex-col items-center justify-center gap-2 text-slate-400">
+                    <div className="h-12 w-12 rounded-full bg-slate-200/50" />
+                    <span className="text-sm font-medium">No image</span>
                   </div>
                 )}
-                <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/60 to-transparent" />
-              </div>
-              <div className="flex h-full flex-col justify-between gap-3 p-4">
-                <div className="flex items-start justify-between gap-3 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                  <span>
-                    {formatDateRange(event.startDate, event.endDate)} · {event.time}
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-60 transition-opacity group-hover:opacity-70" />
+
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
+                  <span className="rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">
+                    {t(`event.eventCategory.${event.category}`)}
                   </span>
-                  <span>{t(`event.eventCategory.${event.category}`)}</span>
                 </div>
+              </div>
+
+              <div className="flex flex-1 flex-col justify-between gap-4 p-5">
                 <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-dancheongNavy line-clamp-2">
+                  <div className="text-[11px] font-bold uppercase tracking-wide text-hanBlue">
+                    {formatDateRange(event.startDate, event.endDate)}
+                  </div>
+                  <h3 className="line-clamp-2 text-lg font-bold leading-snug text-dancheongNavy group-hover:text-hanBlue transition-colors">
                     {event.title}
                   </h3>
-                  <p className="text-sm text-slate-600 line-clamp-2">{event.description}</p>
+                  <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">
+                    {event.description}
+                  </p>
                 </div>
-                <div className="flex flex-col gap-1 text-sm text-slate-600">
-                  <span className="line-clamp-1">{event.location}</span>
-                  <span className="font-semibold text-dancheongNavy">{event.price}</span>
-                </div>
-                <div className="mt-1 flex flex-wrap items-center gap-3 text-sm font-semibold">
-                  <Link to={`/events/${event.id}`} className="text-hanBlue hover:underline">
-                    {t("eventDetail.readMore")} →
-                  </Link>
-                  {event.bookingUrl && (
-                    <a
-                      href={event.bookingUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-slate-500 hover:text-hanBlue"
+
+                <div className="flex flex-col gap-3 pt-2">
+                  <div className="flex items-center justify-between text-xs font-medium text-slate-500">
+                    <span className="line-clamp-1 max-w-[60%]">{event.location}</span>
+                    <span className="text-dancheongNavy">{event.price}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-3">
+                    <Link
+                      to={`/events/${event.id}`}
+                      className="text-sm font-semibold text-hanBlue transition hover:text-dancheongNavy"
                     >
-                      {t("eventDetail.bookingCta")}
-                    </a>
-                  )}
-                  <BookmarkButton
-                    size="sm"
-                    item={{
-                      id: event.id,
-                      type: "event",
-                      title: event.title,
-                      summary: event.description,
-                      imageUrl: event.imageUrl,
-                      location: event.location,
-                      href: `/events/${event.id}`
-                    }}
-                  />
+                      {t("eventDetail.readMore")}
+                    </Link>
+                    <div className="flex items-center gap-2">
+                      {event.bookingUrl && (
+                        <a
+                          href={event.bookingUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="rounded-full bg-slate-50 p-2 text-slate-400 transition hover:bg-hanBlue hover:text-white"
+                          title={t("eventDetail.bookingCta")}
+                        >
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                      )}
+                      <BookmarkButton
+                        size="sm"
+                        item={{
+                          id: event.id,
+                          type: "event",
+                          title: event.title,
+                          summary: event.description,
+                          imageUrl: event.imageUrl,
+                          location: event.location,
+                          href: `/events/${event.id}`
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </article>
@@ -226,9 +245,8 @@ function FilterButton({ label, active, onClick }: FilterButtonProps) {
   return (
     <button
       onClick={onClick}
-      className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-        active ? "bg-hanBlue text-white" : "bg-white text-slate-600 hover:text-hanBlue"
-      }`}
+      className={`rounded-full px-4 py-2 text-sm font-semibold transition ${active ? "bg-hanBlue text-white" : "bg-white text-slate-600 hover:text-hanBlue"
+        }`}
     >
       {label}
     </button>
