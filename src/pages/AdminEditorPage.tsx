@@ -567,10 +567,6 @@ export default function AdminEditorPage() {
       e.currentTarget.style.display = "none";
     };
 
-    const canUseAiGenerator = Boolean(
-      eventDraft.title && eventDraft.location && eventDraft.startDate && eventDraft.time && eventDraft.price
-    );
-
     return (
       <form onSubmit={handleTrendSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
         <div className="flex items-center justify-between">
@@ -850,6 +846,10 @@ export default function AdminEditorPage() {
       console.error("이미지 로드 실패:", e.currentTarget.src);
       e.currentTarget.style.display = "none";
     };
+
+    const canUseAiGenerator = Boolean(
+      eventDraft.title && eventDraft.location && eventDraft.startDate && eventDraft.time && eventDraft.price
+    );
 
     return (
       <form onSubmit={handleEventSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
