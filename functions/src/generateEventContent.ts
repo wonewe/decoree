@@ -61,16 +61,16 @@ Rules:
         price: data.price,
         existingDescription: data.description,
         existingLongDescription: data.longDescription,
-        existingTips: data.tips
+        existingTips: data.tips,
       };
 
       const completion = await openaiClient.chat.completions.create({
         model: "gpt-4o",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: JSON.stringify(userContent) }
+          { role: "user", content: JSON.stringify(userContent) },
         ],
-        response_format: { type: "json_object" }
+        response_format: { type: "json_object" },
       });
 
       const normalizeArray = (value?: string[] | string) => {
@@ -102,7 +102,7 @@ Rules:
       return {
         description: parsed.description ?? "",
         longDescription: normalizeArray(parsed.longDescription),
-        tips: normalizeArray(parsed.tips)
+        tips: normalizeArray(parsed.tips),
       };
     } catch (error) {
       console.error("generateEventContent failed", error);
