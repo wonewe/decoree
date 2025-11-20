@@ -26,7 +26,8 @@ export const updateEvents = async (
   try {
     // 1. Fetch from both KOPIS and KCISA
     console.log("Fetching from KOPIS...");
-    const kopisListItems = await fetchEventList(startDate, endDate, 1, 10);
+    // Fetch up to 300 events (approx 1 month volume)
+    const kopisListItems = await fetchEventList(startDate, endDate, 1, 300);
     console.log(`Found ${kopisListItems.length} events from KOPIS.`);
 
     console.log("Fetching from KCISA...");
