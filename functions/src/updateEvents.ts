@@ -1,5 +1,8 @@
 import { fetchEventList, fetchEventDetail } from "./services/kopis";
 import { normalizeEventData } from "./services/transform";
+import { fetchKcisaEvents } from "./services/kcisa";
+import { normalizeKcisaData } from "./services/kcisaTransform";
+import { deduplicateEvents } from "./services/deduplication";
 import { translateEvent } from "./services/translate";
 import { saveEventToFirestore } from "./services/firestore";
 import { uploadKopisImage } from "./services/storage";
@@ -9,7 +12,7 @@ import {
   completeSyncStatus,
   failSyncStatus,
 } from "./services/syncStatus";
-import { LocalizedEvent, SupportedLanguage } from "./types/event";
+import { BaseEvent, LocalizedEvent, SupportedLanguage } from "./types/event";
 
 export const updateEvents = async (
   startDate: string,
@@ -21,47 +24,61 @@ export const updateEvents = async (
   console.log(`Starting event update from ${startDate} to ${endDate}`);
 
   try {
-    // 1. Fetch List
-    const events = await fetchEventList(startDate, endDate, 1, 10);
-    console.log(`Found ${events.length} events.`);
+    // 1. Fetch from both KOPIS and KCISA
+    console.log("Fetching from KOPIS...");
+    const kopisListItems = await fetchEventList(startDate, endDate, 1, 10);
+    console.log(`Found ${kopisListItems.length} events from KOPIS.`);
+
+    console.log("Fetching from KCISA...");
+    const kcisaEvents = await fetchKcisaEvents("", "", 100, 1);
+    console.log(`Found ${kcisaEvents.length} events from KCISA.`);
+
+    // 2. Process KOPIS events (需요 details)
+    const kopisBaseEvents: BaseEvent[] = [];
+    for (const item of kopisListItems) {
+      const detail = await fetchEventDetail(item.mt20id);
+      if (detail) {
+        kopisBaseEvents.push(normalizeEventData(detail));
+      }
+    }
+
+    // 3. Process KCISA events
+    const kcisaBaseEvents: BaseEvent[] = kcisaEvents.map((e) => normalizeKcisaData(e));
+
+    // 4. Merge and deduplicate
+    const allEvents = [...kopisBaseEvents, ...kcisaBaseEvents];
+    const uniqueEvents = deduplicateEvents(allEvents);
+    console.log(`After deduplication: ${uniqueEvents.length} unique events`);
 
     // Initialize sync status
     if (syncId) {
-      await createSyncStatus(syncId, events.length);
+      await createSyncStatus(syncId, uniqueEvents.length);
     }
 
-    for (let i = 0; i < events.length; i++) {
-      const item = events[i];
-      const eventId = item.mt20id;
-      console.log(`Processing event ${i + 1}/${events.length}: ${eventId} - ${item.prfnm}`);
+    // 5. Process each unique event
+    for (let i = 0; i < uniqueEvents.length; i++) {
+      const baseEvent = uniqueEvents[i];
+      console.log(`Processing event ${i + 1}/${uniqueEvents.length}: ${baseEvent.title}`);
 
       // Update progress
       if (syncId) {
         await updateSyncStatus(syncId, {
           processed: i,
-          progress: Math.round((i / events.length) * 100),
-          message: `처리 중: ${item.prfnm} (${i + 1}/${events.length})`,
+          progress: Math.round((i / uniqueEvents.length) * 100),
+          message: `처리 중: ${baseEvent.title} (${i + 1}/${uniqueEvents.length})`,
         });
       }
 
-      // 2. Fetch Detail
-      const detail = await fetchEventDetail(eventId);
-      if (!detail) {
-        console.warn(`Skipping ${eventId}: No detail found.`);
-        continue;
+      // Upload poster image to Firebase Storage
+      if (baseEvent.imageUrl) {
+        const uploadedImageUrl = await uploadKopisImage(baseEvent.imageUrl, baseEvent.id);
+        baseEvent.imageUrl = uploadedImageUrl;
       }
 
-      // 3. Normalize (Base Event)
-      const baseEvent = normalizeEventData(detail);
-
-      // 4. Upload poster image to Firebase Storage
-      const uploadedImageUrl = await uploadKopisImage(baseEvent.imageUrl, eventId);
-      baseEvent.imageUrl = uploadedImageUrl;
-
-      // 5. Translate
+      // Translate
       const translations = await translateEvent(baseEvent, targetLangs);
 
-      // 6. Prepare Localized Events
+      // Prepare Localized Events
       const localizedEvents: LocalizedEvent[] = targetLangs.map((lang) => {
         const trans = translations[lang];
         return {
@@ -74,8 +91,8 @@ export const updateEvents = async (
         };
       });
 
-      // 7. Save to Firestore
-      await saveEventToFirestore(eventId, localizedEvents);
+      // Save to Firestore
+      await saveEventToFirestore(baseEvent.id, localizedEvents);
     }
 
     console.log("Event update completed successfully.");

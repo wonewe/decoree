@@ -41,6 +41,7 @@ export const normalizeEventData = (
 
   return {
     id: kopisData.mt20id,
+    source: "kopis",
     category: categoryMap[kopisData.genrenm] || "concert",
     title: kopisData.prfnm,
     description: kopisData.sty?.substring(0, 200) || kopisData.prfnm, // Short description

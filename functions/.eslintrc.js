@@ -31,6 +31,7 @@ module.exports = {
     "indent": ["error", 2],
     "max-len": "off",
     "require-jsdoc": "off",
+    "valid-jsdoc": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unused-vars": "warn",
     "object-curly-spacing": "off",

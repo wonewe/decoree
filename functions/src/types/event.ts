@@ -29,8 +29,22 @@ export interface KopisEventDetail {
     dtguidance: string; // Time
 }
 
+export interface KcisaEvent {
+    title: string;
+    type: string; // 분야 (연극, 뮤지컬, 음악, 전시 등)
+    period: string; // 기간 (예: 2024.11.20~2024.12.20)
+    eventPeriod: string; // 시간 (예: 19:00~21:00)
+    eventSite: string; // 장소
+    charge: string; // 금액
+    url: string; // 링크
+    imageObject: string; // 썸네일 URL
+    description: string; // 설명
+    viewCount?: number; // 조회수
+}
+
 export interface BaseEvent {
     id: string;
+    source: "kopis" | "kcisa"; // Track data origin
     category: string;
     title: string;
     description: string; // Short description (from sty)
