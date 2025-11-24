@@ -169,6 +169,45 @@ export default function TextEditor({
     document.execCommand(command, false, formatValue);
   }, []);
 
+  const replaceBlockWithHeading = useCallback((level: number) => {
+    if (!editorRef.current) return;
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    const range = selection.getRangeAt(0);
+    let block = range.startContainer as HTMLElement | null;
+    while (block && block !== editorRef.current && !(block instanceof HTMLParagraphElement) && !(block instanceof HTMLHeadingElement)) {
+      block = block.parentElement;
+    }
+    if (!block || block === editorRef.current) return;
+
+    const heading = document.createElement(`h${Math.min(level, 3)}`);
+    heading.textContent = "";
+    block.replaceWith(heading);
+
+    const newRange = document.createRange();
+    newRange.setStart(heading, 0);
+    newRange.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(newRange);
+    handleInput();
+  }, [handleInput]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key !== " ") return;
+      const selection = window.getSelection();
+      if (!selection || !selection.anchorNode) return;
+      const container = selection.anchorNode;
+      const text = container.textContent ?? "";
+      const trimmed = text.trim();
+      if (!/^#{1,3}$/.test(trimmed)) return;
+      e.preventDefault();
+      const level = trimmed.length;
+      replaceBlockWithHeading(level);
+    },
+    [replaceBlockWithHeading]
+  );
+
   return (
     <div className="flex flex-col gap-3 relative">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -247,6 +286,7 @@ export default function TextEditor({
         ref={editorRef}
         contentEditable
         onInput={handleInput}
+        onKeyDown={handleKeyDown}
         onPaste={handlePaste}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
@@ -293,4 +333,3 @@ export default function TextEditor({
     </div>
   );
 }
-
