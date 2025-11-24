@@ -105,8 +105,7 @@ export default function TrendDetailPage() {
 
         <div className="prose prose-slate max-w-4xl">
           {report.content.map((paragraph, index) => {
-            // HTML 태그가 포함되어 있으면 HTML로 렌더링
-            const isHtml = paragraph.includes("<img") || paragraph.includes("<p>") || paragraph.includes("<h2>") || paragraph.includes("&nbsp;");
+            const isHtml = /<\/?[a-z][\s\S]*>/i.test(paragraph);
             if (isHtml) {
               return (
                 <div
