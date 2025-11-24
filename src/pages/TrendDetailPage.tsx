@@ -6,6 +6,7 @@ import { useI18n } from "../shared/i18n";
 import { getAuthorProfile } from "../data/authors";
 import { formatDate } from "../shared/date";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
+import { MarkdownContent } from "../components/MarkdownContent";
 
 type Status = "idle" | "loading" | "success" | "not-found" | "error";
 
@@ -103,26 +104,7 @@ export default function TrendDetailPage() {
           <span className="rounded-full bg-slate-100 px-3 py-1">{tagList}</span>
         </div>
 
-        <div className="prose prose-lg md:prose-xl prose-slate max-w-4xl text-slate-700 leading-relaxed">
-          {report.content.map((paragraph, index) => {
-            const isHtml = /<\/?[a-z][\s\S]*>/i.test(paragraph);
-            if (isHtml) {
-              return (
-                <div
-                  key={index}
-                  dangerouslySetInnerHTML={{ __html: paragraph }}
-                  className="mb-5 leading-relaxed [&_p]:my-2 [&_p]:text-lg md:[&_p]:text-xl [&_p]:leading-relaxed [&_img]:my-4 [&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_img]:object-contain [&_img]:shadow-md [&_img]:resize [&_img]:overflow-auto [&_img]:cursor-nwse-resize [&_img]:min-w-[200px] [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:text-2xl md:[&_h2]:text-3xl [&_h2]:leading-tight [&_ul]:my-3 [&_li]:my-1"
-                />
-              );
-            }
-            // 일반 텍스트인 경우
-            return (
-              <p key={index} className="mb-4 text-lg md:text-xl leading-relaxed text-slate-700">
-                {paragraph}
-              </p>
-            );
-          })}
-        </div>
+        <MarkdownContent content={report.content.join("\n\n")} />
         {author && (
           <div className="mt-10 flex flex-col gap-4 rounded-3xl bg-white p-6 shadow md:flex-row md:items-center md:gap-6">
             <img
