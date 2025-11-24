@@ -111,13 +111,13 @@ export default function TrendDetailPage() {
                 <div
                   key={index}
                   dangerouslySetInnerHTML={{ __html: paragraph }}
-                  className="mb-6 leading-relaxed [&_p]:mb-3 [&_p]:text-xl md:[&_p]:text-2xl [&_img]:my-5 [&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_img]:object-contain [&_img]:shadow-md [&_img]:resize [&_img]:overflow-auto [&_img]:cursor-nwse-resize [&_img]:min-w-[200px] [&_h2]:mt-7 [&_h2]:mb-3 [&_h2]:text-3xl [&_h2]:font-semibold"
+                  className="mb-6 leading-relaxed [&_p]:mb-2 md:[&_p]:mb-3 [&_p]:text-xl md:[&_p]:text-2xl [&_img]:my-5 [&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_img]:object-contain [&_img]:shadow-md [&_img]:resize [&_img]:overflow-auto [&_img]:cursor-nwse-resize [&_img]:min-w-[200px] [&_h2]:mt-7 [&_h2]:mb-3 [&_h2]:text-3xl [&_h2]:font-semibold"
                 />
               );
             }
             // 일반 텍스트인 경우
             return (
-              <p key={index} className="mb-4 text-xl md:text-2xl leading-relaxed text-slate-700">
+              <p key={index} className="mb-2 md:mb-3 text-xl md:text-2xl leading-relaxed text-slate-700">
                 {paragraph}
               </p>
             );
