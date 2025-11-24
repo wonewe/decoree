@@ -12,15 +12,15 @@ export default function PopupRadarPreview() {
     <section className="section-container space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-2">
-          <span className="badge-label bg-hanBlue/10 text-hanBlue">
+          <span className="badge-label">
             {t("nav.popups")}
           </span>
-          <h2 className="text-3xl font-bold text-dancheongNavy">{t("popupRadar.title")}</h2>
-          <p className="max-w-2xl text-slate-600">{t("popupRadar.subtitle")}</p>
+          <h2 className="text-3xl font-bold text-[var(--ink)]">{t("popupRadar.title")}</h2>
+          <p className="max-w-2xl text-[var(--ink-muted)]">{t("popupRadar.subtitle")}</p>
         </div>
         <Link
           to="/popups"
-          className="rounded-full border border-hanBlue px-6 py-2.5 text-sm font-semibold text-hanBlue transition hover:bg-hanBlue hover:text-white"
+          className="rounded-full border border-[var(--ink)] px-6 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[var(--ink)] hover:text-white"
         >
           {t("popupRadar.cards.cta")}
         </Link>
@@ -66,7 +66,7 @@ export default function PopupRadarPreview() {
       )}
 
       {status === "success" && topPopups.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">
+        <p className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper)] p-8 text-center text-sm text-[var(--ink-muted)]">
           {t("popupRadar.empty")}
         </p>
       )}

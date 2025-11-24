@@ -16,6 +16,42 @@ import { getLanguageLabel } from "../shared/i18n";
 
 type ContentType = "trends" | "events" | "phrases" | "popups";
 
+const SECTION_META: Record<
+  ContentType,
+  { label: string; description: string; createLabel: string; createPath: string; tagline: string }
+> = {
+  trends: {
+    label: "트렌드 리포트",
+    description: "동네별 인사이트와 리포트를 빠르게 작성하고 번역 상태를 추적하세요.",
+    createLabel: "새 트렌드 작성",
+    createPath: "/admin/edit/trends",
+    tagline: "에디터 팀"
+  },
+  events: {
+    label: "이벤트 캘린더",
+    description: "K-Culture 이벤트를 한 곳에서 관리하고 KOPIS와 동기화 상태를 확인합니다.",
+    createLabel: "새 이벤트 작성",
+    createPath: "/admin/edit/events",
+    tagline: "KOPIS 연동"
+  },
+  phrases: {
+    label: "한국어 프레이즈북",
+    description: "학습자용 표현집을 정리하고 카테고리·언어별 커버리지를 확인하세요.",
+    createLabel: "새 프레이즈 작성",
+    createPath: "/admin/edit/phrases",
+    tagline: "언어 전문가"
+  },
+  popups: {
+    label: "팝업 레이더",
+    description: "도심 팝업과 브랜드 협업 케이스를 큐레이션하고 노출 상태를 관리합니다.",
+    createLabel: "새 팝업 작성",
+    createPath: "/admin/edit/popups",
+    tagline: "도심 리서치"
+  }
+};
+
+const sectionOrder: ContentType[] = ["trends", "events", "phrases", "popups"];
+
 export default function AdminListPage() {
   const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
@@ -33,6 +69,42 @@ export default function AdminListPage() {
     processed: number;
   } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const activeMeta = SECTION_META[activeSection];
+
+  const getLanguageCoverage = (items: { language?: string }[]) => {
+    if (items.length === 0) return 0;
+    return new Set(items.map((item) => item.language ?? "default")).size;
+  };
+
+  const summaryCards = useMemo(
+    () => [
+      {
+        key: "trends" as ContentType,
+        label: "트렌드",
+        value: trends.length,
+        helper: `${getLanguageCoverage(trends)}개 언어`
+      },
+      {
+        key: "events" as ContentType,
+        label: "이벤트",
+        value: events.length,
+        helper: `${getLanguageCoverage(events)}개 언어`
+      },
+      {
+        key: "phrases" as ContentType,
+        label: "프레이즈",
+        value: phrases.length,
+        helper: `${getLanguageCoverage(phrases)}개 언어`
+      },
+      {
+        key: "popups" as ContentType,
+        label: "팝업",
+        value: popups.length,
+        helper: `${getLanguageCoverage(popups)}개 언어`
+      }
+    ],
+    [events, phrases, popups, trends]
+  );
 
   const handleUpdateEvents = async () => {
     if (!confirm("KOPIS에서 최신 이벤트를 가져와 갱신하시겠습니까?")) return;
@@ -129,10 +201,11 @@ export default function AdminListPage() {
   }, []);
 
   const sectionTabClass = (section: ContentType) => {
-    return `rounded-full px-4 py-2 text-sm font-semibold transition ${activeSection === section
-      ? "bg-hanBlue text-white shadow"
-      : "border border-slate-200 bg-white text-slate-600 hover:border-hanBlue hover:text-hanBlue"
-      }`;
+    return `rounded-full px-4 py-2 text-sm font-semibold transition ${
+      activeSection === section
+        ? "bg-[var(--ink)] text-white shadow-lg"
+        : "border border-[var(--border)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
+    }`;
   };
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -406,55 +479,84 @@ export default function AdminListPage() {
   return (
     <main className="min-h-screen bg-[var(--paper-muted)]">
       <section className="section-container space-y-8">
-        <header className="space-y-4">
-          <div className="content-shell space-y-2">
-            <p className="text-sm text-[var(--ink-subtle)]">{user?.email}</p>
-            <h1 className="font-heading text-4xl text-[var(--ink)]">Koraid Studio</h1>
-            <p className="text-[var(--ink-muted)]">콘텐츠를 작성하고 다국어 버전을 관리하세요.</p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => setActiveSection("trends")}
-              className={sectionTabClass("trends")}
-            >
-              트렌드 리포트
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveSection("events")}
-              className={sectionTabClass("events")}
-            >
-              이벤트 캘린더
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveSection("phrases")}
-              className={sectionTabClass("phrases")}
-            >
-              한국어 프레이즈북
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveSection("popups")}
-              className={sectionTabClass("popups")}
-            >
-              팝업 레이더
-            </button>
-          </div>
-        </header>
+        <div className="grid gap-6 lg:grid-cols-[2fr,1fr]">
+          <header className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm lg:p-8">
+            <div className="flex flex-wrap items-start justify-between gap-6">
+              <div className="space-y-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
+                  Studio overview
+                </p>
+                <h1 className="font-heading text-4xl text-[var(--ink)]">Koraid Studio</h1>
+                <p className="text-[var(--ink-muted)]">{activeMeta.description}</p>
+              </div>
+              <div className="flex flex-col items-start gap-3">
+                {user?.email && (
+                  <span className="rounded-full bg-[var(--paper-muted)] px-3 py-1 text-xs font-semibold text-[var(--ink-subtle)]">
+                    {user.email}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => navigate(activeMeta.createPath)}
+                  className="pill-button bg-[var(--ink)] text-white hover:-translate-y-0.5"
+                >
+                  + {activeMeta.createLabel}
+                </button>
+              </div>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-2 text-xs font-semibold text-[var(--ink-subtle)]">
+              <span className="rounded-full bg-[var(--paper-muted)] px-3 py-1">{activeMeta.tagline}</span>
+              <span className="rounded-full bg-[var(--paper-muted)] px-3 py-1">
+                현재 섹션 · {activeMeta.label}
+              </span>
+            </div>
+          </header>
 
-        <div className="card space-y-3">
+          <div className="grid gap-4 sm:grid-cols-2">
+            {summaryCards.map((card) => (
+              <div
+                key={card.key}
+                className={`rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-5 shadow-sm transition ${
+                  activeSection === card.key ? "ring-2 ring-[var(--ink)]" : ""
+                }`}
+              >
+                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
+                  {card.label}
+                </p>
+                <p className="mt-2 text-3xl font-semibold text-[var(--ink)]">{card.value}</p>
+                <p className="text-xs text-[var(--ink-muted)]">{card.helper}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {sectionOrder.map((section) => (
+            <button
+              key={section}
+              type="button"
+              onClick={() => setActiveSection(section)}
+              className={sectionTabClass(section)}
+            >
+              {SECTION_META[section].label}
+            </button>
+          ))}
+        </div>
+
+        <div className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm">
           <label className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
             Studio 검색
           </label>
-          <div className="relative">
+          <div className="relative mt-3">
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--ink-subtle)]">
+              ⌕
+            </span>
             <input
               type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="제목, ID, 담당자 등을 입력하세요"
-              className="w-full rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 pr-12 text-sm focus:border-[var(--ink)] focus:outline-none"
+              className="w-full rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 pl-11 pr-12 text-sm text-[var(--ink)] focus:border-[var(--ink)] focus:outline-none"
             />
             {searchQuery && (
               <button

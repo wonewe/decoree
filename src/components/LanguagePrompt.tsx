@@ -43,10 +43,10 @@ export default function LanguagePrompt({ onSelect }: LanguagePromptProps) {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4">
-      <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
-        <h2 className="text-xl font-bold text-dancheongNavy">{t("languagePrompt.title")}</h2>
-        <p className="mt-2 text-sm text-slate-600">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--ink)]/70 p-4">
+      <div className="w-full max-w-md rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow-2xl">
+        <h2 className="text-xl font-bold text-[var(--ink)]">{t("languagePrompt.title")}</h2>
+        <p className="mt-2 text-sm text-[var(--ink-muted)]">
           {t("languagePrompt.description")} ({suggested.toUpperCase()})
         </p>
         <div className="mt-4 grid grid-cols-2 gap-3">
@@ -57,8 +57,8 @@ export default function LanguagePrompt({ onSelect }: LanguagePromptProps) {
               onClick={() => handleSelect(item.code)}
               className={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${
                 item.code === suggested
-                  ? "border-hanBlue bg-hanBlue/10 text-hanBlue shadow"
-                  : "border-slate-200 text-slate-700 hover:border-hanBlue hover:text-hanBlue"
+                  ? "border-[var(--ink)] bg-[var(--ink)]/10 text-[var(--ink)] shadow"
+                  : "border-[var(--border)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
               }`}
             >
               {item.label}
@@ -69,7 +69,7 @@ export default function LanguagePrompt({ onSelect }: LanguagePromptProps) {
           <button
             type="button"
             onClick={() => handleSelect(language)}
-            className="text-sm font-semibold text-slate-500 underline"
+            className="text-sm font-semibold text-[var(--ink-subtle)] underline-offset-4 hover:text-[var(--ink)]"
           >
             {t("languagePrompt.skip")}
           </button>

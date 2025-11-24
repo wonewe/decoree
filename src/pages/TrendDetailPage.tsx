@@ -36,7 +36,7 @@ export default function TrendDetailPage() {
   if (status === "loading" || status === "idle") {
     return (
       <section className="section-container">
-        <div className="h-72 animate-pulse rounded-3xl bg-slate-200" />
+        <div className="h-72 animate-pulse rounded-3xl bg-[var(--paper-muted)]" />
       </section>
     );
   }
@@ -44,10 +44,10 @@ export default function TrendDetailPage() {
   if (status === "not-found" || !report) {
     return (
       <section className="section-container space-y-6 text-center">
-        <h2 className="text-3xl font-semibold text-dancheongNavy">
+        <h2 className="text-3xl font-semibold text-[var(--ink)]">
           {t("trendDetail.notFound")}
         </h2>
-        <p className="text-slate-600">{t("trendDetail.notFoundSubtitle")}</p>
+        <p className="text-[var(--ink-muted)]">{t("trendDetail.notFoundSubtitle")}</p>
         <button
           onClick={() => navigate(-1)}
           className="primary-button inline-flex items-center justify-center"
@@ -72,7 +72,7 @@ export default function TrendDetailPage() {
   };
 
   return (
-    <article className="bg-white">
+    <article className="bg-[var(--paper)]">
       <div className="relative h-[320px] w-full overflow-hidden">
         <img
           src={report.imageUrl}
@@ -84,7 +84,7 @@ export default function TrendDetailPage() {
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/35 to-transparent" />
         <div className="absolute bottom-6 left-1/2 w-full max-w-5xl -translate-x-1/2 px-6">
-          <div className="rounded-2xl border border-white/60 bg-white/85 p-5 text-slate-900 shadow-lg backdrop-blur">
+          <div className="rounded-2xl border border-white/40 bg-white/90 p-5 text-slate-900 shadow-lg backdrop-blur">
             <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
               <button
                 onClick={() => navigate(-1)}
@@ -92,26 +92,26 @@ export default function TrendDetailPage() {
               >
                 ← {t("trendDetail.back")}
               </button>
-              <span className="rounded-full bg-slate-100 px-2 py-1">{report.neighborhood}</span>
+              <span className="rounded-full bg-white/70 px-2 py-1">{report.neighborhood}</span>
               <span>•</span>
               <span>{published}</span>
             </div>
             <h1 className="mt-3 text-3xl font-bold leading-snug md:text-4xl">{report.title}</h1>
-            <p className="mt-2 max-w-3xl text-sm text-slate-600 md:text-base">{report.summary}</p>
+            <p className="mt-2 max-w-3xl text-sm text-slate-700 md:text-base">{report.summary}</p>
           </div>
         </div>
       </div>
 
       <div className="section-container">
         <div className="mx-auto flex max-w-3xl flex-col gap-8 py-10">
-          <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-slate-500">
-            <span className="rounded-full bg-slate-100 px-3 py-1">{tagList}</span>
+          <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-[var(--ink-subtle)]">
+            <span className="rounded-full bg-[var(--paper-muted)] px-3 py-1">{tagList}</span>
           </div>
 
           <MarkdownContent content={report.content.join("\n\n")} />
 
           {author && (
-            <div className="flex flex-col gap-4 rounded-3xl bg-slate-50 p-6 shadow-sm md:flex-row md:items-center md:gap-6">
+            <div className="flex flex-col gap-4 rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm md:flex-row md:items-center md:gap-6">
               <img
                 src={author.avatarUrl}
                 alt={author.name}
@@ -119,21 +119,21 @@ export default function TrendDetailPage() {
                 className="h-16 w-16 flex-shrink-0 rounded-full object-cover shadow"
               />
               <div className="space-y-1">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
                   {t("trendDetail.author.label")}
                 </p>
-                <h3 className="text-lg font-semibold text-dancheongNavy">{author.name}</h3>
-                <p className="text-sm font-semibold text-slate-500">{author.title}</p>
-                <p className="text-sm text-slate-600">{author.bio}</p>
+                <h3 className="text-lg font-semibold text-[var(--ink)]">{author.name}</h3>
+                <p className="text-sm font-semibold text-[var(--ink-subtle)]">{author.title}</p>
+                <p className="text-sm text-[var(--ink-muted)]">{author.bio}</p>
               </div>
             </div>
           )}
 
-          <aside className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
-            <h2 className="text-base font-semibold text-dancheongNavy">
+          <aside className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm">
+            <h2 className="text-base font-semibold text-[var(--ink)]">
               {t("trendDetail.sidebarTitle")}
             </h2>
-            <ul className="mt-3 space-y-2 text-sm text-slate-600">
+            <ul className="mt-3 space-y-2 text-sm text-[var(--ink-muted)]">
               <li>
                 <strong>{t("trendDetail.neighborhood")}: </strong>
                 {report.neighborhood}

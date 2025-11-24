@@ -20,7 +20,7 @@ export function LanguageMultiSelect({ label, helper, value, onChange }: Language
 
   return (
     <div className="flex flex-col gap-2">
-      <span className="text-sm font-semibold text-dancheongNavy">{label}</span>
+      <span className="text-sm font-semibold text-[var(--ink)]">{label}</span>
       <div className="flex flex-wrap gap-2">
         {LANG_OPTIONS.map((lang) => {
           const isActive = value.includes(lang);
@@ -31,8 +31,8 @@ export function LanguageMultiSelect({ label, helper, value, onChange }: Language
               onClick={() => toggleLanguage(lang)}
               className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
                 isActive
-                  ? "bg-hanBlue text-white shadow"
-                  : "border border-slate-200 bg-white text-slate-600 hover:border-hanBlue hover:text-hanBlue"
+                  ? "bg-[var(--ink)] text-white shadow"
+                  : "border border-[var(--border)] bg-[var(--paper)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
               }`}
             >
               {getLanguageLabel(lang)}
@@ -40,7 +40,7 @@ export function LanguageMultiSelect({ label, helper, value, onChange }: Language
           );
         })}
       </div>
-      {helper && <p className="text-xs text-slate-500">{helper}</p>}
+      {helper && <p className="text-xs text-[var(--ink-subtle)]">{helper}</p>}
     </div>
   );
 }

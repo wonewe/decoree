@@ -9,25 +9,25 @@ export default function StudentCommunityPage() {
     <LocalSupportAccessGate>
       <section className="section-container space-y-8">
         <header className="space-y-4">
-          <span className="badge-label bg-hanBlue/10 text-hanBlue">
+          <span className="badge-label">
             {t("nav.localSupport")}
           </span>
-          <h1 className="text-4xl font-bold text-dancheongNavy">{t("localSupport.community.title")}</h1>
-          <p className="max-w-3xl text-slate-600">{t("localSupport.community.subtitle")}</p>
+          <h1 className="text-4xl font-bold text-[var(--ink)]">{t("localSupport.community.title")}</h1>
+          <p className="max-w-3xl text-[var(--ink-muted)]">{t("localSupport.community.subtitle")}</p>
         </header>
         <div className="grid gap-6 md:grid-cols-3">
           {COMMUNITY_BOARDS.map((board) => (
             <Link
               key={board.id}
               to={`/local-support/community/${board.id}`}
-              className="rounded-3xl bg-white p-6 shadow transition hover:-translate-y-1"
+              className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow transition hover:-translate-y-1"
             >
-              <h2 className="text-xl font-semibold text-dancheongNavy">{board.name}</h2>
-              <p className="mt-2 text-sm text-slate-500">{board.summary}</p>
-              <ul className="mt-4 space-y-2 text-xs text-slate-600">
+              <h2 className="text-xl font-semibold text-[var(--ink)]">{board.name}</h2>
+              <p className="mt-2 text-sm text-[var(--ink-muted)]">{board.summary}</p>
+              <ul className="mt-4 space-y-2 text-xs text-[var(--ink-muted)]">
                 {board.highlights.map((item) => (
                   <li key={item} className="flex gap-3">
-                    <span className="text-hanBlue">#</span>
+                    <span className="text-[var(--ink)]">#</span>
                     <span>{item}</span>
                   </li>
                 ))}
