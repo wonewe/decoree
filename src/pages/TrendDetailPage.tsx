@@ -82,23 +82,23 @@ export default function TrendDetailPage() {
         <div className="absolute right-6 top-6">
           <BookmarkButton item={bookmarkItem} />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-        <div className="absolute bottom-6 left-1/2 w-full max-w-5xl -translate-x-1/2 px-6 text-white">
-          <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-white/80">
-            <button
-              onClick={() => navigate(-1)}
-              className="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-[11px] font-semibold backdrop-blur hover:bg-white/30"
-            >
-              ← {t("trendDetail.back")}
-            </button>
-            <span className="rounded-full bg-white/15 px-2 py-1 text-[11px] font-semibold">
-              {report.neighborhood}
-            </span>
-            <span>•</span>
-            <span>{published}</span>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/35 to-transparent" />
+        <div className="absolute bottom-6 left-1/2 w-full max-w-5xl -translate-x-1/2 px-6">
+          <div className="rounded-2xl border border-white/60 bg-white/85 p-5 text-slate-900 shadow-lg backdrop-blur">
+            <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-wide text-slate-600">
+              <button
+                onClick={() => navigate(-1)}
+                className="inline-flex items-center gap-2 rounded-full bg-slate-900 text-white px-3 py-1 transition hover:-translate-y-0.5 hover:shadow"
+              >
+                ← {t("trendDetail.back")}
+              </button>
+              <span className="rounded-full bg-slate-100 px-2 py-1">{report.neighborhood}</span>
+              <span>•</span>
+              <span>{published}</span>
+            </div>
+            <h1 className="mt-3 text-3xl font-bold leading-snug md:text-4xl">{report.title}</h1>
+            <p className="mt-2 max-w-3xl text-sm text-slate-600 md:text-base">{report.summary}</p>
           </div>
-          <h1 className="mt-3 text-3xl font-bold leading-snug md:text-4xl">{report.title}</h1>
-          <p className="mt-2 max-w-3xl text-sm text-white/90 md:text-base">{report.summary}</p>
         </div>
       </div>
 
