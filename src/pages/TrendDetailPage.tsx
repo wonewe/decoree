@@ -94,7 +94,7 @@ export default function TrendDetailPage() {
             <span>{report.neighborhood}</span>
           </div>
           <h1 className="mt-4 text-3xl font-bold md:text-4xl">{report.title}</h1>
-          <p className="mt-2 max-w-3xl text-2xl text-slate-100 md:text-3xl">{report.summary}</p>
+          <p className="mt-2 max-w-3xl text-lg text-slate-100 md:text-xl">{report.summary}</p>
         </div>
       </div>
 
@@ -103,7 +103,7 @@ export default function TrendDetailPage() {
           <span className="rounded-full bg-slate-100 px-3 py-1">{tagList}</span>
         </div>
 
-        <div className="prose prose-2xl md:prose-2xl prose-slate max-w-4xl text-slate-700">
+        <div className="prose prose-2xl md:prose-3xl prose-slate max-w-4xl text-slate-700 leading-snug">
           {report.content.map((paragraph, index) => {
             const isHtml = /<\/?[a-z][\s\S]*>/i.test(paragraph);
             if (isHtml) {
@@ -111,13 +111,13 @@ export default function TrendDetailPage() {
                 <div
                   key={index}
                   dangerouslySetInnerHTML={{ __html: paragraph }}
-                  className="mb-6 leading-relaxed [&_p]:mb-1 md:[&_p]:mb-2 [&_p]:text-2xl md:[&_p]:text-3xl [&_img]:my-5 [&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_img]:object-contain [&_img]:shadow-md [&_img]:resize [&_img]:overflow-auto [&_img]:cursor-nwse-resize [&_img]:min-w-[200px] [&_h2]:mt-7 [&_h2]:mb-2 [&_h2]:text-4xl [&_h2]:font-semibold"
+                  className="mb-4 leading-snug [&_p]:my-1 [&_p]:text-3xl md:[&_p]:text-4xl [&_p]:leading-snug [&_img]:my-4 [&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_img]:object-contain [&_img]:shadow-md [&_img]:resize [&_img]:overflow-auto [&_img]:cursor-nwse-resize [&_img]:min-w-[200px] [&_h2]:mt-5 [&_h2]:mb-2 [&_h2]:text-4xl md:[&_h2]:text-5xl [&_h2]:leading-snug [&_ul]:my-2 [&_li]:my-1"
                 />
               );
             }
             // 일반 텍스트인 경우
             return (
-              <p key={index} className="mb-1 md:mb-2 text-2xl md:text-3xl leading-relaxed text-slate-700">
+              <p key={index} className="mb-1 md:mb-1.5 text-3xl md:text-4xl leading-snug text-slate-700">
                 {paragraph}
               </p>
             );
