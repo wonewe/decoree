@@ -103,7 +103,7 @@ export default function TrendDetailPage() {
           <span className="rounded-full bg-slate-100 px-3 py-1">{tagList}</span>
         </div>
 
-        <div className="prose prose-xl md:prose-2xl prose-slate max-w-4xl text-slate-700 leading-tight">
+        <div className="prose prose-lg md:prose-xl prose-slate max-w-4xl text-slate-700 leading-relaxed">
           {report.content.map((paragraph, index) => {
             const isHtml = /<\/?[a-z][\s\S]*>/i.test(paragraph);
             if (isHtml) {
@@ -111,13 +111,13 @@ export default function TrendDetailPage() {
                 <div
                   key={index}
                   dangerouslySetInnerHTML={{ __html: paragraph }}
-                  className="mb-3 leading-tight [&_p]:my-0.5 [&_p]:text-2xl md:[&_p]:text-3xl [&_p]:leading-tight [&_img]:my-3 [&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_img]:object-contain [&_img]:shadow-md [&_img]:resize [&_img]:overflow-auto [&_img]:cursor-nwse-resize [&_img]:min-w-[200px] [&_h2]:mt-4 [&_h2]:mb-1 [&_h2]:text-3xl md:[&_h2]:text-4xl [&_h2]:leading-tight [&_ul]:my-1 [&_li]:my-0.5"
+                  className="mb-5 leading-relaxed [&_p]:my-2 [&_p]:text-lg md:[&_p]:text-xl [&_p]:leading-relaxed [&_img]:my-4 [&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_img]:object-contain [&_img]:shadow-md [&_img]:resize [&_img]:overflow-auto [&_img]:cursor-nwse-resize [&_img]:min-w-[200px] [&_h2]:mt-6 [&_h2]:mb-3 [&_h2]:text-2xl md:[&_h2]:text-3xl [&_h2]:leading-tight [&_ul]:my-3 [&_li]:my-1"
                 />
               );
             }
             // 일반 텍스트인 경우
             return (
-              <p key={index} className="mb-0.5 md:mb-1 text-2xl md:text-3xl leading-tight text-slate-700">
+              <p key={index} className="mb-4 text-lg md:text-xl leading-relaxed text-slate-700">
                 {paragraph}
               </p>
             );
