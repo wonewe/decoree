@@ -6,6 +6,15 @@ type MarkdownContentProps = {
   style?: CSSProperties;
 };
 
+const normalizeEntities = (value: string) =>
+  value
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+
 const escapeHtml = (value: string) =>
   value
     .replace(/&/g, "&amp;")
@@ -23,18 +32,38 @@ const renderInline = (value: string) => {
   return text;
 };
 
+const stripHtml = (value: string) => normalizeEntities(value).replace(/<[^>]+>/g, "");
+
+const parseHtmlHeading = (value: string) => {
+  const match = value.match(/^<h([1-6])[^>]*>([\s\S]+?)<\/h\1>/i);
+  if (!match) return null;
+  const level = Math.min(parseInt(match[1], 10) || 1, 3);
+  const text = stripHtml(match[2]).trim();
+  if (!text) return null;
+  return { level, text };
+};
+
 const renderBlock = (block: string) => {
-  const trimmed = block.trim();
+  const raw = normalizeEntities(block);
+  const trimmed = raw.trim();
   if (!trimmed) return "";
 
-  if (/^#{1,6}\s/.test(trimmed)) {
-    const level = Math.min(trimmed.match(/^#+/)![0].length, 3); // cap at h3 to keep hierarchy tidy
-    const text = trimmed.replace(/^#{1,6}\s*/, "");
+  const htmlHeading = parseHtmlHeading(trimmed);
+  if (htmlHeading) {
+    return `<h${htmlHeading.level}>${renderInline(htmlHeading.text)}</h${htmlHeading.level}>`;
+  }
+
+  const htmlStripped = trimmed.includes("<") ? stripHtml(trimmed) : trimmed;
+  if (!htmlStripped) return "";
+
+  if (/^#{1,6}\s/.test(htmlStripped)) {
+    const level = Math.min(htmlStripped.match(/^#+/)![0].length, 3); // cap at h3 to keep hierarchy tidy
+    const text = htmlStripped.replace(/^#{1,6}\s*/, "");
     return `<h${level}>${renderInline(text)}</h${level}>`;
   }
 
-  if (/^-\s+/m.test(trimmed)) {
-    const items = trimmed
+  if (/^-\s+/m.test(htmlStripped)) {
+    const items = htmlStripped
       .split(/\n+/)
       .filter((line) => line.trim().startsWith("- "))
       .map((line) => `<li>${renderInline(line.trim().replace(/^-+\s*/, ""))}</li>`)
@@ -42,7 +71,7 @@ const renderBlock = (block: string) => {
     return `<ul>${items}</ul>`;
   }
 
-  return `<p>${renderInline(trimmed)}</p>`;
+  return `<p>${renderInline(htmlStripped)}</p>`;
 };
 
 export function MarkdownContent({ content, className = "", style }: MarkdownContentProps) {
