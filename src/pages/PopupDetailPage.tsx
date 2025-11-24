@@ -29,7 +29,7 @@ export default function PopupDetailPage() {
   if (status === "loading") {
     return (
       <section className="section-container">
-        <div className="h-72 animate-pulse rounded-3xl bg-slate-200" />
+        <div className="h-72 animate-pulse rounded-3xl bg-[var(--paper)] shadow-sm ring-1 ring-[var(--border)]" />
       </section>
     );
   }
@@ -37,7 +37,7 @@ export default function PopupDetailPage() {
   if (!popup) {
     return (
       <section className="section-container space-y-4 text-center">
-        <h2 className="text-3xl font-semibold text-dancheongNavy">Pop-up not found</h2>
+        <h2 className="text-3xl font-semibold text-[var(--ink)]">Pop-up not found</h2>
         <button onClick={() => navigate(-1)} className="primary-button inline-flex justify-center">
           {t("trendDetail.goBack")}
         </button>
@@ -86,7 +86,7 @@ export default function PopupDetailPage() {
   );
 
   return (
-    <article className="bg-white">
+    <article className="bg-[var(--paper)]">
       <div className="relative h-[320px] w-full overflow-hidden">
         <img src={popup.heroImageUrl} alt={popup.title} className="h-full w-full object-cover" />
         <div className="absolute right-6 top-6">
@@ -101,7 +101,7 @@ export default function PopupDetailPage() {
             ← {t("trendDetail.back")}
           </button>
           <p className="text-sm uppercase tracking-wide text-white/80">{popup.window}</p>
-          <h1 className="mt-2 text-3xl font-bold md:text-4xl">{popup.title}</h1>
+          <h1 className="mt-2 text-3xl font-bold text-white md:text-4xl">{popup.title}</h1>
           <p className="text-sm text-white/90">{popup.location}</p>
         </div>
       </div>
@@ -109,13 +109,13 @@ export default function PopupDetailPage() {
       <div className="section-container space-y-10">
         <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
           <div className="space-y-6">
-            <p className="text-lg text-slate-600">{popup.description}</p>
-            <div className="space-y-4 rounded-3xl bg-slate-50 p-6 shadow">
-              <h2 className="text-xl font-semibold text-dancheongNavy">Highlights</h2>
-              <ul className="space-y-3 text-sm text-slate-600">
+            <p className="text-lg text-[var(--ink-muted)]">{popup.description}</p>
+            <div className="space-y-4 rounded-3xl bg-[var(--paper-muted)] p-6 shadow">
+              <h2 className="text-xl font-semibold text-[var(--ink)]">Highlights</h2>
+              <ul className="space-y-3 text-sm text-[var(--ink-muted)]">
                 {popup.highlights.map((item) => (
                   <li key={item} className="flex gap-3">
-                    <span className="text-hanBlue">•</span>
+                    <span className="text-[var(--ink)]">•</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -123,16 +123,16 @@ export default function PopupDetailPage() {
             </div>
             {renderDetails()}
           </div>
-          <aside className="space-y-4 rounded-3xl bg-white p-6 shadow">
+          <aside className="space-y-4 rounded-3xl bg-[var(--paper-muted)] p-6 shadow">
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Brand</h3>
-              <p className="text-lg font-semibold text-dancheongNavy">{popup.brand}</p>
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">Brand</h3>
+              <p className="text-lg font-semibold text-[var(--ink)]">{popup.brand}</p>
             </div>
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Status</h3>
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">Status</h3>
               <p
                 className={`text-base font-semibold ${
-                  popup.status === "ended" ? "text-slate-500" : "text-hanBlue"
+                  popup.status === "ended" ? "text-[var(--ink-subtle)]" : "text-[var(--ink)]"
                 }`}
               >
                 {popup.status === "now"
@@ -143,13 +143,13 @@ export default function PopupDetailPage() {
               </p>
             </div>
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Location</h3>
-              <p className="text-sm text-slate-600">{popup.location}</p>
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">Location</h3>
+              <p className="text-sm text-[var(--ink-muted)]">{popup.location}</p>
             </div>
             {mapEmbedUrl && (
               <div className="space-y-2">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Map</h3>
-                <div className="overflow-hidden rounded-2xl border border-slate-200">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">Map</h3>
+                <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
                   <iframe
                     title={`map-${popup.id}`}
                     src={mapEmbedUrl}
@@ -166,7 +166,7 @@ export default function PopupDetailPage() {
                     href={mapLink}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs font-semibold text-hanBlue hover:underline"
+                    className="text-xs font-semibold text-[var(--ink)] underline-offset-4 hover:underline"
                   >
                     지도 크게 보기 ↗
                   </a>
@@ -177,7 +177,7 @@ export default function PopupDetailPage() {
               {popup.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full bg-hanBlue/10 px-3 py-1 text-xs font-semibold text-hanBlue"
+                  className="rounded-full bg-[var(--paper)] px-3 py-1 text-xs font-semibold text-[var(--ink)] ring-1 ring-[var(--border)]"
                 >
                   #{tag}
                 </span>

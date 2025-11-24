@@ -89,27 +89,27 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
       )}
 
       {showFilters && (
-        <div className="space-y-3 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
-          <div className="text-sm font-semibold uppercase tracking-wide text-slate-400">
+        <div className="space-y-3 rounded-3xl bg-[var(--paper)] p-6 shadow-sm ring-1 ring-[var(--border)]">
+          <div className="text-sm font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
             {t("events.dateFilter.title")}
           </div>
           <div className="grid gap-4 md:grid-cols-[repeat(2,minmax(0,1fr))_auto]">
-            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               {t("events.dateFilter.start")}
               <input
                 type="date"
                 value={startDate}
                 onChange={(event) => setStartDate(event.target.value)}
-                className="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+                className="rounded-xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 text-sm text-[var(--ink)] focus:border-[var(--ink)] focus:outline-none focus:ring-1 focus:ring-[var(--ink)]"
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-slate-600">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               {t("events.dateFilter.end")}
               <input
                 type="date"
                 value={endDate}
                 onChange={(event) => setEndDate(event.target.value)}
-                className="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+                className="rounded-xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 text-sm text-[var(--ink)] focus:border-[var(--ink)] focus:outline-none focus:ring-1 focus:ring-[var(--ink)]"
               />
             </label>
             <button
@@ -118,7 +118,7 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
                 setStartDate("");
                 setEndDate("");
               }}
-              className="self-end rounded-full border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-600 transition hover:border-dancheongRed hover:text-dancheongRed"
+              className="self-end rounded-full border border-[var(--border)] px-6 py-3 text-sm font-semibold text-[var(--ink)] transition hover:border-[var(--ink)] hover:text-[var(--ink)]"
             >
               {t("events.dateFilter.reset")}
             </button>
@@ -131,9 +131,9 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
           {previewedEvents.map((event) => (
             <article
               key={event.id}
-              className="group relative flex h-full flex-col overflow-hidden rounded-3xl bg-white text-dancheongNavy shadow-sm ring-1 ring-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="group relative flex h-full flex-col overflow-hidden rounded-3xl bg-[var(--paper)] text-[var(--ink)] shadow-sm ring-1 ring-[var(--border)] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-[var(--paper-muted)]">
                 {event.imageUrl ? (
                   <img
                     src={event.imageUrl}
@@ -142,8 +142,8 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
                     loading="lazy"
                   />
                 ) : (
-                  <div className="flex h-full flex-col items-center justify-center gap-2 text-slate-400">
-                    <div className="h-12 w-12 rounded-full bg-slate-200/50" />
+                  <div className="flex h-full flex-col items-center justify-center gap-2 text-[var(--ink-subtle)]">
+                    <div className="h-12 w-12 rounded-full bg-[var(--paper-muted)]/70" />
                     <span className="text-sm font-medium">No image</span>
                   </div>
                 )}
@@ -158,27 +158,27 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
 
               <div className="flex flex-1 flex-col justify-between gap-4 p-5">
                 <div className="space-y-2">
-                  <div className="text-[11px] font-bold uppercase tracking-wide text-hanBlue">
+                  <div className="text-[11px] font-bold uppercase tracking-wide text-[var(--ink-muted)]">
                     {formatDateRange(event.startDate, event.endDate)}
                   </div>
-                  <h3 className="line-clamp-2 text-lg font-bold leading-snug text-dancheongNavy group-hover:text-hanBlue transition-colors">
+                  <h3 className="line-clamp-2 text-lg font-bold leading-snug text-[var(--ink)] transition-colors group-hover:text-[var(--ink-muted)]">
                     {event.title}
                   </h3>
-                  <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">
+                  <p className="line-clamp-2 text-sm leading-relaxed text-[var(--ink-muted)]">
                     {event.description}
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-3 pt-2">
-                  <div className="flex items-center justify-between text-xs font-medium text-slate-500">
+                  <div className="flex items-center justify-between text-xs font-medium text-[var(--ink-subtle)]">
                     <span className="line-clamp-1 max-w-[60%]">{event.location}</span>
-                    <span className="text-dancheongNavy">{event.price}</span>
+                    <span className="text-[var(--ink)]">{event.price}</span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 border-t border-slate-100 pt-3">
+                  <div className="flex items-center justify-between gap-2 border-t border-[var(--border)] pt-3">
                     <Link
                       to={`/events/${event.id}`}
-                      className="text-sm font-semibold text-hanBlue transition hover:text-dancheongNavy"
+                      className="text-sm font-semibold text-[var(--ink)] transition hover:text-[var(--ink-muted)]"
                     >
                       {t("eventDetail.readMore")}
                     </Link>
@@ -188,7 +188,7 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
                           href={event.bookingUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="rounded-full bg-slate-50 p-2 text-slate-400 transition hover:bg-hanBlue hover:text-white"
+                          className="rounded-full bg-[var(--paper-muted)] p-2 text-[var(--ink-subtle)] transition hover:bg-[var(--ink)] hover:text-white"
                           title={t("eventDetail.bookingCta")}
                         >
                           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -245,7 +245,7 @@ function FilterButton({ label, active, onClick }: FilterButtonProps) {
       className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
         active
           ? "bg-[var(--ink)] text-white"
-          : "bg-white text-[var(--ink-muted)] hover:text-[var(--ink)]"
+          : "bg-[var(--paper)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
       }`}
     >
       {label}

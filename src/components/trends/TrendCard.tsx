@@ -38,7 +38,7 @@ export function TrendCard({ report }: TrendCardProps) {
 
   return (
     <article
-      className="card cursor-pointer transition-[box-shadow,transform] hover:-translate-y-1 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-hanBlue"
+      className="card cursor-pointer transition-[box-shadow,transform] hover:-translate-y-1 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--ink)]"
       role="button"
       tabIndex={0}
       onClick={goToDetail}
@@ -50,18 +50,18 @@ export function TrendCard({ report }: TrendCardProps) {
             <CardHeader intensity={report.intensity} publishedLabel={publishedLabel} />
             <BookmarkButton item={bookmarkItem} size="sm" />
           </div>
-          <h3 className="text-lg font-semibold text-dancheongNavy">{report.title}</h3>
-          <p className="text-sm text-slate-600">{report.summary}</p>
+          <h3 className="text-lg font-semibold text-[var(--ink)]">{report.title}</h3>
+          <p className="text-sm text-[var(--ink-muted)]">{report.summary}</p>
           {author && (
             <AuthorMeta name={author.name} title={author.title} avatarUrl={author.avatarUrl} />
           )}
-          <div className="text-xs text-slate-500">
+          <div className="text-xs text-[var(--ink-subtle)]">
             <strong>{t("trendDetail.neighborhood")}:</strong> {report.neighborhood} •{" "}
             {report.tags.join(" · ")}
           </div>
-          <p className="text-sm text-slate-700">{report.details}</p>
+          <p className="text-sm text-[var(--ink)]">{report.details}</p>
         </div>
-        <figure className="overflow-hidden rounded-2xl bg-slate-100 md:w-40 lg:w-48">
+        <figure className="overflow-hidden rounded-2xl bg-[var(--paper-muted)] md:w-40 lg:w-48">
           <img
             src={report.imageUrl}
             alt={report.title}
@@ -85,7 +85,7 @@ function CardHeader({ intensity, publishedLabel }: CardHeaderProps) {
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div className="flex items-center gap-2">
         <IntensityBadge intensity={intensity} />
-        <span className="text-xs text-slate-400">{publishedLabel}</span>
+        <span className="text-xs text-[var(--ink-subtle)]">{publishedLabel}</span>
       </div>
     </div>
   );
@@ -100,7 +100,7 @@ type AuthorMetaProps = {
 function AuthorMeta({ name, title, avatarUrl }: AuthorMetaProps) {
   const { t } = useI18n();
   return (
-    <div className="flex items-center gap-3 text-xs text-slate-500">
+    <div className="flex items-center gap-3 text-xs text-[var(--ink-subtle)]">
       <img
         src={avatarUrl}
         alt={name}
@@ -108,7 +108,7 @@ function AuthorMeta({ name, title, avatarUrl }: AuthorMetaProps) {
         loading="lazy"
       />
       <div className="flex flex-col">
-        <span className="font-semibold text-slate-600">
+        <span className="font-semibold text-[var(--ink)]">
           {t("trends.byline", { author: name })}
         </span>
         <span>{title}</span>
@@ -124,9 +124,9 @@ type IntensityBadgeProps = {
 function IntensityBadge({ intensity }: IntensityBadgeProps) {
   const { t } = useI18n();
   const styles: Record<TrendIntensity, string> = {
-    highlight: "bg-dancheongGreen/10 text-dancheongGreen",
-    insider: "bg-hanBlue/10 text-hanBlue",
-    emerging: "bg-dancheongYellow/10 text-dancheongYellow"
+    highlight: "bg-[var(--tag-green-bg)] text-[var(--tag-green)]",
+    insider: "bg-[var(--tag-blue-bg)] text-[var(--tag-blue)]",
+    emerging: "bg-[var(--tag-amber-bg)] text-[var(--tag-amber)]"
   };
 
   return (

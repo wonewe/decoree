@@ -32,8 +32,10 @@ export default function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition ${
-          open ? "border-hanBlue bg-hanBlue text-white shadow-lg" : "border-slate-200 bg-white"
+        className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-[var(--ink)] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ink)] ${
+          open
+            ? "border-[var(--ink)] bg-[var(--paper)] shadow-lg"
+            : "border-[var(--border)] bg-[var(--paper)]"
         }`}
         aria-haspopup="listbox"
         aria-expanded={open}
@@ -42,7 +44,7 @@ export default function LanguageSwitcher() {
         <span className="text-xs">{open ? "▲" : "▼"}</span>
       </button>
       {open && (
-        <div className="absolute right-0 z-20 mt-2 w-40 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl">
+        <div className="absolute right-0 z-20 mt-2 w-40 rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-2 shadow-xl">
           <ul role="listbox" className="space-y-1 text-sm">
             {languages.map((code) => (
               <li key={code}>
@@ -53,8 +55,8 @@ export default function LanguageSwitcher() {
                   onClick={() => setLanguage(code)}
                   className={`w-full rounded-xl px-3 py-2 text-left transition ${
                     language === code
-                      ? "bg-hanBlue text-white"
-                      : "text-slate-600 hover:bg-slate-100 hover:text-hanBlue"
+                      ? "bg-[var(--ink)] text-white"
+                      : "text-[var(--ink-muted)] hover:bg-[var(--paper-muted)] hover:text-[var(--ink)]"
                   }`}
                 >
                   {getLanguageLabel(code)}

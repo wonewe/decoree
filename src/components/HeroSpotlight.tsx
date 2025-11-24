@@ -77,7 +77,7 @@ export default function HeroSpotlight() {
   }, [spotlights.length]);
 
   return (
-    <section className="overflow-hidden rounded-3xl bg-white shadow-xl ring-1 ring-slate-100">
+    <section className="overflow-hidden rounded-3xl bg-[var(--paper)] shadow-xl ring-1 ring-[var(--border-strong)]">
       <div className="relative overflow-hidden">
         <div
           className="flex transition-transform duration-[1200ms] ease-in-out"
@@ -92,7 +92,7 @@ export default function HeroSpotlight() {
           ))}
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-3 border-t border-slate-100 bg-slate-50 px-4 py-3 md:px-6">
+      <div className="flex flex-wrap items-center gap-3 border-t border-[var(--border-strong)] bg-[var(--paper-muted)] px-4 py-3 md:px-6">
         {spotlights.map((spotlight) => (
           <button
             key={spotlight.key}
@@ -103,8 +103,8 @@ export default function HeroSpotlight() {
             }}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
               spotlights[activeIndex]?.key === spotlight.key
-                ? "bg-hanBlue text-white"
-                : "bg-white text-slate-600 hover:text-hanBlue"
+                ? "bg-[var(--ink)] text-white"
+                : "bg-[var(--paper)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
             }`}
           >
             {spotlight.tag}
@@ -140,27 +140,27 @@ function HeroSpotlightSlide({ spotlight }: HeroSpotlightSlideProps) {
           <p className="mt-3 text-sm text-slate-100 md:text-base">{spotlight.description}</p>
         </div>
       </div>
-      <div className="flex flex-col justify-between gap-6 p-6 md:h-[340px] md:p-8">
+      <div className="flex flex-col justify-between gap-6 bg-[var(--paper)] p-6 md:h-[340px] md:p-8">
         <div className="space-y-4">
-          <h4 className="text-sm uppercase tracking-wide text-slate-500">
+          <h4 className="text-sm uppercase tracking-wide text-[var(--ink-subtle)]">
             {t("hero.spotlight.title")}
           </h4>
           <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-dancheongNavy md:text-2xl">
+            <h3 className="text-xl font-semibold text-[var(--ink)] md:text-2xl">
               {spotlight.title}
             </h3>
-            <p className="text-sm text-slate-600 md:text-base">{spotlight.description}</p>
-            <p className="text-xs uppercase tracking-wide text-slate-400">{spotlight.meta}</p>
+            <p className="text-sm text-[var(--ink-muted)] md:text-base">{spotlight.description}</p>
+            <p className="text-xs uppercase tracking-wide text-[var(--ink-subtle)]">{spotlight.meta}</p>
           </div>
         </div>
         <div className="flex flex-col gap-4">
           <Link
             to={spotlight.to}
-            className="inline-flex items-center justify-center rounded-full bg-hanBlue px-5 py-3 text-sm font-semibold text-white transition hover:bg-dancheongNavy"
+            className="inline-flex items-center justify-center rounded-full bg-[var(--ink)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--ink-muted)]"
           >
             {spotlight.cta} →
           </Link>
-          <span className="text-xs text-slate-400">{t("hero.spotlight.disclaimer")}</span>
+          <span className="text-xs text-[var(--ink-subtle)]">{t("hero.spotlight.disclaimer")}</span>
         </div>
       </div>
     </>

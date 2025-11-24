@@ -32,47 +32,33 @@ export default function PopupRadarPreview() {
             <Link
               key={popup.id}
               to={`/popups/${popup.id}`}
-              className="group relative flex h-full flex-col overflow-hidden rounded-3xl bg-white text-dancheongNavy shadow-sm ring-1 ring-slate-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="group overflow-hidden rounded-[32px] bg-[var(--paper)] shadow-lg ring-1 ring-[var(--border)] transition hover:-translate-y-1"
             >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
+              <div className="relative">
                 <img
                   src={popup.posterUrl}
                   alt={popup.title}
-                  className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-105"
+                  className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
                   loading="lazy"
                 />
-                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-60 transition-opacity group-hover:opacity-70" />
-
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
-                  <span
-                    className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm ${
-                      popup.status === "ended" ? "bg-slate-800/70" : "bg-black/40"
-                    }`}
-                  >
-                    {popup.status === "now"
-                      ? t("popupRadar.status.now")
-                      : popup.status === "soon"
-                        ? t("popupRadar.status.soon")
-                        : t("popupRadar.status.ended")}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex flex-1 flex-col justify-between gap-4 p-5">
-                <div className="space-y-2">
-                  <h3 className="line-clamp-2 text-lg font-bold leading-snug text-dancheongNavy group-hover:text-hanBlue transition-colors">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+                  <div className="text-xs">{popup.window}</div>
+                  <h3 className="text-2xl font-bold leading-tight text-white drop-shadow">
                     {popup.title}
                   </h3>
-                  <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">
-                    {popup.description}
-                  </p>
+                  <p className="text-sm text-white/80">{popup.location}</p>
                 </div>
-
-                <div className="flex flex-col gap-3 pt-2">
-                  <div className="flex items-center justify-between text-xs font-medium text-slate-500">
-                    <span className="line-clamp-1">{popup.location}</span>
-                  </div>
-                </div>
+                <span className="absolute left-4 top-4 rounded-full bg-black/65 px-3 py-1 text-xs font-semibold text-white">
+                  {popup.status === "now"
+                    ? t("popupRadar.status.now")
+                    : popup.status === "soon"
+                      ? t("popupRadar.status.soon")
+                      : t("popupRadar.status.ended")}
+                </span>
+              </div>
+              <div className="p-5 text-sm text-[var(--ink-muted)]">
+                <p className="line-clamp-3">{popup.description}</p>
               </div>
             </Link>
           ))}

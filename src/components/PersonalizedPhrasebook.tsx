@@ -65,7 +65,7 @@ export default function PersonalizedPhrasebook() {
               className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                 selectedCategories.includes(category)
                   ? "bg-[var(--ink)] text-white"
-                  : "bg-white text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                  : "bg-[var(--paper)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
               }`}
             >
               {t(`phrasebook.category.${category}`)}
@@ -137,23 +137,23 @@ export default function PersonalizedPhrasebook() {
           </div>
 
           {filteredPhrases.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500">
+            <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper)] p-6 text-center text-sm text-[var(--ink-subtle)]">
               {t("phrasebook.search.empty")}
             </div>
           ) : (
-              <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 md:grid-cols-2">
               {filteredPhrases.map((phrase) => (
-                  <article key={phrase.id} className="card space-y-4">
+                <article key={phrase.id} className="card space-y-4">
                   <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold uppercase text-[var(--ink-subtle)]">
+                    <span className="text-sm font-semibold uppercase text-[var(--ink-subtle)]">
                       {t(`phrasebook.category.${phrase.category}`)}
                     </span>
                     <button
                       onClick={() => handleMarkCompleted(phrase)}
                       className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
                         completed.has(phrase.id)
-                            ? "bg-[var(--ink)] text-white"
-                            : "bg-[var(--paper-muted)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                          ? "bg-[var(--ink)] text-white"
+                          : "bg-[var(--paper-muted)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
                       }`}
                     >
                       {completed.has(phrase.id) ? "✓" : "+"} {t("phrasebook.completed")}

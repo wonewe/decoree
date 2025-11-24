@@ -6,6 +6,7 @@ import { useHeaderAuth } from "../hooks/useHeaderAuth";
 import { usePageTracking } from "../hooks/usePageTracking";
 import LanguageSwitcher from "./LanguageSwitcher";
 import LanguagePrompt from "./LanguagePrompt";
+import { useTheme } from "../hooks/useTheme";
 
 const primaryNav = [
   { path: "/trends", labelKey: "nav.trends" },
@@ -19,6 +20,7 @@ export default function Layout() {
   const { user, isAdmin, handleLogout, isProcessing, error: authError, dismissError } =
     useHeaderAuth();
   const location = useLocation();
+  const { resolvedTheme, cycleTheme, preference } = useTheme();
   usePageTracking();
 
   const siteOrigin =
@@ -77,6 +79,14 @@ export default function Layout() {
           </nav>
           <div className="flex items-center gap-3">
             <LanguageSwitcher />
+            <button
+              type="button"
+              onClick={cycleTheme}
+              className="rounded-full border border-[var(--border)] p-2 text-xs font-semibold text-[var(--ink-muted)] transition hover:text-[var(--ink)]"
+              aria-label="Toggle theme"
+            >
+              {resolvedTheme === "dark" ? "☀️" : preference === "system" ? "🌓" : "🌙"}
+            </button>
             {user ? (
               <div className="flex items-center gap-2">
                 <NavLink

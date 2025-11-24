@@ -47,7 +47,10 @@ export default function HeroSection() {
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <Link to="/trends" className="primary-button">
+            <Link
+              to="/trends"
+              className="pill-button border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] hover:-translate-y-0.5"
+            >
               {t("hero.cta.primary")}
             </Link>
             <Link to="/events" className="secondary-button">

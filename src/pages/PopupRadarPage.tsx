@@ -95,16 +95,34 @@ export default function PopupRadarPage() {
           {filteredPopups.map((popup) => (
             <article
               key={popup.id}
-              className="group relative flex h-full flex-col overflow-hidden rounded-[32px] bg-slate-900 text-white shadow-xl"
+              className="group flex h-full flex-col overflow-hidden rounded-[32px] bg-[var(--paper)] shadow-xl ring-1 ring-[var(--border)]"
             >
-              <Link to={`/popups/${popup.id}`} className="relative block h-full">
-                <img
-                  src={popup.posterUrl}
-                  alt={popup.title}
-                  className="h-72 w-full object-cover opacity-90 transition duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
+              <div className="relative">
+                <Link to={`/popups/${popup.id}`} className="block">
+                  <img
+                    src={popup.posterUrl}
+                    alt={popup.title}
+                    className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+                    <div className="text-xs">{popup.window}</div>
+                    <h3 className="text-2xl font-bold leading-tight text-white drop-shadow">{popup.title}</h3>
+                    <p className="text-sm text-white/80">{popup.location}</p>
+                  </div>
+                </Link>
+                <span
+                  className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-semibold ${
+                    popup.status === "ended" ? "bg-slate-700/80 text-white" : "bg-black/70 text-white"
+                  }`}
+                >
+                  {popup.status === "now"
+                    ? t("popupRadar.status.now")
+                    : popup.status === "soon"
+                      ? t("popupRadar.status.soon")
+                      : t("popupRadar.status.ended")}
+                </span>
                 <div className="absolute right-3 top-3">
                   <BookmarkButton
                     size="sm"
@@ -119,24 +137,11 @@ export default function PopupRadarPage() {
                     }}
                   />
                 </div>
-                <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-                  <div className="text-xs">{popup.window}</div>
-                  <h3 className="text-2xl font-bold leading-tight drop-shadow">{popup.title}</h3>
-                  <p className="text-sm text-white/80">{popup.location}</p>
-                  <p className="mt-1 text-xs text-white/70 line-clamp-2">{popup.description}</p>
-                </div>
-                <span
-                  className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-semibold ${
-                    popup.status === "ended" ? "bg-slate-700/80 text-white" : "bg-black/70 text-white"
-                  }`}
-                >
-                  {popup.status === "now"
-                    ? t("popupRadar.status.now")
-                    : popup.status === "soon"
-                      ? t("popupRadar.status.soon")
-                      : t("popupRadar.status.ended")}
-                </span>
-              </Link>
+              </div>
+              <div className="flex flex-1 flex-col justify-between gap-3 p-5 text-[var(--ink)]">
+                <p className="text-sm text-[var(--ink-muted)] line-clamp-2">{popup.description}</p>
+                <p className="text-xs text-[var(--ink-subtle)]">{popup.location}</p>
+              </div>
             </article>
           ))}
         </div>
