@@ -94,7 +94,7 @@ export default function TrendDetailPage() {
             <span>{report.neighborhood}</span>
           </div>
           <h1 className="mt-4 text-3xl font-bold md:text-4xl">{report.title}</h1>
-          <p className="mt-2 max-w-3xl text-sm text-slate-100 md:text-base">{report.summary}</p>
+          <p className="mt-2 max-w-3xl text-base text-slate-100 md:text-lg">{report.summary}</p>
         </div>
       </div>
 
@@ -103,7 +103,7 @@ export default function TrendDetailPage() {
           <span className="rounded-full bg-slate-100 px-3 py-1">{tagList}</span>
         </div>
 
-        <div className="prose prose-lg prose-slate max-w-4xl text-slate-700">
+        <div className="prose prose-lg md:prose-xl prose-slate max-w-4xl text-slate-700">
           {report.content.map((paragraph, index) => {
             const isHtml = /<\/?[a-z][\s\S]*>/i.test(paragraph);
             if (isHtml) {
@@ -111,13 +111,13 @@ export default function TrendDetailPage() {
                 <div
                   key={index}
                   dangerouslySetInnerHTML={{ __html: paragraph }}
-                  className="mb-6 leading-relaxed [&_p]:mb-4 [&_p]:text-lg [&_img]:my-6 [&_img]:mx-auto [&_img]:h-auto [&_img]:max-h-[420px] [&_img]:w-full [&_img]:max-w-2xl [&_img]:rounded-2xl [&_img]:object-cover [&_img]:shadow-md [&_h2]:mt-8 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:font-semibold"
+                  className="mb-6 leading-relaxed [&_p]:mb-4 [&_p]:text-lg md:[&_p]:text-xl [&_img]:my-6 [&_img]:mx-auto [&_img]:block [&_img]:h-auto [&_img]:max-h-[420px] [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_img]:object-contain [&_img]:shadow-md [&_h2]:mt-8 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:font-semibold"
                 />
               );
             }
             // 일반 텍스트인 경우
             return (
-              <p key={index} className="mb-5 text-lg leading-relaxed text-slate-700">
+              <p key={index} className="mb-5 text-lg md:text-xl leading-relaxed text-slate-700">
                 {paragraph}
               </p>
             );

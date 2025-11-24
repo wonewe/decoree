@@ -40,7 +40,7 @@ export default function WeeklyTrendDecoder() {
                 </div>
                 <div className="space-y-2">
                   <h3 className="text-xl font-semibold text-dancheongNavy">{report.title}</h3>
-                  <p className="text-sm text-slate-600 line-clamp-3">{report.summary}</p>
+                  <p className="text-base text-slate-600 line-clamp-3">{report.summary}</p>
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
                   <span>{report.tags.slice(0, 3).join(" / ")}</span>
