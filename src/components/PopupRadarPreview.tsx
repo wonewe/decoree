@@ -44,8 +44,16 @@ export default function PopupRadarPreview() {
                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-60 transition-opacity group-hover:opacity-70" />
 
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
-                  <span className="rounded-full bg-black/40 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">
-                    {popup.status === "now" ? t("popupRadar.status.now") : t("popupRadar.status.soon")}
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm ${
+                      popup.status === "ended" ? "bg-slate-800/70" : "bg-black/40"
+                    }`}
+                  >
+                    {popup.status === "now"
+                      ? t("popupRadar.status.now")
+                      : popup.status === "soon"
+                        ? t("popupRadar.status.soon")
+                        : t("popupRadar.status.ended")}
                   </span>
                 </div>
               </div>

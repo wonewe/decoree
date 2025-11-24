@@ -1376,6 +1376,7 @@ export default function AdminEditorPage() {
             >
               <option value="now">진행 중</option>
               <option value="soon">오픈 예정</option>
+              <option value="ended">종료</option>
             </select>
           </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
@@ -1387,6 +1388,27 @@ export default function AdminEditorPage() {
               className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
               placeholder="2024.06.01 - 06.24 • 11:00-20:00"
               required
+            />
+          </label>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            시작일 (자동 상태 전환)
+            <input
+              type="date"
+              value={popupDraft.startDate}
+              onChange={(e) => setPopupDraft((prev) => ({ ...prev, startDate: e.target.value }))}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            />
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            종료일 (자동 상태 전환)
+            <input
+              type="date"
+              value={popupDraft.endDate}
+              onChange={(e) => setPopupDraft((prev) => ({ ...prev, endDate: e.target.value }))}
+              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
             />
           </label>
         </div>

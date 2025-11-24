@@ -7,7 +7,7 @@ import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
 export default function PopupRadarPage() {
   const { t, language } = useI18n();
   const { status, popups } = usePopups(language);
-  const [filter, setFilter] = useState<"all" | "now" | "soon">("all");
+  const [filter, setFilter] = useState<"all" | "now" | "soon" | "ended">("all");
   const [search, setSearch] = useState("");
 
   const filteredPopups = useMemo(() => {
@@ -30,7 +30,7 @@ export default function PopupRadarPage() {
           <p className="text-sm text-slate-500">{t("popupRadar.sections.now.subtitle")}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {(["all", "now", "soon"] as const).map((key) => (
+          {(["all", "now", "soon", "ended"] as const).map((key) => (
             <button
               key={key}
               type="button"
@@ -117,10 +117,16 @@ export default function PopupRadarPage() {
                   <p className="text-sm text-white/80">{popup.location}</p>
                   <p className="mt-1 text-xs text-white/70 line-clamp-2">{popup.description}</p>
                 </div>
-                <span className="absolute left-4 top-4 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-white">
+                <span
+                  className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-semibold ${
+                    popup.status === "ended" ? "bg-slate-700/80 text-white" : "bg-black/70 text-white"
+                  }`}
+                >
                   {popup.status === "now"
                     ? t("popupRadar.status.now")
-                    : t("popupRadar.status.soon")}
+                    : popup.status === "soon"
+                      ? t("popupRadar.status.soon")
+                      : t("popupRadar.status.ended")}
                 </span>
               </Link>
             </article>

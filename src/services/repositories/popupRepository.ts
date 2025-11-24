@@ -17,18 +17,50 @@ import {
   shouldAutoTranslatePopup,
   translatePopupEvent
 } from "../translation/popupTranslationService";
+import type { PopupStatus } from "../../data/popups";
 
 type WithTimestamps<T> = T & {
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 };
 
-const fallbackPopups = POPUP_EVENTS.map((popup) => stripLanguageMeta(ensureLanguage(popup)));
+const parseDate = (value?: string) => {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+};
+
+const derivePopupStatus = (popup: PopupEvent): PopupStatus => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const start = parseDate(popup.startDate);
+  const end = parseDate(popup.endDate);
+
+  if (end && end.getTime() < today.getTime()) {
+    return "ended";
+  }
+  if (start && start.getTime() > today.getTime()) {
+    return "soon";
+  }
+  if (start || end) {
+    return "now";
+  }
+  return popup.status ?? "now";
+};
+
+const normalizePopup = (popup: PopupEvent) => {
+  const normalized = ensureLanguage(popup);
+  const { __softLanguage, ...rest } = normalized;
+  return {
+    ...rest,
+    status: derivePopupStatus(rest)
+  };
+};
+
+const fallbackPopups = POPUP_EVENTS.map((popup) => normalizePopup(popup));
 
 const toPopup = (docData: WithTimestamps<PopupEvent>): PopupEvent => {
-  const normalized = ensureLanguage(docData);
-  const { __softLanguage, ...rest } = normalized;
-  return rest;
+  return normalizePopup(docData);
 };
 
 const localizePopups = async (popups: PopupEvent[], language?: SupportedLanguage) => {

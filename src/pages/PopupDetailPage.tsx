@@ -130,8 +130,16 @@ export default function PopupDetailPage() {
             </div>
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-400">Status</h3>
-              <p className="text-base font-semibold text-hanBlue">
-                {popup.status === "now" ? t("popupRadar.status.now") : t("popupRadar.status.soon")}
+              <p
+                className={`text-base font-semibold ${
+                  popup.status === "ended" ? "text-slate-500" : "text-hanBlue"
+                }`}
+              >
+                {popup.status === "now"
+                  ? t("popupRadar.status.now")
+                  : popup.status === "soon"
+                    ? t("popupRadar.status.soon")
+                    : t("popupRadar.status.ended")}
               </p>
             </div>
             <div>

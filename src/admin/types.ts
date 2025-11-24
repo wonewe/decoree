@@ -64,6 +64,8 @@ export type PopupDraft = {
   brand: string;
   window: string;
   status: PopupStatus;
+  startDate: string;
+  endDate: string;
   location: string;
   posterUrl: string;
   heroImageUrl: string;
@@ -77,5 +79,4 @@ export type PopupDraft = {
 // Re-export for convenience
 export type { TrendReport, KCultureEvent, Phrase, PopupEvent };
 export type { TrendIntensity, EventCategory, PhraseCategory, PopupStatus };
-
 

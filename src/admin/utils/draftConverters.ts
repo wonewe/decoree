@@ -211,6 +211,8 @@ export function createEmptyPopupDraft(): PopupDraft {
     brand: "",
     window: "2024.06.01 - 06.30",
     status: "now",
+    startDate: "",
+    endDate: "",
     location: "",
     posterUrl: "",
     heroImageUrl: "",
@@ -233,6 +235,8 @@ export function popupToDraft(popup: PopupEvent): PopupDraft {
     brand: popup.brand,
     window: popup.window,
     status: popup.status,
+    startDate: popup.startDate ?? "",
+    endDate: popup.endDate ?? "",
     location: popup.location,
     posterUrl: popup.posterUrl,
     heroImageUrl: popup.heroImageUrl,
@@ -269,6 +273,8 @@ export function draftToPopup(draft: PopupDraft): PopupEvent {
     brand: draft.brand.trim(),
     window: draft.window.trim(),
     status: draft.status,
+    ...(draft.startDate ? { startDate: draft.startDate } : {}),
+    ...(draft.endDate ? { endDate: draft.endDate } : {}),
     location: draft.location.trim(),
     posterUrl: draft.posterUrl.trim(),
     heroImageUrl: draft.heroImageUrl.trim() || draft.posterUrl.trim(),
@@ -279,5 +285,4 @@ export function draftToPopup(draft: PopupDraft): PopupEvent {
     ...(trimmedReservationUrl ? { reservationUrl: trimmedReservationUrl } : {})
   };
 }
-
 
