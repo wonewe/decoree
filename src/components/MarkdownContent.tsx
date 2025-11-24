@@ -43,6 +43,15 @@ const parseHtmlHeading = (value: string) => {
   return { level, text };
 };
 
+const parseHtmlImage = (value: string) => {
+  const match = value.match(/<img[^>]*src=["']([^"']+)["'][^>]*alt=["']?([^"'>]*)["']?[^>]*>/i);
+  if (!match) return null;
+  const src = match[1];
+  const alt = match[2] ?? "";
+  if (!src) return null;
+  return { src, alt: escapeHtml(alt) };
+};
+
 const renderBlock = (block: string) => {
   const raw = normalizeEntities(block);
   const trimmed = raw.trim();
@@ -51,6 +60,11 @@ const renderBlock = (block: string) => {
   const htmlHeading = parseHtmlHeading(trimmed);
   if (htmlHeading) {
     return `<h${htmlHeading.level}>${renderInline(htmlHeading.text)}</h${htmlHeading.level}>`;
+  }
+
+  const htmlImage = parseHtmlImage(trimmed);
+  if (htmlImage) {
+    return `<p><img src="${htmlImage.src}" alt="${htmlImage.alt}" /></p>`;
   }
 
   const htmlStripped = trimmed.includes("<") ? stripHtml(trimmed) : trimmed;
