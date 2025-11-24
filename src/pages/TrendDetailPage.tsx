@@ -73,7 +73,7 @@ export default function TrendDetailPage() {
 
   return (
     <article className="bg-white">
-      <div className="relative h-[340px] w-full overflow-hidden">
+      <div className="relative h-[320px] w-full overflow-hidden">
         <img
           src={report.imageUrl}
           alt={report.title}
@@ -82,72 +82,78 @@ export default function TrendDetailPage() {
         <div className="absolute right-6 top-6">
           <BookmarkButton item={bookmarkItem} />
         </div>
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-6 py-8 text-white">
-          <button
-            onClick={() => navigate(-1)}
-            className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold backdrop-blur hover:bg-white/40"
-          >
-            ← {t("trendDetail.back")}
-          </button>
-          <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-slate-100">
-            <span>{published}</span>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        <div className="absolute bottom-6 left-1/2 w-full max-w-5xl -translate-x-1/2 px-6 text-white">
+          <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-white/80">
+            <button
+              onClick={() => navigate(-1)}
+              className="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-[11px] font-semibold backdrop-blur hover:bg-white/30"
+            >
+              ← {t("trendDetail.back")}
+            </button>
+            <span className="rounded-full bg-white/15 px-2 py-1 text-[11px] font-semibold">
+              {report.neighborhood}
+            </span>
             <span>•</span>
-            <span>{report.neighborhood}</span>
+            <span>{published}</span>
           </div>
-          <h1 className="mt-4 text-3xl font-bold md:text-4xl">{report.title}</h1>
-          <p className="mt-2 max-w-3xl text-base text-slate-100 md:text-lg">{report.summary}</p>
+          <h1 className="mt-3 text-3xl font-bold leading-snug md:text-4xl">{report.title}</h1>
+          <p className="mt-2 max-w-3xl text-sm text-white/90 md:text-base">{report.summary}</p>
         </div>
       </div>
 
       <div className="section-container">
-        <div className="mb-6 flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-slate-500">
-          <span className="rounded-full bg-slate-100 px-3 py-1">{tagList}</span>
-        </div>
-
-        <MarkdownContent content={report.content.join("\n\n")} />
-        {author && (
-          <div className="mt-10 flex flex-col gap-4 rounded-3xl bg-white p-6 shadow md:flex-row md:items-center md:gap-6">
-            <img
-              src={author.avatarUrl}
-              alt={author.name}
-              loading="lazy"
-              className="h-20 w-20 flex-shrink-0 rounded-full object-cover shadow"
-            />
-            <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                {t("trendDetail.author.label")}
-              </p>
-              <h3 className="text-xl font-semibold text-dancheongNavy">{author.name}</h3>
-              <p className="text-sm font-semibold text-slate-500">{author.title}</p>
-              <p className="text-sm text-slate-600">{author.bio}</p>
-            </div>
+        <div className="mx-auto flex max-w-3xl flex-col gap-8 py-10">
+          <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-slate-500">
+            <span className="rounded-full bg-slate-100 px-3 py-1">{tagList}</span>
           </div>
-        )}
 
-        <aside className="mt-10 rounded-3xl bg-slate-50 p-6">
-          <h2 className="text-lg font-semibold text-dancheongNavy">
-            {t("trendDetail.sidebarTitle")}
-          </h2>
-          <ul className="mt-4 space-y-3 text-sm text-slate-600">
-            <li>
-              <strong>{t("trendDetail.neighborhood")}: </strong>
-              {report.neighborhood}
-            </li>
-            <li>
-              <strong>{t("trendDetail.intensity")}: </strong>
-              {t(`trendDetail.intensity.${report.intensity}`)}
-            </li>
-            <li>
-              <strong>{t("trendDetail.published")}: </strong>
-              {published}
-            </li>
-          </ul>
-        </aside>
+          <MarkdownContent content={report.content.join("\n\n")} />
 
-        <div className="mt-12 flex justify-end">
-          <Link to="/trends" className="secondary-button">
-            {t("trendDetail.backToList")}
-          </Link>
+          {author && (
+            <div className="flex flex-col gap-4 rounded-3xl bg-slate-50 p-6 shadow-sm md:flex-row md:items-center md:gap-6">
+              <img
+                src={author.avatarUrl}
+                alt={author.name}
+                loading="lazy"
+                className="h-16 w-16 flex-shrink-0 rounded-full object-cover shadow"
+              />
+              <div className="space-y-1">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  {t("trendDetail.author.label")}
+                </p>
+                <h3 className="text-lg font-semibold text-dancheongNavy">{author.name}</h3>
+                <p className="text-sm font-semibold text-slate-500">{author.title}</p>
+                <p className="text-sm text-slate-600">{author.bio}</p>
+              </div>
+            </div>
+          )}
+
+          <aside className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100">
+            <h2 className="text-base font-semibold text-dancheongNavy">
+              {t("trendDetail.sidebarTitle")}
+            </h2>
+            <ul className="mt-3 space-y-2 text-sm text-slate-600">
+              <li>
+                <strong>{t("trendDetail.neighborhood")}: </strong>
+                {report.neighborhood}
+              </li>
+              <li>
+                <strong>{t("trendDetail.intensity")}: </strong>
+                {t(`trendDetail.intensity.${report.intensity}`)}
+              </li>
+              <li>
+                <strong>{t("trendDetail.published")}: </strong>
+                {published}
+              </li>
+            </ul>
+          </aside>
+
+          <div className="flex justify-end">
+            <Link to="/trends" className="secondary-button">
+              {t("trendDetail.backToList")}
+            </Link>
+          </div>
         </div>
       </div>
     </article>
