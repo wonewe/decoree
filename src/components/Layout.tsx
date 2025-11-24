@@ -1,24 +1,17 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { useMemo } from "react";
+import { Helmet } from "react-helmet-async";
 import { useI18n } from "../shared/i18n";
-import LanguageSwitcher from "./LanguageSwitcher";
-import { useEffect, useMemo, useRef, useState } from "react";
 import { useHeaderAuth } from "../hooks/useHeaderAuth";
 import { usePageTracking } from "../hooks/usePageTracking";
-import { Helmet } from "react-helmet-async";
+import LanguageSwitcher from "./LanguageSwitcher";
 import LanguagePrompt from "./LanguagePrompt";
 
-const exploreLinks = [
+const primaryNav = [
   { path: "/trends", labelKey: "nav.trends" },
   { path: "/events", labelKey: "nav.events" },
   { path: "/popups", labelKey: "nav.popups" },
-  { path: "/culture-test", labelKey: "nav.cultureTest" }
-] as const;
-
-const supportLinks = [
-  { path: "/phrasebook", labelKey: "nav.phrasebook" },
-  { path: "/local-support/services", labelKey: "localSupport.services.title" },
-  { path: "/local-support/apps", labelKey: "localSupport.apps.title" },
-  { path: "/local-support/community", labelKey: "localSupport.community.title" }
+  { path: "/phrasebook", labelKey: "nav.phrasebook" }
 ] as const;
 
 export default function Layout() {
@@ -26,14 +19,7 @@ export default function Layout() {
   const { user, isAdmin, handleLogout, isProcessing, error: authError, dismissError } =
     useHeaderAuth();
   const location = useLocation();
-  const [isExploreOpen, setIsExploreOpen] = useState(false);
-  const [isSupportOpen, setIsSupportOpen] = useState(false);
-  const exploreRef = useRef<HTMLDivElement>(null);
-  const supportRef = useRef<HTMLDivElement>(null);
   usePageTracking();
-
-  const isExploreActive = exploreLinks.some((link) => location.pathname.startsWith(link.path));
-  const isSupportActive = supportLinks.some((link) => location.pathname.startsWith(link.path));
 
   const siteOrigin =
     import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
@@ -49,120 +35,39 @@ export default function Layout() {
     [location.pathname]
   );
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (exploreRef.current && !exploreRef.current.contains(event.target as Node)) {
-        setIsExploreOpen(false);
-      }
-      if (supportRef.current && !supportRef.current.contains(event.target as Node)) {
-        setIsSupportOpen(false);
-      }
-    };
-
-    if (isExploreOpen || isSupportOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isExploreOpen, isSupportOpen]);
-
-  useEffect(() => {
-    setIsExploreOpen(false);
-    setIsSupportOpen(false);
-  }, [location.pathname]);
-
   return (
-    <div className="min-h-screen bg-[var(--surface-muted)] text-slate-900">
+    <div className="min-h-screen bg-[var(--paper-muted)] text-[var(--ink)]">
       <LanguagePrompt onSelect={setLanguage} />
       <Helmet>
         <link rel="canonical" href={canonicalUrl} />
         {isNoIndex && <meta name="robots" content="noindex, nofollow" />}
       </Helmet>
 
-      <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
-          <NavLink to="/" className="text-lg font-bold text-slate-900">
+      <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--paper)]/90 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+          <NavLink to="/" className="font-heading text-2xl font-semibold tracking-tight text-[var(--ink)]">
             koraid
           </NavLink>
-          <nav className="hidden items-center gap-4 text-sm font-semibold md:flex">
-            <div className="relative" ref={exploreRef}>
-              <button
-                type="button"
-                onClick={() => setIsExploreOpen((prev) => !prev)}
-                className={`flex items-center gap-2 rounded-full px-3 py-2 transition ${
-                  isExploreActive || isExploreOpen
-                    ? "bg-slate-900 text-white shadow-sm"
-                    : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
-                }`}
-                aria-haspopup="menu"
-                aria-expanded={isExploreOpen}
+          <nav className="hidden items-center gap-6 text-sm font-semibold text-[var(--ink-subtle)] md:flex">
+            {primaryNav.map((link) => (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                className={({ isActive }) =>
+                  `transition ${
+                    isActive ? "text-[var(--ink)]" : "hover:text-[var(--ink)]"
+                  }`
+                }
               >
-                {t("nav.explore")}
-                <span className="text-xs">{isExploreOpen ? "▲" : "▼"}</span>
-              </button>
-              {isExploreOpen && (
-                <div className="absolute right-0 z-10 mt-3 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg">
-                  {exploreLinks.map((link) => (
-                    <NavLink
-                      key={link.path}
-                      to={link.path}
-                      onClick={() => setIsExploreOpen(false)}
-                      className={({ isActive }) =>
-                        `block rounded-xl px-3 py-2 text-sm transition font-medium ${
-                          isActive
-                            ? "bg-slate-900 text-white"
-                            : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-                        }`
-                      }
-                    >
-                      {t(link.labelKey)}
-                    </NavLink>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="relative" ref={supportRef}>
-              <button
-                type="button"
-                onClick={() => setIsSupportOpen((prev) => !prev)}
-                className={`flex items-center gap-2 rounded-full px-3 py-2 transition ${
-                  isSupportActive || isSupportOpen
-                    ? "bg-slate-900 text-white shadow-sm"
-                    : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
-                }`}
-                aria-haspopup="menu"
-                aria-expanded={isSupportOpen}
-              >
-                {t("nav.localSupport")}
-                <span className="text-xs">{isSupportOpen ? "▲" : "▼"}</span>
-              </button>
-              {isSupportOpen && (
-                <div className="absolute right-0 z-10 mt-3 w-60 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg">
-                  {supportLinks.map((link) => (
-                    <NavLink
-                      key={link.path}
-                      to={link.path}
-                      onClick={() => setIsSupportOpen(false)}
-                      className={({ isActive }) =>
-                        `block rounded-xl px-3 py-2 text-sm transition font-medium ${
-                          isActive
-                            ? "bg-slate-900 text-white"
-                            : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-                        }`
-                      }
-                    >
-                      {t(link.labelKey)}
-                    </NavLink>
-                  ))}
-                </div>
-              )}
-            </div>
+                {t(link.labelKey)}
+              </NavLink>
+            ))}
             {isAdmin && (
               <NavLink
                 to="/admin"
                 className={({ isActive }) =>
-                  `transition hover:text-slate-900 ${
-                    isActive ? "text-slate-900" : "text-slate-700"
+                  `transition ${
+                    isActive ? "text-[var(--ink)]" : "hover:text-[var(--ink)]"
                   }`
                 }
               >
@@ -174,23 +79,15 @@ export default function Layout() {
             <LanguageSwitcher />
             {user ? (
               <div className="flex items-center gap-2">
-                {isAdmin && (
-                  <NavLink
-                    to="/admin"
-                    className="inline-flex rounded-full border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-500 hover:text-slate-900 md:hidden"
-                  >
-                    {t("nav.admin")}
-                  </NavLink>
-                )}
                 <NavLink
                   to="/profile"
-                  className="inline-flex rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-500 hover:text-slate-900"
+                  className="hidden rounded-full border border-[var(--border)] px-4 py-2 text-xs font-semibold text-[var(--ink-muted)] transition hover:text-[var(--ink)] md:inline-flex"
                 >
                   {user.displayName?.trim() || user.email}
                 </NavLink>
                 <button
                   onClick={handleLogout}
-                  className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-700 transition hover:border-slate-500 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold text-[var(--ink-muted)] transition hover:text-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-60"
                   disabled={isProcessing}
                 >
                   {isProcessing ? t("auth.loading") : t("auth.logout")}
@@ -200,13 +97,13 @@ export default function Layout() {
               <div className="hidden items-center gap-2 md:flex">
                 <NavLink
                   to="/login"
-                  className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-500 hover:text-slate-900"
+                  className="rounded-full border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--ink-muted)] transition hover:text-[var(--ink)]"
                 >
                   {t("auth.login")}
                 </NavLink>
                 <NavLink
                   to="/signup"
-                  className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-500 hover:text-slate-900"
+                  className="rounded-full border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--ink-muted)] transition hover:text-[var(--ink)]"
                 >
                   {t("auth.signup")}
                 </NavLink>
@@ -232,17 +129,19 @@ export default function Layout() {
       <main>
         <Outlet />
       </main>
-      <footer className="border-t border-slate-200 bg-white py-10">
-        <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 text-sm text-slate-600 md:flex-row md:items-center md:justify-between">
-          <span>© {new Date().getFullYear()} koraid. {t("footer.madeIn")}.</span>
-          <div className="flex gap-4">
-            <a href="https://www.instagram.com" className="hover:text-slate-900" target="_blank" rel="noreferrer">
+      <footer className="border-t border-[var(--border)] bg-[var(--paper)] py-12">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 text-sm text-[var(--ink-muted)] md:flex-row md:items-center md:justify-between">
+          <span>
+            © {new Date().getFullYear()} koraid · {t("footer.madeIn")}
+          </span>
+          <div className="flex flex-wrap gap-4">
+            <a href="https://www.instagram.com" className="muted-link" target="_blank" rel="noreferrer">
               Instagram
             </a>
-            <a href="https://www.tiktok.com" className="hover:text-slate-900" target="_blank" rel="noreferrer">
+            <a href="https://www.tiktok.com" className="muted-link" target="_blank" rel="noreferrer">
               TikTok
             </a>
-            <a href="mailto:Team@kor-aid.com" className="hover:text-slate-900">
+            <a href="mailto:Team@kor-aid.com" className="muted-link">
               Team@kor-aid.com
             </a>
           </div>

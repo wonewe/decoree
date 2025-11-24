@@ -170,7 +170,7 @@ export default function AdminListPage() {
   }, [normalizedQuery, popups]);
 
   const renderEmptyState = (message: string) => (
-    <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
+    <p className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--ink-muted)]">
       {message}
     </p>
   );
@@ -178,8 +178,8 @@ export default function AdminListPage() {
   const renderContentList = () => {
     if (loading) {
       return (
-        <section className="rounded-3xl bg-white p-10 text-center shadow">
-          <p className="text-sm text-slate-500">콘텐츠를 불러오는 중입니다...</p>
+        <section className="card text-center">
+          <p className="text-sm text-[var(--ink-muted)]">콘텐츠를 불러오는 중입니다...</p>
         </section>
       );
     }
@@ -189,10 +189,10 @@ export default function AdminListPage() {
         return (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-dancheongNavy">주간 트렌드</h3>
+              <h3 className="text-xl font-semibold text-[var(--ink)]">주간 트렌드</h3>
               <button
                 onClick={() => navigate("/admin/edit/trends")}
-                className="rounded-full bg-hanBlue px-4 py-2 text-sm font-semibold text-white transition hover:bg-hanBlue/90"
+                className="primary-button"
               >
                 새 트렌드 작성
               </button>
@@ -209,24 +209,24 @@ export default function AdminListPage() {
                     <button
                       key={trend.id}
                       onClick={() => navigate(`/admin/edit/trends/${trend.id}`)}
-                      className="w-full rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:border-hanBlue hover:shadow-md"
+                      className="card w-full text-left transition hover:-translate-y-0.5"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+                            <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
                               {getLanguageLabel(trend.language ?? "en")}
                             </span>
                             {author && (
-                              <span className="text-xs text-slate-500">{author.name}</span>
+                              <span className="text-xs text-[var(--ink-subtle)]">{author.name}</span>
                             )}
                           </div>
-                          <h4 className="mt-1 font-semibold text-dancheongNavy">{trend.title}</h4>
-                          <p className="mt-1 text-sm text-slate-600 line-clamp-2">
+                          <h4 className="mt-1 font-semibold text-[var(--ink)]">{trend.title}</h4>
+                          <p className="mt-1 text-sm text-[var(--ink-muted)] line-clamp-2">
                             {trend.summary}
                           </p>
                         </div>
-                        <span className="ml-4 text-xs text-slate-400">{trend.id}</span>
+                        <span className="ml-4 text-xs text-[var(--ink-subtle)]">{trend.id}</span>
                       </div>
                     </button>
                   );
@@ -239,18 +239,18 @@ export default function AdminListPage() {
       case "events":
         return (
           <div className="space-y-3">
-            <h3 className="text-lg font-semibold text-dancheongNavy">K-Culture 이벤트</h3>
+            <h3 className="text-xl font-semibold text-[var(--ink)]">K-Culture 이벤트</h3>
             <div className="flex gap-2">
               <button
                 onClick={handleUpdateEvents}
                 disabled={updating}
-                className="rounded-full border border-hanBlue px-4 py-2 text-sm font-semibold text-hanBlue transition hover:bg-hanBlue/10 disabled:opacity-50"
+                className="secondary-button disabled:opacity-50"
               >
                 {updating ? "갱신 중..." : "이벤트 갱신"}
               </button>
               <button
                 onClick={() => navigate("/admin/edit/events")}
-                className="rounded-full bg-hanBlue px-4 py-2 text-sm font-semibold text-white transition hover:bg-hanBlue/90"
+                className="primary-button"
               >
                 새 이벤트 작성
               </button>
@@ -258,19 +258,19 @@ export default function AdminListPage() {
 
             {/* Progress Bar */}
             {syncProgress && (
-              <div className="rounded-xl border border-hanBlue/30 bg-hanBlue/5 p-4 space-y-2">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--paper)] p-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-dancheongNavy">{syncProgress.message}</span>
-                  <span className="text-hanBlue font-semibold">{syncProgress.progress}%</span>
+                  <span className="font-medium text-[var(--ink)]">{syncProgress.message}</span>
+                  <span className="text-[var(--ink)] font-semibold">{syncProgress.progress}%</span>
                 </div>
-                <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--paper-muted)]">
                   <div
-                    className="h-full rounded-full bg-hanBlue transition-all duration-300"
+                    className="h-full rounded-full bg-[var(--ink)] transition-all duration-300"
                     style={{ width: `${syncProgress.progress}%` }}
                   />
                 </div>
                 {syncProgress.total > 0 && (
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs text-[var(--ink-muted)]">
                     {syncProgress.processed} / {syncProgress.total} 이벤트 처리됨
                   </p>
                 )}
@@ -287,25 +287,25 @@ export default function AdminListPage() {
                     <button
                       key={event.id}
                       onClick={() => navigate(`/admin/edit/events/${event.id}`)}
-                      className="w-full rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:border-hanBlue hover:shadow-md"
+                      className="card w-full text-left transition hover:-translate-y-0.5"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+                            <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
                               {getLanguageLabel(event.language)}
                             </span>
-                            <span className="text-xs text-slate-500">{event.category}</span>
+                            <span className="text-xs text-[var(--ink-subtle)]">{event.category}</span>
                           </div>
-                          <h4 className="mt-1 font-semibold text-dancheongNavy">{event.title}</h4>
-                          <p className="mt-1 text-sm text-slate-600 line-clamp-2">
+                          <h4 className="mt-1 font-semibold text-[var(--ink)]">{event.title}</h4>
+                          <p className="mt-1 text-sm text-[var(--ink-muted)] line-clamp-2">
                             {event.description}
                           </p>
-                          <p className="mt-1 text-xs text-slate-500">
+                          <p className="mt-1 text-xs text-[var(--ink-subtle)]">
                             {event.startDate} · {event.location}
                           </p>
                         </div>
-                        <span className="ml-4 text-xs text-slate-400">{event.id}</span>
+                        <span className="ml-4 text-xs text-[var(--ink-subtle)]">{event.id}</span>
                       </div>
                     </button>
                 ))}
@@ -318,11 +318,8 @@ export default function AdminListPage() {
         return (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-dancheongNavy">한국어 프레이즈북</h3>
-              <button
-                onClick={() => navigate("/admin/edit/phrases")}
-                className="rounded-full bg-hanBlue px-4 py-2 text-sm font-semibold text-white transition hover:bg-hanBlue/90"
-              >
+              <h3 className="text-xl font-semibold text-[var(--ink)]">한국어 프레이즈북</h3>
+              <button onClick={() => navigate("/admin/edit/phrases")} className="primary-button">
                 새 프레이즈 작성
               </button>
             </div>
@@ -333,23 +330,23 @@ export default function AdminListPage() {
             ) : (
               <div className="space-y-2">
                 {filteredPhrases.map((phrase) => (
-                  <button
-                    key={phrase.id}
-                    onClick={() => navigate(`/admin/edit/phrases/${phrase.id}`)}
-                    className="w-full rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:border-hanBlue hover:shadow-md"
-                  >
+                    <button
+                      key={phrase.id}
+                      onClick={() => navigate(`/admin/edit/phrases/${phrase.id}`)}
+                      className="card w-full text-left transition hover:-translate-y-0.5"
+                    >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+                            <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
                             {getLanguageLabel(phrase.language)}
                           </span>
-                          <span className="text-xs text-slate-500">{phrase.category}</span>
+                            <span className="text-xs text-[var(--ink-subtle)]">{phrase.category}</span>
                         </div>
-                        <h4 className="mt-1 font-semibold text-dancheongNavy">{phrase.korean}</h4>
-                        <p className="mt-1 text-sm text-slate-600">{phrase.translation}</p>
+                          <h4 className="mt-1 font-semibold text-[var(--ink)]">{phrase.korean}</h4>
+                          <p className="mt-1 text-sm text-[var(--ink-muted)]">{phrase.translation}</p>
                       </div>
-                      <span className="ml-4 text-xs text-slate-400">{phrase.id}</span>
+                        <span className="ml-4 text-xs text-[var(--ink-subtle)]">{phrase.id}</span>
                     </div>
                   </button>
                 ))}
@@ -362,11 +359,8 @@ export default function AdminListPage() {
         return (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-dancheongNavy">팝업 레이더</h3>
-              <button
-                onClick={() => navigate("/admin/edit/popups")}
-                className="rounded-full bg-hanBlue px-4 py-2 text-sm font-semibold text-white transition hover:bg-hanBlue/90"
-              >
+              <h3 className="text-xl font-semibold text-[var(--ink)]">팝업 레이더</h3>
+              <button onClick={() => navigate("/admin/edit/popups")} className="primary-button">
                 새 팝업 작성
               </button>
             </div>
@@ -377,24 +371,24 @@ export default function AdminListPage() {
             ) : (
               <div className="space-y-2">
                 {filteredPopups.map((popup) => (
-                  <button
-                    key={popup.id}
-                    onClick={() => navigate(`/admin/edit/popups/${popup.id}`)}
-                    className="w-full rounded-xl border border-slate-200 bg-white p-4 text-left transition hover:border-hanBlue hover:shadow-md"
-                  >
+                    <button
+                      key={popup.id}
+                      onClick={() => navigate(`/admin/edit/popups/${popup.id}`)}
+                      className="card w-full text-left transition hover:-translate-y-0.5"
+                    >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+                            <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
                             {getLanguageLabel(popup.language)}
                           </span>
-                          <span className="text-xs text-slate-500">{popup.status}</span>
+                            <span className="text-xs text-[var(--ink-subtle)]">{popup.status}</span>
                         </div>
-                        <h4 className="mt-1 font-semibold text-dancheongNavy">{popup.title}</h4>
-                        <p className="mt-1 text-sm text-slate-600">{popup.brand}</p>
-                        <p className="mt-1 text-xs text-slate-500">{popup.location}</p>
+                          <h4 className="mt-1 font-semibold text-[var(--ink)]">{popup.title}</h4>
+                          <p className="mt-1 text-sm text-[var(--ink-muted)]">{popup.brand}</p>
+                          <p className="mt-1 text-xs text-[var(--ink-subtle)]">{popup.location}</p>
                       </div>
-                      <span className="ml-4 text-xs text-slate-400">{popup.id}</span>
+                        <span className="ml-4 text-xs text-[var(--ink-subtle)]">{popup.id}</span>
                     </div>
                   </button>
                 ))}
@@ -410,75 +404,71 @@ export default function AdminListPage() {
   }
 
   return (
-    <main className="section-container space-y-6">
-      <header className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-dancheongNavy">Studio 관리</h1>
-          <div className="text-sm text-slate-500">
-            {user?.email}로 로그인됨
+    <main className="min-h-screen bg-[var(--paper-muted)]">
+      <section className="section-container space-y-8">
+        <header className="space-y-4">
+          <div className="content-shell space-y-2">
+            <p className="text-sm text-[var(--ink-subtle)]">{user?.email}</p>
+            <h1 className="font-heading text-4xl text-[var(--ink)]">Koraid Studio</h1>
+            <p className="text-[var(--ink-muted)]">콘텐츠를 작성하고 다국어 버전을 관리하세요.</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => setActiveSection("trends")}
+              className={sectionTabClass("trends")}
+            >
+              트렌드 리포트
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveSection("events")}
+              className={sectionTabClass("events")}
+            >
+              이벤트 캘린더
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveSection("phrases")}
+              className={sectionTabClass("phrases")}
+            >
+              한국어 프레이즈북
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveSection("popups")}
+              className={sectionTabClass("popups")}
+            >
+              팝업 레이더
+            </button>
+          </div>
+        </header>
+
+        <div className="card space-y-3">
+          <label className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
+            Studio 검색
+          </label>
+          <div className="relative">
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="제목, ID, 담당자 등을 입력하세요"
+              className="w-full rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 pr-12 text-sm focus:border-[var(--ink)] focus:outline-none"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-[var(--ink)]"
+              >
+                지우기
+              </button>
+            )}
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={() => setActiveSection("trends")}
-            className={sectionTabClass("trends")}
-          >
-            트렌드 리포트
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveSection("events")}
-            className={sectionTabClass("events")}
-          >
-            이벤트 캘린더
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveSection("phrases")}
-            className={sectionTabClass("phrases")}
-          >
-            한국어 프레이즈북
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveSection("popups")}
-            className={sectionTabClass("popups")}
-          >
-            팝업 레이더
-          </button>
-        </div>
-      </header>
-
-      <section className="rounded-3xl bg-white p-8 shadow">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <div className="flex-1">
-            <label className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Studio 검색
-            </label>
-            <div className="mt-1 flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2">
-              <span className="text-slate-400">🔍</span>
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="제목, ID, 장소 등을 입력하세요"
-                className="w-full bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
-              />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery("")}
-                  className="text-xs font-semibold text-slate-400 hover:text-slate-600"
-                >
-                  지우기
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-        {renderContentList()}
+        <section className="space-y-6">{renderContentList()}</section>
       </section>
     </main>
   );

@@ -48,18 +48,15 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
   const showError = status === "error";
 
   return (
-    <section className="section-container space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="space-y-2">
-          <span className="badge-label bg-hanBlue/10 text-hanBlue">{t("events.title")}</span>
-          <h2 className="text-3xl font-bold text-dancheongNavy">{t("events.title")}</h2>
-          <p className="max-w-2xl text-slate-600">{t("events.subtitle")}</p>
+    <section className="section-container space-y-10">
+      <div className="content-shell flex flex-wrap items-end justify-between gap-4">
+        <div className="space-y-3">
+          <span className="badge-label">{t("events.title")}</span>
+          <h2 className="font-heading text-4xl text-[var(--ink)]">{t("events.title")}</h2>
+          <p className="max-w-2xl text-[var(--ink-muted)]">{t("events.subtitle")}</p>
         </div>
         {preview && (
-          <Link
-            to="/events"
-            className="rounded-full border border-hanBlue px-6 py-2.5 text-sm font-semibold text-hanBlue transition hover:bg-hanBlue hover:text-white"
-          >
+          <Link to="/events" className="secondary-button">
             {t("eventDetail.backToList")}
           </Link>
         )}
@@ -245,8 +242,11 @@ function FilterButton({ label, active, onClick }: FilterButtonProps) {
   return (
     <button
       onClick={onClick}
-      className={`rounded-full px-4 py-2 text-sm font-semibold transition ${active ? "bg-hanBlue text-white" : "bg-white text-slate-600 hover:text-hanBlue"
-        }`}
+      className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+        active
+          ? "bg-[var(--ink)] text-white"
+          : "bg-white text-[var(--ink-muted)] hover:text-[var(--ink)]"
+      }`}
     >
       {label}
     </button>

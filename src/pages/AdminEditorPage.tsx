@@ -256,8 +256,6 @@ export default function AdminEditorPage() {
       }
 
       const baseTrend = draftToTrend({ ...trendDraft, imageUrl: finalImageUrl });
-      console.log("저장할 트렌드 데이터:", baseTrend);
-      console.log("content 배열:", baseTrend.content);
       
       // content가 비어있으면 에러
       if (!baseTrend.content || baseTrend.content.length === 0) {
@@ -326,8 +324,6 @@ export default function AdminEditorPage() {
       }
 
       const baseEvent = draftToEvent({ ...eventDraft, imageUrl: finalImageUrl });
-      console.log("저장할 이벤트 데이터:", baseEvent);
-      console.log("longDescription 배열:", baseEvent.longDescription);
       
       // longDescription이 비어있으면 에러
       if (!baseEvent.longDescription || baseEvent.longDescription.length === 0) {
@@ -447,8 +443,6 @@ export default function AdminEditorPage() {
       }
 
       const basePopup = draftToPopup({ ...popupDraft, posterUrl: finalPosterUrl, heroImageUrl: finalHeroUrl });
-      console.log("저장할 팝업 데이터:", basePopup);
-      console.log("details 배열:", basePopup.details);
       
       // details가 비어있으면 에러
       if (!basePopup.details || basePopup.details.length === 0) {
@@ -775,7 +769,7 @@ export default function AdminEditorPage() {
                 alt={trendDraft.title || "Trend image preview"}
                 className="h-56 w-full object-cover"
                 onError={handleImageError}
-                onLoad={() => console.log("이미지 로드 성공:", currentTrendImagePreview)}
+                onLoad={() => undefined}
               />
             </div>
             <p className="text-xs text-slate-500">저장 시 모든 언어 버전에 동일한 이미지가 반영됩니다.</p>
@@ -1082,7 +1076,7 @@ export default function AdminEditorPage() {
                 alt={eventDraft.title || "Event image preview"}
                 className="h-56 w-full object-cover"
                 onError={handleImageError}
-                onLoad={() => console.log("이미지 로드 성공:", currentEventImagePreview)}
+                onLoad={() => undefined}
               />
             </div>
             <p className="text-xs text-slate-500">
@@ -1554,7 +1548,7 @@ export default function AdminEditorPage() {
                     alt="Poster preview"
                     className="h-56 w-full object-cover"
                     onError={handleImageError}
-                    onLoad={() => console.log("이미지 로드 성공:", currentPopupPosterPreview)}
+                    onLoad={() => undefined}
                   />
                 </div>
               </div>
@@ -1568,7 +1562,7 @@ export default function AdminEditorPage() {
                     alt="Hero preview"
                     className="h-56 w-full object-cover"
                     onError={handleImageError}
-                    onLoad={() => console.log("이미지 로드 성공:", currentPopupHeroPreview)}
+                    onLoad={() => undefined}
                   />
                 </div>
               </div>
@@ -1661,51 +1655,51 @@ export default function AdminEditorPage() {
   };
 
   return (
-    <main className="section-container space-y-6">
-      <header className="space-y-4">
-        <div className="flex items-center justify-between">
+    <main className="min-h-screen bg-[var(--paper-muted)]">
+      <section className="section-container space-y-6">
+        <header className="content-shell space-y-3">
           <button
             onClick={() => navigate("/admin")}
-            className="text-sm font-semibold text-slate-600 hover:text-hanBlue"
+            className="text-sm font-semibold text-[var(--ink-subtle)] hover:text-[var(--ink)]"
           >
-            ← 목록으로
+            ← Studio 목록
           </button>
-          <h1 className="text-2xl font-bold text-dancheongNavy">
+          <h1 className="font-heading text-4xl text-[var(--ink)]">
             {type === "trends" && "트렌드 리포트"}
             {type === "events" && "K-Culture 이벤트"}
             {type === "phrases" && "한국어 프레이즈북"}
             {type === "popups" && "팝업 레이더"}
             {id ? " 수정" : " 작성"}
           </h1>
-        </div>
-      </header>
+        </header>
 
-      {message && (
-        <div
-          className={`rounded-xl border p-4 ${
-            message.tone === "success"
-              ? "border-green-200 bg-green-50 text-green-800"
-              : message.tone === "error"
-              ? "border-rose-200 bg-rose-50 text-rose-800"
-              : "border-blue-200 bg-blue-50 text-blue-800"
-          }`}
-        >
-          <p className="text-sm font-semibold">{message.text}</p>
-        </div>
-      )}
+        {message && (
+          <div
+            className={`rounded-2xl border p-4 ${
+              message.tone === "success"
+                ? "border-green-200 bg-green-50 text-green-800"
+                : message.tone === "error"
+                ? "border-rose-200 bg-rose-50 text-rose-800"
+                : "border-blue-200 bg-blue-50 text-blue-800"
+            }`}
+          >
+            <p className="text-sm font-semibold">{message.text}</p>
+          </div>
+        )}
 
-      {loading ? (
-        <section className="rounded-3xl bg-white p-10 text-center shadow">
-          <p className="text-sm text-slate-500">콘텐츠를 불러오는 중입니다...</p>
-        </section>
-      ) : (
-        <>
-          {type === "trends" && renderTrendForm()}
-          {type === "events" && renderEventForm()}
-          {type === "phrases" && renderPhraseForm()}
-          {type === "popups" && renderPopupForm()}
-        </>
-      )}
+        {loading ? (
+          <section className="card text-center">
+            <p className="text-sm text-[var(--ink-muted)]">콘텐츠를 불러오는 중입니다...</p>
+          </section>
+        ) : (
+          <>
+            {type === "trends" && renderTrendForm()}
+            {type === "events" && renderEventForm()}
+            {type === "phrases" && renderPhraseForm()}
+            {type === "popups" && renderPopupForm()}
+          </>
+        )}
+      </section>
     </main>
   );
 }

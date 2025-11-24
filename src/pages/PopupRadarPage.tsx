@@ -23,32 +23,40 @@ export default function PopupRadarPage() {
   }, [filter, popups, search]);
 
   return (
-    <section className="section-container space-y-8 bg-white">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="text-2xl font-semibold text-dancheongNavy">{t("popupRadar.sections.now.title")}</h2>
-          <p className="text-sm text-slate-500">{t("popupRadar.sections.now.subtitle")}</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {(["all", "now", "soon", "ended"] as const).map((key) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setFilter(key)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                filter === key
-                  ? "bg-hanBlue text-white shadow"
-                  : "border border-slate-200 text-slate-600 hover:border-hanBlue hover:text-hanBlue"
-              }`}
-            >
-              {t(`popupRadar.filters.${key}`)}
-            </button>
-          ))}
+    <section className="section-container space-y-10">
+      <div className="content-shell space-y-4">
+        <span className="badge-label">{t("popupRadar.title")}</span>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div className="space-y-2">
+            <h2 className="font-heading text-4xl text-[var(--ink)]">
+              {t("popupRadar.sections.now.title")}
+            </h2>
+            <p className="text-[var(--ink-muted)]">{t("popupRadar.sections.now.subtitle")}</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {(["all", "now", "soon", "ended"] as const).map((key) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setFilter(key)}
+                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  filter === key
+                    ? "bg-[var(--ink)] text-white"
+                    : "bg-white text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                }`}
+              >
+                {t(`popupRadar.filters.${key}`)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 rounded-3xl bg-white p-4 shadow">
-        <label htmlFor="popup-search" className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+      <div className="card space-y-3">
+        <label
+          htmlFor="popup-search"
+          className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]"
+        >
           {t("popupRadar.search.label")}
         </label>
         <div className="relative">
@@ -58,13 +66,13 @@ export default function PopupRadarPage() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder={t("popupRadar.search.placeholder")}
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 pr-12 text-sm shadow-inner focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+            className="w-full rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 pr-12 text-sm focus:border-[var(--ink)] focus:outline-none"
           />
           {search && (
             <button
               type="button"
               onClick={() => setSearch("")}
-              className="absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-hanBlue"
+              className="absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-[var(--ink)]"
             >
               {t("popupRadar.search.clear")}
             </button>
@@ -135,7 +143,7 @@ export default function PopupRadarPage() {
       )}
 
       {status === "success" && filteredPopups.length === 0 && (
-        <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500">
+        <div className="rounded-3xl border border-dashed border-[var(--border)] bg-white p-6 text-center text-sm text-[var(--ink-muted)]">
           {t("popupRadar.empty")}
         </div>
       )}
