@@ -34,7 +34,7 @@ export default function PopupRadarPreview() {
               to={`/popups/${popup.id}`}
               className="group overflow-hidden rounded-[32px] bg-[var(--paper)] shadow-lg ring-1 ring-[var(--border)] transition hover:-translate-y-1"
             >
-              <div className="relative">
+              <div className="relative overflow-hidden">
                 <img
                   src={popup.posterUrl}
                   alt={popup.title}

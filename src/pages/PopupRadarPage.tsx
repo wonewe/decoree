@@ -97,7 +97,7 @@ export default function PopupRadarPage() {
               key={popup.id}
               className="group flex h-full flex-col overflow-hidden rounded-[32px] bg-[var(--paper)] shadow-xl ring-1 ring-[var(--border)]"
             >
-              <div className="relative">
+              <div className="relative overflow-hidden">
                 <Link to={`/popups/${popup.id}`} className="block">
                   <img
                     src={popup.posterUrl}
