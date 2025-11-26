@@ -15,7 +15,15 @@ export async function submitFeedback(payload: FeedbackPayload) {
       const key = "koraid:feedback:local";
       const existing = typeof window !== "undefined" ? window.localStorage.getItem(key) : null;
       const store = existing ? (JSON.parse(existing) as Array<FeedbackPayload & { createdAt: string }>) : [];
-      store.unshift({ ...payload, createdAt: new Date().toISOString() });
+      const sanitized: FeedbackPayload & { createdAt: string } = {
+        message: payload.message?.trim() ?? "",
+        language: payload.language ?? "unknown",
+        createdAt: new Date().toISOString()
+      };
+      if (payload.suggestionType) sanitized.suggestionType = payload.suggestionType;
+      if (payload.suggestionId) sanitized.suggestionId = payload.suggestionId;
+
+      store.unshift(sanitized);
       if (typeof window !== "undefined") {
         window.localStorage.setItem(key, JSON.stringify(store.slice(0, 50)));
       }
@@ -35,10 +43,10 @@ export async function submitFeedback(payload: FeedbackPayload) {
     const sanitized: FeedbackPayload & { createdAt: Timestamp } = {
       message,
       language: payload.language ?? "unknown",
-      suggestionType: payload.suggestionType,
-      suggestionId: payload.suggestionId,
       createdAt: Timestamp.now()
     };
+    if (payload.suggestionType) sanitized.suggestionType = payload.suggestionType;
+    if (payload.suggestionId) sanitized.suggestionId = payload.suggestionId;
 
     assertFirestoreAvailable("Submitting feedback");
     if (shouldUseStaticContent()) {
