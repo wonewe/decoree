@@ -27,6 +27,19 @@ export async function submitFeedback(payload: FeedbackPayload) {
   };
 
   try {
+    const message = payload.message?.trim();
+    if (!message) {
+      return { ok: false, error: "empty-message" };
+    }
+
+    const sanitized: FeedbackPayload & { createdAt: Timestamp } = {
+      message,
+      language: payload.language ?? "unknown",
+      suggestionType: payload.suggestionType,
+      suggestionId: payload.suggestionId,
+      createdAt: Timestamp.now()
+    };
+
     assertFirestoreAvailable("Submitting feedback");
     if (shouldUseStaticContent()) {
       return fallbackToLocal();
@@ -34,10 +47,7 @@ export async function submitFeedback(payload: FeedbackPayload) {
     const app = getFirebaseApp();
     const db = getFirestore(app);
     const feedbackCollection = collection(db, "feedback");
-    await addDoc(feedbackCollection, {
-      ...payload,
-      createdAt: Timestamp.now()
-    });
+    await addDoc(feedbackCollection, sanitized);
     return { ok: true };
   } catch (error) {
     console.warn("Failed to submit feedback to Firestore, falling back to local store.", error);
