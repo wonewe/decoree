@@ -62,10 +62,10 @@ export default function PersonalizedPhrasebook() {
             <button
               key={category}
               onClick={() => toggleCategory(category)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+              className={`inline-flex items-center rounded-full border px-4 py-2 text-sm font-semibold transition ${
                 selectedCategories.includes(category)
-                  ? "bg-[var(--ink)] text-white"
-                  : "bg-[var(--paper)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                  ? "border-[var(--pill-active-bg)] bg-[var(--pill-active-bg)] text-[var(--pill-active-fg)] shadow-sm"
+                  : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
               }`}
             >
               {t(`phrasebook.category.${category}`)}
@@ -150,10 +150,10 @@ export default function PersonalizedPhrasebook() {
                     </span>
                     <button
                       onClick={() => handleMarkCompleted(phrase)}
-                      className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                      className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold transition ${
                         completed.has(phrase.id)
-                          ? "bg-[var(--ink)] text-white"
-                          : "bg-[var(--paper-muted)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                          ? "border-[var(--pill-active-bg)] bg-[var(--pill-active-bg)] text-[var(--pill-active-fg)] shadow-sm"
+                          : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
                       }`}
                     >
                       {completed.has(phrase.id) ? "✓" : "+"} {t("phrasebook.completed")}
