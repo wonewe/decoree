@@ -26,6 +26,76 @@ type Suggestion =
   | { type: "event"; item: KCultureEvent }
   | null;
 
+const copyMap: Record<
+  string,
+  {
+    greeting: string;
+    suggestion: string;
+    refresh: string;
+    viewMore: string;
+    noSuggestion: string;
+    loading: string;
+    feedback: string;
+    placeholder: string;
+    close: string;
+    send: string;
+    sending: string;
+  }
+> = {
+  ko: {
+    greeting: "이런 팝업/전시는 어떠세요?",
+    suggestion: "추천",
+    refresh: "새로고침",
+    viewMore: "자세히 보기 →",
+    noSuggestion: "추천할 대상을 찾지 못했습니다.",
+    loading: "추천을 불러오는 중...",
+    feedback: "피드백",
+    placeholder: "예) 성수/홍대 야외 팝업을 더 보고 싶어요.",
+    close: "닫기",
+    send: "보내기",
+    sending: "보내는 중..."
+  },
+  en: {
+    greeting: "How about these pop-ups or exhibitions?",
+    suggestion: "Suggestion",
+    refresh: "Refresh",
+    viewMore: "View details →",
+    noSuggestion: "No suggestion available right now.",
+    loading: "Loading suggestions...",
+    feedback: "Feedback",
+    placeholder: "e.g., More outdoor pop-ups in Seongsu/Hongdae.",
+    close: "Close",
+    send: "Send",
+    sending: "Sending..."
+  },
+  fr: {
+    greeting: "Que diriez-vous de ces pop-ups/expositions ?",
+    suggestion: "Suggestion",
+    refresh: "Rafraîchir",
+    viewMore: "Voir les détails →",
+    noSuggestion: "Aucune suggestion pour le moment.",
+    loading: "Chargement des suggestions...",
+    feedback: "Retour",
+    placeholder: "ex. Plus de pop-ups en plein air à Seongsu/Hongdae.",
+    close: "Fermer",
+    send: "Envoyer",
+    sending: "Envoi..."
+  },
+  ja: {
+    greeting: "こんなポップアップ／展示はいかがですか？",
+    suggestion: "おすすめ",
+    refresh: "更新",
+    viewMore: "詳しく見る →",
+    noSuggestion: "おすすめを見つけられませんでした。",
+    loading: "おすすめを読み込み中...",
+    feedback: "フィードバック",
+    placeholder: "例）ソンス／弘大の屋外ポップアップをもっと見たいです。",
+    close: "閉じる",
+    send: "送信",
+    sending: "送信中..."
+  }
+};
+
 export function FeedbackPrompt() {
   const { language } = useI18n();
   const { popups, status: popupStatus } = usePopups(language);
@@ -38,18 +108,7 @@ export function FeedbackPrompt() {
   const [suggestion, setSuggestion] = useState<Suggestion>(null);
   const [bubbleVisible, setBubbleVisible] = useState(true);
 
-  const greeting = useMemo(() => {
-    switch (language) {
-      case "fr":
-        return "Que diriez-vous de ces pop-ups/expositions ?";
-      case "ja":
-        return "こんなポップアップ／展示はいかがですか？";
-      case "ko":
-        return "이런 팝업/전시는 어떠세요?";
-      default:
-        return "How about these pop-ups or exhibitions?";
-    }
-  }, [language]);
+  const copy = copyMap[language] ?? copyMap.en;
 
   const computeSuggestion = (): Suggestion => {
     const livePopups = popups.filter((p) => p.status === "now" && !p.hidden);
@@ -116,11 +175,11 @@ export function FeedbackPrompt() {
           >
             {suggestion ? (
               <>
-                <span className="text-[var(--ink-muted)]">추천: </span>
+                <span className="text-[var(--ink-muted)]">{copy.suggestion}: </span>
                 <span>{suggestion.item.title}</span>
               </>
             ) : (
-              <span>{greeting}</span>
+              <span>{copy.greeting}</span>
             )}
           </button>
         )}
@@ -140,7 +199,7 @@ export function FeedbackPrompt() {
         {suggestionOpen && (
           <div className="absolute bottom-[calc(100%+10px)] right-0 w-80 rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-4 shadow-xl">
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-semibold text-[var(--ink)]">추천</h4>
+              <h4 className="text-sm font-semibold text-[var(--ink)]">{copy.suggestion}</h4>
               <button
                 type="button"
                 onClick={() => setSuggestionOpen(false)}
@@ -151,17 +210,17 @@ export function FeedbackPrompt() {
             </div>
             <div className="mt-3 space-y-3">
               <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--ink-subtle)]">
-                <span>{greeting}</span>
+                <span>{copy.greeting}</span>
                 <button
                   type="button"
                   onClick={() => setSuggestion(computeSuggestion())}
                   className="text-[var(--ink-muted)] hover:text-[var(--ink)]"
                 >
-                  새로고침
+                  {copy.refresh}
                 </button>
               </div>
               {showLoading ? (
-                <p className="text-xs text-[var(--ink-subtle)]">추천을 불러오는 중...</p>
+                <p className="text-xs text-[var(--ink-subtle)]">{copy.loading}</p>
               ) : suggestion ? (
                 <div className="rounded-xl border border-[var(--border)] bg-[var(--paper-muted)] p-3">
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
@@ -171,22 +230,22 @@ export function FeedbackPrompt() {
                   {suggestion.item.location && (
                     <p className="text-xs text-[var(--ink-subtle)]">{suggestion.item.location}</p>
                   )}
-                  <div className="mt-2 flex justify-end">
-                    <a
-                      href={
-                        suggestion.type === "popup"
-                          ? `/popups/${suggestion.item.id}`
-                          : `/events/${suggestion.item.id}`
-                      }
-                      className="text-xs font-semibold text-[var(--ink)] underline"
-                    >
-                      자세히 보기 →
-                    </a>
+                    <div className="mt-2 flex justify-end">
+                      <a
+                        href={
+                          suggestion.type === "popup"
+                            ? `/popups/${suggestion.item.id}`
+                            : `/events/${suggestion.item.id}`
+                        }
+                        className="text-xs font-semibold text-[var(--ink)] underline"
+                      >
+                        {copy.viewMore}
+                      </a>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <p className="text-xs text-[var(--ink-subtle)]">추천할 대상을 찾지 못했습니다.</p>
-              )}
+                ) : (
+                <p className="text-xs text-[var(--ink-subtle)]">{copy.noSuggestion}</p>
+                )}
             </div>
           </div>
         )}
@@ -194,7 +253,7 @@ export function FeedbackPrompt() {
         {feedbackOpen && (
           <div className="absolute bottom-[calc(100%+10px)] right-0 w-80 rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-4 shadow-xl">
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-semibold text-[var(--ink)]">피드백</h4>
+              <h4 className="text-sm font-semibold text-[var(--ink)]">{copy.feedback}</h4>
               <button
                 type="button"
                 onClick={() => setFeedbackOpen(false)}
@@ -209,7 +268,7 @@ export function FeedbackPrompt() {
                 onChange={(e) => setText(e.target.value)}
                 rows={3}
                 className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper-muted)] px-3 py-2 text-sm text-[var(--ink)] focus:border-[var(--ink)] focus:outline-none"
-                placeholder="예) 성수/홍대 야외 팝업을 더 보고 싶어요."
+                placeholder={copy.placeholder}
               />
               <div className="flex justify-end gap-2">
                 <button
@@ -217,7 +276,7 @@ export function FeedbackPrompt() {
                   onClick={() => setFeedbackOpen(false)}
                   className="rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-semibold text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
                 >
-                  닫기
+                  {copy.close}
                 </button>
                 <button
                   type="button"
@@ -225,7 +284,7 @@ export function FeedbackPrompt() {
                   className="rounded-full bg-[var(--ink)] px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60"
                   disabled={!text.trim() || sending}
                 >
-                  {sending ? "보내는 중..." : "보내기"}
+                  {sending ? copy.sending : copy.send}
                 </button>
               </div>
             </div>

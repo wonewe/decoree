@@ -1,6 +1,6 @@
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { addDoc, collection, Timestamp, getFirestore } from "firebase/firestore";
 import { assertFirestoreAvailable, shouldUseStaticContent } from "./repositories/runtimeConfig";
-import { db } from "./repositories/firestoreClient";
+import { getFirebaseApp } from "./firebase";
 
 type FeedbackPayload = {
   message: string;
@@ -10,19 +10,29 @@ type FeedbackPayload = {
 };
 
 export async function submitFeedback(payload: FeedbackPayload) {
-  try {
-    if (shouldUseStaticContent()) {
+  const fallbackToLocal = () => {
+    try {
       const key = "koraid:feedback:local";
-      const storeRaw = typeof window !== "undefined" ? window.localStorage.getItem(key) : null;
-      const store = storeRaw ? (JSON.parse(storeRaw) as FeedbackPayload[]) : [];
-      store.unshift({ ...payload, createdAt: new Date().toISOString() } as any);
+      const existing = typeof window !== "undefined" ? window.localStorage.getItem(key) : null;
+      const store = existing ? (JSON.parse(existing) as Array<FeedbackPayload & { createdAt: string }>) : [];
+      store.unshift({ ...payload, createdAt: new Date().toISOString() });
       if (typeof window !== "undefined") {
         window.localStorage.setItem(key, JSON.stringify(store.slice(0, 50)));
       }
-      return { ok: true };
+      return { ok: true, local: true as const };
+    } catch (error) {
+      console.error("Failed to store feedback locally", error);
+      return { ok: false, error: error instanceof Error ? error.message : "local-storage" };
     }
+  };
 
+  try {
     assertFirestoreAvailable("Submitting feedback");
+    if (shouldUseStaticContent()) {
+      return fallbackToLocal();
+    }
+    const app = getFirebaseApp();
+    const db = getFirestore(app);
     const feedbackCollection = collection(db, "feedback");
     await addDoc(feedbackCollection, {
       ...payload,
@@ -30,7 +40,7 @@ export async function submitFeedback(payload: FeedbackPayload) {
     });
     return { ok: true };
   } catch (error) {
-    console.error("Failed to submit feedback", error);
-    return { ok: false, error: error instanceof Error ? error.message : "unknown" };
+    console.warn("Failed to submit feedback to Firestore, falling back to local store.", error);
+    return fallbackToLocal();
   }
 }
