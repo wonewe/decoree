@@ -168,7 +168,7 @@ export function FeedbackPrompt() {
                     {suggestion.type === "popup" ? "Pop-up" : "Event"}
                   </p>
                   <p className="mt-1 text-sm font-semibold text-[var(--ink)]">{suggestion.item.title}</p>
-                  {"location" in suggestion.item && suggestion.item.location && (
+                  {suggestion.item.location && (
                     <p className="text-xs text-[var(--ink-subtle)]">{suggestion.item.location}</p>
                   )}
                   <div className="mt-2 flex justify-end">
