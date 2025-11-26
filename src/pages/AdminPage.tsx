@@ -621,10 +621,10 @@ export default function AdminPage() {
       setLoading(true);
       try {
         const [trendData, eventData, phraseData, popupData] = await Promise.all([
-          fetchTrendReports(),
-          fetchEvents(),
-          fetchPhrases(),
-          fetchPopups()
+          fetchTrendReports(undefined, { includeHidden: true }),
+          fetchEvents(undefined, { includeHidden: true }),
+          fetchPhrases(undefined, { includeHidden: true }),
+          fetchPopups(undefined, { includeHidden: true })
         ]);
 
         if (!isMounted) return;
@@ -820,7 +820,7 @@ export default function AdminPage() {
         }
       }
 
-      const refreshed = await fetchTrendReports();
+      const refreshed = await fetchTrendReports(undefined, { includeHidden: true });
       setTrends(refreshed);
       const preferredId =
         localizedPayloads.find((entry) => entry.language === basePayload.language)?.id ??
@@ -989,7 +989,7 @@ export default function AdminPage() {
         }
       }
 
-      const refreshed = await fetchEvents();
+      const refreshed = await fetchEvents(undefined, { includeHidden: true });
       setEvents(refreshed);
       const preferredId =
         localizedPayloads.find((entry) => entry.language === payload.language)?.id ??
@@ -1129,7 +1129,7 @@ export default function AdminPage() {
         }
       }
 
-      const refreshed = await fetchPhrases();
+      const refreshed = await fetchPhrases(undefined, { includeHidden: true });
       setPhrases(refreshed);
       const preferredId =
         localizedPayloads.find((entry) => entry.language === payload.language)?.id ??
@@ -1305,7 +1305,7 @@ export default function AdminPage() {
         }
       }
 
-      const refreshed = await fetchPopups();
+      const refreshed = await fetchPopups(undefined, { includeHidden: true });
       setPopups(refreshed);
       const preferredId =
         localizedPayloads.find((entry) => entry.language === payload.language)?.id ??

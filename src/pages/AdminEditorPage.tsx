@@ -189,7 +189,7 @@ export default function AdminEditorPage() {
       try {
         if (type === "trends") {
           if (id) {
-            const report = await getTrendReportById(id);
+            const report = await getTrendReportById(id, { includeHidden: true });
             if (report) {
               setTrendDraft(trendToDraft(report));
             }
@@ -203,7 +203,7 @@ export default function AdminEditorPage() {
           }
         } else if (type === "events") {
           if (id) {
-            const event = await getEventById(id);
+            const event = await getEventById(id, { includeHidden: true });
             if (event) {
               setEventDraft(eventToDraft(event));
             }
@@ -217,7 +217,7 @@ export default function AdminEditorPage() {
           }
         } else if (type === "phrases") {
           if (id) {
-            const phrase = await getPhraseById(id);
+            const phrase = await getPhraseById(id, { includeHidden: true });
             if (phrase) {
               setPhraseDraft(phraseToDraft(phrase));
             }
@@ -231,7 +231,7 @@ export default function AdminEditorPage() {
           }
         } else if (type === "popups") {
           if (id) {
-            const popup = await getPopupById(id);
+            const popup = await getPopupById(id, language, { includeHidden: true });
             if (popup) {
               setPopupDraft(popupToDraft(popup));
             }
@@ -643,6 +643,15 @@ export default function AdminEditorPage() {
               ))}
             </select>
           </label>
+          <label className="flex items-center gap-3 text-sm font-semibold text-[var(--ink)]">
+            <input
+              type="checkbox"
+              checked={trendDraft.hidden}
+              onChange={(e) => setTrendDraft((prev) => ({ ...prev, hidden: e.target.checked }))}
+              className="h-4 w-4 rounded border-[var(--border)]"
+            />
+            <span>숨김</span>
+          </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             저자
             <select
@@ -922,6 +931,15 @@ export default function AdminEditorPage() {
                 </option>
               ))}
             </select>
+          </label>
+          <label className="flex items-center gap-3 text-sm font-semibold text-[var(--ink)]">
+            <input
+              type="checkbox"
+              checked={eventDraft.hidden}
+              onChange={(e) => setEventDraft((prev) => ({ ...prev, hidden: e.target.checked }))}
+              className="h-4 w-4 rounded border-[var(--border)]"
+            />
+            <span>숨김</span>
           </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             ID
@@ -1217,6 +1235,15 @@ export default function AdminEditorPage() {
               ))}
             </select>
           </label>
+          <label className="flex items-center gap-3 text-sm font-semibold text-[var(--ink)]">
+            <input
+              type="checkbox"
+              checked={phraseDraft.hidden}
+              onChange={(e) => setPhraseDraft((prev) => ({ ...prev, hidden: e.target.checked }))}
+              className="h-4 w-4 rounded border-[var(--border)]"
+            />
+            <span>숨김</span>
+          </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             ID
             <input
@@ -1378,6 +1405,15 @@ export default function AdminEditorPage() {
                 </option>
               ))}
             </select>
+          </label>
+          <label className="flex items-center gap-3 text-sm font-semibold text-[var(--ink)]">
+            <input
+              type="checkbox"
+              checked={popupDraft.hidden}
+              onChange={(e) => setPopupDraft((prev) => ({ ...prev, hidden: e.target.checked }))}
+              className="h-4 w-4 rounded border-[var(--border)]"
+            />
+            <span>숨김</span>
           </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             ID

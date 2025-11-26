@@ -182,10 +182,10 @@ export default function AdminListPage() {
       setLoading(true);
       try {
         const [trendsData, eventsData, phrasesData, popupsData] = await Promise.all([
-          fetchTrendReports(),
-          fetchEvents(),
-          fetchPhrases(),
-          fetchPopups()
+          fetchTrendReports(undefined, { includeHidden: true }),
+          fetchEvents(undefined, { includeHidden: true }),
+          fetchPhrases(undefined, { includeHidden: true }),
+          fetchPopups(undefined, { includeHidden: true })
         ]);
         setTrends(trendsData);
         setEvents(eventsData);
@@ -286,14 +286,19 @@ export default function AdminListPage() {
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
-                              {getLanguageLabel(trend.language ?? "en")}
+                        <div className="flex items-center gap-2">
+                          <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
+                            {getLanguageLabel(trend.language ?? "en")}
+                          </span>
+                          {trend.hidden && (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                              숨김
                             </span>
-                            {author && (
-                              <span className="text-xs text-[var(--ink-subtle)]">{author.name}</span>
-                            )}
-                          </div>
+                          )}
+                          {author && (
+                            <span className="text-xs text-[var(--ink-subtle)]">{author.name}</span>
+                          )}
+                        </div>
                           <h4 className="mt-1 font-semibold text-[var(--ink)]">{trend.title}</h4>
                           <p className="mt-1 text-sm text-[var(--ink-muted)] line-clamp-2">
                             {trend.summary}
@@ -364,12 +369,17 @@ export default function AdminListPage() {
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
-                              {getLanguageLabel(event.language)}
+                        <div className="flex items-center gap-2">
+                          <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
+                            {getLanguageLabel(event.language)}
+                          </span>
+                          {event.hidden && (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                              숨김
                             </span>
-                            <span className="text-xs text-[var(--ink-subtle)]">{event.category}</span>
-                          </div>
+                          )}
+                          <span className="text-xs text-[var(--ink-subtle)]">{event.category}</span>
+                        </div>
                           <h4 className="mt-1 font-semibold text-[var(--ink)]">{event.title}</h4>
                           <p className="mt-1 text-sm text-[var(--ink-muted)] line-clamp-2">
                             {event.description}
@@ -414,6 +424,11 @@ export default function AdminListPage() {
                             <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
                             {getLanguageLabel(phrase.language)}
                           </span>
+                            {phrase.hidden && (
+                              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                                숨김
+                              </span>
+                            )}
                             <span className="text-xs text-[var(--ink-subtle)]">{phrase.category}</span>
                         </div>
                           <h4 className="mt-1 font-semibold text-[var(--ink)]">{phrase.korean}</h4>
@@ -455,6 +470,11 @@ export default function AdminListPage() {
                             <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
                             {getLanguageLabel(popup.language)}
                           </span>
+                            {popup.hidden && (
+                              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                                숨김
+                              </span>
+                            )}
                             <span className="text-xs text-[var(--ink-subtle)]">{popup.status}</span>
                         </div>
                           <h4 className="mt-1 font-semibold text-[var(--ink)]">{popup.title}</h4>
@@ -575,4 +595,3 @@ export default function AdminListPage() {
     </main>
   );
 }
-

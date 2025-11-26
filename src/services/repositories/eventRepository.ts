@@ -90,6 +90,10 @@ function sortEvents(events: KCultureEvent[]) {
   );
 }
 
+function filterHidden(events: KCultureEvent[], includeHidden?: boolean) {
+  return includeHidden ? events : events.filter((event) => !event.hidden);
+}
+
 function mergeStaticEvents(language?: SupportedLanguage) {
   const overrides = readLocalOverrides().map(normalizeEvent);
   const deletedIds = new Set(readDeletedIds());
@@ -152,40 +156,53 @@ const toEvent = (docData: WithTimestamps<KCultureEvent>): KCultureEvent => {
   };
 };
 
-export async function fetchEvents(language?: SupportedLanguage): Promise<KCultureEvent[]> {
+export async function fetchEvents(
+  language?: SupportedLanguage,
+  options?: { includeHidden?: boolean }
+): Promise<KCultureEvent[]> {
+  const includeHidden = options?.includeHidden ?? false;
   if (shouldUseStaticContent()) {
-    return mergeStaticEvents(language);
+    return filterHidden(mergeStaticEvents(language), includeHidden);
   }
   try {
     const snapshot = await getDocs(query(eventCollection, orderBy("startDate", "asc")));
     if (snapshot.empty) {
-      return mergeStaticEvents(language);
+      return filterHidden(mergeStaticEvents(language), includeHidden);
     }
     const events = snapshot.docs.map((docSnap) => {
       const data = docSnap.data() as WithTimestamps<KCultureEvent>;
       return toEvent({ ...data, id: docSnap.id });
     });
-    return sortEvents(filterByLanguage(events, language));
+    return sortEvents(filterHidden(filterByLanguage(events, language), includeHidden));
   } catch (error) {
     console.error("Failed to fetch events, fallback to static data.", error);
-    return mergeStaticEvents(language);
+    return filterHidden(mergeStaticEvents(language), includeHidden);
   }
 }
 
-export async function getEventById(id: string) {
+export async function getEventById(id: string, options?: { includeHidden?: boolean }) {
+  const includeHidden = options?.includeHidden ?? false;
   if (shouldUseStaticContent()) {
-    return getLocalEventById(id);
+    const local = getLocalEventById(id);
+    if (local && !includeHidden && local.hidden) return null;
+    return local;
   }
   try {
     const snapshot = await getDoc(doc(eventCollection, id));
     if (snapshot.exists()) {
-      return toEvent({ ...(snapshot.data() as KCultureEvent), id: snapshot.id });
+      const data = toEvent({ ...(snapshot.data() as KCultureEvent), id: snapshot.id });
+      if (!includeHidden && data.hidden) return null;
+      return data;
     }
   } catch (error) {
     console.error("Unable to fetch event by id", error);
-    return getLocalEventById(id);
+    const fallback = getLocalEventById(id);
+    if (fallback && !includeHidden && fallback.hidden) return null;
+    return fallback;
   }
-  return getLocalEventById(id);
+  const fallback = getLocalEventById(id);
+  if (fallback && !includeHidden && fallback.hidden) return null;
+  return fallback;
 }
 
 export async function addEvent(event: KCultureEvent) {
@@ -208,7 +225,7 @@ export async function addEvent(event: KCultureEvent) {
       updatedAt: Timestamp.now()
     };
     await setDoc(doc(eventCollection, id), payload, { merge: true });
-    const fetched = await fetchEvents();
+    const fetched = await fetchEvents(undefined, { includeHidden: true });
     console.log("[events] addEvent: 저장 후 이벤트 개수:", fetched.length, "ID 목록:", fetched.map(e => e.id));
     return fetched;
   } catch (error) {
@@ -237,7 +254,7 @@ export async function updateEvent(event: KCultureEvent) {
       },
       { merge: true }
     );
-    return fetchEvents();
+    return fetchEvents(undefined, { includeHidden: true });
   } catch (error) {
     console.warn("[events] updateEvent failed on Firestore, falling back to local store.", error);
     return saveLocally();
@@ -256,7 +273,7 @@ export async function deleteEvent(id: string) {
 
   try {
     await deleteDoc(doc(eventCollection, id));
-    return fetchEvents();
+    return fetchEvents(undefined, { includeHidden: true });
   } catch (error) {
     console.warn("[events] deleteEvent failed on Firestore, falling back to local store.", error);
     return deleteLocally();
