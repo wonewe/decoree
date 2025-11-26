@@ -36,10 +36,10 @@ export function BookmarkButton({ item, size = "md", className }: BookmarkButtonP
       type="button"
       onClick={handleClick}
       aria-pressed={active}
-      className={`inline-flex items-center justify-center rounded-full border px-3 py-2 font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hanBlue ${
+      className={`inline-flex items-center justify-center rounded-full border px-3 py-2 font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ink)] ${
         active
-          ? "border-hanBlue bg-hanBlue text-white"
-          : "border-slate-200 bg-white/80 text-slate-600 hover:border-hanBlue hover:text-hanBlue"
+          ? "border-[var(--ink)] bg-[var(--ink)] text-white"
+          : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
       } ${sizing} ${className ?? ""}`}
       title={active ? t("bookmarks.button.remove") : t("bookmarks.button.save")}
     >

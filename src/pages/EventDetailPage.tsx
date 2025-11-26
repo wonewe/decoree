@@ -34,7 +34,7 @@ export default function EventDetailPage() {
   if (status === "loading" || status === "idle") {
     return (
       <section className="section-container">
-        <div className="h-72 animate-pulse rounded-3xl bg-slate-200" />
+        <div className="h-72 animate-pulse rounded-3xl bg-[var(--paper)] shadow-sm ring-1 ring-[var(--border)]" />
       </section>
     );
   }
@@ -42,10 +42,10 @@ export default function EventDetailPage() {
   if (status === "not-found" || !event) {
     return (
       <section className="section-container space-y-6 text-center">
-        <h2 className="text-3xl font-semibold text-dancheongNavy">
+        <h2 className="text-3xl font-semibold text-[var(--ink)]">
           {t("eventDetail.notFound")}
         </h2>
-        <p className="text-slate-600">{t("eventDetail.notFoundSubtitle")}</p>
+        <p className="text-[var(--ink-muted)]">{t("eventDetail.notFoundSubtitle")}</p>
         <button
           onClick={() => navigate(-1)}
           className="primary-button inline-flex items-center justify-center"
@@ -75,7 +75,7 @@ export default function EventDetailPage() {
     : null;
 
   return (
-    <article className="bg-white">
+    <article className="bg-[var(--paper)]">
       <div className="relative h-[320px] w-full overflow-hidden">
         <img
           src={event.imageUrl}
@@ -92,7 +92,7 @@ export default function EventDetailPage() {
           >
             ← {t("eventDetail.back")}
           </button>
-          <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-slate-100">
+          <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-white/80">
             <span>{formattedDate}</span>
             <span>•</span>
             <span>{event.time}</span>
@@ -100,7 +100,7 @@ export default function EventDetailPage() {
             <span>{t(`event.eventCategory.${event.category}`)}</span>
           </div>
           <h1 className="mt-4 text-3xl font-bold md:text-4xl">{event.title}</h1>
-          <p className="mt-2 max-w-3xl text-sm text-slate-100 md:text-base">
+          <p className="mt-2 max-w-3xl text-sm text-white/85 md:text-base">
             {event.description}
           </p>
         </div>
@@ -117,27 +117,27 @@ export default function EventDetailPage() {
                   <div
                     key={index}
                     dangerouslySetInnerHTML={{ __html: paragraph }}
-                    className="mb-4 text-lg leading-relaxed text-slate-700 [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3"
+                    className="mb-4 text-lg leading-relaxed text-[var(--ink)] [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3"
                   />
                 );
               }
               // 일반 텍스트인 경우
               return (
-                <p key={index} className="mb-4 text-lg leading-relaxed text-slate-700">
+              <p key={index} className="mb-4 text-lg leading-relaxed text-[var(--ink)]">
                   {paragraph}
                 </p>
               );
             })}
 
             {event.tips.length > 0 && (
-              <div className="rounded-3xl bg-hanBlue/5 p-6">
-                <h2 className="text-lg font-semibold text-dancheongNavy">
+            <div className="rounded-3xl bg-[var(--paper-muted)] p-6">
+              <h2 className="text-lg font-semibold text-[var(--ink)]">
                   {t("eventDetail.tipsTitle")}
                 </h2>
-                <ul className="mt-3 space-y-2 text-sm text-slate-600">
+              <ul className="mt-3 space-y-2 text-sm text-[var(--ink-muted)]">
                   {event.tips.map((tip, index) => (
                     <li key={index} className="flex gap-2">
-                      <span className="mt-1 text-hanBlue">•</span>
+                    <span className="mt-1 text-[var(--ink)]">•</span>
                       <span>{tip}</span>
                     </li>
                   ))}
@@ -146,22 +146,22 @@ export default function EventDetailPage() {
             )}
           </div>
 
-          <aside className="space-y-4 rounded-3xl bg-slate-50 p-6">
-            <h2 className="text-lg font-semibold text-dancheongNavy">
+          <aside className="space-y-4 rounded-3xl bg-[var(--paper-muted)] p-6">
+            <h2 className="text-lg font-semibold text-[var(--ink)]">
               {t("eventDetail.infoTitle")}
             </h2>
-            <dl className="space-y-4 text-sm text-slate-600">
+            <dl className="space-y-4 text-sm text-[var(--ink-muted)]">
               <div>
-                <dt className="font-semibold text-slate-500">{t("eventDetail.when")}</dt>
+                <dt className="font-semibold text-[var(--ink-subtle)]">{t("eventDetail.when")}</dt>
                 <dd>{formattedDate}</dd>
                 <dd>{event.time}</dd>
               </div>
               <div>
-                <dt className="font-semibold text-slate-500">{t("eventDetail.where")}</dt>
+                <dt className="font-semibold text-[var(--ink-subtle)]">{t("eventDetail.where")}</dt>
                 <dd>{event.location}</dd>
               </div>
               <div>
-                <dt className="font-semibold text-slate-500">{t("eventDetail.price")}</dt>
+                <dt className="font-semibold text-[var(--ink-subtle)]">{t("eventDetail.price")}</dt>
                 <dd>{event.price}</dd>
               </div>
             </dl>
@@ -177,7 +177,7 @@ export default function EventDetailPage() {
             )}
             {mapEmbedUrl && (
               <div className="mt-4 space-y-2">
-                <div className="overflow-hidden rounded-2xl border border-slate-200 shadow-sm">
+                <div className="overflow-hidden rounded-2xl border border-[var(--border)] shadow-sm">
                   <iframe
                     title={`${event.title} map`}
                     src={mapEmbedUrl}
@@ -186,8 +186,8 @@ export default function EventDetailPage() {
                     allowFullScreen
                   />
                 </div>
-                <div className="text-xs text-slate-500">
-                  <span className="font-semibold text-slate-700">Map:</span>{" "}
+                <div className="text-xs text-[var(--ink-subtle)]">
+                  <span className="font-semibold text-[var(--ink)]">Map:</span>{" "}
                   {mapQuery}
                   {mapLink && (
                     <>
@@ -197,7 +197,7 @@ export default function EventDetailPage() {
                         href={mapLink}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-hanBlue hover:underline"
+                        className="text-[var(--ink)] underline-offset-4 hover:underline"
                       >
                         Google Maps에서 열기
                       </a>

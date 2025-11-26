@@ -77,13 +77,13 @@ export default function SignupPage() {
 
   return (
     <section className="section-container">
-      <div className="mx-auto max-w-lg space-y-6 rounded-3xl bg-white p-8 shadow-xl">
+      <div className="mx-auto max-w-lg space-y-6 rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-8 shadow-xl">
         <header className="space-y-2 text-center">
           <span className="badge-label">{t("auth.badge")}</span>
-          <h1 className="text-3xl font-bold text-dancheongNavy">{t("auth.signupTitle")}</h1>
-          <p className="text-sm text-slate-500">{t("auth.signupSubtitle")}</p>
+          <h1 className="text-3xl font-bold text-[var(--ink)]">{t("auth.signupTitle")}</h1>
+          <p className="text-sm text-[var(--ink-muted)]">{t("auth.signupSubtitle")}</p>
           {firebaseError && (
-            <p className="rounded-2xl border border-dancheongRed/30 bg-dancheongRed/10 px-4 py-2 text-sm text-dancheongRed">
+            <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-800">
               {firebaseError}
             </p>
           )}
@@ -91,7 +91,7 @@ export default function SignupPage() {
 
         <button
           onClick={handleGoogleSignup}
-          className="flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 px-4 py-3 font-semibold text-slate-600 transition hover:border-hanBlue hover:text-hanBlue disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-full border border-[var(--border)] px-4 py-3 font-semibold text-[var(--ink)] transition hover:border-[var(--ink)] hover:text-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-60"
           disabled={googleLoading || loading}
           type="button"
         >
@@ -116,15 +116,15 @@ export default function SignupPage() {
           {googleLoading ? t("auth.googleLoading") : t("auth.loginWithGoogle")}
         </button>
 
-        <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-slate-400">
-          <span className="h-px flex-1 bg-slate-200" />
+        <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-[var(--ink-subtle)]">
+          <span className="h-px flex-1 bg-[var(--border)]" />
           {t("auth.or")}
-          <span className="h-px flex-1 bg-slate-200" />
+          <span className="h-px flex-1 bg-[var(--border)]" />
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-slate-600" htmlFor="email">
+            <label className="block text-sm font-semibold text-[var(--ink)]" htmlFor="email">
               {t("auth.email")}
             </label>
             <input
@@ -133,12 +133,12 @@ export default function SignupPage() {
               required
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+              className="w-full rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 text-[var(--ink)] shadow-sm focus:border-[var(--ink)] focus:outline-none focus:ring-1 focus:ring-[var(--ink)]/40"
               placeholder="admin@example.com"
             />
           </div>
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-slate-600" htmlFor="password">
+            <label className="block text-sm font-semibold text-[var(--ink)]" htmlFor="password">
               {t("auth.password")}
             </label>
             <input
@@ -147,12 +147,12 @@ export default function SignupPage() {
               required
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+              className="w-full rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 text-[var(--ink)] shadow-sm focus:border-[var(--ink)] focus:outline-none focus:ring-1 focus:ring-[var(--ink)]/40"
               placeholder="••••••••"
             />
           </div>
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-slate-600" htmlFor="passwordConfirm">
+            <label className="block text-sm font-semibold text-[var(--ink)]" htmlFor="passwordConfirm">
               {t("auth.passwordConfirm")}
             </label>
             <input
@@ -161,7 +161,7 @@ export default function SignupPage() {
               required
               value={passwordConfirm}
               onChange={(event) => setPasswordConfirm(event.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+              className="w-full rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 text-[var(--ink)] shadow-sm focus:border-[var(--ink)] focus:outline-none focus:ring-1 focus:ring-[var(--ink)]/40"
               placeholder="••••••••"
             />
           </div>
@@ -175,19 +175,19 @@ export default function SignupPage() {
         </form>
 
         {translatedAuthError && (
-          <p className="rounded-2xl bg-dancheongRed/10 px-4 py-2 text-sm text-dancheongRed">
+          <p className="rounded-2xl bg-rose-50 px-4 py-2 text-sm text-rose-800">
             {translatedAuthError}
           </p>
         )}
 
-        <div className="text-center text-sm text-slate-600">
+        <div className="text-center text-sm text-[var(--ink-muted)]">
           {t("auth.haveAccount")}{" "}
-          <Link to="/login" className="font-semibold text-hanBlue hover:underline">
+          <Link to="/login" className="font-semibold text-[var(--ink)] underline-offset-4 hover:underline">
             {t("auth.goToLogin")}
           </Link>
         </div>
 
-        <footer className="rounded-2xl bg-slate-100 p-4 text-xs text-slate-500">
+        <footer className="rounded-2xl bg-[var(--paper-muted)] p-4 text-xs text-[var(--ink-subtle)]">
           <p>{t("auth.footer.hint")}</p>
           <p className="mt-1">{t("auth.footer.support")}</p>
         </footer>

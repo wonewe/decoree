@@ -12,7 +12,7 @@ export default function PublicServiceDetailPage() {
     <LocalSupportAccessGate>
       {!guide ? (
         <section className="section-container space-y-4 text-center">
-          <p className="text-slate-600">Service introuvable.</p>
+          <p className="text-[var(--ink-muted)]">Service introuvable.</p>
           <Link to="/local-support/services" className="primary-button inline-flex justify-center">
             ← {t("trendDetail.backToList")}
           </Link>
@@ -20,25 +20,25 @@ export default function PublicServiceDetailPage() {
       ) : (
         <section className="section-container space-y-8">
           <header className="space-y-3">
-            <span className="badge-label bg-hanBlue/10 text-hanBlue">{t("nav.localSupport")}</span>
-            <h1 className="text-4xl font-bold text-dancheongNavy">{guide.title}</h1>
-            <p className="text-slate-600">{guide.summary}</p>
+            <span className="badge-label">{t("nav.localSupport")}</span>
+            <h1 className="text-4xl font-bold text-[var(--ink)]">{guide.title}</h1>
+            <p className="text-[var(--ink-muted)]">{guide.summary}</p>
           </header>
           <div className="grid gap-6 md:grid-cols-2">
-            <article className="rounded-3xl bg-white p-6 shadow">
-              <h2 className="text-xl font-semibold text-dancheongNavy">Checklist</h2>
-              <ul className="mt-4 space-y-2 text-sm text-slate-600">
+            <article className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow">
+              <h2 className="text-xl font-semibold text-[var(--ink)]">Checklist</h2>
+              <ul className="mt-4 space-y-2 text-sm text-[var(--ink-muted)]">
                 {guide.checklist.map((item) => (
                   <li key={item} className="flex gap-3">
-                    <span className="text-hanBlue">•</span>
+                    <span className="text-[var(--ink)]">•</span>
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </article>
-            <article className="rounded-3xl bg-slate-50 p-6 shadow">
-              <h2 className="text-xl font-semibold text-dancheongNavy">Calendrier</h2>
-              <ul className="mt-4 space-y-2 text-sm text-slate-600">
+            <article className="rounded-3xl border border-[var(--border)] bg-[var(--paper-muted)] p-6 shadow">
+              <h2 className="text-xl font-semibold text-[var(--ink)]">Calendrier</h2>
+              <ul className="mt-4 space-y-2 text-sm text-[var(--ink-muted)]">
                 {guide.calendar.map((item) => (
                   <li key={item}>{item}</li>
                 ))}

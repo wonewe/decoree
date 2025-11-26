@@ -40,12 +40,12 @@ export default function JapaneseLandingPage() {
   return (
     <div className="space-y-12">
       <section className="section-container">
-        <div className="rounded-3xl bg-gradient-to-br from-hanBlue/10 via-white to-dancheongYellow/20 p-10 shadow-lg lg:p-16">
+        <div className="rounded-3xl bg-gradient-to-br from-[var(--ink)]/10 via-[var(--paper)] to-[var(--accent)]/15 p-10 shadow-lg lg:p-16">
           <span className="badge-label">{t("japaneseLanding.badge")}</span>
-          <h1 className="mt-6 text-4xl font-bold text-dancheongNavy lg:text-5xl">
+          <h1 className="mt-6 text-4xl font-bold text-[var(--ink)] lg:text-5xl">
             {t("japaneseLanding.hero.title")}
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-slate-600">
+          <p className="mt-4 max-w-2xl text-lg text-[var(--ink-muted)]">
             {t("japaneseLanding.hero.subtitle")}
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
@@ -61,7 +61,7 @@ export default function JapaneseLandingPage() {
 
       <section className="section-container space-y-8">
         <div className="space-y-3">
-          <h2 className="text-2xl font-semibold text-dancheongNavy">
+          <h2 className="text-2xl font-semibold text-[var(--ink)]">
             {t("japaneseLanding.overview.title")}
           </h2>
         </div>
@@ -70,13 +70,13 @@ export default function JapaneseLandingPage() {
             <Link
               key={card.title}
               to={card.to}
-              className="group flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-6 shadow transition hover:-translate-y-1 hover:border-hanBlue/40 hover:shadow-xl"
+              className="group flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow transition hover:-translate-y-1 hover:border-[var(--ink)]/40 hover:shadow-xl"
             >
-              <h3 className="text-xl font-semibold text-dancheongNavy group-hover:text-hanBlue">
+              <h3 className="text-xl font-semibold text-[var(--ink)] group-hover:text-[var(--ink)]">
                 {card.title}
               </h3>
-              <p className="text-sm text-slate-600">{card.description}</p>
-              <span className="text-xs font-semibold text-hanBlue group-hover:underline">
+              <p className="text-sm text-[var(--ink-muted)]">{card.description}</p>
+              <span className="text-xs font-semibold text-[var(--ink)] group-hover:underline">
                 {t("hero.highlights.cta")} →
               </span>
             </Link>
@@ -85,13 +85,13 @@ export default function JapaneseLandingPage() {
       </section>
 
       <section className="section-container">
-        <div className="rounded-3xl bg-white p-8 shadow-xl">
+        <div className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-8 shadow-xl">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h2 className="text-2xl font-semibold text-dancheongNavy">
+              <h2 className="text-2xl font-semibold text-[var(--ink)]">
                 {t("japaneseLanding.cta.title")}
               </h2>
-              <p className="mt-2 max-w-xl text-slate-600">
+              <p className="mt-2 max-w-xl text-[var(--ink-muted)]">
                 {t("japaneseLanding.cta.subtitle")}
               </p>
             </div>
@@ -100,7 +100,7 @@ export default function JapaneseLandingPage() {
             </Link>
           </div>
           <div className="mt-8 space-y-4">
-            <h3 className="text-lg font-semibold text-dancheongNavy">
+            <h3 className="text-lg font-semibold text-[var(--ink)]">
               {t("japaneseLanding.resources.title")}
             </h3>
             <div className="flex flex-wrap gap-3">
@@ -108,7 +108,7 @@ export default function JapaneseLandingPage() {
                 <Link
                   key={item.label}
                   to={item.to}
-                  className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-hanBlue hover:text-hanBlue"
+                  className="rounded-full border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--ink-muted)] transition hover:border-[var(--ink)] hover:text-[var(--ink)]"
                 >
                   {item.label}
                 </Link>
