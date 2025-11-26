@@ -644,7 +644,7 @@ export default function AdminEditorPage() {
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-3 text-sm font-semibold text-[var(--ink)]">
+          <label className="flex items-center gap-2 text-sm font-semibold text-[var(--ink)]">
             <input
               type="checkbox"
               checked={trendDraft.hidden}
@@ -933,7 +933,7 @@ export default function AdminEditorPage() {
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-3 text-sm font-semibold text-[var(--ink)]">
+          <label className="flex items-center gap-2 text-sm font-semibold text-[var(--ink)]">
             <input
               type="checkbox"
               checked={eventDraft.hidden}
@@ -1236,7 +1236,7 @@ export default function AdminEditorPage() {
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-3 text-sm font-semibold text-[var(--ink)]">
+          <label className="flex items-center gap-2 text-sm font-semibold text-[var(--ink)]">
             <input
               type="checkbox"
               checked={phraseDraft.hidden}
@@ -1407,7 +1407,7 @@ export default function AdminEditorPage() {
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-3 text-sm font-semibold text-[var(--ink)]">
+          <label className="flex items-center gap-2 text-sm font-semibold text-[var(--ink)]">
             <input
               type="checkbox"
               checked={popupDraft.hidden}
