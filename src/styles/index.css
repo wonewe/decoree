@@ -23,6 +23,8 @@
   --tag-blue-bg: #e0e9ff;
   --tag-amber: #b45309;
   --tag-amber-bg: #fff4e0;
+  --pill-active-bg: #111827;
+  --pill-active-fg: #f8fafc;
   --radius-lg: 22px;
   --radius-md: 14px;
   --shadow-card: 0 30px 80px rgba(15, 23, 42, 0.08);
@@ -49,6 +51,8 @@
   --tag-blue-bg: rgba(59, 130, 246, 0.15);
   --tag-amber: #fcd34d;
   --tag-amber-bg: rgba(251, 191, 36, 0.15);
+  --pill-active-bg: #e5e7eb;
+  --pill-active-fg: #0b1220;
   --shadow-card: 0 25px 80px rgba(0, 0, 0, 0.45);
 }
 
@@ -208,6 +212,29 @@ a:hover {
   color: var(--ink);
 }
 
+[data-theme="dark"] .primary-button {
+  background: #111827;
+  color: #f8fafc;
+  border: 1px solid #f8fafc;
+}
+
+[data-theme="dark"] .primary-button:hover {
+  background: #0b1020;
+  color: #f8fafc;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"] .secondary-button {
+  border-color: #3a4049;
+  color: #f4f5f7;
+  background: transparent;
+}
+
+[data-theme="dark"] .secondary-button:hover {
+  border-color: #e5e7eb;
+  color: #ffffff;
+}
+
 .muted-link {
   color: var(--ink-subtle);
   font-size: 0.95rem;
@@ -316,4 +343,3 @@ a:hover {
     transform: scale(1.1);
   }
 }
-
