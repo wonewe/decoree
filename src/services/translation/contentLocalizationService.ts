@@ -10,7 +10,7 @@ export const STUDIO_AUTO_TRANSLATE_ENABLED =
 
 const ensureArray = (values?: string[]) => (values ? [...values] : []);
 
-const hasMediaHtml = (value: string) => /<img|<figure|<video|<iframe/i.test(value);
+const hasMediaHtml = (value: string) => /<(img|figure|video|iframe)\b/i.test(value);
 
 async function translateFields(
   texts: string[],
