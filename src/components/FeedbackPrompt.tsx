@@ -111,7 +111,6 @@ export function FeedbackPrompt() {
             onClick={() => {
               setSuggestionOpen((prev) => !prev);
               setFeedbackOpen(false);
-              setSuggestion(computeSuggestion());
             }}
             className="max-w-xs rounded-2xl border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-left text-xs font-semibold text-[var(--ink)] shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
           >
