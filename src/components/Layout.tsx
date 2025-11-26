@@ -69,7 +69,7 @@ export default function Layout() {
                 to="/admin"
                 className={({ isActive }) =>
                   `transition hover:text-hanBlue ${
-                    isActive ? "text-hanBlue" : "text-slate-600"
+                    isActive ? "text-hanBlue" : "text-[var(--ink-subtle)]"
                   }`
                 }
               >
