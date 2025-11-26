@@ -11,6 +11,11 @@ export const STUDIO_AUTO_TRANSLATE_ENABLED =
 const ensureArray = (values?: string[]) => (values ? [...values] : []);
 
 const hasMediaHtml = (value: string) => /<(img|figure|video|iframe)\b/i.test(value);
+const pickTranslated = (value: string | undefined, fallback: string) => {
+  if (value == null) return fallback;
+  if (value.trim() === "") return fallback;
+  return value;
+};
 
 async function translateFields(
   texts: string[],
@@ -42,14 +47,14 @@ export async function translateTrendReportContent(
   if (!translated) return null;
 
   let index = 0;
-  const title = translated[index++] ?? base.title;
-  const summary = translated[index++] ?? base.summary;
-  const details = translated[index++] ?? base.details;
-  const neighborhood = translated[index++] ?? base.neighborhood;
+  const title = pickTranslated(translated[index++], base.title);
+  const summary = pickTranslated(translated[index++], base.summary);
+  const details = pickTranslated(translated[index++], base.details);
+  const neighborhood = pickTranslated(translated[index++], base.neighborhood);
 
-  const translatedTags = tags.map((tag) => translated[index++] ?? tag);
+  const translatedTags = tags.map((tag) => pickTranslated(translated[index++], tag));
   const translatedContent = content.map((paragraph) => {
-    const next = translated[index++] ?? paragraph;
+    const next = pickTranslated(translated[index++], paragraph);
     return hasMediaHtml(paragraph) ? paragraph : next;
   });
 
@@ -84,15 +89,15 @@ export async function translateEventContent(
   if (!translated) return null;
 
   let index = 0;
-  const title = translated[index++] ?? base.title;
-  const description = translated[index++] ?? base.description;
-  const location = translated[index++] ?? base.location;
-  const price = translated[index++] ?? base.price;
+  const title = pickTranslated(translated[index++], base.title);
+  const description = pickTranslated(translated[index++], base.description);
+  const location = pickTranslated(translated[index++], base.location);
+  const price = pickTranslated(translated[index++], base.price);
   const translatedLongDescription = longDescription.map((paragraph) => {
-    const next = translated[index++] ?? paragraph;
+    const next = pickTranslated(translated[index++], paragraph);
     return hasMediaHtml(paragraph) ? paragraph : next;
   });
-  const translatedTips = tips.map((tip) => translated[index++] ?? tip);
+  const translatedTips = tips.map((tip) => pickTranslated(translated[index++], tip));
 
   return {
     ...base,
@@ -118,8 +123,8 @@ export async function translatePhraseContent(
   return {
     ...base,
     language: targetLanguage,
-    translation: translationText ?? base.translation,
-    culturalNote: culturalNoteText ?? base.culturalNote
+    translation: pickTranslated(translationText, base.translation),
+    culturalNote: pickTranslated(culturalNoteText, base.culturalNote ?? "")
   };
 }
 
@@ -145,16 +150,16 @@ export async function translatePopupContent(
   if (!translated) return null;
 
   let index = 0;
-  const title = translated[index++] ?? base.title;
-  const brand = translated[index++] ?? base.brand;
-  const window = translated[index++] ?? base.window;
-  const location = translated[index++] ?? base.location;
-  const description = translated[index++] ?? base.description;
+  const title = pickTranslated(translated[index++], base.title);
+  const brand = pickTranslated(translated[index++], base.brand);
+  const window = pickTranslated(translated[index++], base.window);
+  const location = pickTranslated(translated[index++], base.location);
+  const description = pickTranslated(translated[index++], base.description);
 
-  const translatedTags = tags.map((tag) => translated[index++] ?? tag);
-  const translatedHighlights = highlights.map((item) => translated[index++] ?? item);
+  const translatedTags = tags.map((tag) => pickTranslated(translated[index++], tag));
+  const translatedHighlights = highlights.map((item) => pickTranslated(translated[index++], item));
   const translatedDetails = details.map((item) => {
-    const next = translated[index++] ?? item;
+    const next = pickTranslated(translated[index++], item);
     return hasMediaHtml(item) ? item : next;
   });
 
