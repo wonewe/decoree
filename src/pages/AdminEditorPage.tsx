@@ -22,7 +22,7 @@ import {
 } from "../services/contentService";
 import { useAuth } from "../shared/auth";
 import type { SupportedLanguage } from "../shared/i18n";
-import { getLanguageLabel } from "../shared/i18n";
+import { getLanguageLabel, useI18n } from "../shared/i18n";
 import {
   STUDIO_AUTO_TRANSLATE_ENABLED,
   translateEventContent,
@@ -96,6 +96,7 @@ export default function AdminEditorPage() {
   const { type, id } = useParams<{ type: ContentType; id?: string }>();
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
+  const { language } = useI18n();
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<AdminMessage | null>(null);
   const [saving, setSaving] = useState(false);
@@ -256,7 +257,7 @@ export default function AdminEditorPage() {
     }
 
     loadContent();
-  }, [isAdmin, navigate, type, id]);
+  }, [isAdmin, navigate, type, id, language]);
 
   // Handlers for each content type
   const handleTrendSubmit = async (e: FormEvent) => {
