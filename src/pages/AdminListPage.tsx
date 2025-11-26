@@ -11,6 +11,7 @@ import {
   fetchPopups,
   fetchTrendReports
 } from "../services/contentService";
+import { fetchFeedbacks, type FeedbackEntry } from "../services/repositories/feedbackRepository";
 import { useAuth } from "../shared/auth";
 import { getLanguageLabel } from "../shared/i18n";
 
@@ -61,6 +62,9 @@ export default function AdminListPage() {
   const [events, setEvents] = useState<KCultureEvent[]>([]);
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [popups, setPopups] = useState<PopupEvent[]>([]);
+  const [feedbacks, setFeedbacks] = useState<FeedbackEntry[]>([]);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [syncProgress, setSyncProgress] = useState<{
     message: string;
@@ -200,6 +204,18 @@ export default function AdminListPage() {
     loadContent();
   }, []);
 
+  const loadFeedbacks = async () => {
+    setFeedbackLoading(true);
+    try {
+      const data = await fetchFeedbacks();
+      setFeedbacks(data);
+    } catch (error) {
+      console.error("Failed to load feedbacks", error);
+    } finally {
+      setFeedbackLoading(false);
+    }
+  };
+
   const sectionTabClass = (section: ContentType) => {
     return `rounded-full px-4 py-2 text-sm font-semibold transition ${
       activeSection === section
@@ -217,6 +233,53 @@ export default function AdminListPage() {
       return target.includes(normalizedQuery);
     });
   }, [normalizedQuery, trends]);
+
+  const renderFeedbackModal = () => {
+    if (!feedbackOpen) return null;
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+        <div className="w-full max-w-3xl rounded-2xl bg-[var(--paper)] p-6 shadow-2xl">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-[var(--ink)]">피드백</h3>
+            <button
+              type="button"
+              onClick={() => setFeedbackOpen(false)}
+              className="text-sm font-semibold text-[var(--ink-muted)] hover:text-[var(--ink)]"
+            >
+              닫기
+            </button>
+          </div>
+          <div className="mt-4 max-h-[70vh] overflow-y-auto space-y-3">
+            {feedbackLoading && <p className="text-sm text-[var(--ink-muted)]">불러오는 중...</p>}
+            {!feedbackLoading && feedbacks.length === 0 && (
+              <p className="text-sm text-[var(--ink-muted)]">등록된 피드백이 없습니다.</p>
+            )}
+            {feedbacks.map((fb) => (
+              <div
+                key={fb.id}
+                className="rounded-xl border border-[var(--border)] bg-[var(--paper-muted)] p-4"
+              >
+                <div className="flex items-center justify-between text-xs text-[var(--ink-subtle)]">
+                  <span>{fb.language ?? "unknown"}</span>
+                  <span>
+                    {fb.createdAt?.toDate
+                      ? fb.createdAt.toDate().toLocaleString()
+                      : fb.createdAt?.toString() ?? ""}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-[var(--ink)] whitespace-pre-line">{fb.message}</p>
+                {(fb.suggestionType || fb.suggestionId) && (
+                  <p className="mt-2 text-xs text-[var(--ink-subtle)]">
+                    추천: {fb.suggestionType ?? ""} {fb.suggestionId ?? ""}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   const filteredEvents = useMemo(() => {
     if (!normalizedQuery) return events;
@@ -510,6 +573,7 @@ export default function AdminListPage() {
 
   return (
     <main className="min-h-screen bg-[var(--paper-muted)]">
+      {renderFeedbackModal()}
       <section className="section-container space-y-8">
         <div className="grid gap-6 lg:grid-cols-[2fr,1fr]">
           <header className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm lg:p-8">
@@ -527,6 +591,16 @@ export default function AdminListPage() {
                     {user.email}
                   </span>
                 )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFeedbackOpen(true);
+                    loadFeedbacks();
+                  }}
+                  className="pill-button border border-[var(--border)] text-[var(--ink)] hover:-translate-y-0.5"
+                >
+                  피드백 보기
+                </button>
                 <button
                   type="button"
                   onClick={() => navigate(activeMeta.createPath)}

@@ -22,6 +22,13 @@ service cloud.firestore {
       allow write: if request.auth != null;
     }
 
+    match /feedback/{feedbackId} {
+      // 익명 제출 허용 (요청에 따라 조정 가능)
+      allow create: if true;
+      // 읽기는 인증된 사용자만
+      allow read: if request.auth != null;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
