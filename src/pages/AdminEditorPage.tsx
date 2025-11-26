@@ -644,14 +644,15 @@ export default function AdminEditorPage() {
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-2 whitespace-nowrap text-sm font-semibold text-[var(--ink)]">
+          <label className="flex items-center gap-2 text-sm font-semibold text-[var(--ink)]">
             <input
               type="checkbox"
               checked={trendDraft.hidden}
               onChange={(e) => setTrendDraft((prev) => ({ ...prev, hidden: e.target.checked }))}
               className="h-4 w-4 rounded border-[var(--border)]"
+              aria-label="숨김"
             />
-            <span>숨김</span>
+            <span className="sr-only">숨김</span>
           </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             저자
@@ -933,14 +934,15 @@ export default function AdminEditorPage() {
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-2 whitespace-nowrap text-sm font-semibold text-[var(--ink)]">
+          <label className="flex items-center gap-2 text-sm font-semibold text-[var(--ink)]">
             <input
               type="checkbox"
               checked={eventDraft.hidden}
               onChange={(e) => setEventDraft((prev) => ({ ...prev, hidden: e.target.checked }))}
               className="h-4 w-4 rounded border-[var(--border)]"
+              aria-label="숨김"
             />
-            <span>숨김</span>
+            <span className="sr-only">숨김</span>
           </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             ID
@@ -1236,14 +1238,15 @@ export default function AdminEditorPage() {
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-2 whitespace-nowrap text-sm font-semibold text-[var(--ink)]">
+          <label className="flex items-center gap-2 text-sm font-semibold text-[var(--ink)]">
             <input
               type="checkbox"
               checked={phraseDraft.hidden}
               onChange={(e) => setPhraseDraft((prev) => ({ ...prev, hidden: e.target.checked }))}
               className="h-4 w-4 rounded border-[var(--border)]"
+              aria-label="숨김"
             />
-            <span>숨김</span>
+            <span className="sr-only">숨김</span>
           </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             ID
@@ -1407,14 +1410,15 @@ export default function AdminEditorPage() {
               ))}
             </select>
           </label>
-          <label className="flex items-center gap-2 whitespace-nowrap text-sm font-semibold text-[var(--ink)]">
+          <label className="flex items-center gap-2 text-sm font-semibold text-[var(--ink)]">
             <input
               type="checkbox"
               checked={popupDraft.hidden}
               onChange={(e) => setPopupDraft((prev) => ({ ...prev, hidden: e.target.checked }))}
               className="h-4 w-4 rounded border-[var(--border)]"
+              aria-label="숨김"
             />
-            <span>숨김</span>
+            <span className="sr-only">숨김</span>
           </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             ID
