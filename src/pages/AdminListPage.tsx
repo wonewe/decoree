@@ -270,6 +270,9 @@ export default function AdminListPage() {
                 새 트렌드 작성
               </button>
             </div>
+            <p className="text-xs font-semibold text-[var(--ink-subtle)]">
+              숨김 배지가 있는 콘텐츠는 사용자에게 비노출됩니다.
+            </p>
             {filteredTrends.length === 0 ? (
               renderEmptyState(
                 trends.length === 0 ? "아직 등록된 트렌드가 없습니다." : "검색 결과가 없습니다."
@@ -333,6 +336,9 @@ export default function AdminListPage() {
                 새 이벤트 작성
               </button>
             </div>
+            <p className="text-xs font-semibold text-[var(--ink-subtle)]">
+              숨김 배지가 있는 콘텐츠는 사용자에게 비노출됩니다.
+            </p>
 
             {/* Progress Bar */}
             {syncProgress && (
@@ -406,6 +412,9 @@ export default function AdminListPage() {
                 새 프레이즈 작성
               </button>
             </div>
+            <p className="text-xs font-semibold text-[var(--ink-subtle)]">
+              숨김 배지가 있는 콘텐츠는 사용자에게 비노출됩니다.
+            </p>
             {filteredPhrases.length === 0 ? (
               renderEmptyState(
                 phrases.length === 0 ? "아직 등록된 프레이즈가 없습니다." : "검색 결과가 없습니다."
@@ -452,6 +461,9 @@ export default function AdminListPage() {
                 새 팝업 작성
               </button>
             </div>
+            <p className="text-xs font-semibold text-[var(--ink-subtle)]">
+              숨김 배지가 있는 콘텐츠는 사용자에게 비노출됩니다.
+            </p>
             {filteredPopups.length === 0 ? (
               renderEmptyState(
                 popups.length === 0 ? "아직 등록된 팝업이 없습니다." : "검색 결과가 없습니다."
