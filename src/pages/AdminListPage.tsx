@@ -182,10 +182,10 @@ export default function AdminListPage() {
       setLoading(true);
       try {
         const [trendsData, eventsData, phrasesData, popupsData] = await Promise.all([
-          fetchTrendReports(),
-          fetchEvents(),
-          fetchPhrases(),
-          fetchPopups()
+          fetchTrendReports(undefined, { includeHidden: true }),
+          fetchEvents(undefined, { includeHidden: true }),
+          fetchPhrases(undefined, { includeHidden: true }),
+          fetchPopups(undefined, { includeHidden: true })
         ]);
         setTrends(trendsData);
         setEvents(eventsData);
@@ -270,6 +270,9 @@ export default function AdminListPage() {
                 새 트렌드 작성
               </button>
             </div>
+            <p className="text-xs font-semibold text-[var(--ink-subtle)]">
+              숨김 배지가 있는 콘텐츠는 사용자에게 비노출됩니다.
+            </p>
             {filteredTrends.length === 0 ? (
               renderEmptyState(
                 trends.length === 0 ? "아직 등록된 트렌드가 없습니다." : "검색 결과가 없습니다."
@@ -286,14 +289,19 @@ export default function AdminListPage() {
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
-                              {getLanguageLabel(trend.language ?? "en")}
+                        <div className="flex items-center gap-2">
+                          <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
+                            {getLanguageLabel(trend.language ?? "en")}
+                          </span>
+                          {trend.hidden && (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                              숨김
                             </span>
-                            {author && (
-                              <span className="text-xs text-[var(--ink-subtle)]">{author.name}</span>
-                            )}
-                          </div>
+                          )}
+                          {author && (
+                            <span className="text-xs text-[var(--ink-subtle)]">{author.name}</span>
+                          )}
+                        </div>
                           <h4 className="mt-1 font-semibold text-[var(--ink)]">{trend.title}</h4>
                           <p className="mt-1 text-sm text-[var(--ink-muted)] line-clamp-2">
                             {trend.summary}
@@ -328,6 +336,9 @@ export default function AdminListPage() {
                 새 이벤트 작성
               </button>
             </div>
+            <p className="text-xs font-semibold text-[var(--ink-subtle)]">
+              숨김 배지가 있는 콘텐츠는 사용자에게 비노출됩니다.
+            </p>
 
             {/* Progress Bar */}
             {syncProgress && (
@@ -364,12 +375,17 @@ export default function AdminListPage() {
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
-                              {getLanguageLabel(event.language)}
+                        <div className="flex items-center gap-2">
+                          <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
+                            {getLanguageLabel(event.language)}
+                          </span>
+                          {event.hidden && (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                              숨김
                             </span>
-                            <span className="text-xs text-[var(--ink-subtle)]">{event.category}</span>
-                          </div>
+                          )}
+                          <span className="text-xs text-[var(--ink-subtle)]">{event.category}</span>
+                        </div>
                           <h4 className="mt-1 font-semibold text-[var(--ink)]">{event.title}</h4>
                           <p className="mt-1 text-sm text-[var(--ink-muted)] line-clamp-2">
                             {event.description}
@@ -396,6 +412,9 @@ export default function AdminListPage() {
                 새 프레이즈 작성
               </button>
             </div>
+            <p className="text-xs font-semibold text-[var(--ink-subtle)]">
+              숨김 배지가 있는 콘텐츠는 사용자에게 비노출됩니다.
+            </p>
             {filteredPhrases.length === 0 ? (
               renderEmptyState(
                 phrases.length === 0 ? "아직 등록된 프레이즈가 없습니다." : "검색 결과가 없습니다."
@@ -414,6 +433,11 @@ export default function AdminListPage() {
                             <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
                             {getLanguageLabel(phrase.language)}
                           </span>
+                            {phrase.hidden && (
+                              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                                숨김
+                              </span>
+                            )}
                             <span className="text-xs text-[var(--ink-subtle)]">{phrase.category}</span>
                         </div>
                           <h4 className="mt-1 font-semibold text-[var(--ink)]">{phrase.korean}</h4>
@@ -437,6 +461,9 @@ export default function AdminListPage() {
                 새 팝업 작성
               </button>
             </div>
+            <p className="text-xs font-semibold text-[var(--ink-subtle)]">
+              숨김 배지가 있는 콘텐츠는 사용자에게 비노출됩니다.
+            </p>
             {filteredPopups.length === 0 ? (
               renderEmptyState(
                 popups.length === 0 ? "아직 등록된 팝업이 없습니다." : "검색 결과가 없습니다."
@@ -455,6 +482,11 @@ export default function AdminListPage() {
                             <span className="rounded-full bg-[var(--paper-muted)] px-2 py-0.5 text-xs font-semibold text-[var(--ink-subtle)]">
                             {getLanguageLabel(popup.language)}
                           </span>
+                            {popup.hidden && (
+                              <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                                숨김
+                              </span>
+                            )}
                             <span className="text-xs text-[var(--ink-subtle)]">{popup.status}</span>
                         </div>
                           <h4 className="mt-1 font-semibold text-[var(--ink)]">{popup.title}</h4>
@@ -575,4 +607,3 @@ export default function AdminListPage() {
     </main>
   );
 }
-

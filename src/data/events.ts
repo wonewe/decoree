@@ -5,6 +5,7 @@ export type EventCategory = "concert" | "traditional" | "atelier" | "theatre" | 
 export type KCultureEvent = {
   id: string;
   language: SupportedLanguage;
+  hidden?: boolean;
   title: string;
   description: string;
   startDate: string;

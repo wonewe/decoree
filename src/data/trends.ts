@@ -5,6 +5,7 @@ export type TrendIntensity = "highlight" | "insider" | "emerging";
 export type TrendReport = {
   id: string;
   language: SupportedLanguage;
+  hidden?: boolean;
   title: string;
   summary: string;
   details: string;

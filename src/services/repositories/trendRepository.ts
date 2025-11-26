@@ -27,6 +27,9 @@ const sortReports = (reports: TrendReport[]) =>
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   );
 
+const filterHidden = (reports: TrendReport[], includeHidden?: boolean) =>
+  includeHidden ? reports : reports.filter((report) => !report.hidden);
+
 const fallbackTrends = TREND_REPORTS.map((report) => {
   const normalized = ensureLanguage(report);
   const { __softLanguage, ...rest } = normalized;
@@ -48,40 +51,51 @@ const toTrend = (docData: WithTimestamps<TrendReport>): TrendReport => {
   };
 };
 
-export async function fetchTrendReports(language?: SupportedLanguage): Promise<TrendReport[]> {
+export async function fetchTrendReports(
+  language?: SupportedLanguage,
+  options?: { includeHidden?: boolean }
+): Promise<TrendReport[]> {
+  const includeHidden = options?.includeHidden ?? false;
   if (shouldUseStaticContent()) {
-    return sortReports(filterByLanguage(fallbackTrends, language));
+    return sortReports(filterHidden(filterByLanguage(fallbackTrends, language), includeHidden));
   }
   try {
     const snapshot = await getDocs(query(trendCollection, orderBy("publishedAt", "desc")));
     if (snapshot.empty) {
-      return sortReports(filterByLanguage(fallbackTrends, language));
+      return sortReports(filterHidden(filterByLanguage(fallbackTrends, language), includeHidden));
     }
     const reports = snapshot.docs.map((docSnap) => {
       const data = docSnap.data() as WithTimestamps<TrendReport>;
       return toTrend({ ...data, id: docSnap.id });
     });
-    return sortReports(filterByLanguage(reports, language));
+    return sortReports(filterHidden(filterByLanguage(reports, language), includeHidden));
   } catch (error) {
     console.error("Failed to fetch trend reports, fallback to static data.", error);
-    return sortReports(filterByLanguage(fallbackTrends, language));
+    return sortReports(filterHidden(filterByLanguage(fallbackTrends, language), includeHidden));
   }
 }
 
-export async function getTrendReportById(id: string) {
+export async function getTrendReportById(id: string, options?: { includeHidden?: boolean }) {
+  const includeHidden = options?.includeHidden ?? false;
   if (shouldUseStaticContent()) {
-    return fallbackTrends.find((report) => report.id === id) ?? null;
+    const found = fallbackTrends.find((report) => report.id === id);
+    if (found && !includeHidden && found.hidden) return null;
+    return found ?? null;
   }
   try {
     const docRef = doc(trendCollection, id);
     const snapshot = await getDoc(docRef);
     if (snapshot.exists()) {
-      return toTrend({ ...(snapshot.data() as TrendReport), id: snapshot.id });
+      const report = toTrend({ ...(snapshot.data() as TrendReport), id: snapshot.id });
+      if (!includeHidden && report.hidden) return null;
+      return report;
     }
   } catch (error) {
     console.error("Unable to fetch trend by id", error);
   }
-  return fallbackTrends.find((report) => report.id === id) ?? null;
+  const fallback = fallbackTrends.find((report) => report.id === id);
+  if (fallback && !includeHidden && fallback.hidden) return null;
+  return fallback ?? null;
 }
 
 export async function addTrendReport(report: TrendReport) {
@@ -95,7 +109,7 @@ export async function addTrendReport(report: TrendReport) {
     updatedAt: Timestamp.now()
   };
   await setDoc(doc(trendCollection, id), payload, { merge: true });
-  return fetchTrendReports();
+  return fetchTrendReports(undefined, { includeHidden: true });
 }
 
 export async function updateTrendReport(report: TrendReport) {
@@ -110,11 +124,11 @@ export async function updateTrendReport(report: TrendReport) {
     },
     { merge: true }
   );
-  return fetchTrendReports();
+  return fetchTrendReports(undefined, { includeHidden: true });
 }
 
 export async function deleteTrendReport(id: string) {
   assertFirestoreAvailable("Deleting a trend report");
   await deleteDoc(doc(trendCollection, id));
-  return fetchTrendReports();
+  return fetchTrendReports(undefined, { includeHidden: true });
 }
