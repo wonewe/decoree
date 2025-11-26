@@ -10,6 +10,8 @@ export const STUDIO_AUTO_TRANSLATE_ENABLED =
 
 const ensureArray = (values?: string[]) => (values ? [...values] : []);
 
+const hasMediaHtml = (value: string) => /<(img|figure|video|iframe)\b/i.test(value);
+
 async function translateFields(
   texts: string[],
   sourceLanguage: SupportedLanguage | undefined,
@@ -46,7 +48,10 @@ export async function translateTrendReportContent(
   const neighborhood = translated[index++] ?? base.neighborhood;
 
   const translatedTags = tags.map((tag) => translated[index++] ?? tag);
-  const translatedContent = content.map((paragraph) => translated[index++] ?? paragraph);
+  const translatedContent = content.map((paragraph) => {
+    const next = translated[index++] ?? paragraph;
+    return hasMediaHtml(paragraph) ? paragraph : next;
+  });
 
   return {
     ...base,
@@ -83,9 +88,10 @@ export async function translateEventContent(
   const description = translated[index++] ?? base.description;
   const location = translated[index++] ?? base.location;
   const price = translated[index++] ?? base.price;
-  const translatedLongDescription = longDescription.map(
-    (paragraph) => translated[index++] ?? paragraph
-  );
+  const translatedLongDescription = longDescription.map((paragraph) => {
+    const next = translated[index++] ?? paragraph;
+    return hasMediaHtml(paragraph) ? paragraph : next;
+  });
   const translatedTips = tips.map((tip) => translated[index++] ?? tip);
 
   return {
@@ -147,7 +153,10 @@ export async function translatePopupContent(
 
   const translatedTags = tags.map((tag) => translated[index++] ?? tag);
   const translatedHighlights = highlights.map((item) => translated[index++] ?? item);
-  const translatedDetails = details.map((item) => translated[index++] ?? item);
+  const translatedDetails = details.map((item) => {
+    const next = translated[index++] ?? item;
+    return hasMediaHtml(item) ? item : next;
+  });
 
   return {
     ...base,

@@ -68,8 +68,10 @@ export default function Layout() {
               <NavLink
                 to="/admin"
                 className={({ isActive }) =>
-                  `transition hover:text-hanBlue ${
-                    isActive ? "text-hanBlue" : "text-[var(--ink-subtle)]"
+                  `inline-flex rounded-full border px-3 py-2 text-xs font-semibold transition ${
+                    isActive
+                      ? "border-[var(--border-strong)] bg-[var(--paper)] text-[var(--ink)]"
+                      : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
                   }`
                 }
               >
@@ -92,7 +94,7 @@ export default function Layout() {
                 {isAdmin && (
                   <NavLink
                     to="/admin"
-                    className="inline-flex rounded-full border border-hanBlue px-3 py-2 text-xs font-semibold text-hanBlue transition hover:bg-hanBlue hover:text-white md:hidden"
+                    className="inline-flex rounded-full border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-xs font-semibold text-[var(--ink-muted)] transition hover:border-[var(--ink)] hover:text-[var(--ink)] md:hidden"
                   >
                     {t("nav.admin")}
                   </NavLink>
