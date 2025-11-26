@@ -18,7 +18,8 @@ export function useTheme() {
   const [preference, setPreference] = useState<ThemePreference>(() => {
     if (typeof window === "undefined") return "light";
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY) as ThemePreference | null;
-    return stored ?? "system";
+    // 기본값을 화이트(라이트) 모드로 설정
+    return stored ?? "light";
   });
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() => applyTheme(preference));
 
@@ -54,4 +55,3 @@ export function useTheme() {
     cycleTheme
   };
 }
-
