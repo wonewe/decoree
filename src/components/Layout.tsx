@@ -72,9 +72,6 @@ export default function Layout() {
                     isActive
                       ? "border-[var(--border-strong)] bg-[var(--paper)] text-[var(--ink)]"
                       : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
-                  `transition hover:text-hanBlue ${
-                    isActive ? "text-hanBlue" : "text-[var(--ink-subtle)]"
-main
                   }`
                 }
               >

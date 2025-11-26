@@ -105,18 +105,6 @@ export default function PopupDetailPage() {
             <h1 className="mt-1 text-2xl font-bold md:text-3xl">{popup.title}</h1>
             <p className="text-sm text-slate-600">{popup.location}</p>
           </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-        <div className="absolute bottom-6 left-1/2 w-full max-w-5xl -translate-x-1/2 px-6 text-white">
-          <button
-            onClick={() => navigate(-1)}
-            className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold backdrop-blur hover:bg-white/40"
-          >
-            ← {t("trendDetail.back")}
-          </button>
-          <p className="text-sm uppercase tracking-wide text-white/80">{popup.window}</p>
-          <h1 className="mt-2 text-3xl font-bold text-white md:text-4xl">{popup.title}</h1>
-          <p className="text-sm text-white/90">{popup.location}</p>
-main
         </div>
       </div>
 
