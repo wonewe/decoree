@@ -24,6 +24,8 @@ export default function Layout() {
   const { resolvedTheme, cycleTheme, preference } = useTheme();
   usePageTracking();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   const siteOrigin =
     import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
@@ -44,6 +46,26 @@ export default function Layout() {
     setMobileNavOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (typeof window === "undefined") return;
+      const currentY = window.scrollY;
+      const delta = currentY - lastScrollY;
+
+      // 아래로 충분히 스크롤하면 헤더 숨김, 위로 스크롤하면 다시 표시
+      if (currentY > 80 && delta > 6) {
+        setShowHeader(false);
+      } else if (delta < -6 || currentY < 80) {
+        setShowHeader(true);
+      }
+
+      setLastScrollY(currentY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   return (
     <div className="min-h-screen bg-[var(--paper-muted)] text-[var(--ink)]">
       <LanguagePrompt onSelect={setLanguage} />
@@ -52,7 +74,11 @@ export default function Layout() {
         {isNoIndex && <meta name="robots" content="noindex, nofollow" />}
       </Helmet>
 
-      <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--paper)]/90 backdrop-blur">
+      <header
+        className={`sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--paper)]/90 backdrop-blur transition-transform duration-300 ${
+          showHeader ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
           <NavLink to="/" className="font-heading text-2xl font-semibold tracking-tight text-[var(--ink)]">
             koraid
@@ -100,14 +126,14 @@ export default function Layout() {
             <button
               type="button"
               onClick={() => setMobileNavOpen((prev) => !prev)}
-              className="inline-flex items-center justify-center rounded-full border border-[var(--border)] bg-[var(--paper)] px-2.5 py-1.5 text-xs font-semibold text-[var(--ink-subtle)] shadow-sm transition hover:-translate-y-0.5 hover:text-[var(--ink)] md:hidden"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--paper)] text-[var(--ink-subtle)] shadow-sm transition hover:-translate-y-0.5 hover:text-[var(--ink)] md:hidden"
               aria-label="카테고리 열기"
               aria-expanded={mobileNavOpen}
             >
-              <span className="flex items-center gap-0.5">
-                <span className="h-1 w-1 rounded-full bg-current" />
-                <span className="h-1 w-1 rounded-full bg-current" />
-                <span className="h-1 w-1 rounded-full bg-current" />
+              <span className="flex flex-col items-center justify-center gap-[2px]">
+                <span className="h-[3px] w-[3px] rounded-full bg-current" />
+                <span className="h-[3px] w-[3px] rounded-full bg-current" />
+                <span className="h-[3px] w-[3px] rounded-full bg-current" />
               </span>
             </button>
             {user ? (
