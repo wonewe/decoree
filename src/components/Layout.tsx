@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { useI18n } from "../shared/i18n";
 import { useHeaderAuth } from "../hooks/useHeaderAuth";
@@ -23,7 +23,6 @@ export default function Layout() {
   const location = useLocation();
   const { resolvedTheme, cycleTheme, preference } = useTheme();
   usePageTracking();
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const siteOrigin =
     import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
@@ -38,11 +37,6 @@ export default function Layout() {
     () => /^\/(admin|studio|internal)/i.test(location.pathname),
     [location.pathname]
   );
-
-  useEffect(() => {
-    // 페이지 이동 시 모바일 메뉴를 닫아 UI가 깨지지 않도록 처리
-    setMobileNavOpen(false);
-  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-[var(--paper-muted)] text-[var(--ink)]">
@@ -138,58 +132,36 @@ export default function Layout() {
             )}
           </div>
         </div>
-        {/* 모바일 전용 카테고리 아코디언 (우측 상단) */}
-        <div className="relative mx-auto block max-w-6xl px-6 md:hidden">
-          <div className="flex items-center justify-end">
-            <button
-              type="button"
-              onClick={() => setMobileNavOpen((prev) => !prev)}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-              aria-label="카테고리 열기"
+        {/* 모바일 전용 카테고리 버튼 (한 줄, 스크롤 가능) */}
+        <div className="mx-auto mt-1 flex max-w-6xl gap-2 overflow-x-auto px-6 pb-3 md:hidden">
+          {primaryNav.map((link) => (
+            <NavLink
+              key={link.path}
+              to={link.path}
+              className={({ isActive }) =>
+                `whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                  isActive
+                    ? "border-[var(--ink)] bg-[var(--paper)] text-[var(--ink)] shadow-sm"
+                    : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-subtle)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
+                }`
+              }
             >
-              <span className="flex flex-col items-center justify-center gap-1">
-                <span className="h-1 w-1 rounded-full bg-current" />
-                <span className="h-1 w-1 rounded-full bg-current" />
-                <span className="h-1 w-1 rounded-full bg-current" />
-              </span>
-            </button>
-          </div>
-          {mobileNavOpen && (
-            <div className="absolute right-6 top-[calc(100%+8px)] w-48 rounded-2xl border border-[var(--border)] bg-[var(--paper)]/95 shadow-xl backdrop-blur">
-              <div className="divide-y divide-[var(--border)]">
-                {primaryNav.map((link) => (
-                  <NavLink
-                    key={link.path}
-                    to={link.path}
-                    className={({ isActive }) =>
-                      `flex items-center justify-between px-4 py-3 text-sm font-semibold transition ${
-                        isActive
-                          ? "text-[var(--ink)]"
-                          : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
-                      }`
-                    }
-                  >
-                    {t(link.labelKey)}
-                    <span className="text-xs text-[var(--ink-subtle)]">›</span>
-                  </NavLink>
-                ))}
-                {isAdmin && (
-                  <NavLink
-                    to="/admin"
-                    className={({ isActive }) =>
-                      `flex items-center justify-between px-4 py-3 text-sm font-semibold transition ${
-                        isActive
-                          ? "text-[var(--ink)]"
-                          : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
-                      }`
-                    }
-                  >
-                    {t("nav.admin")}
-                    <span className="text-xs text-[var(--ink-subtle)]">›</span>
-                  </NavLink>
-                )}
-              </div>
-            </div>
+              {t(link.labelKey)}
+            </NavLink>
+          ))}
+          {isAdmin && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                `whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                  isActive
+                    ? "border-[var(--ink)] bg-[var(--paper)] text-[var(--ink)] shadow-sm"
+                    : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-subtle)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
+                }`
+              }
+            >
+              {t("nav.admin")}
+            </NavLink>
           )}
         </div>
         {authError && (
