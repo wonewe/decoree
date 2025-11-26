@@ -17,5 +17,8 @@ export async function fetchFeedbacks(): Promise<FeedbackEntry[]> {
     return [];
   }
   const snap = await getDocs(query(collection(db, "feedback"), orderBy("createdAt", "desc")));
-  return snap.docs.map((docSnap) => ({ id: docSnap.id, ...(docSnap.data() as FeedbackEntry) }));
+  return snap.docs.map((docSnap) => {
+    const data = docSnap.data() as Omit<FeedbackEntry, "id">;
+    return { id: docSnap.id, ...data };
+  });
 }
