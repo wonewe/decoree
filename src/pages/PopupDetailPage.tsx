@@ -92,17 +92,19 @@ export default function PopupDetailPage() {
         <div className="absolute right-6 top-6">
           <BookmarkButton item={bookmarkItem} />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-        <div className="absolute bottom-6 left-1/2 w-full max-w-5xl -translate-x-1/2 px-6 text-white">
-          <button
-            onClick={() => navigate(-1)}
-            className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold backdrop-blur hover:bg-white/40"
-          >
-            ← {t("trendDetail.back")}
-          </button>
-          <p className="text-sm uppercase tracking-wide text-white/80">{popup.window}</p>
-          <h1 className="mt-2 text-3xl font-bold md:text-4xl">{popup.title}</h1>
-          <p className="text-sm text-white/90">{popup.location}</p>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+        <div className="absolute bottom-6 left-1/2 w-full max-w-5xl -translate-x-1/2 px-6">
+          <div className="rounded-2xl border border-white/60 bg-white/85 p-4 text-slate-900 shadow-lg backdrop-blur">
+            <button
+              onClick={() => navigate(-1)}
+              className="mb-3 inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 text-[11px] font-semibold text-white transition hover:-translate-y-0.5 hover:shadow"
+            >
+              ← {t("trendDetail.back")}
+            </button>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">{popup.window}</p>
+            <h1 className="mt-1 text-2xl font-bold md:text-3xl">{popup.title}</h1>
+            <p className="text-sm text-slate-600">{popup.location}</p>
+          </div>
         </div>
       </div>
 
