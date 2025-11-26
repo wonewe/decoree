@@ -100,12 +100,15 @@ export default function Layout() {
             <button
               type="button"
               onClick={() => setMobileNavOpen((prev) => !prev)}
-              className="inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--paper)] px-3 py-1.5 text-xs font-semibold text-[var(--ink-subtle)] shadow-sm transition hover:-translate-y-0.5 hover:text-[var(--ink)] md:hidden"
+              className="inline-flex items-center justify-center rounded-full border border-[var(--border)] bg-[var(--paper)] px-2.5 py-1.5 text-xs font-semibold text-[var(--ink-subtle)] shadow-sm transition hover:-translate-y-0.5 hover:text-[var(--ink)] md:hidden"
               aria-label="카테고리 열기"
               aria-expanded={mobileNavOpen}
             >
-              <span>카테고리</span>
-              <span className="text-[10px]">{mobileNavOpen ? "▲" : "▼"}</span>
+              <span className="flex items-center gap-0.5">
+                <span className="h-1 w-1 rounded-full bg-current" />
+                <span className="h-1 w-1 rounded-full bg-current" />
+                <span className="h-1 w-1 rounded-full bg-current" />
+              </span>
             </button>
             {user ? (
               <div className="flex items-center gap-2">
