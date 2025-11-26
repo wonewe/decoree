@@ -7,6 +7,7 @@ import { usePageTracking } from "../hooks/usePageTracking";
 import LanguageSwitcher from "./LanguageSwitcher";
 import LanguagePrompt from "./LanguagePrompt";
 import { useTheme } from "../hooks/useTheme";
+import { FeedbackPrompt } from "./FeedbackPrompt";
 
 const primaryNav = [
   { path: "/trends", labelKey: "nav.trends" },
@@ -167,6 +168,7 @@ export default function Layout() {
           </div>
         </div>
       </footer>
+      <FeedbackPrompt />
     </div>
   );
 }
