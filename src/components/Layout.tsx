@@ -68,8 +68,8 @@ export default function Layout() {
               <NavLink
                 to="/admin"
                 className={({ isActive }) =>
-                  `transition ${
-                    isActive ? "text-[var(--ink)]" : "hover:text-[var(--ink)]"
+                  `transition hover:text-hanBlue ${
+                    isActive ? "text-hanBlue" : "text-[var(--ink-subtle)]"
                   }`
                 }
               >
@@ -89,6 +89,14 @@ export default function Layout() {
             </button>
             {user ? (
               <div className="flex items-center gap-2">
+                {isAdmin && (
+                  <NavLink
+                    to="/admin"
+                    className="inline-flex rounded-full border border-hanBlue px-3 py-2 text-xs font-semibold text-hanBlue transition hover:bg-hanBlue hover:text-white md:hidden"
+                  >
+                    {t("nav.admin")}
+                  </NavLink>
+                )}
                 <NavLink
                   to="/profile"
                   className="hidden rounded-full border border-[var(--border)] px-4 py-2 text-xs font-semibold text-[var(--ink-muted)] transition hover:text-[var(--ink)] md:inline-flex"
