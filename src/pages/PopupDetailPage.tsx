@@ -101,7 +101,7 @@ export default function PopupDetailPage() {
             ← {t("trendDetail.back")}
           </button>
           <p className="text-sm uppercase tracking-wide text-white/80">{popup.window}</p>
-          <h1 className="mt-2 text-3xl font-bold md:text-4xl">{popup.title}</h1>
+          <h1 className="mt-2 text-3xl font-bold text-white md:text-4xl">{popup.title}</h1>
           <p className="text-sm text-white/90">{popup.location}</p>
         </div>
       </div>
