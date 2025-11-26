@@ -93,11 +93,11 @@ export function MarkdownContent({ content, className = "", style }: MarkdownCont
 
   return (
     <div
-      className={`prose prose-lg md:prose-xl prose-slate max-w-4xl text-slate-700 leading-relaxed
+      className={`prose prose-lg md:prose-xl prose-headings:font-heading prose-headings:text-[var(--ink)] prose-p:text-[var(--ink-muted)] prose-li:text-[var(--ink-muted)] max-w-4xl text-[var(--ink-muted)] leading-relaxed
         [&_img]:mx-auto [&_img]:my-4 [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_img]:object-contain [&_img]:shadow-md [&_img]:resize [&_img]:overflow-auto [&_img]:cursor-nwse-resize
         [&_h1]:text-3xl [&_h1]:md:text-4xl [&_h2]:text-2xl [&_h2]:md:text-3xl [&_h3]:text-xl [&_h3]:md:text-2xl
         [&_h1]:mt-6 [&_h1]:mb-3 [&_h2]:mt-5 [&_h2]:mb-2 [&_h3]:mt-4 [&_h3]:mb-2
-        [&_p]:my-3 [&_ul]:my-3 [&_li]:my-1 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:bg-slate-100 [&_code]:text-sm [&_a]:text-hanBlue [&_a]:font-semibold [&_a]:underline
+        [&_p]:my-3 [&_ul]:my-3 [&_li]:my-1 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:bg-[var(--paper-muted)] [&_code]:text-sm [&_a]:text-[var(--ink)] [&_a]:font-semibold [&_a]:underline
       ${className}`.replace(/\s+/g, " ")}
       style={style}
       dangerouslySetInnerHTML={{ __html: blocks }}

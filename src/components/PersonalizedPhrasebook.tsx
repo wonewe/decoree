@@ -42,8 +42,6 @@ export default function PersonalizedPhrasebook() {
 
   const handleMarkCompleted = (phrase: Phrase) => {
     setCompleted((prev) => new Set(prev).add(phrase.id));
-    // Placeholders for analytics hooks (e.g., Firestore).
-    console.info("Phrase completed:", phrase.id);
   };
 
   const completionRate = phrases.length ? Math.round((completed.size / phrases.length) * 100) : 0;
@@ -51,10 +49,11 @@ export default function PersonalizedPhrasebook() {
   const showError = status === "error";
 
   return (
-    <section className="section-container space-y-8">
-      <div className="space-y-4">
-        <h2 className="text-3xl font-bold text-dancheongNavy">{t("phrasebook.title")}</h2>
-        <p className="max-w-2xl text-slate-600">{t("phrasebook.subtitle")}</p>
+    <section className="section-container space-y-10">
+      <div className="content-shell space-y-4">
+        <span className="badge-label">{t("phrasebook.title")}</span>
+        <h2 className="font-heading text-4xl text-[var(--ink)]">{t("phrasebook.title")}</h2>
+        <p className="max-w-2xl text-[var(--ink-muted)]">{t("phrasebook.subtitle")}</p>
       </div>
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -63,17 +62,17 @@ export default function PersonalizedPhrasebook() {
             <button
               key={category}
               onClick={() => toggleCategory(category)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+              className={`inline-flex items-center rounded-full border px-4 py-2 text-sm font-semibold transition ${
                 selectedCategories.includes(category)
-                  ? "bg-dancheongGreen text-white"
-                  : "bg-white text-slate-600 hover:text-dancheongGreen"
+                  ? "border-[var(--pill-active-bg)] bg-[var(--pill-active-bg)] text-[var(--pill-active-fg)] shadow-sm"
+                  : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
               }`}
             >
               {t(`phrasebook.category.${category}`)}
             </button>
           ))}
         </div>
-        <div className="relative w-full md:w-72">
+        <div className="relative w-full md:w-80">
           <label htmlFor="phrase-search" className="sr-only">
             {t("phrasebook.search.label")}
           </label>
@@ -83,13 +82,13 @@ export default function PersonalizedPhrasebook() {
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             placeholder={t("phrasebook.search.placeholder")}
-            className="w-full rounded-full border border-slate-200 bg-white px-4 py-3 pr-12 text-sm shadow-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+            className="w-full rounded-full border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 pr-12 text-sm focus:border-[var(--ink)] focus:outline-none"
           />
           {searchTerm && (
             <button
               type="button"
               onClick={() => setSearchTerm("")}
-              className="absolute inset-y-0 right-2 flex items-center rounded-full px-3 text-xs font-semibold text-slate-400 transition hover:text-hanBlue"
+              className="absolute inset-y-0 right-2 flex items-center rounded-full px-3 text-xs font-semibold text-[var(--ink)]"
             >
               {t("phrasebook.search.clear")}
             </button>
@@ -121,14 +120,16 @@ export default function PersonalizedPhrasebook() {
 
       {status === "success" && phrases.length > 0 && (
         <>
-          <div className="rounded-2xl bg-white p-4 shadow">
+          <div className="card">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-slate-600">{t("phrasebook.completed")}</span>
-              <span className="text-lg font-bold text-hanBlue">{completionRate}%</span>
+              <span className="text-sm font-semibold text-[var(--ink-muted)]">
+                {t("phrasebook.completed")}
+              </span>
+              <span className="text-lg font-bold text-[var(--ink)]">{completionRate}%</span>
             </div>
             <div className="mt-2 flex flex-wrap gap-2">
               {Array.from(completed).map((id) => (
-                <span key={id} className="rounded-full bg-hanBlue/10 px-3 py-1 text-xs text-hanBlue">
+                <span key={id} className="rounded-full bg-[var(--accent-muted)] px-3 py-1 text-xs text-[var(--accent)]">
                   {id}
                 </span>
               ))}
@@ -136,7 +137,7 @@ export default function PersonalizedPhrasebook() {
           </div>
 
           {filteredPhrases.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500">
+            <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper)] p-6 text-center text-sm text-[var(--ink-subtle)]">
               {t("phrasebook.search.empty")}
             </div>
           ) : (
@@ -144,28 +145,28 @@ export default function PersonalizedPhrasebook() {
               {filteredPhrases.map((phrase) => (
                 <article key={phrase.id} className="card space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold uppercase text-slate-400">
+                    <span className="text-sm font-semibold uppercase text-[var(--ink-subtle)]">
                       {t(`phrasebook.category.${phrase.category}`)}
                     </span>
                     <button
                       onClick={() => handleMarkCompleted(phrase)}
-                      className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
+                      className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold transition ${
                         completed.has(phrase.id)
-                          ? "bg-hanBlue text-white"
-                          : "bg-slate-100 text-slate-600 hover:bg-hanBlue/10 hover:text-hanBlue"
+                          ? "border-[var(--pill-active-bg)] bg-[var(--pill-active-bg)] text-[var(--pill-active-fg)] shadow-sm"
+                          : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
                       }`}
                     >
                       {completed.has(phrase.id) ? "✓" : "+"} {t("phrasebook.completed")}
                     </button>
                   </div>
                   <div>
-                    <p className="text-2xl font-semibold text-dancheongNavy">{phrase.korean}</p>
-                    <p className="text-sm uppercase tracking-wide text-slate-400">
+                    <p className="text-2xl font-semibold text-[var(--ink)]">{phrase.korean}</p>
+                    <p className="text-sm uppercase tracking-wide text-[var(--ink-subtle)]">
                       {phrase.transliteration}
                     </p>
                   </div>
-                  <p className="text-slate-600">{phrase.translation}</p>
-                  <div className="rounded-xl bg-slate-100 p-3 text-sm text-slate-500">
+                  <p className="text-[var(--ink-muted)]">{phrase.translation}</p>
+                  <div className="rounded-xl bg-[var(--paper-muted)] p-3 text-sm text-[var(--ink-subtle)]">
                     {phrase.culturalNote}
                   </div>
                 </article>

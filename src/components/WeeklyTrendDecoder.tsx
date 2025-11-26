@@ -15,10 +15,11 @@ export default function WeeklyTrendDecoder() {
   const showError = status === "error";
 
   return (
-    <section className="section-container space-y-8">
-      <div className="space-y-4">
-        <h2 className="text-3xl font-bold text-dancheongNavy">{t("trends.title")}</h2>
-        <p className="max-w-2xl text-slate-600">{t("trends.subtitle")}</p>
+    <section className="section-container space-y-10">
+      <div className="content-shell space-y-4">
+        <span className="badge-label text-[var(--ink-subtle)]">{t("hero.highlights.cta")}</span>
+        <h2 className="font-heading text-4xl text-[var(--ink)]">{t("trends.title")}</h2>
+        <p className="max-w-2xl text-[var(--ink-muted)]">{t("trends.subtitle")}</p>
       </div>
       {status === "loading" && (
         <div className="grid gap-6 md:grid-cols-2">
@@ -29,25 +30,19 @@ export default function WeeklyTrendDecoder() {
       )}
       {showGrid && (
         <>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-2">
             {reports.slice(0, 4).map((report) => (
-              <article
-                key={report.id}
-                className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
-              >
-                <div className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              <article key={report.id} className="card gap-4">
+                <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
                   {formatDate(report.publishedAt)} · {report.neighborhood}
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-xl font-semibold text-dancheongNavy">{report.title}</h3>
-                  <p className="text-base text-slate-600 line-clamp-3">{report.summary}</p>
+                  <h3 className="text-xl font-semibold text-[var(--ink)]">{report.title}</h3>
+                  <p className="text-base text-[var(--ink-muted)] line-clamp-3">{report.summary}</p>
                 </div>
-                <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+                <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--ink-subtle)]">
                   <span>{report.tags.slice(0, 3).join(" / ")}</span>
-                  <Link
-                    to={`/trends/${report.id}`}
-                    className="text-sm font-semibold text-hanBlue hover:underline"
-                  >
+                  <Link to={`/trends/${report.id}`} className="text-sm font-semibold text-[var(--ink)]">
                     {t("trends.readMore")} →
                   </Link>
                 </div>
@@ -55,13 +50,9 @@ export default function WeeklyTrendDecoder() {
             ))}
           </div>
           {reports.length > 4 && (
-            <div className="flex justify-end">
-              <Link
-                to="/trends"
-                className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-hanBlue hover:text-hanBlue"
-              >
-                {t("trends.viewAll")}
-                <span>→</span>
+            <div className="content-shell flex justify-end">
+              <Link to="/trends" className="secondary-button">
+                {t("trends.viewAll")} →
               </Link>
             </div>
           )}

@@ -63,6 +63,9 @@ const toPopup = (docData: WithTimestamps<PopupEvent>): PopupEvent => {
   return normalizePopup(docData);
 };
 
+const filterHidden = (popups: PopupEvent[], includeHidden?: boolean) =>
+  includeHidden ? popups : popups.filter((popup) => !popup.hidden);
+
 const localizePopups = async (popups: PopupEvent[], language?: SupportedLanguage) => {
   const normalized = popups.map((popup) => ensureLanguage(popup));
   if (!language) {
@@ -90,27 +93,36 @@ const localizePopups = async (popups: PopupEvent[], language?: SupportedLanguage
   return localized.filter((popup): popup is PopupEvent => popup != null);
 };
 
-export async function fetchPopups(language?: SupportedLanguage): Promise<PopupEvent[]> {
+export async function fetchPopups(
+  language?: SupportedLanguage,
+  options?: { includeHidden?: boolean }
+): Promise<PopupEvent[]> {
+  const includeHidden = options?.includeHidden ?? false;
   if (shouldUseStaticContent()) {
-    return localizePopups(fallbackPopups, language);
+    return localizePopups(filterHidden(fallbackPopups, includeHidden), language);
   }
   try {
     const snapshot = await getDocs(query(popupCollection, orderBy("window", "asc")));
     if (snapshot.empty) {
-      return localizePopups(fallbackPopups, language);
+      return localizePopups(filterHidden(fallbackPopups, includeHidden), language);
     }
     const popups = snapshot.docs.map((docSnap) => {
       const data = docSnap.data() as WithTimestamps<PopupEvent>;
       return toPopup({ ...data, id: docSnap.id });
     });
-    return localizePopups(popups, language);
+    return localizePopups(filterHidden(popups, includeHidden), language);
   } catch (error) {
     console.error("Failed to fetch popups, fallback to static data.", error);
-    return localizePopups(fallbackPopups, language);
+    return localizePopups(filterHidden(fallbackPopups, includeHidden), language);
   }
 }
 
-export async function getPopupById(id: string, language?: SupportedLanguage) {
+export async function getPopupById(
+  id: string,
+  language?: SupportedLanguage,
+  options?: { includeHidden?: boolean }
+) {
+  const includeHidden = options?.includeHidden ?? false;
   const localizeSingle = async (popup: PopupEvent | null) => {
     if (!popup) return null;
     const [localized] = await localizePopups([popup], language);
@@ -118,18 +130,24 @@ export async function getPopupById(id: string, language?: SupportedLanguage) {
   };
 
   if (shouldUseStaticContent()) {
-    const fallback = fallbackPopups.find((popup) => popup.id === id) ?? null;
+    const fallback =
+      fallbackPopups.find((popup) => popup.id === id && (includeHidden || !popup.hidden)) ?? null;
     return localizeSingle(fallback);
   }
   try {
     const snapshot = await getDoc(doc(popupCollection, id));
     if (snapshot.exists()) {
-      return localizeSingle(toPopup({ ...(snapshot.data() as PopupEvent), id: snapshot.id }));
+      const popup = toPopup({ ...(snapshot.data() as PopupEvent), id: snapshot.id });
+      if (!includeHidden && popup.hidden) {
+        return null;
+      }
+      return localizeSingle(popup);
     }
   } catch (error) {
     console.error("Unable to fetch popup by id", error);
   }
-  const fallback = fallbackPopups.find((popup) => popup.id === id) ?? null;
+  const fallback =
+    fallbackPopups.find((popup) => popup.id === id && (includeHidden || !popup.hidden)) ?? null;
   return localizeSingle(fallback);
 }
 
@@ -142,7 +160,7 @@ export async function addPopup(popup: PopupEvent) {
     updatedAt: Timestamp.now()
   };
   await setDoc(doc(popupCollection, popup.id), payload, { merge: true });
-  return fetchPopups();
+  return fetchPopups(undefined, { includeHidden: true });
 }
 
 export async function updatePopup(popup: PopupEvent) {
@@ -156,11 +174,11 @@ export async function updatePopup(popup: PopupEvent) {
     },
     { merge: true }
   );
-  return fetchPopups();
+  return fetchPopups(undefined, { includeHidden: true });
 }
 
 export async function deletePopup(id: string) {
   assertFirestoreAvailable("Deleting a popup event");
   await deleteDoc(doc(popupCollection, id));
-  return fetchPopups();
+  return fetchPopups(undefined, { includeHidden: true });
 }

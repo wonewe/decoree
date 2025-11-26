@@ -209,17 +209,17 @@ export default function TextEditor({
   );
 
   return (
-    <div className="flex flex-col gap-3 relative">
+    <div className="relative flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <label className="text-sm font-semibold text-dancheongNavy">{label}</label>
+          <label className="text-sm font-semibold text-[var(--ink)]">{label}</label>
           {labelActions && <div className="flex items-center gap-2">{labelActions}</div>}
         </div>
-        <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-2 py-1">
+        <div className="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] px-2 py-1">
           <button
             type="button"
             onClick={() => applyFormat("bold")}
-            className="rounded px-2 py-1 text-xs font-bold text-slate-700 hover:bg-slate-100"
+            className="rounded px-2 py-1 text-xs font-bold text-[var(--ink)] hover:bg-[var(--paper)]"
             title="굵게 (Ctrl+B)"
           >
             B
@@ -227,7 +227,7 @@ export default function TextEditor({
           <button
             type="button"
             onClick={() => applyFormat("italic")}
-            className="rounded px-2 py-1 text-xs italic text-slate-700 hover:bg-slate-100"
+            className="rounded px-2 py-1 text-xs italic text-[var(--ink)] hover:bg-[var(--paper)]"
             title="기울임 (Ctrl+I)"
           >
             I
@@ -235,16 +235,16 @@ export default function TextEditor({
           <button
             type="button"
             onClick={() => applyFormat("underline")}
-            className="rounded px-2 py-1 text-xs underline text-slate-700 hover:bg-slate-100"
+            className="rounded px-2 py-1 text-xs underline text-[var(--ink)] hover:bg-[var(--paper)]"
             title="밑줄 (Ctrl+U)"
           >
             U
           </button>
-          <div className="h-4 w-px bg-slate-200" />
+          <div className="h-4 w-px bg-[var(--border)]" />
           <button
             type="button"
             onClick={() => applyFormat("formatBlock", "h2")}
-            className="rounded px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+            className="rounded px-2 py-1 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper)]"
             title="제목"
           >
             H2
@@ -252,29 +252,29 @@ export default function TextEditor({
           <button
             type="button"
             onClick={() => applyFormat("formatBlock", "p")}
-            className="rounded px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
+            className="rounded px-2 py-1 text-xs text-[var(--ink)] hover:bg-[var(--paper)]"
             title="본문"
           >
             P
           </button>
-          <div className="h-4 w-px bg-slate-200" />
+          <div className="h-4 w-px bg-[var(--border)]" />
           <div className="flex items-center gap-1">
-            <span className="text-xs text-slate-500">높이</span>
+            <span className="text-xs text-[var(--ink-subtle)]">높이</span>
             <button
               type="button"
               onClick={() => setEditorHeight((prev) => Math.max(200, prev - 40))}
-              className="rounded px-1 py-0.5 text-xs text-slate-600 hover:bg-slate-100"
+              className="rounded px-1 py-0.5 text-xs text-[var(--ink-muted)] hover:bg-[var(--paper)]"
               disabled={editorHeight <= 200}
             >
               −
             </button>
-            <span className="w-10 text-center text-xs font-semibold text-dancheongNavy">
+            <span className="w-10 text-center text-xs font-semibold text-[var(--ink)]">
               {editorHeight}px
             </span>
             <button
               type="button"
               onClick={() => setEditorHeight((prev) => Math.min(600, prev + 40))}
-              className="rounded px-1 py-0.5 text-xs text-slate-600 hover:bg-slate-100"
+              className="rounded px-1 py-0.5 text-xs text-[var(--ink-muted)] hover:bg-[var(--paper)]"
               disabled={editorHeight >= 600}
             >
               +
@@ -295,32 +295,33 @@ export default function TextEditor({
           maxHeight: "600px",
           overflowY: "auto"
         }}
-        className={`w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-relaxed focus:border-hanBlue focus:outline-none focus:ring-2 focus:ring-hanBlue/20 ${
-          imageUploadOptions ? "hover:border-hanBlue/50" : ""
+        className={`w-full rounded-2xl border border-[var(--border)] bg-[var(--paper)] px-4 py-3 text-sm leading-relaxed transition focus:border-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--ink)]/20 ${
+          imageUploadOptions ? "hover:border-[var(--ink)]/60" : ""
         } ${uploading ? "opacity-50 pointer-events-none" : ""}`}
         data-placeholder={placeholder}
         suppressContentEditableWarning
       />
       {uploading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-xl">
-          <div className="text-sm text-slate-600">이미지 업로드 중...</div>
+        <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-[var(--paper)]/80">
+          <div className="text-sm text-[var(--ink-muted)]">이미지 업로드 중...</div>
         </div>
       )}
       <style>{`
         [contenteditable][data-placeholder]:empty:before {
           content: attr(data-placeholder);
-          color: #94a3b8;
+          color: var(--ink-subtle);
           pointer-events: none;
         }
         [contenteditable] h2 {
           font-size: 1.25rem;
           font-weight: 600;
           margin: 0.75rem 0 0.5rem 0;
-          color: #1e293b;
+          color: var(--ink);
         }
         [contenteditable] p {
           margin: 0.5rem 0;
           line-height: 1.6;
+          color: var(--ink-muted);
         }
         [contenteditable] img {
           max-width: 100%;

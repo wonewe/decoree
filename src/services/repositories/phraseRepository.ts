@@ -19,45 +19,59 @@ type WithTimestamps<T> = T & {
 
 const fallbackPhrases = PHRASES.map((phrase) => stripLanguageMeta(ensureLanguage(phrase)));
 
+const filterHidden = (phrases: Phrase[], includeHidden?: boolean) =>
+  includeHidden ? phrases : phrases.filter((phrase) => !phrase.hidden);
+
 const toPhrase = (docData: WithTimestamps<Phrase>): Phrase => {
   const normalized = ensureLanguage(docData);
   const { __softLanguage, ...rest } = normalized;
   return rest;
 };
 
-export async function fetchPhrases(language?: SupportedLanguage): Promise<Phrase[]> {
+export async function fetchPhrases(
+  language?: SupportedLanguage,
+  options?: { includeHidden?: boolean }
+): Promise<Phrase[]> {
+  const includeHidden = options?.includeHidden ?? false;
   if (shouldUseStaticContent()) {
-    return filterByLanguage(fallbackPhrases, language);
+    return filterHidden(filterByLanguage(fallbackPhrases, language), includeHidden);
   }
   try {
     const snapshot = await getDocs(phraseCollection);
     if (snapshot.empty) {
-      return filterByLanguage(fallbackPhrases, language);
+      return filterHidden(filterByLanguage(fallbackPhrases, language), includeHidden);
     }
     const phrases = snapshot.docs.map((docSnap) => {
       const data = docSnap.data() as WithTimestamps<Phrase>;
       return toPhrase({ ...data, id: docSnap.id });
     });
-    return filterByLanguage(phrases, language);
+    return filterHidden(filterByLanguage(phrases, language), includeHidden);
   } catch (error) {
     console.error("Failed to fetch phrases, fallback to static data.", error);
-    return filterByLanguage(fallbackPhrases, language);
+    return filterHidden(filterByLanguage(fallbackPhrases, language), includeHidden);
   }
 }
 
-export async function getPhraseById(id: string) {
+export async function getPhraseById(id: string, options?: { includeHidden?: boolean }) {
+  const includeHidden = options?.includeHidden ?? false;
   if (shouldUseStaticContent()) {
-    return fallbackPhrases.find((phrase) => phrase.id === id) ?? null;
+    const found = fallbackPhrases.find((phrase) => phrase.id === id);
+    if (found && !includeHidden && found.hidden) return null;
+    return found ?? null;
   }
   try {
     const snapshot = await getDoc(doc(phraseCollection, id));
     if (snapshot.exists()) {
-      return toPhrase({ ...(snapshot.data() as Phrase), id: snapshot.id });
+      const phrase = toPhrase({ ...(snapshot.data() as Phrase), id: snapshot.id });
+      if (!includeHidden && phrase.hidden) return null;
+      return phrase;
     }
   } catch (error) {
     console.error("Unable to fetch phrase by id", error);
   }
-  return fallbackPhrases.find((phrase) => phrase.id === id) ?? null;
+  const found = fallbackPhrases.find((phrase) => phrase.id === id);
+  if (found && !includeHidden && found.hidden) return null;
+  return found ?? null;
 }
 
 export async function addPhrase(phrase: Phrase) {
@@ -70,7 +84,7 @@ export async function addPhrase(phrase: Phrase) {
     updatedAt: Timestamp.now()
   };
   await setDoc(doc(phraseCollection, id), payload, { merge: true });
-  return fetchPhrases();
+  return fetchPhrases(undefined, { includeHidden: true });
 }
 
 export async function updatePhrase(phrase: Phrase) {
@@ -84,11 +98,11 @@ export async function updatePhrase(phrase: Phrase) {
     },
     { merge: true }
   );
-  return fetchPhrases();
+  return fetchPhrases(undefined, { includeHidden: true });
 }
 
 export async function deletePhrase(id: string) {
   assertFirestoreAvailable("Deleting a phrase");
   await deleteDoc(doc(phraseCollection, id));
-  return fetchPhrases();
+  return fetchPhrases(undefined, { includeHidden: true });
 }

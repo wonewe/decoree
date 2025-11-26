@@ -621,10 +621,10 @@ export default function AdminPage() {
       setLoading(true);
       try {
         const [trendData, eventData, phraseData, popupData] = await Promise.all([
-          fetchTrendReports(),
-          fetchEvents(),
-          fetchPhrases(),
-          fetchPopups()
+          fetchTrendReports(undefined, { includeHidden: true }),
+          fetchEvents(undefined, { includeHidden: true }),
+          fetchPhrases(undefined, { includeHidden: true }),
+          fetchPopups(undefined, { includeHidden: true })
         ]);
 
         if (!isMounted) return;
@@ -820,7 +820,7 @@ export default function AdminPage() {
         }
       }
 
-      const refreshed = await fetchTrendReports();
+      const refreshed = await fetchTrendReports(undefined, { includeHidden: true });
       setTrends(refreshed);
       const preferredId =
         localizedPayloads.find((entry) => entry.language === basePayload.language)?.id ??
@@ -989,7 +989,7 @@ export default function AdminPage() {
         }
       }
 
-      const refreshed = await fetchEvents();
+      const refreshed = await fetchEvents(undefined, { includeHidden: true });
       setEvents(refreshed);
       const preferredId =
         localizedPayloads.find((entry) => entry.language === payload.language)?.id ??
@@ -1129,7 +1129,7 @@ export default function AdminPage() {
         }
       }
 
-      const refreshed = await fetchPhrases();
+      const refreshed = await fetchPhrases(undefined, { includeHidden: true });
       setPhrases(refreshed);
       const preferredId =
         localizedPayloads.find((entry) => entry.language === payload.language)?.id ??
@@ -1305,7 +1305,7 @@ export default function AdminPage() {
         }
       }
 
-      const refreshed = await fetchPopups();
+      const refreshed = await fetchPopups(undefined, { includeHidden: true });
       setPopups(refreshed);
       const preferredId =
         localizedPayloads.find((entry) => entry.language === payload.language)?.id ??
@@ -1407,7 +1407,7 @@ export default function AdminPage() {
     `rounded-full px-5 py-2 text-sm font-semibold transition ${
       section === activeSection
         ? "bg-dancheongNavy text-white shadow"
-        : "bg-white text-dancheongNavy hover:bg-slate-100"
+        : "bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--paper-muted)]"
     }`;
 
   const renderMessage = () => {
@@ -1417,7 +1417,7 @@ export default function AdminPage() {
         ? "bg-emerald-50 text-emerald-700 border-emerald-200"
         : message.tone === "error"
         ? "bg-rose-50 text-rose-700 border-rose-200"
-        : "bg-slate-100 text-slate-600 border-slate-200";
+        : "bg-[var(--paper-muted)] text-[var(--ink-muted)] border-[var(--border)]";
     return (
       <div className={`rounded-2xl border px-6 py-4 text-sm ${toneClass}`}>
         {message.text}
@@ -1430,11 +1430,11 @@ export default function AdminPage() {
       type="button"
       onClick={onClick}
       className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition ${
-        isActive ? "border-dancheongNavy bg-dancheongNavy/5" : "border-slate-200 bg-white"
+        isActive ? "border-dancheongNavy bg-dancheongNavy/5" : "border-[var(--border)] bg-[var(--paper)]"
       } hover:border-dancheongNavy/60`}
     >
-      <span className="block font-semibold text-dancheongNavy">{label}</span>
-      <span className="mt-1 block text-xs text-slate-500">{id}</span>
+      <span className="block font-semibold text-[var(--ink)]">{label}</span>
+      <span className="mt-1 block text-xs text-[var(--ink-subtle)]">{id}</span>
     </button>
   );
 
@@ -1456,7 +1456,7 @@ export default function AdminPage() {
 
     return (
       <div className="flex flex-col gap-2">
-        <span className="text-sm font-semibold text-dancheongNavy">{label}</span>
+        <span className="text-sm font-semibold text-[var(--ink)]">{label}</span>
         <div className="flex flex-wrap gap-2">
           {LANG_OPTIONS.map((lang) => {
             const isActive = value.includes(lang);
@@ -1467,8 +1467,8 @@ export default function AdminPage() {
                 onClick={() => toggleLanguage(lang)}
                 className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
                   isActive
-                    ? "bg-hanBlue text-white shadow"
-                    : "border border-slate-200 bg-white text-slate-600 hover:border-hanBlue hover:text-hanBlue"
+                    ? "bg-[var(--ink)] text-white shadow"
+                    : "border border-[var(--border)] bg-[var(--paper)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
                 }`}
               >
                 {getLanguageLabel(lang)}
@@ -1476,7 +1476,7 @@ export default function AdminPage() {
             );
           })}
         </div>
-        {helper && <p className="text-xs text-slate-500">{helper}</p>}
+        {helper && <p className="text-xs text-[var(--ink-subtle)]">{helper}</p>}
       </div>
     );
   };
@@ -1573,12 +1573,12 @@ export default function AdminPage() {
     return (
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-semibold text-dancheongNavy">{label}</label>
-          <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-2 py-1">
+          <label className="text-sm font-semibold text-[var(--ink)]">{label}</label>
+          <div className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--paper)] px-2 py-1">
             <button
               type="button"
               onClick={() => applyFormat("bold")}
-              className="rounded px-2 py-1 text-xs font-bold text-slate-700 hover:bg-slate-100"
+              className="rounded px-2 py-1 text-xs font-bold text-[var(--ink)] hover:bg-[var(--paper-muted)]"
               title="굵게 (Ctrl+B)"
             >
               B
@@ -1586,7 +1586,7 @@ export default function AdminPage() {
             <button
               type="button"
               onClick={() => applyFormat("italic")}
-              className="rounded px-2 py-1 text-xs italic text-slate-700 hover:bg-slate-100"
+              className="rounded px-2 py-1 text-xs italic text-[var(--ink)] hover:bg-[var(--paper-muted)]"
               title="기울임 (Ctrl+I)"
             >
               I
@@ -1594,7 +1594,7 @@ export default function AdminPage() {
             <button
               type="button"
               onClick={() => applyFormat("underline")}
-              className="rounded px-2 py-1 text-xs underline text-slate-700 hover:bg-slate-100"
+              className="rounded px-2 py-1 text-xs underline text-[var(--ink)] hover:bg-[var(--paper-muted)]"
               title="밑줄 (Ctrl+U)"
             >
               U
@@ -1603,7 +1603,7 @@ export default function AdminPage() {
             <button
               type="button"
               onClick={() => applyFormat("formatBlock", "h2")}
-              className="rounded px-2 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+              className="rounded px-2 py-1 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper-muted)]"
               title="제목"
             >
               H2
@@ -1611,27 +1611,27 @@ export default function AdminPage() {
             <button
               type="button"
               onClick={() => applyFormat("formatBlock", "p")}
-              className="rounded px-2 py-1 text-xs text-slate-700 hover:bg-slate-100"
+              className="rounded px-2 py-1 text-xs text-[var(--ink)] hover:bg-[var(--paper-muted)]"
               title="본문"
             >
               P
             </button>
             <div className="h-4 w-px bg-slate-200" />
             <div className="flex items-center gap-1">
-              <span className="text-xs text-slate-500">높이</span>
+              <span className="text-xs text-[var(--ink-subtle)]">높이</span>
               <button
                 type="button"
                 onClick={() => setEditorHeight((prev) => Math.max(200, prev - 40))}
-                className="rounded px-1 py-0.5 text-xs text-slate-600 hover:bg-slate-100"
+                className="rounded px-1 py-0.5 text-xs text-[var(--ink-muted)] hover:bg-[var(--paper-muted)]"
                 disabled={editorHeight <= 200}
               >
                 −
               </button>
-              <span className="w-10 text-center text-xs font-semibold text-dancheongNavy">{editorHeight}px</span>
+              <span className="w-10 text-center text-xs font-semibold text-[var(--ink)]">{editorHeight}px</span>
               <button
                 type="button"
                 onClick={() => setEditorHeight((prev) => Math.min(600, prev + 40))}
-                className="rounded px-1 py-0.5 text-xs text-slate-600 hover:bg-slate-100"
+                className="rounded px-1 py-0.5 text-xs text-[var(--ink-muted)] hover:bg-[var(--paper-muted)]"
                 disabled={editorHeight >= 600}
               >
                 +
@@ -1650,7 +1650,7 @@ export default function AdminPage() {
             maxHeight: "600px",
             overflowY: "auto"
           }}
-          className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-relaxed focus:border-hanBlue focus:outline-none focus:ring-2 focus:ring-hanBlue/20"
+          className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper)] px-4 py-3 text-sm leading-relaxed focus:border-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--ink)]/20"
           data-placeholder={placeholder}
           suppressContentEditableWarning
         />
@@ -1682,7 +1682,7 @@ export default function AdminPage() {
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
       <aside className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-dancheongNavy">주간 트렌드 목록</h3>
+          <h3 className="text-lg font-semibold text-[var(--ink)]">주간 트렌드 목록</h3>
           <button
             type="button"
             onClick={() => {
@@ -1690,7 +1690,7 @@ export default function AdminPage() {
               setTrendDraft(createEmptyTrendDraft());
               clearTrendImageSelection();
             }}
-            className="text-sm font-semibold text-hanBlue hover:underline"
+            className="text-sm font-semibold text-[var(--ink)] hover:underline"
           >
             새 트렌드 작성
           </button>
@@ -1701,7 +1701,7 @@ export default function AdminPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="트렌드/이벤트/팝업/회화 검색"
-            className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
           />
           {hasTrendDraft && trendDraftCache && (
             renderListButton(
@@ -1727,16 +1727,16 @@ export default function AdminPage() {
             });
           })}
           {trends.length === 0 && (
-            <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
+            <p className="rounded-xl border border-dashed border-[var(--border)] p-4 text-sm text-[var(--ink-subtle)]">
               아직 등록된 트렌드가 없습니다. 오른쪽 양식을 채워 새 트렌드를 추가하세요.
             </p>
           )}
         </div>
       </aside>
 
-      <form onSubmit={handleTrendSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
+      <form onSubmit={handleTrendSubmit} className="space-y-6 rounded-3xl bg-[var(--paper)] p-8 shadow">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold text-dancheongNavy">
+          <h3 className="text-xl font-semibold text-[var(--ink)]">
             {selectedTrendId ? "트렌드 수정" : "새 트렌드 등록"}
           </h3>
           {selectedTrendId && (
@@ -1751,7 +1751,7 @@ export default function AdminPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-4">
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             언어
             <select
               value={trendDraft.language}
@@ -1765,7 +1765,7 @@ export default function AdminPage() {
                   )
                 }))
               }
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             >
               {LANG_OPTIONS.map((lang) => (
                 <option key={lang} value={lang}>
@@ -1774,7 +1774,7 @@ export default function AdminPage() {
               ))}
             </select>
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             저자
             <select
               value={trendDraft.authorId}
@@ -1784,7 +1784,7 @@ export default function AdminPage() {
                   authorId: e.target.value
                 }))
               }
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             >
               {AUTHOR_PROFILES.map((author) => (
                 <option key={author.id} value={author.id}>
@@ -1793,39 +1793,39 @@ export default function AdminPage() {
               ))}
             </select>
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             ID (영문 소문자, 하이픈 권장)
             <input
               type="text"
               value={trendDraft.id}
               onChange={(e) => setTrendDraft((prev) => ({ ...prev, id: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               placeholder="ex) seongsu-vinyl"
               required
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             공개 날짜
             <input
               type="date"
               value={trendDraft.publishedAt}
               onChange={(e) => setTrendDraft((prev) => ({ ...prev, publishedAt: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               required
             />
           </label>
         </div>
 
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
+        <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper-muted)]/70 p-4">
           <LanguageMultiSelect
             label="노출 언어 (복수 선택)"
             helper="작성 언어를 기준으로 자동 번역하여 각 언어 버전이 생성됩니다. 선택하지 않으면 작성 언어만 발행됩니다."
             value={trendDraft.languages}
             onChange={(languages) => setTrendDraft((prev) => ({ ...prev, languages }))}
           />
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-[var(--ink-subtle)]">
             다국어 발행 시 ID 앞에 언어 코드가 자동으로 붙습니다. 예){" "}
-            <span className="font-semibold text-dancheongNavy">
+            <span className="font-semibold text-[var(--ink)]">
               {trendDraft.languages.length > 1
                 ? `fr-${normalizeBaseId(trendDraft.id || "trend-id", trendDraft.language)}`
                 : trendDraft.id || "trend-id"}
@@ -1833,60 +1833,60 @@ export default function AdminPage() {
           </p>
         </div>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
           제목
           <input
             type="text"
             value={trendDraft.title}
             onChange={(e) => setTrendDraft((prev) => ({ ...prev, title: e.target.value }))}
-            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             required
           />
         </label>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
           요약
           <textarea
             value={trendDraft.summary}
             onChange={(e) => setTrendDraft((prev) => ({ ...prev, summary: e.target.value }))}
-            className="h-24 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="h-24 rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             required
           />
         </label>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
           상세 설명 (목록 카드에서 사용)
           <textarea
             value={trendDraft.details}
             onChange={(e) => setTrendDraft((prev) => ({ ...prev, details: e.target.value }))}
-            className="h-24 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="h-24 rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             required
           />
         </label>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             지역 / 동네
             <input
               type="text"
               value={trendDraft.neighborhood}
               onChange={(e) => setTrendDraft((prev) => ({ ...prev, neighborhood: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               required
             />
           </label>
           <div className="space-y-3">
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               대표 이미지 URL
               <input
                 type="url"
                 value={trendDraft.imageUrl}
                 onChange={(e) => setTrendDraft((prev) => ({ ...prev, imageUrl: e.target.value }))}
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
                 placeholder="https://"
               />
             </label>
-            <div className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <div className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               <span>이미지 파일 업로드 (선택)</span>
               <input
                 type="file"
@@ -1898,21 +1898,21 @@ export default function AdminPage() {
                     e.target.value = "";
                   }
                 }}
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-hanBlue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[var(--ink)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
               />
               {trendImageFile && (
                 <div className="flex items-center justify-between gap-2 text-xs font-normal">
-                  <span className="truncate text-slate-500">{trendImageFile.name}</span>
+                  <span className="truncate text-[var(--ink-subtle)]">{trendImageFile.name}</span>
                   <button
                     type="button"
                     onClick={() => applyTrendImageFile(null)}
-                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                    className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold text-[var(--ink-muted)] hover:bg-[var(--paper-muted)]"
                   >
                     선택 해제
                   </button>
                 </div>
               )}
-              <p className="text-xs font-normal text-slate-500">
+              <p className="text-xs font-normal text-[var(--ink-subtle)]">
                 Studio에 업로드하면 Firebase Storage URL이 자동으로 생성됩니다.
               </p>
             </div>
@@ -1920,40 +1920,40 @@ export default function AdminPage() {
         </div>
 
         {currentTrendImagePreview && (
-          <div className="space-y-2 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-4">
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <div className="space-y-2 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper-muted)]/80 p-4">
+            <span className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
               이미지 미리보기
             </span>
-            <div className="overflow-hidden rounded-xl border border-slate-100">
+            <div className="overflow-hidden rounded-xl border border-[var(--border)]">
               <img
                 src={currentTrendImagePreview}
                 alt={trendDraft.title || "Trend image preview"}
                 className="h-56 w-full object-cover"
               />
             </div>
-            <p className="text-xs text-slate-500">저장 시 모든 언어 버전에 동일한 이미지가 반영됩니다.</p>
+            <p className="text-xs text-[var(--ink-subtle)]">저장 시 모든 언어 버전에 동일한 이미지가 반영됩니다.</p>
           </div>
         )}
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             태그 (쉼표로 구분)
             <input
               type="text"
               value={trendDraft.tagsInput}
               onChange={(e) => setTrendDraft((prev) => ({ ...prev, tagsInput: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               placeholder="pop-up, mode, street food"
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             트렌드 강도
             <select
               value={trendDraft.intensity}
               onChange={(e) =>
                 setTrendDraft((prev) => ({ ...prev, intensity: e.target.value as TrendIntensity }))
               }
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             >
               <option value="highlight">Highlight</option>
               <option value="insider">Insider</option>
@@ -1973,7 +1973,7 @@ export default function AdminPage() {
           <button
             type="button"
             onClick={handleTrendDraftSave}
-            className="rounded-full border border-hanBlue/40 px-5 py-2 text-sm font-semibold text-hanBlue hover:bg-hanBlue/10"
+            className="rounded-full border border-[var(--ink)]/40 px-5 py-2 text-sm font-semibold text-[var(--ink)] hover:bg-[var(--ink)]/10"
           >
             임시저장
           </button>
@@ -1984,14 +1984,14 @@ export default function AdminPage() {
               setTrendDraft(createEmptyTrendDraft());
               clearTrendImageSelection();
             }}
-            className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+            className="rounded-full border border-[var(--border)] px-5 py-2 text-sm font-semibold text-[var(--ink-muted)] hover:bg-[var(--paper-muted)]"
           >
             새로 작성
           </button>
           <button
             type="submit"
             disabled={savingTrend}
-            className="rounded-full bg-hanBlue px-6 py-2 text-sm font-semibold text-white shadow transition hover:bg-dancheongNavy disabled:cursor-not-allowed disabled:bg-slate-400"
+            className="rounded-full bg-[var(--ink)] px-6 py-2 text-sm font-semibold text-white shadow transition hover:bg-dancheongNavy disabled:cursor-not-allowed disabled:bg-slate-400"
           >
             {savingTrend ? "저장 중..." : "저장하기"}
           </button>
@@ -2008,7 +2008,7 @@ export default function AdminPage() {
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
         <aside className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-dancheongNavy">K-Culture 이벤트</h3>
+            <h3 className="text-lg font-semibold text-[var(--ink)]">K-Culture 이벤트</h3>
             <button
               type="button"
               onClick={() => {
@@ -2016,7 +2016,7 @@ export default function AdminPage() {
                 setEventDraft(createEmptyEventDraft());
                 clearEventImageSelection();
               }}
-              className="text-sm font-semibold text-hanBlue hover:underline"
+              className="text-sm font-semibold text-[var(--ink)] hover:underline"
             >
               새 이벤트 작성
             </button>
@@ -2047,16 +2047,16 @@ export default function AdminPage() {
               )
             )}
             {events.length === 0 && (
-              <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
+              <p className="rounded-xl border border-dashed border-[var(--border)] p-4 text-sm text-[var(--ink-subtle)]">
                 아직 등록된 이벤트가 없습니다. 오른쪽 양식을 채워 새 이벤트를 추가하세요.
               </p>
             )}
           </div>
         </aside>
 
-        <form onSubmit={handleEventSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
+        <form onSubmit={handleEventSubmit} className="space-y-6 rounded-3xl bg-[var(--paper)] p-8 shadow">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-semibold text-dancheongNavy">
+            <h3 className="text-xl font-semibold text-[var(--ink)]">
               {selectedEventId ? "이벤트 수정" : "새 이벤트 등록"}
             </h3>
             {selectedEventId && (
@@ -2071,7 +2071,7 @@ export default function AdminPage() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               언어
               <select
                 value={eventDraft.language}
@@ -2085,7 +2085,7 @@ export default function AdminPage() {
                     )
                   }))
                 }
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               >
                 {LANG_OPTIONS.map((lang) => (
                   <option key={lang} value={lang}>
@@ -2094,24 +2094,24 @@ export default function AdminPage() {
                 ))}
               </select>
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               ID
               <input
                 type="text"
                 value={eventDraft.id}
                 onChange={(e) => setEventDraft((prev) => ({ ...prev, id: e.target.value }))}
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
                 required
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               카테고리
               <select
                 value={eventDraft.category}
                 onChange={(e) =>
                   setEventDraft((prev) => ({ ...prev, category: e.target.value as EventCategory }))
                 }
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               >
                 <option value="concert">Concert</option>
                 <option value="traditional">Traditional</option>
@@ -2122,121 +2122,121 @@ export default function AdminPage() {
             </label>
           </div>
 
-          <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
+          <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper-muted)]/70 p-4">
             <LanguageMultiSelect
               label="노출 언어 (복수 선택)"
               helper="선택한 언어마다 이벤트 설명이 자동 번역되어 게시됩니다."
               value={eventDraft.languages}
               onChange={(languages) => setEventDraft((prev) => ({ ...prev, languages }))}
             />
-            <p className="mt-2 text-xs text-slate-500">
+            <p className="mt-2 text-xs text-[var(--ink-subtle)]">
               여러 언어를 발행하면 ID는{" "}
               <strong>{`lang-${normalizeBaseId(eventDraft.id || "event-id", eventDraft.language)}`}</strong>{" "}
               형식으로 저장됩니다.
             </p>
           </div>
 
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             제목
             <input
               type="text"
               value={eventDraft.title}
               onChange={(e) => setEventDraft((prev) => ({ ...prev, title: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               required
             />
           </label>
 
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             요약 설명
             <textarea
               value={eventDraft.description}
               onChange={(e) => setEventDraft((prev) => ({ ...prev, description: e.target.value }))}
-              className="h-24 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="h-24 rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               required
             />
           </label>
 
           <div className="grid gap-4 md:grid-cols-3">
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               시작 날짜
               <input
                 type="date"
                 value={eventDraft.startDate}
                 onChange={(e) => setEventDraft((prev) => ({ ...prev, startDate: e.target.value }))}
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
                 required
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               종료 날짜
               <input
                 type="date"
                 value={eventDraft.endDate}
                 onChange={(e) => setEventDraft((prev) => ({ ...prev, endDate: e.target.value }))}
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               시간
               <input
                 type="time"
                 value={eventDraft.time}
                 onChange={(e) => setEventDraft((prev) => ({ ...prev, time: e.target.value }))}
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
                 required
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               참가비 / 티켓
               <input
                 type="text"
                 value={eventDraft.price}
                 onChange={(e) => setEventDraft((prev) => ({ ...prev, price: e.target.value }))}
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
                 placeholder="예: 29 000 KRW, Entrée libre"
                 required
               />
             </label>
           </div>
 
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             장소
             <input
               type="text"
               value={eventDraft.location}
               onChange={(e) => setEventDraft((prev) => ({ ...prev, location: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               required
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             지도 검색어 (지도 퍼스트뷰 개선용)
             <input
               type="text"
               value={eventDraft.mapQuery}
               onChange={(e) => setEventDraft((prev) => ({ ...prev, mapQuery: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               placeholder="예: 광화문 DDP pop-up, 성수동 무신사 스튜디오"
             />
-            <span className="text-xs font-normal text-slate-500">
+            <span className="text-xs font-normal text-[var(--ink-subtle)]">
               지도를 열 때 우선 검색할 키워드입니다. 비워두면 장소 값으로 검색합니다.
             </span>
           </label>
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-3">
-              <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
                 대표 이미지 URL
                 <input
                   type="url"
                   value={eventDraft.imageUrl}
                   onChange={(e) => setEventDraft((prev) => ({ ...prev, imageUrl: e.target.value }))}
-                  className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                  className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
                   placeholder="https://"
                 />
               </label>
-              <div className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+              <div className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
                 <span>이미지 파일 업로드 (선택)</span>
                 <input
                   type="file"
@@ -2248,50 +2248,50 @@ export default function AdminPage() {
                       e.target.value = "";
                     }
                   }}
-                  className="rounded-xl border border-slate-200 px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-hanBlue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+                  className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[var(--ink)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
                 />
                 {eventImageFile && (
                   <div className="flex items-center justify-between gap-2 text-xs font-normal">
-                    <span className="truncate text-slate-500">{eventImageFile.name}</span>
+                    <span className="truncate text-[var(--ink-subtle)]">{eventImageFile.name}</span>
                     <button
                       type="button"
                       onClick={() => applyEventImageFile(null)}
-                      className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                      className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold text-[var(--ink-muted)] hover:bg-[var(--paper-muted)]"
                     >
                       선택 해제
                     </button>
                   </div>
                 )}
-                <p className="text-xs font-normal text-slate-500">
+                <p className="text-xs font-normal text-[var(--ink-subtle)]">
                   파일을 업로드하면 Firebase Storage에 저장되어 Cloudinary 차단 없이 노출됩니다.
                 </p>
               </div>
             </div>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               예약 링크 (선택)
               <input
                 type="url"
                 value={eventDraft.bookingUrl}
                 onChange={(e) => setEventDraft((prev) => ({ ...prev, bookingUrl: e.target.value }))}
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
                 placeholder="https://"
               />
             </label>
           </div>
 
           {currentEventImagePreview && (
-            <div className="space-y-2 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-4">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <div className="space-y-2 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper-muted)]/80 p-4">
+              <span className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
                 이미지 미리보기
               </span>
-              <div className="overflow-hidden rounded-xl border border-slate-100">
+              <div className="overflow-hidden rounded-xl border border-[var(--border)]">
                 <img
                   src={currentEventImagePreview}
                   alt={eventDraft.title || "Event image preview"}
                   className="h-56 w-full object-cover"
                 />
               </div>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-[var(--ink-subtle)]">
                 저장 시 이 이미지 URL이 모든 언어 버전에 함께 적용됩니다.
               </p>
             </div>
@@ -2303,12 +2303,12 @@ export default function AdminPage() {
             onChange={(value) => setEventDraft((prev) => ({ ...prev, longDescriptionInput: value }))}
           />
 
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             팁 & 추천 (줄바꿈으로 구분)
             <textarea
               value={eventDraft.tipsInput}
               onChange={(e) => setEventDraft((prev) => ({ ...prev, tipsInput: e.target.value }))}
-              className="h-32 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="h-32 rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
 
@@ -2316,7 +2316,7 @@ export default function AdminPage() {
             <button
               type="button"
               onClick={handleEventDraftSave}
-              className="rounded-full border border-hanBlue/40 px-5 py-2 text-sm font-semibold text-hanBlue hover:bg-hanBlue/10"
+              className="rounded-full border border-[var(--ink)]/40 px-5 py-2 text-sm font-semibold text-[var(--ink)] hover:bg-[var(--ink)]/10"
             >
               임시저장
             </button>
@@ -2327,14 +2327,14 @@ export default function AdminPage() {
                 setEventDraft(createEmptyEventDraft());
                 clearEventImageSelection();
               }}
-              className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+              className="rounded-full border border-[var(--border)] px-5 py-2 text-sm font-semibold text-[var(--ink-muted)] hover:bg-[var(--paper-muted)]"
             >
               새로 작성
             </button>
             <button
               type="submit"
               disabled={savingEvent}
-              className="rounded-full bg-hanBlue px-6 py-2 text-sm font-semibold text-white shadow transition hover:bg-dancheongNavy disabled:cursor-not-allowed disabled:bg-slate-400"
+              className="rounded-full bg-[var(--ink)] px-6 py-2 text-sm font-semibold text-white shadow transition hover:bg-dancheongNavy disabled:cursor-not-allowed disabled:bg-slate-400"
             >
               {savingEvent ? "저장 중..." : "저장하기"}
             </button>
@@ -2348,14 +2348,14 @@ export default function AdminPage() {
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
       <aside className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-dancheongNavy">한국어 표현</h3>
+          <h3 className="text-lg font-semibold text-[var(--ink)]">한국어 표현</h3>
           <button
             type="button"
             onClick={() => {
               setSelectedPhraseId(null);
               setPhraseDraft(createEmptyPhraseDraft());
             }}
-            className="text-sm font-semibold text-hanBlue hover:underline"
+            className="text-sm font-semibold text-[var(--ink)] hover:underline"
           >
             새 표현 작성
           </button>
@@ -2384,16 +2384,16 @@ export default function AdminPage() {
             )
           )}
           {phrases.length === 0 && (
-            <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
+            <p className="rounded-xl border border-dashed border-[var(--border)] p-4 text-sm text-[var(--ink-subtle)]">
               아직 등록된 표현이 없습니다. 오른쪽 양식을 채워 새 표현을 추가하세요.
             </p>
           )}
         </div>
       </aside>
 
-      <form onSubmit={handlePhraseSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
+      <form onSubmit={handlePhraseSubmit} className="space-y-6 rounded-3xl bg-[var(--paper)] p-8 shadow">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold text-dancheongNavy">
+          <h3 className="text-xl font-semibold text-[var(--ink)]">
             {selectedPhraseId ? "표현 수정" : "새 표현 등록"}
           </h3>
           {selectedPhraseId && (
@@ -2408,7 +2408,7 @@ export default function AdminPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             언어
             <select
               value={phraseDraft.language}
@@ -2422,7 +2422,7 @@ export default function AdminPage() {
                   )
                 }))
               }
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             >
               {LANG_OPTIONS.map((lang) => (
                 <option key={lang} value={lang}>
@@ -2431,24 +2431,24 @@ export default function AdminPage() {
               ))}
             </select>
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             ID
             <input
               type="text"
               value={phraseDraft.id}
               onChange={(e) => setPhraseDraft((prev) => ({ ...prev, id: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               required
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             카테고리
             <select
               value={phraseDraft.category}
               onChange={(e) =>
                 setPhraseDraft((prev) => ({ ...prev, category: e.target.value as PhraseCategory }))
               }
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             >
               <option value="food">음식</option>
               <option value="shopping">쇼핑</option>
@@ -2457,30 +2457,30 @@ export default function AdminPage() {
           </label>
         </div>
 
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
+        <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper-muted)]/70 p-4">
           <LanguageMultiSelect
             label="노출 언어 (복수 선택)"
             helper="선택한 언어마다 번역과 문화 노트가 자동 생성됩니다."
             value={phraseDraft.languages}
             onChange={(languages) => setPhraseDraft((prev) => ({ ...prev, languages }))}
           />
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-[var(--ink-subtle)]">
             예) <strong>{`ja-${normalizeBaseId(phraseDraft.id || "phrase-id", phraseDraft.language)}`}</strong>
           </p>
         </div>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
           한국어 표현
           <input
             type="text"
             value={phraseDraft.korean}
             onChange={(e) => setPhraseDraft((prev) => ({ ...prev, korean: e.target.value }))}
-            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             required
           />
         </label>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
           발음 표기
           <input
             type="text"
@@ -2488,28 +2488,28 @@ export default function AdminPage() {
             onChange={(e) =>
               setPhraseDraft((prev) => ({ ...prev, transliteration: e.target.value }))
             }
-            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             required
           />
         </label>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
           번역 (선택한 언어)
           <input
             type="text"
             value={phraseDraft.translation}
             onChange={(e) => setPhraseDraft((prev) => ({ ...prev, translation: e.target.value }))}
-            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             required
           />
         </label>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
           문화 노트
           <textarea
             value={phraseDraft.culturalNote}
             onChange={(e) => setPhraseDraft((prev) => ({ ...prev, culturalNote: e.target.value }))}
-            className="h-28 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="h-28 rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             required
           />
         </label>
@@ -2518,7 +2518,7 @@ export default function AdminPage() {
           <button
             type="button"
             onClick={handlePhraseDraftSave}
-            className="rounded-full border border-hanBlue/40 px-5 py-2 text-sm font-semibold text-hanBlue hover:bg-hanBlue/10"
+            className="rounded-full border border-[var(--ink)]/40 px-5 py-2 text-sm font-semibold text-[var(--ink)] hover:bg-[var(--ink)]/10"
           >
             임시저장
           </button>
@@ -2528,14 +2528,14 @@ export default function AdminPage() {
               setSelectedPhraseId(null);
               setPhraseDraft(createEmptyPhraseDraft());
             }}
-            className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+            className="rounded-full border border-[var(--border)] px-5 py-2 text-sm font-semibold text-[var(--ink-muted)] hover:bg-[var(--paper-muted)]"
           >
             새로 작성
           </button>
           <button
             type="submit"
             disabled={savingPhrase}
-            className="rounded-full bg-hanBlue px-6 py-2 text-sm font-semibold text-white shadow transition hover:bg-dancheongNavy disabled:cursor-not-allowed disabled:bg-slate-400"
+            className="rounded-full bg-[var(--ink)] px-6 py-2 text-sm font-semibold text-white shadow transition hover:bg-dancheongNavy disabled:cursor-not-allowed disabled:bg-slate-400"
           >
             {savingPhrase ? "저장 중..." : "저장하기"}
           </button>
@@ -2552,7 +2552,7 @@ export default function AdminPage() {
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
       <aside className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-dancheongNavy">팝업 레이더</h3>
+          <h3 className="text-lg font-semibold text-[var(--ink)]">팝업 레이더</h3>
           <button
             type="button"
             onClick={() => {
@@ -2561,7 +2561,7 @@ export default function AdminPage() {
               clearPopupPosterSelection();
               clearPopupHeroSelection();
             }}
-            className="text-sm font-semibold text-hanBlue hover:underline"
+            className="text-sm font-semibold text-[var(--ink)] hover:underline"
           >
             새 팝업 작성
           </button>
@@ -2594,16 +2594,16 @@ export default function AdminPage() {
             )
           )}
           {popups.length === 0 && (
-            <p className="rounded-xl border border-dashed border-slate-300 p-4 text-sm text-slate-500">
+            <p className="rounded-xl border border-dashed border-[var(--border)] p-4 text-sm text-[var(--ink-subtle)]">
               아직 등록된 팝업이 없습니다. 오른쪽 양식을 채워 추가하세요.
             </p>
           )}
         </div>
       </aside>
 
-      <form onSubmit={handlePopupSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
+      <form onSubmit={handlePopupSubmit} className="space-y-6 rounded-3xl bg-[var(--paper)] p-8 shadow">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-semibold text-dancheongNavy">
+          <h3 className="text-xl font-semibold text-[var(--ink)]">
             {selectedPopupId ? "팝업 수정" : "새 팝업 등록"}
           </h3>
           {selectedPopupId && (
@@ -2618,7 +2618,7 @@ export default function AdminPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-4">
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             언어
             <select
               value={popupDraft.language}
@@ -2632,7 +2632,7 @@ export default function AdminPage() {
                   )
                 }))
               }
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             >
               {LANG_OPTIONS.map((lang) => (
                 <option key={lang} value={lang}>
@@ -2641,115 +2641,115 @@ export default function AdminPage() {
               ))}
             </select>
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             ID
             <input
               type="text"
               value={popupDraft.id}
               onChange={(e) => setPopupDraft((prev) => ({ ...prev, id: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               required
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             상태
             <select
               value={popupDraft.status}
               onChange={(e) =>
                 setPopupDraft((prev) => ({ ...prev, status: e.target.value as PopupStatus }))
               }
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             >
               <option value="now">진행 중</option>
               <option value="soon">오픈 예정</option>
             </select>
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             기간
             <input
               type="text"
               value={popupDraft.window}
               onChange={(e) => setPopupDraft((prev) => ({ ...prev, window: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               placeholder="2024.06.01 - 06.24 • 11:00-20:00"
               required
             />
           </label>
         </div>
 
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 p-4">
+        <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper-muted)]/70 p-4">
           <LanguageMultiSelect
             label="노출 언어 (복수 선택)"
             helper="팝업 카드와 상세 페이지가 선택한 언어로 자동 생성됩니다."
             value={popupDraft.languages}
             onChange={(languages) => setPopupDraft((prev) => ({ ...prev, languages }))}
           />
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-[var(--ink-subtle)]">
             예) <strong>{`en-${normalizeBaseId(popupDraft.id || "popup-id", popupDraft.language)}`}</strong>
           </p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             제목
             <input
               type="text"
               value={popupDraft.title}
               onChange={(e) => setPopupDraft((prev) => ({ ...prev, title: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               required
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             브랜드 / 기획자
             <input
               type="text"
               value={popupDraft.brand}
               onChange={(e) => setPopupDraft((prev) => ({ ...prev, brand: e.target.value }))}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
               required
             />
           </label>
         </div>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
           위치
           <input
             type="text"
             value={popupDraft.location}
             onChange={(e) => setPopupDraft((prev) => ({ ...prev, location: e.target.value }))}
-            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             required
           />
         </label>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
           지도 검색어 (선택)
           <input
             type="text"
             value={popupDraft.mapQuery}
             onChange={(e) => setPopupDraft((prev) => ({ ...prev, mapQuery: e.target.value }))}
-            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             placeholder="지도가 잘 나오도록 장소명/주소를 입력하세요"
           />
-          <span className="text-xs font-normal text-slate-500">
+          <span className="text-xs font-normal text-[var(--ink-subtle)]">
             입력하지 않으면 위치 필드로 지도 검색을 시도합니다.
           </span>
         </label>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-3">
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               포스터 이미지 URL
               <input
                 type="url"
                 value={popupDraft.posterUrl}
                 onChange={(e) => setPopupDraft((prev) => ({ ...prev, posterUrl: e.target.value }))}
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
                 placeholder="https://"
               />
             </label>
-            <div className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <div className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               <span>포스터 파일 업로드 (선택)</span>
               <input
                 type="file"
@@ -2761,37 +2761,37 @@ export default function AdminPage() {
                     e.target.value = "";
                   }
                 }}
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-hanBlue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[var(--ink)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
               />
               {popupPosterFile && (
                 <div className="flex items-center justify-between gap-2 text-xs font-normal">
-                  <span className="truncate text-slate-500">{popupPosterFile.name}</span>
+                  <span className="truncate text-[var(--ink-subtle)]">{popupPosterFile.name}</span>
                   <button
                     type="button"
                     onClick={() => applyPopupPosterFile(null)}
-                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                    className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold text-[var(--ink-muted)] hover:bg-[var(--paper-muted)]"
                   >
                     선택 해제
                   </button>
                 </div>
               )}
-              <p className="text-xs font-normal text-slate-500">
+              <p className="text-xs font-normal text-[var(--ink-subtle)]">
                 파일을 업로드하면 Firebase Storage URL이 자동으로 설정됩니다.
               </p>
             </div>
           </div>
           <div className="space-y-3">
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               상세 헤더 이미지 URL (선택)
               <input
                 type="url"
                 value={popupDraft.heroImageUrl}
                 onChange={(e) => setPopupDraft((prev) => ({ ...prev, heroImageUrl: e.target.value }))}
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
                 placeholder="https://"
               />
             </label>
-            <div className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <div className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               <span>헤더 이미지 파일 업로드 (선택)</span>
               <input
                 type="file"
@@ -2803,21 +2803,21 @@ export default function AdminPage() {
                     e.target.value = "";
                   }
                 }}
-                className="rounded-xl border border-slate-200 px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-hanBlue file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+                className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-[var(--ink)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
               />
               {popupHeroFile && (
                 <div className="flex items-center justify-between gap-2 text-xs font-normal">
-                  <span className="truncate text-slate-500">{popupHeroFile.name}</span>
+                  <span className="truncate text-[var(--ink-subtle)]">{popupHeroFile.name}</span>
                   <button
                     type="button"
                     onClick={() => applyPopupHeroFile(null)}
-                    className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                    className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold text-[var(--ink-muted)] hover:bg-[var(--paper-muted)]"
                   >
                     선택 해제
                   </button>
                 </div>
               )}
-              <p className="text-xs font-normal text-slate-500">
+              <p className="text-xs font-normal text-[var(--ink-subtle)]">
                 비워두면 포스터 이미지와 동일한 URL이 적용됩니다.
               </p>
             </div>
@@ -2827,11 +2827,11 @@ export default function AdminPage() {
         {(currentPopupPosterPreview || currentPopupHeroPreview) && (
           <div className="grid gap-4 md:grid-cols-2">
             {currentPopupPosterPreview && (
-              <div className="space-y-2 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-4">
-                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <div className="space-y-2 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper-muted)]/80 p-4">
+                <span className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
                   포스터 미리보기
                 </span>
-                <div className="overflow-hidden rounded-xl border border-slate-100">
+                <div className="overflow-hidden rounded-xl border border-[var(--border)]">
                   <img
                     src={currentPopupPosterPreview}
                     alt={popupDraft.title || "Popup poster preview"}
@@ -2841,51 +2841,51 @@ export default function AdminPage() {
               </div>
             )}
             {currentPopupHeroPreview && (
-              <div className="space-y-2 rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-4">
-                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <div className="space-y-2 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper-muted)]/80 p-4">
+                <span className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
                   헤더 미리보기
                 </span>
-                <div className="overflow-hidden rounded-xl border border-slate-100">
+                <div className="overflow-hidden rounded-xl border border-[var(--border)]">
                   <img
                     src={currentPopupHeroPreview}
                     alt={popupDraft.title || "Popup hero preview"}
                     className="h-56 w-full object-cover"
                   />
                 </div>
-                <p className="text-xs text-slate-500">헤더가 비어 있으면 포스터 이미지가 재사용됩니다.</p>
+                <p className="text-xs text-[var(--ink-subtle)]">헤더가 비어 있으면 포스터 이미지가 재사용됩니다.</p>
               </div>
             )}
           </div>
         )}
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
           태그 (쉼표로 구분)
           <input
             type="text"
             value={popupDraft.tagsInput}
             onChange={(e) => setPopupDraft((prev) => ({ ...prev, tagsInput: e.target.value }))}
-            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
           />
         </label>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
           소개 문장
           <textarea
             value={popupDraft.description}
             onChange={(e) => setPopupDraft((prev) => ({ ...prev, description: e.target.value }))}
-            className="h-24 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="h-24 rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
           />
         </label>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             하이라이트 (줄바꿈으로 구분)
             <textarea
               value={popupDraft.highlightsInput}
               onChange={(e) =>
                 setPopupDraft((prev) => ({ ...prev, highlightsInput: e.target.value }))
               }
-              className="h-32 rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="h-32 rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             />
           </label>
           <EnhancedTextEditor
@@ -2895,13 +2895,13 @@ export default function AdminPage() {
           />
         </div>
 
-        <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
           예약 링크 (선택)
           <input
             type="url"
             value={popupDraft.reservationUrl}
             onChange={(e) => setPopupDraft((prev) => ({ ...prev, reservationUrl: e.target.value }))}
-            className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+            className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
           />
         </label>
 
@@ -2909,7 +2909,7 @@ export default function AdminPage() {
           <button
             type="button"
             onClick={handlePopupDraftSave}
-            className="rounded-full border border-hanBlue/40 px-5 py-2 text-sm font-semibold text-hanBlue hover:bg-hanBlue/10"
+            className="rounded-full border border-[var(--ink)]/40 px-5 py-2 text-sm font-semibold text-[var(--ink)] hover:bg-[var(--ink)]/10"
           >
             임시저장
           </button>
@@ -2921,14 +2921,14 @@ export default function AdminPage() {
               clearPopupPosterSelection();
               clearPopupHeroSelection();
             }}
-            className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+            className="rounded-full border border-[var(--border)] px-5 py-2 text-sm font-semibold text-[var(--ink-muted)] hover:bg-[var(--paper-muted)]"
           >
             새로 작성
           </button>
           <button
             type="submit"
             disabled={savingPopup}
-            className="rounded-full bg-hanBlue px-6 py-2 text-sm font-semibold text-white shadow transition hover:bg-dancheongNavy disabled:cursor-not-allowed disabled:bg-slate-400"
+            className="rounded-full bg-[var(--ink)] px-6 py-2 text-sm font-semibold text-white shadow transition hover:bg-dancheongNavy disabled:cursor-not-allowed disabled:bg-slate-400"
           >
             {savingPopup ? "저장 중..." : "저장하기"}
           </button>
@@ -2943,20 +2943,20 @@ export default function AdminPage() {
       <header className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-dancheongNavy">Studio koraid 관리자</h1>
-            <p className="mt-2 text-sm text-slate-500">
+            <h1 className="text-3xl font-bold text-[var(--ink)]">Studio koraid 관리자</h1>
+            <p className="mt-2 text-sm text-[var(--ink-subtle)]">
               주간 트렌드, 이벤트, 프레이즈북 콘텐츠를 한 곳에서 관리하세요. 저장 이후에는
               실시간으로 웹사이트에 반영됩니다.
             </p>
           </div>
           {user && (
-            <div className="rounded-full bg-white px-5 py-3 text-sm text-slate-600 shadow">
-              <p className="font-semibold text-dancheongNavy">로그인 계정</p>
+            <div className="rounded-full bg-[var(--paper)] px-5 py-3 text-sm text-[var(--ink-muted)] shadow">
+              <p className="font-semibold text-[var(--ink)]">로그인 계정</p>
               <p>{user.email}</p>
               <button
                 type="button"
                 onClick={logout}
-                className="mt-2 text-xs font-semibold text-hanBlue hover:underline"
+                className="mt-2 text-xs font-semibold text-[var(--ink)] hover:underline"
               >
                 로그아웃
               </button>
@@ -2965,44 +2965,44 @@ export default function AdminPage() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          <div className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
               다국어 자동 번역
             </p>
-            <p className="mt-2 text-lg font-semibold text-dancheongNavy">
+            <p className="mt-2 text-lg font-semibold text-[var(--ink)]">
               {STUDIO_AUTO_TRANSLATE_ENABLED ? "활성화됨" : "비활성화됨"}
             </p>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-[var(--ink-subtle)]">
               작성 언어 한 번으로 {LANG_OPTIONS.map((lang) => getLanguageLabel(lang)).join(", ")}{" "}
               페이지에 동시 노출됩니다.
             </p>
           </div>
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          <div className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
               현재 콘텐츠
             </p>
             <div className="mt-2 grid grid-cols-3 gap-2 text-center">
               <div>
-                <p className="text-lg font-bold text-dancheongNavy">{trends.length}</p>
-                <p className="text-xs text-slate-500">트렌드</p>
+                <p className="text-lg font-bold text-[var(--ink)]">{trends.length}</p>
+                <p className="text-xs text-[var(--ink-subtle)]">트렌드</p>
               </div>
               <div>
-                <p className="text-lg font-bold text-dancheongNavy">{events.length}</p>
-                <p className="text-xs text-slate-500">이벤트</p>
+                <p className="text-lg font-bold text-[var(--ink)]">{events.length}</p>
+                <p className="text-xs text-[var(--ink-subtle)]">이벤트</p>
               </div>
               <div>
-                <p className="text-lg font-bold text-dancheongNavy">{phrases.length}</p>
-                <p className="text-xs text-slate-500">프레이즈</p>
+                <p className="text-lg font-bold text-[var(--ink)]">{phrases.length}</p>
+                <p className="text-xs text-[var(--ink-subtle)]">프레이즈</p>
               </div>
             </div>
           </div>
-          <div className="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+          <div className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-5 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
               ID 안내
             </p>
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm text-[var(--ink-muted)]">
               다국어 발행 시 ID는 <strong>언어코드-id</strong> 형태로 저장됩니다. 예){" "}
-              <span className="font-semibold text-dancheongNavy">fr-seongsu-guide</span>
+              <span className="font-semibold text-[var(--ink)]">fr-seongsu-guide</span>
             </p>
           </div>
         </div>
@@ -3054,8 +3054,8 @@ export default function AdminPage() {
       </header>
 
       {loading ? (
-        <section className="rounded-3xl bg-white p-10 text-center shadow">
-          <p className="text-sm text-slate-500">콘텐츠를 불러오는 중입니다...</p>
+        <section className="rounded-3xl bg-[var(--paper)] p-10 text-center shadow">
+          <p className="text-sm text-[var(--ink-subtle)]">콘텐츠를 불러오는 중입니다...</p>
         </section>
       ) : (
         <>

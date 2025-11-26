@@ -5,6 +5,7 @@ export type PopupStatus = "now" | "soon" | "ended";
 export type PopupEvent = {
   id: string;
   language: SupportedLanguage;
+  hidden?: boolean;
   title: string;
   brand: string;
   window: string;

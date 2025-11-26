@@ -15,6 +15,7 @@ export type TrendDraft = {
   id: string;
   language: SupportedLanguage;
   languages: SupportedLanguage[];
+  hidden: boolean;
   authorId: string;
   title: string;
   summary: string;
@@ -31,6 +32,7 @@ export type EventDraft = {
   id: string;
   language: SupportedLanguage;
   languages: SupportedLanguage[];
+  hidden: boolean;
   title: string;
   description: string;
   startDate: string;
@@ -49,6 +51,7 @@ export type PhraseDraft = {
   id: string;
   language: SupportedLanguage;
   languages: SupportedLanguage[];
+  hidden: boolean;
   korean: string;
   transliteration: string;
   translation: string;
@@ -60,6 +63,7 @@ export type PopupDraft = {
   id: string;
   language: SupportedLanguage;
   languages: SupportedLanguage[];
+  hidden: boolean;
   title: string;
   brand: string;
   window: string;
@@ -79,4 +83,3 @@ export type PopupDraft = {
 // Re-export for convenience
 export type { TrendReport, KCultureEvent, Phrase, PopupEvent };
 export type { TrendIntensity, EventCategory, PhraseCategory, PopupStatus };
-

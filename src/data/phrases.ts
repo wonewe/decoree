@@ -5,6 +5,7 @@ export type PhraseCategory = "food" | "shopping" | "entertainment";
 export type Phrase = {
   id: string;
   language: SupportedLanguage;
+  hidden?: boolean;
   korean: string;
   transliteration: string;
   translation: string;

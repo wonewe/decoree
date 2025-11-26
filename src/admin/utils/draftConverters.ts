@@ -20,6 +20,7 @@ export function createEmptyTrendDraft(): TrendDraft {
     id: "",
     language: "en",
     languages: ["en"],
+    hidden: false,
     authorId: AUTHOR_PROFILES[0]?.id ?? "",
     title: "",
     summary: "",
@@ -40,6 +41,7 @@ export function trendToDraft(report: TrendReport): TrendDraft {
     id: report.id,
     language: report.language ?? "en",
     languages: [report.language ?? "en"],
+    hidden: report.hidden ?? false,
     authorId: report.authorId ?? AUTHOR_PROFILES[0]?.id ?? "",
     title: report.title,
     summary: report.summary,
@@ -68,6 +70,7 @@ export function draftToTrend(draft: TrendDraft): TrendReport {
   return {
     id: draft.id.trim(),
     language: draft.language,
+    hidden: draft.hidden ?? false,
     authorId: draft.authorId,
     title: draft.title.trim(),
     summary: draft.summary.trim(),
@@ -89,6 +92,7 @@ export function createEmptyEventDraft(): EventDraft {
     id: "",
     language: "en",
     languages: ["en"],
+    hidden: false,
     title: "",
     description: "",
     startDate: todayIso(),
@@ -111,6 +115,7 @@ export function eventToDraft(event: KCultureEvent): EventDraft {
     id: event.id,
     language: event.language ?? "en",
     languages: [event.language ?? "en"],
+    hidden: event.hidden ?? false,
     title: event.title,
     description: event.description,
     startDate: event.startDate ?? todayIso(),
@@ -143,6 +148,7 @@ export function draftToEvent(draft: EventDraft): KCultureEvent {
   return {
     id: draft.id.trim(),
     language: draft.language,
+    hidden: draft.hidden ?? false,
     title: draft.title.trim(),
     description: draft.description.trim(),
     startDate: draft.startDate,
@@ -166,6 +172,7 @@ export function createEmptyPhraseDraft(): PhraseDraft {
     id: "",
     language: "en",
     languages: ["en"],
+    hidden: false,
     korean: "",
     transliteration: "",
     translation: "",
@@ -179,6 +186,7 @@ export function phraseToDraft(phrase: Phrase): PhraseDraft {
     id: phrase.id,
     language: phrase.language ?? "en",
     languages: [phrase.language ?? "en"],
+    hidden: phrase.hidden ?? false,
     korean: phrase.korean,
     transliteration: phrase.transliteration,
     translation: phrase.translation,
@@ -191,6 +199,7 @@ export function draftToPhrase(draft: PhraseDraft): Phrase {
   return {
     id: draft.id.trim(),
     language: draft.language,
+    hidden: draft.hidden ?? false,
     korean: draft.korean.trim(),
     transliteration: draft.transliteration.trim(),
     translation: draft.translation.trim(),
@@ -207,6 +216,7 @@ export function createEmptyPopupDraft(): PopupDraft {
     id: "",
     language: "en",
     languages: ["en"],
+    hidden: false,
     title: "",
     brand: "",
     window: "2024.06.01 - 06.30",
@@ -231,6 +241,7 @@ export function popupToDraft(popup: PopupEvent): PopupDraft {
     id: popup.id,
     language: popup.language ?? "en",
     languages: [popup.language ?? "en"],
+    hidden: popup.hidden ?? false,
     title: popup.title,
     brand: popup.brand,
     window: popup.window,
@@ -269,6 +280,7 @@ export function draftToPopup(draft: PopupDraft): PopupEvent {
   return {
     id: draft.id.trim(),
     language: draft.language,
+    hidden: draft.hidden ?? false,
     title: draft.title.trim(),
     brand: draft.brand.trim(),
     window: draft.window.trim(),
@@ -285,4 +297,3 @@ export function draftToPopup(draft: PopupDraft): PopupEvent {
     ...(trimmedReservationUrl ? { reservationUrl: trimmedReservationUrl } : {})
   };
 }
-

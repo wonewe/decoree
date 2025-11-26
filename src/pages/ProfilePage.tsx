@@ -22,10 +22,10 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <section className="section-container space-y-6 text-center">
-        <h1 className="text-3xl font-semibold text-dancheongNavy">
+        <h1 className="text-3xl font-semibold text-[var(--ink)]">
           {t("profile.noUser.title")}
         </h1>
-        <p className="text-slate-600">{t("profile.noUser.subtitle")}</p>
+        <p className="text-[var(--ink-muted)]">{t("profile.noUser.subtitle")}</p>
       </section>
     );
   }
@@ -65,46 +65,46 @@ export default function ProfilePage() {
   return (
     <section className="section-container space-y-10">
       <header className="space-y-3">
-        <span className="badge-label bg-hanBlue/10 text-hanBlue">
+        <span className="badge-label">
           {t("profile.badge")}
         </span>
-        <h1 className="text-4xl font-bold text-dancheongNavy md:text-5xl">
+        <h1 className="text-4xl font-bold text-[var(--ink)] md:text-5xl">
           {t("profile.title")}
         </h1>
-        <p className="max-w-2xl text-base text-slate-600 md:text-lg">
+        <p className="max-w-2xl text-base text-[var(--ink-muted)] md:text-lg">
           {t("profile.subtitle")}
         </p>
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        <form onSubmit={handleSubmit} className="space-y-6 rounded-3xl bg-white p-8 shadow">
+        <form onSubmit={handleSubmit} className="studio-form space-y-6">
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold text-dancheongNavy">
+            <h2 className="text-xl font-semibold text-[var(--ink)]">
               {t("profile.section.identity")}
             </h2>
-            <p className="text-sm text-slate-500">{t("profile.section.identityHint")}</p>
+            <p className="text-sm text-[var(--ink-muted)]">{t("profile.section.identityHint")}</p>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               {t("profile.form.displayName")}
               <input
                 type="text"
                 value={displayName}
                 onChange={(event) => setDisplayName(event.target.value)}
                 placeholder={t("profile.form.displayNamePlaceholder")}
-                className="rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-hanBlue focus:outline-none focus:ring-1 focus:ring-hanBlue"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 text-sm text-[var(--ink)] focus:border-[var(--ink)] focus:outline-none focus:ring-1 focus:ring-[var(--ink)]/40"
                 required
                 maxLength={80}
               />
             </label>
-            <label className="flex flex-col gap-2 text-sm font-semibold text-dancheongNavy">
+            <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
               {t("profile.form.email")}
               <input
                 type="email"
                 value={user.email ?? ""}
                 readOnly
-                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500"
+                className="rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 text-sm text-[var(--ink-muted)]"
               />
             </label>
           </div>
@@ -113,73 +113,73 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={status === "saving"}
-              className="rounded-full bg-hanBlue px-6 py-3 text-sm font-semibold text-white shadow transition hover:bg-dancheongNavy disabled:cursor-not-allowed disabled:bg-slate-400"
+              className="pill-button bg-[var(--ink)] text-white hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {status === "saving" ? t("profile.actions.saving") : t("profile.actions.save")}
             </button>
             <button
               type="button"
               onClick={() => logout()}
-              className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-hanBlue hover:text-hanBlue"
+              className="pill-button border border-[var(--border)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
             >
               {t("profile.actions.logout")}
             </button>
             {status === "success" && (
-              <span className="text-sm font-semibold text-dancheongGreen">
+              <span className="text-sm font-semibold text-emerald-600">
                 {t("profile.feedback.success")}
               </span>
             )}
             {status === "error" && errorMessage && (
-              <span className="text-sm font-semibold text-dancheongRed">{errorMessage}</span>
+              <span className="text-sm font-semibold text-rose-700">{errorMessage}</span>
             )}
           </div>
         </form>
 
-        <aside className="space-y-6 rounded-3xl bg-white p-8 shadow">
+        <aside className="space-y-6 rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-8 shadow">
           <div className="space-y-2">
-            <h2 className="text-lg font-semibold text-dancheongNavy">
+            <h2 className="text-lg font-semibold text-[var(--ink)]">
               {t("profile.section.account")}
             </h2>
-            <p className="text-sm text-slate-500">{t("profile.section.accountHint")}</p>
+            <p className="text-sm text-[var(--ink-muted)]">{t("profile.section.accountHint")}</p>
           </div>
-          <dl className="space-y-4 text-sm text-slate-600">
+          <dl className="space-y-4 text-sm text-[var(--ink-muted)]">
             <div>
-              <dt className="font-semibold text-slate-500">{t("profile.account.displayName")}</dt>
+              <dt className="font-semibold text-[var(--ink-subtle)]">{t("profile.account.displayName")}</dt>
               <dd>{user.displayName ?? t("profile.account.fallbackName")}</dd>
             </div>
             <div>
-              <dt className="font-semibold text-slate-500">{t("profile.account.email")}</dt>
+              <dt className="font-semibold text-[var(--ink-subtle)]">{t("profile.account.email")}</dt>
               <dd>{user.email}</dd>
             </div>
             {createdAt && (
               <div>
-                <dt className="font-semibold text-slate-500">{t("profile.account.created")}</dt>
+                <dt className="font-semibold text-[var(--ink-subtle)]">{t("profile.account.created")}</dt>
                 <dd>{createdAt}</dd>
               </div>
             )}
             {lastLogin && (
               <div>
-                <dt className="font-semibold text-slate-500">{t("profile.account.lastLogin")}</dt>
+                <dt className="font-semibold text-[var(--ink-subtle)]">{t("profile.account.lastLogin")}</dt>
                 <dd>{lastLogin}</dd>
               </div>
             )}
             <div>
-              <dt className="font-semibold text-slate-500">{t("profile.account.uid")}</dt>
-              <dd className="break-all text-xs text-slate-500">{user.uid}</dd>
+              <dt className="font-semibold text-[var(--ink-subtle)]">{t("profile.account.uid")}</dt>
+              <dd className="break-all text-xs text-[var(--ink-subtle)]">{user.uid}</dd>
             </div>
           </dl>
         </aside>
       </div>
 
-      <section className="space-y-6 rounded-3xl bg-white p-8 shadow">
+      <section className="space-y-6 rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-8 shadow">
         <div className="space-y-2">
-          <h2 className="text-2xl font-semibold text-dancheongNavy">
+          <h2 className="text-2xl font-semibold text-[var(--ink)]">
             {t("profile.bookmarks.title")}
           </h2>
-          <p className="text-sm text-slate-500">{t("profile.bookmarks.subtitle")}</p>
+          <p className="text-sm text-[var(--ink-muted)]">{t("profile.bookmarks.subtitle")}</p>
         </div>
         {sortedBookmarks.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+          <p className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper-muted)] px-4 py-6 text-sm text-[var(--ink-muted)]">
             {t("profile.bookmarks.empty")}
           </p>
         ) : (
@@ -187,32 +187,32 @@ export default function ProfilePage() {
             {sortedBookmarks.map((bookmark) => (
               <article
                 key={`${bookmark.type}-${bookmark.id}`}
-                className="flex flex-col gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-4"
+                className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] p-4"
               >
-                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
                   <span>{t(`bookmarks.type.${bookmark.type}`)}</span>
                   <span>{formatDate(bookmark.savedAt)}</span>
                 </div>
-                <h3 className="text-lg font-semibold text-dancheongNavy">{bookmark.title}</h3>
+                <h3 className="text-lg font-semibold text-[var(--ink)]">{bookmark.title}</h3>
                 {bookmark.summary && (
-                  <p className="text-sm text-slate-600">{bookmark.summary}</p>
+                  <p className="text-sm text-[var(--ink-muted)]">{bookmark.summary}</p>
                 )}
                 {bookmark.location && (
-                  <p className="text-xs uppercase tracking-wide text-slate-500">
+                  <p className="text-xs uppercase tracking-wide text-[var(--ink-subtle)]">
                     {bookmark.location}
                   </p>
                 )}
                 <div className="flex flex-wrap gap-2 text-sm font-semibold">
                   <Link
                     to={bookmark.href}
-                    className="rounded-full border border-hanBlue px-4 py-2 text-hanBlue transition hover:bg-hanBlue hover:text-white"
+                    className="rounded-full border border-[var(--ink)] px-4 py-2 text-[var(--ink)] transition hover:bg-[var(--ink)] hover:text-white"
                   >
                     {t("bookmarks.actions.view")}
                   </Link>
                   <button
                     type="button"
                     onClick={() => removeBookmark(bookmark.type, bookmark.id)}
-                    className="rounded-full border border-slate-200 px-4 py-2 text-slate-500 transition hover:border-dancheongRed hover:text-dancheongRed"
+                    className="rounded-full border border-[var(--border)] px-4 py-2 text-[var(--ink-muted)] transition hover:border-rose-300 hover:text-rose-600"
                   >
                     {t("bookmarks.actions.remove")}
                   </button>
