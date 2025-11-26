@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useI18n } from "../shared/i18n";
 import { useHeaderAuth } from "../hooks/useHeaderAuth";
@@ -23,6 +23,7 @@ export default function Layout() {
   const location = useLocation();
   const { resolvedTheme, cycleTheme, preference } = useTheme();
   usePageTracking();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const siteOrigin =
     import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
@@ -37,6 +38,11 @@ export default function Layout() {
     () => /^\/(admin|studio|internal)/i.test(location.pathname),
     [location.pathname]
   );
+
+  useEffect(() => {
+    // 페이지 이동 시 모바일 카테고리 드롭다운 닫기
+    setMobileNavOpen(false);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-[var(--paper-muted)] text-[var(--ink)]">
@@ -90,6 +96,17 @@ export default function Layout() {
             >
               {resolvedTheme === "dark" ? "☀️" : preference === "system" ? "🌓" : "🌙"}
             </button>
+            {/* 모바일: 다크 모드 토글 오른쪽에 카테고리 열기 버튼 */}
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen((prev) => !prev)}
+              className="inline-flex items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--paper)] px-3 py-1.5 text-xs font-semibold text-[var(--ink-subtle)] shadow-sm transition hover:-translate-y-0.5 hover:text-[var(--ink)] md:hidden"
+              aria-label="카테고리 열기"
+              aria-expanded={mobileNavOpen}
+            >
+              <span>카테고리</span>
+              <span className="text-[10px]">{mobileNavOpen ? "▲" : "▼"}</span>
+            </button>
             {user ? (
               <div className="flex items-center gap-2">
                 {isAdmin && (
@@ -132,38 +149,46 @@ export default function Layout() {
             )}
           </div>
         </div>
-        {/* 모바일 전용 카테고리 버튼 (한 줄, 스크롤 가능) */}
-        <div className="mx-auto mt-1 flex max-w-6xl gap-2 overflow-x-auto px-6 pb-3 md:hidden">
-          {primaryNav.map((link) => (
-            <NavLink
-              key={link.path}
-              to={link.path}
-              className={({ isActive }) =>
-                `whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
-                  isActive
-                    ? "border-[var(--ink)] bg-[var(--paper)] text-[var(--ink)] shadow-sm"
-                    : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-subtle)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
-                }`
-              }
-            >
-              {t(link.labelKey)}
-            </NavLink>
-          ))}
-          {isAdmin && (
-            <NavLink
-              to="/admin"
-              className={({ isActive }) =>
-                `whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
-                  isActive
-                    ? "border-[var(--ink)] bg-[var(--paper)] text-[var(--ink)] shadow-sm"
-                    : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-subtle)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
-                }`
-              }
-            >
-              {t("nav.admin")}
-            </NavLink>
-          )}
-        </div>
+
+        {/* 모바일: 카테고리 버튼 드롭다운 (헤더 아래로 펼쳐짐) */}
+        {mobileNavOpen && (
+          <div className="mx-auto max-w-6xl px-6 pb-3 md:hidden">
+            <div className="mt-2 rounded-2xl border border-[var(--border)] bg-[var(--paper)] shadow-lg">
+              <div className="flex flex-wrap gap-2 px-3 py-3">
+                {primaryNav.map((link) => (
+                  <NavLink
+                    key={link.path}
+                    to={link.path}
+                    className={({ isActive }) =>
+                      `whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                        isActive
+                          ? "border-[var(--ink)] bg-[var(--paper)] text-[var(--ink)] shadow-sm"
+                          : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-subtle)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
+                      }`
+                    }
+                  >
+                    {t(link.labelKey)}
+                  </NavLink>
+                ))}
+                {isAdmin && (
+                  <NavLink
+                    to="/admin"
+                    className={({ isActive }) =>
+                      `whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                        isActive
+                          ? "border-[var(--ink)] bg-[var(--paper)] text-[var(--ink)] shadow-sm"
+                          : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-subtle)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
+                      }`
+                    }
+                  >
+                    {t("nav.admin")}
+                  </NavLink>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {authError && (
           <div className="bg-rose-50 px-4 py-2 text-xs text-rose-700">
             <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
