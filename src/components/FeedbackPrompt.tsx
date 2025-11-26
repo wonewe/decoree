@@ -107,6 +107,7 @@ export function FeedbackPrompt() {
   const [sending, setSending] = useState(false);
   const [suggestion, setSuggestion] = useState<Suggestion>(null);
   const [bubbleVisible, setBubbleVisible] = useState(true);
+  const [bubbleDismissed, setBubbleDismissed] = useState(false);
 
   const copy = copyMap[language] ?? copyMap.en;
 
@@ -137,9 +138,11 @@ export function FeedbackPrompt() {
   }, [popups, events, suggestionOpen]);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setBubbleVisible(false), 60_000);
+    const timer = window.setTimeout(() => {
+      if (!bubbleDismissed) setBubbleVisible(false);
+    }, 60_000);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [bubbleDismissed]);
 
   const handleSend = async () => {
     if (!text.trim()) return;
@@ -165,23 +168,35 @@ export function FeedbackPrompt() {
     <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2">
       <div className="relative flex flex-col items-end gap-2">
         {bubbleVisible && (
-          <button
-            type="button"
-            onClick={() => {
-              setSuggestionOpen((prev) => !prev);
-              setFeedbackOpen(false);
-            }}
-            className="max-w-xs rounded-2xl border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-left text-xs font-semibold text-[var(--ink)] shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-          >
-            {suggestion ? (
-              <>
-                <span className="text-[var(--ink-muted)]">{copy.suggestion}: </span>
-                <span>{suggestion.item.title}</span>
-              </>
-            ) : (
-              <span>{copy.greeting}</span>
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setSuggestionOpen((prev) => !prev);
+                setFeedbackOpen(false);
+              }}
+              className="max-w-xs rounded-2xl border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-left text-xs font-semibold text-[var(--ink)] shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              {suggestion ? (
+                <>
+                  <span className="text-[var(--ink-muted)]">{copy.suggestion}: </span>
+                  <span>{suggestion.item.title}</span>
+                </>
+              ) : (
+                <span>{copy.greeting}</span>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setBubbleDismissed(true);
+                setBubbleVisible(false);
+              }}
+              className="rounded-full border border-[var(--border)] bg-[var(--paper-muted)] px-2 py-1 text-[10px] font-semibold text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
+            >
+              ×
+            </button>
+          </div>
         )}
 
         <button
@@ -190,24 +205,27 @@ export function FeedbackPrompt() {
             setFeedbackOpen((prev) => !prev);
             setSuggestionOpen(false);
           }}
-          className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--paper)] text-lg shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+          className="flex h-14 w-14 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--paper)]/85 text-lg shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:shadow-md"
           aria-label="피드백 열기"
         >
-          <img src="/favicon.svg" alt="" className="h-6 w-6 object-contain" />
+          <div
+            className="h-9 w-9 rounded-full bg-center bg-no-repeat bg-contain"
+            style={{ backgroundImage: "url('/favicon.svg')" }}
+          />
         </button>
 
         {suggestionOpen && (
-          <div className="absolute bottom-[calc(100%+10px)] right-0 w-80 rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-4 shadow-xl">
+          <div className="absolute bottom-[calc(100%+10px)] right-0 w-80 rounded-2xl border border-[var(--border)] bg-white/95 p-4 shadow-xl backdrop-blur">
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-semibold text-[var(--ink)]">{copy.suggestion}</h4>
               <button
                 type="button"
                 onClick={() => setSuggestionOpen(false)}
-                className="text-xs font-semibold text-[var(--ink-subtle)] hover:text-[var(--ink)]"
-              >
-                ×
-              </button>
-            </div>
+            className="text-xs font-semibold text-[var(--ink-subtle)] hover:text-[var(--ink)]"
+          >
+            ×
+          </button>
+        </div>
             <div className="mt-3 space-y-3">
               <div className="flex items-center justify-between text-[11px] font-semibold text-[var(--ink-subtle)]">
                 <span>{copy.greeting}</span>
@@ -251,7 +269,7 @@ export function FeedbackPrompt() {
         )}
 
         {feedbackOpen && (
-          <div className="absolute bottom-[calc(100%+10px)] right-0 w-80 rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-4 shadow-xl">
+          <div className="absolute bottom-[calc(100%+10px)] right-0 w-80 rounded-2xl border border-[var(--border)] bg-white/95 p-4 shadow-xl backdrop-blur">
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-semibold text-[var(--ink)]">{copy.feedback}</h4>
               <button
