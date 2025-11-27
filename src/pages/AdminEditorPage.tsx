@@ -280,12 +280,12 @@ export default function AdminEditorPage() {
       }
 
       const baseTrend = draftToTrend({ ...trendDraft, imageUrl: finalImageUrl });
-      
+
       // content가 비어있으면 에러
       if (!baseTrend.content || baseTrend.content.length === 0) {
         throw new Error("본문 내용이 필요합니다.");
       }
-      
+
       const targetLanguages = resolveTargetLanguages(trendDraft.languages, trendDraft.language);
 
       const payloads: TrendReport[] = [];
@@ -348,12 +348,12 @@ export default function AdminEditorPage() {
       }
 
       const baseEvent = draftToEvent({ ...eventDraft, imageUrl: finalImageUrl });
-      
+
       // longDescription이 비어있으면 에러
       if (!baseEvent.longDescription || baseEvent.longDescription.length === 0) {
         throw new Error("상세 설명이 필요합니다.");
       }
-      
+
       const targetLanguages = resolveTargetLanguages(eventDraft.languages, eventDraft.language);
 
       const payloads: KCultureEvent[] = [];
@@ -467,12 +467,12 @@ export default function AdminEditorPage() {
       }
 
       const basePopup = draftToPopup({ ...popupDraft, posterUrl: finalPosterUrl, heroImageUrl: finalHeroUrl });
-      
+
       // details가 비어있으면 에러
       if (!basePopup.details || basePopup.details.length === 0) {
         throw new Error("상세 설명이 필요합니다.");
       }
-      
+
       const targetLanguages = resolveTargetLanguages(popupDraft.languages, popupDraft.language);
 
       const payloads: PopupEvent[] = [];
@@ -596,7 +596,7 @@ export default function AdminEditorPage() {
 
   const renderTrendForm = () => {
     const currentTrendImagePreview = trendImage.preview;
-    
+
     const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
       console.error("이미지 로드 실패:", e.currentTarget.src);
       // 이미지 로드 실패 시 빈 이미지로 대체
@@ -887,7 +887,7 @@ export default function AdminEditorPage() {
 
   const renderEventForm = () => {
     const currentEventImagePreview = eventImage.preview;
-    
+
     const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
       console.error("이미지 로드 실패:", e.currentTarget.src);
       e.currentTarget.style.display = "none";
@@ -1363,7 +1363,7 @@ export default function AdminEditorPage() {
   const renderPopupForm = () => {
     const currentPopupPosterPreview = popupPoster.preview;
     const currentPopupHeroPreview = popupHero.preview;
-    
+
     const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
       console.error("이미지 로드 실패:", e.currentTarget.src);
       e.currentTarget.style.display = "none";

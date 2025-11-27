@@ -93,13 +93,20 @@ export function MarkdownContent({ content, className = "", style }: MarkdownCont
 
   return (
     <div
-      className={`prose prose-base md:prose-lg max-w-[68ch] w-full text-[var(--ink)] leading-8
+      className={`prose prose-lg md:prose-xl max-w-[72ch] w-full text-[var(--ink)] leading-loose
         prose-headings:font-heading prose-headings:text-[var(--ink)] prose-headings:tracking-tight prose-headings:leading-tight
-        prose-strong:font-semibold prose-p:text-[var(--ink)] prose-li:text-[var(--ink)] prose-a:text-[var(--ink)] prose-a:font-semibold prose-a:underline
-        [&_img]:mx-auto [&_img]:my-4 [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_img]:object-contain [&_img]:shadow-md [&_img]:resize [&_img]:overflow-auto [&_img]:cursor-nwse-resize
-        [&_h1]:text-3xl [&_h1]:md:text-4xl [&_h2]:text-2xl [&_h2]:md:text-3xl [&_h3]:text-xl [&_h3]:md:text-2xl
-        [&_h1]:mt-6 [&_h1]:mb-2 [&_h2]:mt-5 [&_h2]:mb-2 [&_h3]:mt-4 [&_h3]:mb-2
-        [&_p]:my-2 [&_ul]:my-2 [&_li]:my-1.5 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:bg-[var(--paper-muted)] [&_code]:text-sm
+        prose-strong:font-semibold prose-strong:text-[var(--ink)]
+        prose-p:text-[var(--ink)] prose-p:text-lg prose-p:leading-8 prose-p:mb-6
+        prose-li:text-[var(--ink)] prose-li:text-lg prose-li:leading-8
+        prose-a:text-[var(--ink)] prose-a:font-semibold prose-a:underline prose-a:decoration-[var(--ink-muted)] prose-a:underline-offset-4 hover:prose-a:decoration-[var(--ink)]
+        [&_img]:mx-auto [&_img]:my-8 [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-xl [&_img]:shadow-lg
+        [&_h1]:text-4xl [&_h1]:md:text-5xl [&_h1]:font-bold [&_h1]:mt-12 [&_h1]:mb-6
+        [&_h2]:text-3xl [&_h2]:md:text-4xl [&_h2]:font-bold [&_h2]:mt-10 [&_h2]:mb-5
+        [&_h3]:text-2xl [&_h3]:md:text-3xl [&_h3]:font-semibold [&_h3]:mt-8 [&_h3]:mb-4
+        [&_ul]:my-6 [&_ul]:list-disc [&_ul]:pl-6
+        [&_li]:my-2
+        [&_blockquote]:border-l-4 [&_blockquote]:border-[var(--ink-muted)] [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-[var(--ink-muted)]
+        [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:bg-[var(--paper-muted)] [&_code]:text-sm [&_code]:font-mono [&_code]:text-[var(--ink)]
       ${className}`.replace(/\s+/g, " ")}
       style={style}
       dangerouslySetInnerHTML={{ __html: blocks }}
