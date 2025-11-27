@@ -31,6 +31,8 @@ export default function TextEditor({
   const editorRef = useRef<HTMLDivElement>(null);
   const [editorHeight, setEditorHeight] = useState(300);
   const [uploading, setUploading] = useState(false);
+  const [fontFamily, setFontFamily] = useState("default");
+  const [fontSize, setFontSize] = useState("16");
   const isInitializedRef = useRef(false);
   const onChangeRef = useRef(onChange);
 
@@ -73,6 +75,15 @@ export default function TextEditor({
       handleInput();
     }
   }, [handleInput]);
+
+  useEffect(() => {
+    // CSS 인라인 스타일이 적용되도록 설정 (미지원 브라우저는 무시)
+    try {
+      document.execCommand("styleWithCSS", false, "true");
+    } catch {
+      // no-op
+    }
+  }, []);
 
   // 이미지 삽입 함수
   const insertImage = useCallback(async (file: File) => {
@@ -169,6 +180,32 @@ export default function TextEditor({
     document.execCommand(command, false, formatValue);
   }, []);
 
+  const applyInlineStyle = useCallback(
+    (style: Partial<CSSStyleDeclaration>) => {
+      if (!editorRef.current) return;
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+      const range = selection.getRangeAt(0);
+      const selectedText = range.toString();
+      if (!selectedText) return;
+
+      const span = document.createElement("span");
+      Object.assign(span.style, style);
+      span.textContent = selectedText;
+
+      range.deleteContents();
+      range.insertNode(span);
+
+      const newRange = document.createRange();
+      newRange.selectNodeContents(span);
+      selection.removeAllRanges();
+      selection.addRange(newRange);
+
+      handleInput();
+    },
+    [handleInput]
+  );
+
   const replaceBlockWithHeading = useCallback((level: number) => {
     if (!editorRef.current) return;
     const selection = window.getSelection();
@@ -257,6 +294,49 @@ export default function TextEditor({
           >
             P
           </button>
+          <div className="h-4 w-px bg-[var(--border)]" />
+          <div className="flex items-center gap-1">
+            <label className="text-xs text-[var(--ink-subtle)]">폰트</label>
+            <select
+              value={fontFamily}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFontFamily(value);
+                const family =
+                  value === "default"
+                    ? ""
+                    : value === "noto"
+                    ? "'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif"
+                    : "Inter, 'Helvetica Neue', Arial, sans-serif";
+                if (family) {
+                  applyInlineStyle({ fontFamily: family });
+                }
+              }}
+              className="rounded-md border border-[var(--border)] bg-[var(--paper)] px-2 py-1 text-xs text-[var(--ink)] focus:border-[var(--ink)] focus:outline-none"
+            >
+              <option value="default">기본</option>
+              <option value="noto">Noto Sans</option>
+              <option value="inter">Inter</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-1">
+            <label className="text-xs text-[var(--ink-subtle)]">크기</label>
+            <select
+              value={fontSize}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFontSize(value);
+                applyInlineStyle({ fontSize: `${value}px` });
+              }}
+              className="rounded-md border border-[var(--border)] bg-[var(--paper)] px-2 py-1 text-xs text-[var(--ink)] focus:border-[var(--ink)] focus:outline-none"
+            >
+              <option value="14">14px</option>
+              <option value="16">16px</option>
+              <option value="18">18px</option>
+              <option value="20">20px</option>
+              <option value="24">24px</option>
+            </select>
+          </div>
           <div className="h-4 w-px bg-[var(--border)]" />
           <div className="flex items-center gap-1">
             <span className="text-xs text-[var(--ink-subtle)]">높이</span>

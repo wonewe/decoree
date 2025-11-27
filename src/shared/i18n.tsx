@@ -1376,7 +1376,7 @@ const translations: TranslationDictionary = {
       "hero.spotlight.cta.event": "Reserve your spot",
       "hero.spotlight.cta.phrase": "Learn the phrase",
       "hero.spotlight.disclaimer": "Curated picks from the koraid team.",
-      "popupRadar.title": "Seongsu Pop-up Radar",
+      "popupRadar.title": "Pop-up Radar",
       "popupRadar.subtitle":
         "A three-stop loop to keep up with creator collaborations, concept cafés and limited launches in Seongsu.",
       "popupRadar.sections.overview.title": "Why Seongsu?",
