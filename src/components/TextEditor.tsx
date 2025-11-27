@@ -180,26 +180,76 @@ export default function TextEditor({
     document.execCommand(command, false, formatValue);
   }, []);
 
-  const applyInlineStyle = useCallback(
-    (style: Partial<CSSStyleDeclaration>) => {
-      if (!editorRef.current) return;
+  // 선택 영역 변경 시 툴바 상태 업데이트
+  useEffect(() => {
+    const updateToolbarState = () => {
       const selection = window.getSelection();
       if (!selection || selection.rangeCount === 0) return;
-      const range = selection.getRangeAt(0);
-      const selectedText = range.toString();
-      if (!selectedText) return;
 
-      const span = document.createElement("span");
-      Object.assign(span.style, style);
-      span.textContent = selectedText;
+      const node = selection.anchorNode;
+      if (!node || !editorRef.current?.contains(node)) return;
 
-      range.deleteContents();
-      range.insertNode(span);
+      const element = node.nodeType === Node.TEXT_NODE ? node.parentElement : (node as HTMLElement);
+      if (!element) return;
 
-      const newRange = document.createRange();
-      newRange.selectNodeContents(span);
-      selection.removeAllRanges();
-      selection.addRange(newRange);
+      const computedStyle = window.getComputedStyle(element);
+
+      // 폰트 패밀리 감지
+      const family = computedStyle.fontFamily.replace(/['"]/g, "");
+      if (family.includes("Merriweather") || family.includes("Georgia") || family.includes("serif")) {
+        setFontFamily("serif");
+      } else if (family.includes("Menlo") || family.includes("Monaco") || family.includes("monospace")) {
+        setFontFamily("mono");
+      } else {
+        setFontFamily("default");
+      }
+
+      // 폰트 크기 감지
+      const size = parseInt(computedStyle.fontSize);
+      if (!isNaN(size)) {
+        // 근사값 찾기 (정확히 일치하지 않을 수 있음)
+        const sizes = [14, 16, 18, 20, 24, 30];
+        const closest = sizes.reduce((prev, curr) =>
+          Math.abs(curr - size) < Math.abs(prev - size) ? curr : prev
+        );
+        setFontSize(closest.toString());
+      }
+    };
+
+    document.addEventListener("selectionchange", updateToolbarState);
+    return () => document.removeEventListener("selectionchange", updateToolbarState);
+  }, []);
+
+  const applyInlineStyle = useCallback(
+    (style: { fontFamily?: string; fontSize?: string }) => {
+      if (!editorRef.current) return;
+      editorRef.current.focus();
+
+      if (style.fontFamily) {
+        document.execCommand("fontName", false, style.fontFamily);
+      }
+
+      if (style.fontSize) {
+        // 1. 임시로 font size 7 (가장 큰 사이즈) 적용
+        document.execCommand("fontSize", false, "7");
+
+        // 2. font size 7이 적용된 태그를 찾아서 span으로 교체하고 정확한 pixel size 적용
+        const fontElements = editorRef.current.getElementsByTagName("font");
+        for (let i = fontElements.length - 1; i >= 0; i--) {
+          const font = fontElements[i];
+          if (font.getAttribute("size") === "7") {
+            const span = document.createElement("span");
+            span.style.fontSize = style.fontSize;
+
+            // 기존 font 태그의 내용을 span으로 이동
+            while (font.firstChild) {
+              span.appendChild(font.firstChild);
+            }
+
+            font.replaceWith(span);
+          }
+        }
+      }
 
       handleInput();
     },
