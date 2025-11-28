@@ -117,6 +117,7 @@ export function MarkdownContent({ content, className = "", style }: MarkdownCont
         [&_h3]:text-2xl [&_h3]:md:text-3xl [&_h3]:mt-10 [&_h3]:mb-5
         [&_ul]:my-8 [&_ul]:list-disc [&_ul]:pl-6
         [&_li]:my-3
+        [&_hr]:my-10 [&_hr]:border-[var(--border)]
         [&_blockquote]:border-l-4 [&_blockquote]:border-[var(--ink-muted)] [&_blockquote]:pl-6 [&_blockquote]:py-2 [&_blockquote]:italic [&_blockquote]:text-[var(--ink-muted)] [&_blockquote]:my-10
         [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:bg-[var(--paper-muted)] [&_code]:text-sm [&_code]:font-mono [&_code]:text-[var(--ink)]
         [&_span]:leading-loose

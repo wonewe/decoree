@@ -255,6 +255,8 @@ export default function TextEditor({
       }
 
       // 2. 새로운 스타일 적용 (execCommand 사용 후 cleanup)
+      // 중첩된 스타일 문제를 해결하기 위해, 새로 적용된 태그 내부의 기존 스타일을 제거하는 로직 추가
+
       if (style.fontFamily) {
         // 임시 폰트 이름 사용
         const tempFontName = "TEMP_FONT_" + Date.now();
@@ -268,15 +270,26 @@ export default function TextEditor({
             const span = document.createElement("span");
             span.style.fontFamily = style.fontFamily!;
 
-            // 기존 스타일 유지
+            // 기존 스타일 유지 (size 등)
             if (font.getAttribute("size")) {
-              // size가 있다면 유지해야 하지만, 보통 fontName 명령은 size를 건드리지 않음
+              // size가 있다면 유지
             }
 
             // 내용 이동
             while (font.firstChild) {
               span.appendChild(font.firstChild);
             }
+
+            // 내부의 중첩된 font-family 스타일 제거 (일괄 적용을 위해)
+            const nestedSpans = span.getElementsByTagName("span");
+            for (let j = 0; j < nestedSpans.length; j++) {
+              nestedSpans[j].style.fontFamily = "";
+              // 스타일 속성이 비어있으면 style 속성 자체 제거 (선택사항)
+              if (nestedSpans[j].getAttribute("style") === "") {
+                nestedSpans[j].removeAttribute("style");
+              }
+            }
+
             font.replaceWith(span);
           }
         }
@@ -301,6 +314,16 @@ export default function TextEditor({
             while (font.firstChild) {
               span.appendChild(font.firstChild);
             }
+
+            // 내부의 중첩된 font-size 스타일 제거 (일괄 적용을 위해)
+            const nestedSpans = span.getElementsByTagName("span");
+            for (let j = 0; j < nestedSpans.length; j++) {
+              nestedSpans[j].style.fontSize = "";
+              if (nestedSpans[j].getAttribute("style") === "") {
+                nestedSpans[j].removeAttribute("style");
+              }
+            }
+
             font.replaceWith(span);
           }
         }
@@ -336,6 +359,13 @@ export default function TextEditor({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
+      // Cmd+B / Ctrl+B for Bold
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        applyFormat("bold");
+        return;
+      }
+
       if (e.key !== " ") return;
       const selection = window.getSelection();
       if (!selection || !selection.anchorNode) return;
@@ -347,7 +377,7 @@ export default function TextEditor({
       const level = trimmed.length;
       replaceBlockWithHeading(level);
     },
-    [replaceBlockWithHeading]
+    [replaceBlockWithHeading, applyFormat]
   );
 
   return (
@@ -411,6 +441,14 @@ export default function TextEditor({
               title="Paragraph"
             >
               P
+            </button>
+            <button
+              type="button"
+              onClick={() => applyFormat("insertHorizontalRule")}
+              className="rounded px-2 py-1 text-sm text-[var(--ink)] hover:bg-[var(--paper)] hover:shadow-sm"
+              title="Divider"
+            >
+              —
             </button>
           </div>
 
