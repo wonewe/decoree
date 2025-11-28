@@ -105,7 +105,7 @@ export function MarkdownContent({ content, className = "", style }: MarkdownCont
 
   return (
     <div
-      className={`prose prose-lg md:prose-xl max-w-[72ch] w-full text-[var(--ink)] leading-loose tracking-wide
+      className={`prose prose-lg md:prose-xl max-w-[72ch] w-full mx-auto text-[var(--ink)] leading-loose tracking-wide
         prose-headings:font-heading prose-headings:text-[var(--ink)] prose-headings:tracking-tight prose-headings:leading-tight prose-headings:font-bold
         prose-p:text-[var(--ink)] prose-p:text-lg prose-p:leading-8 prose-p:mb-8 prose-p:font-normal
         prose-strong:font-bold prose-strong:text-[var(--ink)]
