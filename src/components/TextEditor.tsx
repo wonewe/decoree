@@ -76,10 +76,10 @@ export default function TextEditor({
     }
   }, [handleInput]);
 
+  // styleWithCSS 강제 비활성화 (font 태그 생성을 위해)
   useEffect(() => {
-    // CSS 인라인 스타일이 적용되도록 설정 (미지원 브라우저는 무시)
     try {
-      document.execCommand("styleWithCSS", false, "true");
+      document.execCommand("styleWithCSS", false, "false");
     } catch {
       // no-op
     }
@@ -225,27 +225,82 @@ export default function TextEditor({
       if (!editorRef.current) return;
       editorRef.current.focus();
 
+      // styleWithCSS 끄기 (font 태그 생성 보장)
+      try {
+        document.execCommand("styleWithCSS", false, "false");
+      } catch {
+        // no-op
+      }
+
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+
+      // 1. 기존 span 업데이트 시도 (선택 영역이 기존 span 전체를 포함하는 경우)
+      const range = selection.getRangeAt(0);
+      const container = range.commonAncestorContainer;
+      const element = container.nodeType === Node.TEXT_NODE ? container.parentElement : (container as HTMLElement);
+
+      // 선택 영역이 요소의 전체 텍스트와 일치하는지 확인
+      const isExactSelection = element && element.tagName === "SPAN" && element.textContent === range.toString();
+
+      if (isExactSelection) {
+        if (style.fontFamily) {
+          element.style.fontFamily = style.fontFamily;
+        }
+        if (style.fontSize) {
+          element.style.fontSize = style.fontSize;
+        }
+        handleInput();
+        return;
+      }
+
+      // 2. 새로운 스타일 적용 (execCommand 사용 후 cleanup)
       if (style.fontFamily) {
-        document.execCommand("fontName", false, style.fontFamily);
+        // 임시 폰트 이름 사용
+        const tempFontName = "TEMP_FONT_" + Date.now();
+        document.execCommand("fontName", false, tempFontName);
+
+        // 임시 폰트 태그를 찾아서 span으로 교체
+        const fontElements = editorRef.current.getElementsByTagName("font");
+        for (let i = fontElements.length - 1; i >= 0; i--) {
+          const font = fontElements[i];
+          if (font.getAttribute("face") === tempFontName) {
+            const span = document.createElement("span");
+            span.style.fontFamily = style.fontFamily!;
+
+            // 기존 스타일 유지
+            if (font.getAttribute("size")) {
+              // size가 있다면 유지해야 하지만, 보통 fontName 명령은 size를 건드리지 않음
+            }
+
+            // 내용 이동
+            while (font.firstChild) {
+              span.appendChild(font.firstChild);
+            }
+            font.replaceWith(span);
+          }
+        }
       }
 
       if (style.fontSize) {
-        // 1. 임시로 font size 7 (가장 큰 사이즈) 적용
+        // 임시 폰트 사이즈 7 사용
         document.execCommand("fontSize", false, "7");
 
-        // 2. font size 7이 적용된 태그를 찾아서 span으로 교체하고 정확한 pixel size 적용
         const fontElements = editorRef.current.getElementsByTagName("font");
         for (let i = fontElements.length - 1; i >= 0; i--) {
           const font = fontElements[i];
           if (font.getAttribute("size") === "7") {
             const span = document.createElement("span");
-            span.style.fontSize = style.fontSize;
+            span.style.fontSize = style.fontSize!;
 
-            // 기존 font 태그의 내용을 span으로 이동
+            // 기존 font-family가 있다면 유지 (font 태그에 face가 있는 경우)
+            if (font.getAttribute("face")) {
+              span.style.fontFamily = font.getAttribute("face")!;
+            }
+
             while (font.firstChild) {
               span.appendChild(font.firstChild);
             }
-
             font.replaceWith(span);
           }
         }
