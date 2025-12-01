@@ -124,7 +124,7 @@ export default function EventDetailPage() {
             {isAdmin && (
               <div className="flex justify-end">
                 <Link
-                  to={`/admin/studio/events/${event.id}`}
+                  to={`/admin/edit/events/${event.id}`}
                   className="text-xs font-semibold text-[var(--ink-subtle)] underline underline-offset-4 hover:text-[var(--ink)]"
                 >
                   Studio에서 이 이벤트 수정 →

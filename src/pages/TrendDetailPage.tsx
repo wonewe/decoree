@@ -127,7 +127,7 @@ export default function TrendDetailPage() {
             {isAdmin && (
               <div className="flex justify-end">
                 <Link
-                  to={`/admin/studio/trends/${report.id}`}
+                  to={`/admin/edit/trends/${report.id}`}
                   className="text-xs font-semibold text-[var(--ink-subtle)] underline underline-offset-4 hover:text-[var(--ink)]"
                 >
                   Studio에서 이 리포트 수정 →

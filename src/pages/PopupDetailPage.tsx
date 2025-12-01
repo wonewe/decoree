@@ -118,7 +118,7 @@ export default function PopupDetailPage() {
             {isAdmin && (
               <div className="flex justify-end">
                 <Link
-                  to={`/admin/studio/popups/${popup.id}`}
+                  to={`/admin/edit/popups/${popup.id}`}
                   className="text-xs font-semibold text-[var(--ink-subtle)] underline underline-offset-4 hover:text-[var(--ink)]"
                 >
                   Studio에서 이 팝업 수정 →
