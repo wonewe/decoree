@@ -297,3 +297,4 @@ export function draftToPopup(draft: PopupDraft): PopupEvent {
     ...(trimmedReservationUrl ? { reservationUrl: trimmedReservationUrl } : {})
   };
 }
+

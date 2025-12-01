@@ -83,3 +83,4 @@ export type PopupDraft = {
 // Re-export for convenience
 export type { TrendReport, KCultureEvent, Phrase, PopupEvent };
 export type { TrendIntensity, EventCategory, PhraseCategory, PopupStatus };
+
