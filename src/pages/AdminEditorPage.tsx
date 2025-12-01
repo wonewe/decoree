@@ -232,7 +232,9 @@ export default function AdminEditorPage() {
           }
         } else if (type === "popups") {
           if (id) {
-            const popup = await getPopupById(id, language, { includeHidden: true });
+            // Studio에서는 번역된 버전이 아니라 원본 팝업 문서를 직접 편집해야 하므로
+            // language 인자를 넘기지 않고 원본 그대로를 조회한다.
+            const popup = await getPopupById(id, undefined, { includeHidden: true });
             if (popup) {
               setPopupDraft(popupToDraft(popup));
             } else {

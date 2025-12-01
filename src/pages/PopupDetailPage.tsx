@@ -5,11 +5,13 @@ import { getPopupById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
 import { sanitizeHtml } from "../utils/sanitizeHtml";
+import { useAuth } from "../shared/auth";
 
 export default function PopupDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { t, language } = useI18n();
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const [popup, setPopup] = useState<PopupEvent | null>(null);
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
 
@@ -113,6 +115,16 @@ export default function PopupDetailPage() {
       <div className="section-container space-y-10">
         <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
           <div className="space-y-6">
+            {isAdmin && (
+              <div className="flex justify-end">
+                <Link
+                  to={`/admin/studio/popups/${popup.id}`}
+                  className="text-xs font-semibold text-[var(--ink-subtle)] underline underline-offset-4 hover:text-[var(--ink)]"
+                >
+                  Studio에서 이 팝업 수정 →
+                </Link>
+              </div>
+            )}
             <p className="text-xl leading-relaxed text-[var(--ink)]">{popup.description}</p>
             <div className="space-y-4 rounded-3xl bg-[var(--paper-muted)] p-6 shadow">
               <h2 className="text-xl font-semibold text-[var(--ink)]">Highlights</h2>

@@ -6,6 +6,7 @@ import { getEventById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
 import { formatDateRange } from "../shared/date";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
+import { useAuth } from "../shared/auth";
 import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 type Status = "idle" | "loading" | "success" | "not-found" | "error";
@@ -14,6 +15,7 @@ export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { t } = useI18n();
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const [status, setStatus] = useState<Status>("idle");
   const [event, setEvent] = useState<KCultureEvent | null>(null);
 
@@ -119,6 +121,16 @@ export default function EventDetailPage() {
       <div className="section-container">
         <div className="grid gap-12 md:grid-cols-[2fr,1fr]">
           <div className="space-y-6">
+            {isAdmin && (
+              <div className="flex justify-end">
+                <Link
+                  to={`/admin/studio/events/${event.id}`}
+                  className="text-xs font-semibold text-[var(--ink-subtle)] underline underline-offset-4 hover:text-[var(--ink)]"
+                >
+                  Studio에서 이 이벤트 수정 →
+                </Link>
+              </div>
+            )}
             {event.longDescription.map((paragraph, index) => {
               // HTML 태그가 포함되어 있으면 HTML로 렌더링
               const isHtml = /<[^>]+>/.test(paragraph);
