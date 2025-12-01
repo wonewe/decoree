@@ -22,11 +22,11 @@ export default function CommunityBoardDetailPage() {
           <header className="space-y-3">
             <span className="badge-label">{t("nav.localSupport")}</span>
             <h1 className="text-4xl font-bold text-[var(--ink)]">{board.name}</h1>
-            <p className="text-[var(--ink-muted)]">{board.summary}</p>
+            <p className="text-[1.08rem] leading-relaxed text-[var(--ink)]">{board.summary}</p>
           </header>
           <article className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow">
             <h2 className="text-xl font-semibold text-[var(--ink)]">Highlights</h2>
-            <ul className="mt-4 space-y-2 text-sm text-[var(--ink-muted)]">
+            <ul className="mt-4 space-y-2 text-base leading-relaxed text-[var(--ink)]">
               {board.highlights.map((item) => (
                 <li key={item} className="flex gap-3">
                   <span className="text-[var(--ink)]">#</span>
@@ -34,7 +34,7 @@ export default function CommunityBoardDetailPage() {
                 </li>
               ))}
             </ul>
-            <p className="mt-6 text-sm text-[var(--ink-subtle)]">Contact: {board.contact}</p>
+            <p className="mt-6 text-base text-[var(--ink)]">Contact: {board.contact}</p>
           </article>
           <Link to="/local-support/community" className="secondary-button">
             ← {t("trendDetail.backToList")}

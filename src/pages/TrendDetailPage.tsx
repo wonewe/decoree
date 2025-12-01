@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import type { TrendReport } from "../data/trends";
 import { getTrendReportById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
@@ -72,7 +73,15 @@ export default function TrendDetailPage() {
   };
 
   return (
-    <article className="bg-[var(--paper)]">
+    <article className="bg-[var(--paper-muted)]">
+      <Helmet>
+        <title>{report.title} | koraid</title>
+        <meta name="description" content={report.summary} />
+        <meta property="og:title" content={report.title} />
+        <meta property="og:description" content={report.summary} />
+        <meta property="og:image" content={report.imageUrl} />
+        <meta property="og:type" content="article" />
+      </Helmet>
       <div className="relative h-[320px] w-full overflow-hidden">
         <img
           src={report.imageUrl}
@@ -103,56 +112,62 @@ export default function TrendDetailPage() {
       </div>
 
       <div className="section-container">
-        <div className="mx-auto flex max-w-3xl flex-col gap-8 py-10">
-          <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wide text-[var(--ink-subtle)]">
-            <span className="rounded-full bg-[var(--paper-muted)] px-3 py-1">{tagList}</span>
+        <div className="mx-auto flex max-w-3xl flex-col gap-10 py-12">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
+            <span className="rounded-full bg-[var(--paper)] px-3 py-1">{tagList}</span>
+            <span>·</span>
+            <span>{published}</span>
+            <span>·</span>
+            <span>{report.neighborhood}</span>
           </div>
 
           <MarkdownContent content={report.content.join("\n\n")} />
 
           {author && (
-            <div className="flex flex-col gap-4 rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm md:flex-row md:items-center md:gap-6">
-              <img
-                src={author.avatarUrl}
-                alt={author.name}
-                loading="lazy"
-                className="h-16 w-16 flex-shrink-0 rounded-full object-cover shadow"
-              />
-              <div className="space-y-1">
-                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
-                  {t("trendDetail.author.label")}
-                </p>
-                <h3 className="text-lg font-semibold text-[var(--ink)]">{author.name}</h3>
-                <p className="text-sm font-semibold text-[var(--ink-subtle)]">{author.title}</p>
-                <p className="text-sm text-[var(--ink-muted)]">{author.bio}</p>
+            <div className="border-t border-[var(--border)] pt-8">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:gap-6">
+                <img
+                  src={author.avatarUrl}
+                  alt={author.name}
+                  loading="lazy"
+                  className="h-16 w-16 flex-shrink-0 rounded-full object-cover shadow"
+                />
+                <div className="space-y-1">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
+                    {t("trendDetail.author.label")}
+                  </p>
+                  <h3 className="text-lg font-semibold text-[var(--ink)]">{author.name}</h3>
+                  <p className="text-sm font-semibold text-[var(--ink-subtle)]">{author.title}</p>
+                  <p className="text-sm leading-relaxed text-[var(--ink-muted)]">{author.bio}</p>
+                </div>
               </div>
             </div>
           )}
 
-          <aside className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm">
-            <h2 className="text-base font-semibold text-[var(--ink)]">
-              {t("trendDetail.sidebarTitle")}
-            </h2>
-            <ul className="mt-3 space-y-2 text-sm text-[var(--ink-muted)]">
-              <li>
-                <strong>{t("trendDetail.neighborhood")}: </strong>
-                {report.neighborhood}
-              </li>
-              <li>
-                <strong>{t("trendDetail.intensity")}: </strong>
-                {t(`trendDetail.intensity.${report.intensity}`)}
-              </li>
-              <li>
-                <strong>{t("trendDetail.published")}: </strong>
-                {published}
-              </li>
-            </ul>
-          </aside>
+          <div className="flex justify-between pt-4 text-sm text-[var(--ink-subtle)]">
+            <div>
+              <div className="font-semibold">{t("trendDetail.sidebarTitle")}</div>
+              <div className="mt-1 space-y-1">
+                <div>
+                  <span className="font-semibold">{t("trendDetail.neighborhood")}: </span>
+                  <span>{report.neighborhood}</span>
+                </div>
+                <div>
+                  <span className="font-semibold">{t("trendDetail.intensity")}: </span>
+                  <span>{t(`trendDetail.intensity.${report.intensity}`)}</span>
+                </div>
+                <div>
+                  <span className="font-semibold">{t("trendDetail.published")}: </span>
+                  <span>{published}</span>
+                </div>
+              </div>
+            </div>
 
-          <div className="flex justify-end">
-            <Link to="/trends" className="secondary-button">
-              {t("trendDetail.backToList")}
-            </Link>
+            <div className="flex items-end">
+              <Link to="/trends" className="secondary-button">
+                {t("trendDetail.backToList")}
+              </Link>
+            </div>
           </div>
         </div>
       </div>

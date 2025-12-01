@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import type { KCultureEvent } from "../data/events";
 import { getEventById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
 import { formatDateRange } from "../shared/date";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
+import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 type Status = "idle" | "loading" | "success" | "not-found" | "error";
 
@@ -76,6 +78,14 @@ export default function EventDetailPage() {
 
   return (
     <article className="bg-[var(--paper)]">
+      <Helmet>
+        <title>{event.title} | koraid</title>
+        <meta name="description" content={event.description} />
+        <meta property="og:title" content={event.title} />
+        <meta property="og:description" content={event.description} />
+        <meta property="og:image" content={event.imageUrl} />
+        <meta property="og:type" content="event" />
+      </Helmet>
       <div className="relative h-[320px] w-full overflow-hidden">
         <img
           src={event.imageUrl}
@@ -113,31 +123,32 @@ export default function EventDetailPage() {
               // HTML 태그가 포함되어 있으면 HTML로 렌더링
               const isHtml = /<[^>]+>/.test(paragraph);
               if (isHtml) {
+                const safeHtml = sanitizeHtml(paragraph);
                 return (
                   <div
                     key={index}
-                    dangerouslySetInnerHTML={{ __html: paragraph }}
-                    className="mb-4 text-lg leading-relaxed text-[var(--ink)] [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3"
+                    dangerouslySetInnerHTML={{ __html: safeHtml }}
+                    className="mb-4 text-[1.08rem] leading-relaxed text-[var(--ink)] [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3 md:text-[1.16rem]"
                   />
                 );
               }
               // 일반 텍스트인 경우
               return (
-              <p key={index} className="mb-4 text-lg leading-relaxed text-[var(--ink)]">
+                <p key={index} className="mb-4 text-[1.08rem] leading-relaxed text-[var(--ink)]">
                   {paragraph}
                 </p>
               );
             })}
 
             {event.tips.length > 0 && (
-            <div className="rounded-3xl bg-[var(--paper-muted)] p-6">
-              <h2 className="text-lg font-semibold text-[var(--ink)]">
+              <div className="rounded-3xl bg-[var(--paper-muted)] p-6">
+                <h2 className="text-lg font-semibold text-[var(--ink)]">
                   {t("eventDetail.tipsTitle")}
                 </h2>
-              <ul className="mt-3 space-y-2 text-sm text-[var(--ink-muted)]">
+                <ul className="mt-3 space-y-2 text-base leading-relaxed text-[var(--ink)]">
                   {event.tips.map((tip, index) => (
                     <li key={index} className="flex gap-2">
-                    <span className="mt-1 text-[var(--ink)]">•</span>
+                      <span className="mt-1 text-[var(--ink)]">•</span>
                       <span>{tip}</span>
                     </li>
                   ))}
@@ -150,7 +161,7 @@ export default function EventDetailPage() {
             <h2 className="text-lg font-semibold text-[var(--ink)]">
               {t("eventDetail.infoTitle")}
             </h2>
-            <dl className="space-y-4 text-sm text-[var(--ink-muted)]">
+            <dl className="space-y-4 text-base leading-relaxed text-[var(--ink)]">
               <div>
                 <dt className="font-semibold text-[var(--ink-subtle)]">{t("eventDetail.when")}</dt>
                 <dd>{formattedDate}</dd>
