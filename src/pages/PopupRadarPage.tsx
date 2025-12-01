@@ -13,13 +13,24 @@ export default function PopupRadarPage() {
   const filteredPopups = useMemo(() => {
     const list = filter === "all" ? popups : popups.filter((popup) => popup.status === filter);
     const normalized = search.trim().toLowerCase();
-    if (!normalized) return list;
-    return list.filter((popup) => {
+    const searched = !normalized
+      ? list
+      : list.filter((popup) => {
       const haystack = [popup.title, popup.brand, popup.location, popup.description, popup.tags.join(" ")]
         .join(" ")
         .toLowerCase();
       return haystack.includes(normalized);
-    });
+      });
+
+    // 전체 보기(all)에서는 ended 상태를 항상 리스트 하단으로 정렬
+    if (filter === "all") {
+      const statusOrder: Record<string, number> = { now: 0, soon: 1, ended: 2 };
+      return [...searched].sort((a, b) => {
+        return (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99);
+      });
+    }
+
+    return searched;
   }, [filter, popups, search]);
 
   return (
