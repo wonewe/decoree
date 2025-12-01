@@ -201,19 +201,18 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
                           </svg>
                         </a>
                       )}
-                      <BookmarkButton
-                        size="sm"
-                        item={{
-                          id: event.id,
-                          type: "event",
-                          title: event.title,
-                          summary: event.description,
-                          imageUrl: event.imageUrl,
-                          location: event.location,
-                          href: `/events/${event.id}`
-                        }}
-                            onClick={(e) => e.stopPropagation?.()}
-                      />
+                          <BookmarkButton
+                            size="sm"
+                            item={{
+                              id: event.id,
+                              type: "event",
+                              title: event.title,
+                              summary: event.description,
+                              imageUrl: event.imageUrl,
+                              location: event.location,
+                              href: `/events/${event.id}`
+                            }}
+                          />
                     </div>
                   </div>
                 </div>
