@@ -7,6 +7,7 @@ import { useI18n } from "../shared/i18n";
 import { getAuthorProfile } from "../data/authors";
 import { formatDate } from "../shared/date";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
+import { useAuth } from "../shared/auth";
 import { MarkdownContent } from "../components/MarkdownContent";
 
 type Status = "idle" | "loading" | "success" | "not-found" | "error";
@@ -15,6 +16,7 @@ export default function TrendDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { t } = useI18n();
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const [status, setStatus] = useState<Status>("idle");
   const [report, setReport] = useState<TrendReport | null>(null);
 
@@ -121,7 +123,19 @@ export default function TrendDetailPage() {
             <span>{report.neighborhood}</span>
           </div>
 
-          <MarkdownContent content={report.content.join("\n\n")} />
+          <div className="space-y-4">
+            {isAdmin && (
+              <div className="flex justify-end">
+                <Link
+                  to={`/admin/edit/trends/${report.id}`}
+                  className="text-xs font-semibold text-[var(--ink-subtle)] underline underline-offset-4 hover:text-[var(--ink)]"
+                >
+                  Studio에서 이 리포트 수정 →
+                </Link>
+              </div>
+            )}
+            <MarkdownContent content={report.content.join("\n\n")} />
+          </div>
 
           {author && (
             <div className="border-t border-[var(--border)] pt-8">

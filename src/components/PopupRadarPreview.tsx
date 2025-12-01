@@ -6,7 +6,8 @@ import { PopupCardSkeleton } from "./popups/PopupCardSkeleton";
 export default function PopupRadarPreview() {
   const { t, language } = useI18n();
   const { status, popups } = usePopups(language);
-  const topPopups = popups.slice(0, 4);
+  const activePopups = popups.filter((popup) => popup.status !== "ended");
+  const topPopups = activePopups.slice(0, 4);
 
   return (
     <section className="section-container space-y-8">

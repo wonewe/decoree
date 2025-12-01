@@ -1,6 +1,7 @@
 import type { SupportedLanguage } from "../shared/i18n";
 
 export type PopupStatus = "now" | "soon" | "ended";
+export type PopupCategory = "food" | "beauty" | "character" | "game" | "brand" | "other";
 
 export type PopupEvent = {
   id: string;
@@ -10,6 +11,7 @@ export type PopupEvent = {
   brand: string;
   window: string;
   status: PopupStatus;
+  category?: PopupCategory;
   startDate?: string;
   endDate?: string;
   location: string;
@@ -31,6 +33,7 @@ export const POPUP_EVENTS: PopupEvent[] = [
     brand: "Layered x Atelier Blu",
     window: "Now - Aug 25 • 11:00-21:00",
     status: "now",
+    category: "brand",
     startDate: "2024-07-15",
     endDate: "2024-08-25",
     location: "Seongsu-dong, Seoul",
@@ -58,6 +61,7 @@ export const POPUP_EVENTS: PopupEvent[] = [
     brand: "Soft Spirits Club",
     window: "Aug 10 - Sep 1 • 17:00-23:00",
     status: "soon",
+    category: "food",
     startDate: "2024-08-10",
     endDate: "2024-09-01",
     location: "Itaewon, Seoul",
@@ -85,6 +89,7 @@ export const POPUP_EVENTS: PopupEvent[] = [
     brand: "Ganse Studio",
     window: "Now - Sep 5 • 10:00-18:00",
     status: "now",
+    category: "brand",
     startDate: "2024-07-01",
     endDate: "2024-09-05",
     location: "Aewol, Jeju",
