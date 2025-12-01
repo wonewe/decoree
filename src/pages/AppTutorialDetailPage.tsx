@@ -22,12 +22,12 @@ export default function AppTutorialDetailPage() {
           <header className="space-y-3">
             <span className="badge-label">{t("nav.localSupport")}</span>
             <h1 className="text-4xl font-bold text-[var(--ink)]">{tutorial.name}</h1>
-            <p className="text-[var(--ink-muted)]">{tutorial.summary}</p>
+            <p className="text-lg leading-relaxed text-[var(--ink)]">{tutorial.summary}</p>
           </header>
           <div className="grid gap-6 md:grid-cols-2">
             <article className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow">
               <h2 className="text-xl font-semibold text-[var(--ink)]">Steps</h2>
-              <ol className="mt-4 space-y-2 text-sm text-[var(--ink-muted)]">
+              <ol className="mt-4 space-y-2 text-base leading-relaxed text-[var(--ink)]">
                 {tutorial.steps.map((step) => (
                   <li key={step} className="flex gap-3">
                     <span className="text-[var(--ink)]">→</span>
@@ -38,7 +38,7 @@ export default function AppTutorialDetailPage() {
             </article>
             <article className="rounded-3xl border border-[var(--border)] bg-[var(--paper-muted)] p-6 shadow">
               <h2 className="text-xl font-semibold text-[var(--ink)]">Tips</h2>
-              <ul className="mt-4 space-y-2 text-sm text-[var(--ink-muted)]">
+              <ul className="mt-4 space-y-2 text-base leading-relaxed text-[var(--ink)]">
                 {tutorial.tips.map((tip) => (
                   <li key={tip}>{tip}</li>
                 ))}

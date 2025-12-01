@@ -133,7 +133,7 @@ export default function TrendDetailPage() {
                 </p>
                 <h3 className="text-lg font-semibold text-[var(--ink)]">{author.name}</h3>
                 <p className="text-sm font-semibold text-[var(--ink-subtle)]">{author.title}</p>
-                <p className="text-sm text-[var(--ink-muted)]">{author.bio}</p>
+                <p className="text-base leading-relaxed text-[var(--ink)]">{author.bio}</p>
               </div>
             </div>
           )}
@@ -142,7 +142,7 @@ export default function TrendDetailPage() {
             <h2 className="text-base font-semibold text-[var(--ink)]">
               {t("trendDetail.sidebarTitle")}
             </h2>
-            <ul className="mt-3 space-y-2 text-sm text-[var(--ink-muted)]">
+            <ul className="mt-3 space-y-2 text-base leading-relaxed text-[var(--ink)]">
               <li>
                 <strong>{t("trendDetail.neighborhood")}: </strong>
                 {report.neighborhood}

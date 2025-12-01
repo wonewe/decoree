@@ -143,7 +143,7 @@ export default function EventDetailPage() {
                 <h2 className="text-lg font-semibold text-[var(--ink)]">
                   {t("eventDetail.tipsTitle")}
                 </h2>
-                <ul className="mt-3 space-y-2 text-sm text-[var(--ink-muted)]">
+                <ul className="mt-3 space-y-2 text-base leading-relaxed text-[var(--ink)]">
                   {event.tips.map((tip, index) => (
                     <li key={index} className="flex gap-2">
                       <span className="mt-1 text-[var(--ink)]">•</span>
@@ -159,7 +159,7 @@ export default function EventDetailPage() {
             <h2 className="text-lg font-semibold text-[var(--ink)]">
               {t("eventDetail.infoTitle")}
             </h2>
-            <dl className="space-y-4 text-sm text-[var(--ink-muted)]">
+            <dl className="space-y-4 text-base leading-relaxed text-[var(--ink)]">
               <div>
                 <dt className="font-semibold text-[var(--ink-subtle)]">{t("eventDetail.when")}</dt>
                 <dd>{formattedDate}</dd>
