@@ -4,6 +4,7 @@ import type { PopupEvent } from "../data/popups";
 import { getPopupById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
+import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 export default function PopupDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -68,10 +69,11 @@ export default function PopupDetailPage() {
       {popup.details.map((paragraph, index) => {
         const isHtml = /<\/?[a-z][^>]*>/i.test(paragraph);
         if (isHtml) {
+          const safeHtml = sanitizeHtml(paragraph);
           return (
             <div
               key={index}
-              dangerouslySetInnerHTML={{ __html: paragraph }}
+              dangerouslySetInnerHTML={{ __html: safeHtml }}
               className="mb-4 [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3"
             />
           );
