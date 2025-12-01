@@ -9,6 +9,15 @@ export default function PopupRadarPage() {
   const { status, popups } = usePopups(language);
   const [filter, setFilter] = useState<"all" | "now" | "soon" | "ended">("all");
   const [search, setSearch] = useState("");
+  const [activeTag, setActiveTag] = useState<string | "all">("all");
+
+  const availableTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    popups.forEach((popup) => {
+      popup.tags.forEach((tag) => tagSet.add(tag));
+    });
+    return Array.from(tagSet).sort((a, b) => a.localeCompare(b));
+  }, [popups]);
 
   const filteredPopups = useMemo(() => {
     const list = filter === "all" ? popups : popups.filter((popup) => popup.status === filter);
@@ -16,22 +25,31 @@ export default function PopupRadarPage() {
     const searched = !normalized
       ? list
       : list.filter((popup) => {
-      const haystack = [popup.title, popup.brand, popup.location, popup.description, popup.tags.join(" ")]
-        .join(" ")
-        .toLowerCase();
-      return haystack.includes(normalized);
-      });
+          const haystack = [
+            popup.title,
+            popup.brand,
+            popup.location,
+            popup.description,
+            popup.tags.join(" ")
+          ]
+            .join(" ")
+            .toLowerCase();
+          return haystack.includes(normalized);
+        });
+
+    const byTag =
+      activeTag === "all" ? searched : searched.filter((popup) => popup.tags.includes(activeTag));
 
     // 전체 보기(all)에서는 ended 상태를 항상 리스트 하단으로 정렬
     if (filter === "all") {
       const statusOrder: Record<string, number> = { now: 0, soon: 1, ended: 2 };
-      return [...searched].sort((a, b) => {
+      return [...byTag].sort((a, b) => {
         return (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99);
       });
     }
 
-    return searched;
-  }, [filter, popups, search]);
+    return byTag;
+  }, [activeTag, filter, popups, search]);
 
   return (
     <section className="section-container space-y-10">
@@ -62,6 +80,36 @@ export default function PopupRadarPage() {
           </div>
         </div>
       </div>
+
+      {availableTags.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveTag("all")}
+            className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+              activeTag === "all"
+                ? "bg-[var(--ink)] text-white"
+                : "bg-[var(--paper)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
+            }`}
+          >
+            {t("popupRadar.filters.allTags", { defaultValue: "All tags" })}
+          </button>
+          {availableTags.map((tag) => (
+            <button
+              key={tag}
+              type="button"
+              onClick={() => setActiveTag(tag)}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                activeTag === tag
+                  ? "bg-[var(--ink)] text-white"
+                  : "bg-[var(--paper)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
+              }`}
+            >
+              #{tag}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="card space-y-3">
         <label
