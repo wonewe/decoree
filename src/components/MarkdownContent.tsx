@@ -107,11 +107,11 @@ export function MarkdownContent({ content, className = "", style }: MarkdownCont
 
   return (
     <div
-      className={`prose prose-lg md:prose-xl max-w-[72ch] w-full mx-auto text-[var(--ink)] leading-loose tracking-wide
+      className={`prose prose-lg md:prose-xl max-w-[72ch] w-full mx-auto text-[var(--ink)] leading-relaxed tracking-wide
         prose-headings:font-heading prose-headings:text-[var(--ink)] prose-headings:tracking-tight prose-headings:leading-tight prose-headings:font-bold
-        prose-p:text-[var(--ink)] prose-p:text-lg prose-p:leading-8 prose-p:mb-8 prose-p:font-normal
+        prose-p:text-[var(--ink)] prose-p:text-[1.05rem] md:prose-p:text-[1.12rem] prose-p:leading-8 prose-p:mb-8 prose-p:font-normal
         prose-strong:font-bold prose-strong:text-[var(--ink)]
-        prose-li:text-[var(--ink)] prose-li:text-lg prose-li:leading-8
+        prose-li:text-[var(--ink)] prose-li:text-[1.05rem] md:prose-li:text-[1.12rem] prose-li:leading-8
         prose-a:text-[var(--ink)] prose-a:font-semibold prose-a:underline prose-a:decoration-[var(--ink-muted)] prose-a:underline-offset-4 hover:prose-a:decoration-[var(--ink)]
         [&_img]:mx-auto [&_img]:my-10 [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-xl [&_img]:shadow-lg
         [&_h1]:text-4xl [&_h1]:md:text-5xl [&_h1]:mt-16 [&_h1]:mb-8
