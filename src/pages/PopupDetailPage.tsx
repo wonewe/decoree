@@ -4,6 +4,7 @@ import type { PopupEvent } from "../data/popups";
 import { getPopupById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
+import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 export default function PopupDetailPage() {
   const { id } = useParams<{ id: string }>();

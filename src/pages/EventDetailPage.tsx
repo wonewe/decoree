@@ -6,6 +6,7 @@ import { getEventById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
 import { formatDateRange } from "../shared/date";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
+import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 type Status = "idle" | "loading" | "success" | "not-found" | "error";
 
