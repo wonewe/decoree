@@ -31,6 +31,8 @@ export default function TextEditor({
   const editorRef = useRef<HTMLDivElement>(null);
   const [editorHeight, setEditorHeight] = useState(300);
   const [uploading, setUploading] = useState(false);
+  const [fontFamily, setFontFamily] = useState("default");
+  const [fontSize, setFontSize] = useState("16");
   const isInitializedRef = useRef(false);
   const onChangeRef = useRef(onChange);
 
@@ -73,6 +75,15 @@ export default function TextEditor({
       handleInput();
     }
   }, [handleInput]);
+
+  // styleWithCSS 강제 비활성화 (font 태그 생성을 위해)
+  useEffect(() => {
+    try {
+      document.execCommand("styleWithCSS", false, "false");
+    } catch {
+      // no-op
+    }
+  }, []);
 
   // 이미지 삽입 함수
   const insertImage = useCallback(async (file: File) => {
@@ -169,6 +180,160 @@ export default function TextEditor({
     document.execCommand(command, false, formatValue);
   }, []);
 
+  // 선택 영역 변경 시 툴바 상태 업데이트
+  useEffect(() => {
+    const updateToolbarState = () => {
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+
+      const node = selection.anchorNode;
+      if (!node || !editorRef.current?.contains(node)) return;
+
+      const element = node.nodeType === Node.TEXT_NODE ? node.parentElement : (node as HTMLElement);
+      if (!element) return;
+
+      const computedStyle = window.getComputedStyle(element);
+
+      // 폰트 패밀리 감지
+      const family = computedStyle.fontFamily.replace(/['"]/g, "");
+      if (family.includes("Merriweather") || family.includes("Georgia") || family.includes("serif")) {
+        setFontFamily("serif");
+      } else if (family.includes("Menlo") || family.includes("Monaco") || family.includes("monospace")) {
+        setFontFamily("mono");
+      } else {
+        setFontFamily("default");
+      }
+
+      // 폰트 크기 감지
+      const size = parseInt(computedStyle.fontSize);
+      if (!isNaN(size)) {
+        // 근사값 찾기 (정확히 일치하지 않을 수 있음)
+        const sizes = [14, 16, 18, 20, 24, 30];
+        const closest = sizes.reduce((prev, curr) =>
+          Math.abs(curr - size) < Math.abs(prev - size) ? curr : prev
+        );
+        setFontSize(closest.toString());
+      }
+    };
+
+    document.addEventListener("selectionchange", updateToolbarState);
+    return () => document.removeEventListener("selectionchange", updateToolbarState);
+  }, []);
+
+  const applyInlineStyle = useCallback(
+    (style: { fontFamily?: string; fontSize?: string }) => {
+      if (!editorRef.current) return;
+      editorRef.current.focus();
+
+      // styleWithCSS 끄기 (font 태그 생성 보장)
+      try {
+        document.execCommand("styleWithCSS", false, "false");
+      } catch {
+        // no-op
+      }
+
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+
+      // 1. 기존 span 업데이트 시도 (선택 영역이 기존 span 전체를 포함하는 경우)
+      const range = selection.getRangeAt(0);
+      const container = range.commonAncestorContainer;
+      const element = container.nodeType === Node.TEXT_NODE ? container.parentElement : (container as HTMLElement);
+
+      // 선택 영역이 요소의 전체 텍스트와 일치하는지 확인
+      const isExactSelection = element && element.tagName === "SPAN" && element.textContent === range.toString();
+
+      if (isExactSelection) {
+        if (style.fontFamily) {
+          element.style.fontFamily = style.fontFamily;
+        }
+        if (style.fontSize) {
+          element.style.fontSize = style.fontSize;
+        }
+        handleInput();
+        return;
+      }
+
+      // 2. 새로운 스타일 적용 (execCommand 사용 후 cleanup)
+      // 중첩된 스타일 문제를 해결하기 위해, 새로 적용된 태그 내부의 기존 스타일을 제거하는 로직 추가
+
+      if (style.fontFamily) {
+        // 임시 폰트 이름 사용
+        const tempFontName = "TEMP_FONT_" + Date.now();
+        document.execCommand("fontName", false, tempFontName);
+
+        // 임시 폰트 태그를 찾아서 span으로 교체
+        const fontElements = editorRef.current.getElementsByTagName("font");
+        for (let i = fontElements.length - 1; i >= 0; i--) {
+          const font = fontElements[i];
+          if (font.getAttribute("face") === tempFontName) {
+            const span = document.createElement("span");
+            span.style.fontFamily = style.fontFamily!;
+
+            // 기존 스타일 유지 (size 등)
+            if (font.getAttribute("size")) {
+              // size가 있다면 유지
+            }
+
+            // 내용 이동
+            while (font.firstChild) {
+              span.appendChild(font.firstChild);
+            }
+
+            // 내부의 중첩된 font-family 스타일 제거 (일괄 적용을 위해)
+            const nestedSpans = span.getElementsByTagName("span");
+            for (let j = 0; j < nestedSpans.length; j++) {
+              nestedSpans[j].style.fontFamily = "";
+              // 스타일 속성이 비어있으면 style 속성 자체 제거 (선택사항)
+              if (nestedSpans[j].getAttribute("style") === "") {
+                nestedSpans[j].removeAttribute("style");
+              }
+            }
+
+            font.replaceWith(span);
+          }
+        }
+      }
+
+      if (style.fontSize) {
+        // 임시 폰트 사이즈 7 사용
+        document.execCommand("fontSize", false, "7");
+
+        const fontElements = editorRef.current.getElementsByTagName("font");
+        for (let i = fontElements.length - 1; i >= 0; i--) {
+          const font = fontElements[i];
+          if (font.getAttribute("size") === "7") {
+            const span = document.createElement("span");
+            span.style.fontSize = style.fontSize!;
+
+            // 기존 font-family가 있다면 유지 (font 태그에 face가 있는 경우)
+            if (font.getAttribute("face")) {
+              span.style.fontFamily = font.getAttribute("face")!;
+            }
+
+            while (font.firstChild) {
+              span.appendChild(font.firstChild);
+            }
+
+            // 내부의 중첩된 font-size 스타일 제거 (일괄 적용을 위해)
+            const nestedSpans = span.getElementsByTagName("span");
+            for (let j = 0; j < nestedSpans.length; j++) {
+              nestedSpans[j].style.fontSize = "";
+              if (nestedSpans[j].getAttribute("style") === "") {
+                nestedSpans[j].removeAttribute("style");
+              }
+            }
+
+            font.replaceWith(span);
+          }
+        }
+      }
+
+      handleInput();
+    },
+    [handleInput]
+  );
+
   const replaceBlockWithHeading = useCallback((level: number) => {
     if (!editorRef.current) return;
     const selection = window.getSelection();
@@ -194,6 +359,13 @@ export default function TextEditor({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
+      // Cmd+B / Ctrl+B for Bold
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        applyFormat("bold");
+        return;
+      }
+
       if (e.key !== " ") return;
       const selection = window.getSelection();
       if (!selection || !selection.anchorNode) return;
@@ -205,77 +377,142 @@ export default function TextEditor({
       const level = trimmed.length;
       replaceBlockWithHeading(level);
     },
-    [replaceBlockWithHeading]
+    [replaceBlockWithHeading, applyFormat]
   );
 
   return (
-    <div className="relative flex flex-col gap-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="relative flex flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--paper)] shadow-sm transition-shadow hover:shadow-md">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--paper)] px-4 py-2">
         <div className="flex items-center gap-3">
           <label className="text-sm font-semibold text-[var(--ink)]">{label}</label>
           {labelActions && <div className="flex items-center gap-2">{labelActions}</div>}
         </div>
-        <div className="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] px-2 py-1">
-          <button
-            type="button"
-            onClick={() => applyFormat("bold")}
-            className="rounded px-2 py-1 text-xs font-bold text-[var(--ink)] hover:bg-[var(--paper)]"
-            title="굵게 (Ctrl+B)"
-          >
-            B
-          </button>
-          <button
-            type="button"
-            onClick={() => applyFormat("italic")}
-            className="rounded px-2 py-1 text-xs italic text-[var(--ink)] hover:bg-[var(--paper)]"
-            title="기울임 (Ctrl+I)"
-          >
-            I
-          </button>
-          <button
-            type="button"
-            onClick={() => applyFormat("underline")}
-            className="rounded px-2 py-1 text-xs underline text-[var(--ink)] hover:bg-[var(--paper)]"
-            title="밑줄 (Ctrl+U)"
-          >
-            U
-          </button>
-          <div className="h-4 w-px bg-[var(--border)]" />
-          <button
-            type="button"
-            onClick={() => applyFormat("formatBlock", "h2")}
-            className="rounded px-2 py-1 text-xs font-semibold text-[var(--ink)] hover:bg-[var(--paper)]"
-            title="제목"
-          >
-            H2
-          </button>
-          <button
-            type="button"
-            onClick={() => applyFormat("formatBlock", "p")}
-            className="rounded px-2 py-1 text-xs text-[var(--ink)] hover:bg-[var(--paper)]"
-            title="본문"
-          >
-            P
-          </button>
-          <div className="h-4 w-px bg-[var(--border)]" />
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-[var(--ink-subtle)]">높이</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--paper-muted)] p-1">
             <button
               type="button"
-              onClick={() => setEditorHeight((prev) => Math.max(200, prev - 40))}
-              className="rounded px-1 py-0.5 text-xs text-[var(--ink-muted)] hover:bg-[var(--paper)]"
+              onClick={() => applyFormat("bold")}
+              className="rounded px-2 py-1 text-sm font-bold text-[var(--ink)] hover:bg-[var(--paper)] hover:shadow-sm"
+              title="Bold (Ctrl+B)"
+            >
+              B
+            </button>
+            <button
+              type="button"
+              onClick={() => applyFormat("italic")}
+              className="rounded px-2 py-1 text-sm italic text-[var(--ink)] hover:bg-[var(--paper)] hover:shadow-sm"
+              title="Italic (Ctrl+I)"
+            >
+              I
+            </button>
+            <button
+              type="button"
+              onClick={() => applyFormat("underline")}
+              className="rounded px-2 py-1 text-sm underline text-[var(--ink)] hover:bg-[var(--paper)] hover:shadow-sm"
+              title="Underline (Ctrl+U)"
+            >
+              U
+            </button>
+          </div>
+
+          <div className="h-6 w-px bg-[var(--border)]" />
+
+          <div className="flex items-center rounded-lg border border-[var(--border)] bg-[var(--paper-muted)] p-1">
+            <button
+              type="button"
+              onClick={() => applyFormat("formatBlock", "h2")}
+              className="rounded px-2 py-1 text-sm font-bold text-[var(--ink)] hover:bg-[var(--paper)] hover:shadow-sm"
+              title="Heading 2"
+            >
+              H2
+            </button>
+            <button
+              type="button"
+              onClick={() => applyFormat("formatBlock", "h3")}
+              className="rounded px-2 py-1 text-sm font-semibold text-[var(--ink)] hover:bg-[var(--paper)] hover:shadow-sm"
+              title="Heading 3"
+            >
+              H3
+            </button>
+            <button
+              type="button"
+              onClick={() => applyFormat("formatBlock", "p")}
+              className="rounded px-2 py-1 text-sm text-[var(--ink)] hover:bg-[var(--paper)] hover:shadow-sm"
+              title="Paragraph"
+            >
+              P
+            </button>
+            <button
+              type="button"
+              onClick={() => applyFormat("insertHorizontalRule")}
+              className="rounded px-2 py-1 text-sm text-[var(--ink)] hover:bg-[var(--paper)] hover:shadow-sm"
+              title="Divider"
+            >
+              —
+            </button>
+          </div>
+
+          <div className="h-6 w-px bg-[var(--border)]" />
+
+          <div className="flex items-center gap-2">
+            <select
+              value={fontFamily}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFontFamily(value);
+                const family =
+                  value === "default"
+                    ? ""
+                    : value === "serif"
+                      ? "'Merriweather', 'Georgia', serif"
+                      : value === "mono"
+                        ? "'Menlo', 'Monaco', 'Courier New', monospace"
+                        : "'Inter', 'Helvetica Neue', Arial, sans-serif";
+                if (family) {
+                  applyInlineStyle({ fontFamily: family });
+                }
+              }}
+              className="h-8 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-2 text-xs text-[var(--ink)] focus:border-[var(--ink)] focus:outline-none"
+            >
+              <option value="default">Sans-Serif</option>
+              <option value="serif">Serif</option>
+              <option value="mono">Mono</option>
+            </select>
+
+            <select
+              value={fontSize}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFontSize(value);
+                applyInlineStyle({ fontSize: `${value}px` });
+              }}
+              className="h-8 rounded-lg border border-[var(--border)] bg-[var(--paper)] px-2 text-xs text-[var(--ink)] focus:border-[var(--ink)] focus:outline-none"
+            >
+              <option value="14">14px</option>
+              <option value="16">16px</option>
+              <option value="18">18px</option>
+              <option value="20">20px</option>
+              <option value="24">24px</option>
+              <option value="30">30px</option>
+            </select>
+          </div>
+
+          <div className="h-6 w-px bg-[var(--border)]" />
+
+          <div className="flex items-center gap-1 rounded-lg border border-[var(--border)] bg-[var(--paper-muted)] p-1">
+            <button
+              type="button"
+              onClick={() => setEditorHeight((prev) => Math.max(200, prev - 50))}
+              className="rounded px-2 py-1 text-xs text-[var(--ink)] hover:bg-[var(--paper)] hover:shadow-sm"
               disabled={editorHeight <= 200}
             >
               −
             </button>
-            <span className="w-10 text-center text-xs font-semibold text-[var(--ink)]">
-              {editorHeight}px
-            </span>
             <button
               type="button"
-              onClick={() => setEditorHeight((prev) => Math.min(600, prev + 40))}
-              className="rounded px-1 py-0.5 text-xs text-[var(--ink-muted)] hover:bg-[var(--paper)]"
-              disabled={editorHeight >= 600}
+              onClick={() => setEditorHeight((prev) => Math.min(800, prev + 50))}
+              className="rounded px-2 py-1 text-xs text-[var(--ink)] hover:bg-[var(--paper)] hover:shadow-sm"
+              disabled={editorHeight >= 800}
             >
               +
             </button>
@@ -292,12 +529,11 @@ export default function TextEditor({
         onDrop={handleDrop}
         style={{
           minHeight: `${editorHeight}px`,
-          maxHeight: "600px",
+          maxHeight: "800px",
           overflowY: "auto"
         }}
-        className={`w-full rounded-2xl border border-[var(--border)] bg-[var(--paper)] px-4 py-3 text-sm leading-relaxed transition focus:border-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--ink)]/20 ${
-          imageUploadOptions ? "hover:border-[var(--ink)]/60" : ""
-        } ${uploading ? "opacity-50 pointer-events-none" : ""}`}
+        className={`w-full bg-[var(--paper)] px-8 py-8 text-lg leading-loose text-[var(--ink)] focus:outline-none ${imageUploadOptions ? "hover:bg-[var(--paper-hover)]" : ""
+          } ${uploading ? "opacity-50 pointer-events-none" : ""}`}
         data-placeholder={placeholder}
         suppressContentEditableWarning
       />

@@ -57,6 +57,13 @@ const renderBlock = (block: string) => {
   const trimmed = raw.trim();
   if (!trimmed) return "";
 
+  // 1. HTML 블록 태그 감지 (에디터에서 생성된 콘텐츠)
+  // 블록 레벨 태그로 시작하면 HTML로 간주하고 그대로 반환
+  if (/^<(p|div|h[1-6]|ul|ol|blockquote|pre|figure|hr|table)\b/i.test(trimmed)) {
+    return trimmed;
+  }
+
+  // 2. 기존 마크다운 처리 로직 (레거시 지원)
   const htmlHeading = parseHtmlHeading(trimmed);
   if (htmlHeading) {
     return `<h${htmlHeading.level}>${renderInline(htmlHeading.text)}</h${htmlHeading.level}>`;
@@ -67,37 +74,53 @@ const renderBlock = (block: string) => {
     return `<p><img src="${htmlImage.src}" alt="${htmlImage.alt}" /></p>`;
   }
 
-  const htmlStripped = trimmed.includes("<") ? stripHtml(trimmed) : trimmed;
-  if (!htmlStripped) return "";
+  // HTML 태그를 제거하지 않고 인라인 렌더링만 수행
+  // (기존에는 stripHtml을 사용했으나, 이제는 인라인 스타일(span)을 허용해야 함)
+  // 단, 블록 태그가 아닌 경우 <p>로 감싸야 함
+  const processed = renderInline(trimmed);
 
-  if (/^#{1,6}\s/.test(htmlStripped)) {
-    const level = Math.min(htmlStripped.match(/^#+/)![0].length, 3); // cap at h3 to keep hierarchy tidy
-    const text = htmlStripped.replace(/^#{1,6}\s*/, "");
-    return `<h${level}>${renderInline(text)}</h${level}>`;
+  if (/^#{1,6}\s/.test(processed)) {
+    const level = Math.min(processed.match(/^#+/)![0].length, 3);
+    const text = processed.replace(/^#{1,6}\s*/, "");
+    return `<h${level}>${text}</h${level}>`;
   }
 
-  if (/^-\s+/m.test(htmlStripped)) {
-    const items = htmlStripped
+  if (/^-\s+/m.test(processed)) {
+    const items = processed
       .split(/\n+/)
       .filter((line) => line.trim().startsWith("- "))
-      .map((line) => `<li>${renderInline(line.trim().replace(/^-+\s*/, ""))}</li>`)
+      .map((line) => `<li>${line.trim().replace(/^-+\s*/, "")}</li>`)
       .join("");
     return `<ul>${items}</ul>`;
   }
 
-  return `<p>${renderInline(htmlStripped)}</p>`;
+  return `<p>${processed}</p>`;
 };
 
 export function MarkdownContent({ content, className = "", style }: MarkdownContentProps) {
+  // 에디터 콘텐츠는 이미 HTML일 수 있으므로, 줄바꿈으로 무조건 나누기보다
+  // HTML 태그 구조를 고려해야 하지만, 현재 구조상 split을 유지하되
+  // renderBlock에서 HTML을 감지하여 처리
   const blocks = content.split(/\n{2,}/).map(renderBlock).join("");
 
   return (
     <div
-      className={`prose prose-lg md:prose-xl prose-headings:font-heading prose-headings:text-[var(--ink)] prose-p:text-[var(--ink-muted)] prose-li:text-[var(--ink-muted)] max-w-4xl text-[var(--ink-muted)] leading-relaxed
-        [&_img]:mx-auto [&_img]:my-4 [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-2xl [&_img]:object-contain [&_img]:shadow-md [&_img]:resize [&_img]:overflow-auto [&_img]:cursor-nwse-resize
-        [&_h1]:text-3xl [&_h1]:md:text-4xl [&_h2]:text-2xl [&_h2]:md:text-3xl [&_h3]:text-xl [&_h3]:md:text-2xl
-        [&_h1]:mt-6 [&_h1]:mb-3 [&_h2]:mt-5 [&_h2]:mb-2 [&_h3]:mt-4 [&_h3]:mb-2
-        [&_p]:my-3 [&_ul]:my-3 [&_li]:my-1 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:bg-[var(--paper-muted)] [&_code]:text-sm [&_a]:text-[var(--ink)] [&_a]:font-semibold [&_a]:underline
+      className={`prose prose-lg md:prose-xl max-w-[72ch] w-full mx-auto text-[var(--ink)] leading-loose tracking-wide
+        prose-headings:font-heading prose-headings:text-[var(--ink)] prose-headings:tracking-tight prose-headings:leading-tight prose-headings:font-bold
+        prose-p:text-[var(--ink)] prose-p:text-lg prose-p:leading-8 prose-p:mb-8 prose-p:font-normal
+        prose-strong:font-bold prose-strong:text-[var(--ink)]
+        prose-li:text-[var(--ink)] prose-li:text-lg prose-li:leading-8
+        prose-a:text-[var(--ink)] prose-a:font-semibold prose-a:underline prose-a:decoration-[var(--ink-muted)] prose-a:underline-offset-4 hover:prose-a:decoration-[var(--ink)]
+        [&_img]:mx-auto [&_img]:my-10 [&_img]:block [&_img]:h-auto [&_img]:w-auto [&_img]:max-w-full [&_img]:rounded-xl [&_img]:shadow-lg
+        [&_h1]:text-4xl [&_h1]:md:text-5xl [&_h1]:mt-16 [&_h1]:mb-8
+        [&_h2]:text-3xl [&_h2]:md:text-4xl [&_h2]:mt-14 [&_h2]:mb-6
+        [&_h3]:text-2xl [&_h3]:md:text-3xl [&_h3]:mt-10 [&_h3]:mb-5
+        [&_ul]:my-8 [&_ul]:list-disc [&_ul]:pl-6
+        [&_li]:my-3
+        [&_hr]:my-10 [&_hr]:border-[var(--border)]
+        [&_blockquote]:border-l-4 [&_blockquote]:border-[var(--ink-muted)] [&_blockquote]:pl-6 [&_blockquote]:py-2 [&_blockquote]:italic [&_blockquote]:text-[var(--ink-muted)] [&_blockquote]:my-10
+        [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:bg-[var(--paper-muted)] [&_code]:text-sm [&_code]:font-mono [&_code]:text-[var(--ink)]
+        [&_span]:leading-loose
       ${className}`.replace(/\s+/g, " ")}
       style={style}
       dangerouslySetInnerHTML={{ __html: blocks }}
