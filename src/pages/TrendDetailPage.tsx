@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import type { TrendReport } from "../data/trends";
 import { getTrendReportById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
@@ -73,6 +74,14 @@ export default function TrendDetailPage() {
 
   return (
     <article className="bg-[var(--paper)]">
+      <Helmet>
+        <title>{report.title} | koraid</title>
+        <meta name="description" content={report.summary} />
+        <meta property="og:title" content={report.title} />
+        <meta property="og:description" content={report.summary} />
+        <meta property="og:image" content={report.imageUrl} />
+        <meta property="og:type" content="article" />
+      </Helmet>
       <div className="relative h-[320px] w-full overflow-hidden">
         <img
           src={report.imageUrl}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import type { KCultureEvent } from "../data/events";
 import { getEventById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
@@ -76,6 +77,14 @@ export default function EventDetailPage() {
 
   return (
     <article className="bg-[var(--paper)]">
+      <Helmet>
+        <title>{event.title} | koraid</title>
+        <meta name="description" content={event.description} />
+        <meta property="og:title" content={event.title} />
+        <meta property="og:description" content={event.description} />
+        <meta property="og:image" content={event.imageUrl} />
+        <meta property="og:type" content="event" />
+      </Helmet>
       <div className="relative h-[320px] w-full overflow-hidden">
         <img
           src={event.imageUrl}
@@ -123,21 +132,21 @@ export default function EventDetailPage() {
               }
               // 일반 텍스트인 경우
               return (
-              <p key={index} className="mb-4 text-lg leading-relaxed text-[var(--ink)]">
+                <p key={index} className="mb-4 text-lg leading-relaxed text-[var(--ink)]">
                   {paragraph}
                 </p>
               );
             })}
 
             {event.tips.length > 0 && (
-            <div className="rounded-3xl bg-[var(--paper-muted)] p-6">
-              <h2 className="text-lg font-semibold text-[var(--ink)]">
+              <div className="rounded-3xl bg-[var(--paper-muted)] p-6">
+                <h2 className="text-lg font-semibold text-[var(--ink)]">
                   {t("eventDetail.tipsTitle")}
                 </h2>
-              <ul className="mt-3 space-y-2 text-sm text-[var(--ink-muted)]">
+                <ul className="mt-3 space-y-2 text-sm text-[var(--ink-muted)]">
                   {event.tips.map((tip, index) => (
                     <li key={index} className="flex gap-2">
-                    <span className="mt-1 text-[var(--ink)]">•</span>
+                      <span className="mt-1 text-[var(--ink)]">•</span>
                       <span>{tip}</span>
                     </li>
                   ))}
