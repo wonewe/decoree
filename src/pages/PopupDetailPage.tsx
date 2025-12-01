@@ -64,20 +64,21 @@ export default function PopupDetailPage() {
     : null;
 
   const renderDetails = () => (
-    <div className="prose prose-lg max-w-none text-[var(--ink)] leading-relaxed prose-headings:text-[var(--ink)] prose-p:text-[17px] md:prose-p:text-[18px] prose-li:text-[17px] md:prose-li:text-[18px]">
+    <div className="prose prose-lg max-w-none text-[var(--ink)] leading-relaxed prose-headings:text-[var(--ink)] prose-p:text-[1.08rem] md:prose-p:text-[1.16rem] prose-li:text-[1.08rem] md:prose-li:text-[1.16rem]">
       {popup.details.map((paragraph, index) => {
         const isHtml = /<\/?[a-z][^>]*>/i.test(paragraph);
         if (isHtml) {
+          const safeHtml = sanitizeHtml(paragraph);
           return (
             <div
               key={index}
-              dangerouslySetInnerHTML={{ __html: paragraph }}
-              className="mb-6 text-[17px] leading-relaxed text-[var(--ink)] [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3 md:text-[18px]"
+              dangerouslySetInnerHTML={{ __html: safeHtml }}
+              className="mb-6 text-[1.08rem] leading-relaxed text-[var(--ink)] [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3 md:text-[1.16rem]"
             />
           );
         }
         return (
-          <p key={index} className="mb-4 text-lg leading-relaxed text-[var(--ink)]">
+          <p key={index} className="mb-4 text-[1.08rem] leading-relaxed text-[var(--ink)]">
             {paragraph}
           </p>
         );

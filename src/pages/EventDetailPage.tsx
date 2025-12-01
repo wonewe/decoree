@@ -122,17 +122,18 @@ export default function EventDetailPage() {
               // HTML 태그가 포함되어 있으면 HTML로 렌더링
               const isHtml = /<[^>]+>/.test(paragraph);
               if (isHtml) {
+                const safeHtml = sanitizeHtml(paragraph);
                 return (
                   <div
                     key={index}
-                    dangerouslySetInnerHTML={{ __html: paragraph }}
-                    className="mb-4 text-lg leading-relaxed text-[var(--ink)] [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3"
+                    dangerouslySetInnerHTML={{ __html: safeHtml }}
+                    className="mb-4 text-[1.08rem] leading-relaxed text-[var(--ink)] [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3 md:text-[1.16rem]"
                   />
                 );
               }
               // 일반 텍스트인 경우
               return (
-                <p key={index} className="mb-4 text-lg leading-relaxed text-[var(--ink)]">
+                <p key={index} className="mb-4 text-[1.08rem] leading-relaxed text-[var(--ink)]">
                   {paragraph}
                 </p>
               );

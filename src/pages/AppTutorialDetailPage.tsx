@@ -22,7 +22,7 @@ export default function AppTutorialDetailPage() {
           <header className="space-y-3">
             <span className="badge-label">{t("nav.localSupport")}</span>
             <h1 className="text-4xl font-bold text-[var(--ink)]">{tutorial.name}</h1>
-            <p className="text-lg leading-relaxed text-[var(--ink)]">{tutorial.summary}</p>
+            <p className="text-[1.08rem] leading-relaxed text-[var(--ink)]">{tutorial.summary}</p>
           </header>
           <div className="grid gap-6 md:grid-cols-2">
             <article className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow">

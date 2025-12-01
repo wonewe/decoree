@@ -22,7 +22,7 @@ export default function CommunityBoardDetailPage() {
           <header className="space-y-3">
             <span className="badge-label">{t("nav.localSupport")}</span>
             <h1 className="text-4xl font-bold text-[var(--ink)]">{board.name}</h1>
-            <p className="text-lg leading-relaxed text-[var(--ink)]">{board.summary}</p>
+            <p className="text-[1.08rem] leading-relaxed text-[var(--ink)]">{board.summary}</p>
           </header>
           <article className="rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow">
             <h2 className="text-xl font-semibold text-[var(--ink)]">Highlights</h2>
