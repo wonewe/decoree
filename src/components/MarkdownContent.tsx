@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { sanitizeHtml } from "../utils/sanitizeHtml";
 
 type MarkdownContentProps = {
   content: string;
@@ -102,6 +103,7 @@ export function MarkdownContent({ content, className = "", style }: MarkdownCont
   // HTML 태그 구조를 고려해야 하지만, 현재 구조상 split을 유지하되
   // renderBlock에서 HTML을 감지하여 처리
   const blocks = content.split(/\n{2,}/).map(renderBlock).join("");
+  const safeHtml = sanitizeHtml(blocks);
 
   return (
     <div
@@ -123,7 +125,7 @@ export function MarkdownContent({ content, className = "", style }: MarkdownCont
         [&_span]:leading-loose
       ${className}`.replace(/\s+/g, " ")}
       style={style}
-      dangerouslySetInnerHTML={{ __html: blocks }}
+      dangerouslySetInnerHTML={{ __html: safeHtml }}
     />
   );
 }
