@@ -229,6 +229,7 @@ export function createEmptyPopupDraft(): PopupDraft {
     endDate: "",
     location: "",
     mapQuery: "",
+    category: "brand",
     posterUrl: "",
     heroImageUrl: "",
     tagsInput: "",
@@ -255,6 +256,7 @@ export function popupToDraft(popup: PopupEvent): PopupDraft {
     endDate: popup.endDate ?? "",
     location: popup.location,
     mapQuery: popup.mapQuery ?? popup.location,
+    category: popup.category ?? "brand",
     posterUrl: popup.posterUrl,
     heroImageUrl: popup.heroImageUrl,
     tagsInput: popup.tags.join(", "),
@@ -302,6 +304,7 @@ export function draftToPopup(draft: PopupDraft): PopupEvent {
     highlights,
     details,
     ...(trimmedReservationUrl ? { reservationUrl: trimmedReservationUrl } : {}),
-    ...(trimmedMapQuery ? { mapQuery: trimmedMapQuery } : {})
+    ...(trimmedMapQuery ? { mapQuery: trimmedMapQuery } : {}),
+    category: draft.category
   };
 }

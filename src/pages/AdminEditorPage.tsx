@@ -235,6 +235,19 @@ export default function AdminEditorPage() {
             const popup = await getPopupById(id, language, { includeHidden: true });
             if (popup) {
               setPopupDraft(popupToDraft(popup));
+            } else {
+              // 존재하지 않는 ID로 접근한 경우: 새 팝업 초안으로 전환
+              const empty = createEmptyPopupDraft();
+              setPopupDraft({
+                ...empty,
+                id,
+                language: language,
+                languages: [language]
+              });
+              setMessage({
+                tone: "info",
+                text: `ID "${id}"에 해당하는 팝업이 없어 새 팝업으로 작성할 수 있도록 초기화했습니다.`
+              });
             }
           } else {
             const storedDraft = readDraft<PopupDraft>(DRAFT_STORAGE_KEYS.popup);
@@ -620,7 +633,7 @@ export default function AdminEditorPage() {
           )}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-5">
           <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
             언어
             <select
@@ -1455,6 +1468,26 @@ export default function AdminEditorPage() {
               <option value="now">진행 중</option>
               <option value="soon">오픈 예정</option>
               <option value="ended">종료</option>
+            </select>
+          </label>
+          <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
+            카테고리
+            <select
+              value={popupDraft.category}
+              onChange={(e) =>
+                setPopupDraft((prev) => ({
+                  ...prev,
+                  category: e.target.value as PopupDraft["category"]
+                }))
+              }
+              className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            >
+              <option value="food">식품 · F&amp;B</option>
+              <option value="beauty">화장품 · 뷰티</option>
+              <option value="character">캐릭터 · IP</option>
+              <option value="game">게임 · 엔터</option>
+              <option value="brand">브랜드 · 패션</option>
+              <option value="other">기타</option>
             </select>
           </label>
           <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">

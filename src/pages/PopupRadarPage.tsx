@@ -17,6 +17,10 @@ const CATEGORY_LABELS: Record<PopupCategory, string> = {
 };
 
 const detectCategory = (popup: PopupEvent): PopupCategory => {
+  if (popup.category) {
+    return popup.category as PopupCategory;
+  }
+
   const text = [popup.title, popup.brand, popup.location, popup.description, popup.tags.join(" ")]
     .join(" ")
     .toLowerCase();
