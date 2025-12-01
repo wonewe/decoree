@@ -432,6 +432,7 @@ export default function AdminListPage() {
                           <input
                             type="checkbox"
                             checked={currentSelectedIds.includes(trend.id)}
+                            onClick={(e) => e.stopPropagation()}
                             onChange={(e) => {
                               e.stopPropagation();
                               toggleSelect(trend.id);
@@ -544,6 +545,7 @@ export default function AdminListPage() {
                         <input
                           type="checkbox"
                           checked={currentSelectedIds.includes(event.id)}
+                          onClick={(e) => e.stopPropagation()}
                           onChange={(e) => {
                             e.stopPropagation();
                             toggleSelect(event.id);
@@ -624,6 +626,7 @@ export default function AdminListPage() {
                         <input
                           type="checkbox"
                           checked={currentSelectedIds.includes(phrase.id)}
+                          onClick={(e) => e.stopPropagation()}
                           onChange={(e) => {
                             e.stopPropagation();
                             toggleSelect(phrase.id);
@@ -699,6 +702,7 @@ export default function AdminListPage() {
                         <input
                           type="checkbox"
                           checked={currentSelectedIds.includes(popup.id)}
+                          onClick={(e) => e.stopPropagation()}
                           onChange={(e) => {
                             e.stopPropagation();
                             toggleSelect(popup.id);
