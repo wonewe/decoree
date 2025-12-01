@@ -99,6 +99,7 @@ export function createEmptyEventDraft(): EventDraft {
     endDate: todayIso(),
     time: "19:00",
     location: "",
+    mapQuery: "",
     category: "concert",
     price: "",
     bookingUrl: "",
@@ -122,6 +123,7 @@ export function eventToDraft(event: KCultureEvent): EventDraft {
     endDate: event.endDate ?? event.startDate ?? todayIso(),
     time: event.time,
     location: event.location,
+    mapQuery: event.mapQuery ?? event.location,
     category: event.category,
     price: event.price,
     bookingUrl: event.bookingUrl ?? "",
@@ -144,6 +146,7 @@ export function draftToEvent(draft: EventDraft): KCultureEvent {
     .filter(Boolean);
 
   const trimmedBookingUrl = draft.bookingUrl.trim();
+  const trimmedMapQuery = draft.mapQuery.trim();
 
   return {
     id: draft.id.trim(),
@@ -158,6 +161,7 @@ export function draftToEvent(draft: EventDraft): KCultureEvent {
     category: draft.category,
     price: draft.price.trim(),
     ...(trimmedBookingUrl ? { bookingUrl: trimmedBookingUrl } : {}),
+    ...(trimmedMapQuery ? { mapQuery: trimmedMapQuery } : {}),
     imageUrl: draft.imageUrl.trim(),
     longDescription,
     tips
@@ -224,6 +228,7 @@ export function createEmptyPopupDraft(): PopupDraft {
     startDate: "",
     endDate: "",
     location: "",
+    mapQuery: "",
     posterUrl: "",
     heroImageUrl: "",
     tagsInput: "",
@@ -249,6 +254,7 @@ export function popupToDraft(popup: PopupEvent): PopupDraft {
     startDate: popup.startDate ?? "",
     endDate: popup.endDate ?? "",
     location: popup.location,
+    mapQuery: popup.mapQuery ?? popup.location,
     posterUrl: popup.posterUrl,
     heroImageUrl: popup.heroImageUrl,
     tagsInput: popup.tags.join(", "),
@@ -276,6 +282,7 @@ export function draftToPopup(draft: PopupDraft): PopupEvent {
   }
 
   const trimmedReservationUrl = draft.reservationUrl.trim();
+  const trimmedMapQuery = draft.mapQuery.trim();
 
   return {
     id: draft.id.trim(),
@@ -294,6 +301,7 @@ export function draftToPopup(draft: PopupDraft): PopupEvent {
     description: draft.description.trim(),
     highlights,
     details,
-    ...(trimmedReservationUrl ? { reservationUrl: trimmedReservationUrl } : {})
+    ...(trimmedReservationUrl ? { reservationUrl: trimmedReservationUrl } : {}),
+    ...(trimmedMapQuery ? { mapQuery: trimmedMapQuery } : {})
   };
 }

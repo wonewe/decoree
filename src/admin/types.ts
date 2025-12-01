@@ -39,6 +39,7 @@ export type EventDraft = {
   endDate: string;
   time: string;
   location: string;
+  mapQuery: string;
   category: EventCategory;
   price: string;
   bookingUrl: string;
@@ -71,6 +72,7 @@ export type PopupDraft = {
   startDate: string;
   endDate: string;
   location: string;
+  mapQuery: string;
   posterUrl: string;
   heroImageUrl: string;
   tagsInput: string;

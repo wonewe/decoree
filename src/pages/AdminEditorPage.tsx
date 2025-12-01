@@ -1060,6 +1060,19 @@ export default function AdminEditorPage() {
             required
           />
         </label>
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
+          지도 검색어 (선택)
+          <input
+            type="text"
+            value={eventDraft.mapQuery}
+            onChange={(e) => setEventDraft((prev) => ({ ...prev, mapQuery: e.target.value }))}
+            className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            placeholder="예: 성수동 무신사 스튜디오, 광화문 세종문화회관"
+          />
+          <span className="text-xs font-normal text-[var(--ink-subtle)]">
+            지도를 열 때 우선 검색할 키워드입니다. 비워두면 장소 값으로 검색합니다.
+          </span>
+        </label>
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-3">
@@ -1522,6 +1535,19 @@ export default function AdminEditorPage() {
             className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
             required
           />
+        </label>
+        <label className="flex flex-col gap-2 text-sm font-semibold text-[var(--ink)]">
+          지도 검색어 (선택)
+          <input
+            type="text"
+            value={popupDraft.mapQuery}
+            onChange={(e) => setPopupDraft((prev) => ({ ...prev, mapQuery: e.target.value }))}
+            className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm"
+            placeholder="예: 성수동 카페 레이어드, 이태원 제로프루프 바"
+          />
+          <span className="text-xs font-normal text-[var(--ink-subtle)]">
+            지도를 열 때 우선 검색할 키워드입니다. 비워두면 위치 값으로 검색합니다.
+          </span>
         </label>
 
         <div className="grid gap-4 md:grid-cols-2">
