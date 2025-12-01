@@ -3,20 +3,47 @@ import { Link } from "react-router-dom";
 import { useI18n } from "../shared/i18n";
 import { usePopups } from "../hooks/usePopups";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
+import type { PopupEvent } from "../data/popups";
+
+type PopupCategory = "food" | "beauty" | "character" | "game" | "brand" | "other";
+
+const CATEGORY_LABELS: Record<PopupCategory, string> = {
+  food: "식품 · F&B",
+  beauty: "화장품 · 뷰티",
+  character: "캐릭터 · IP",
+  game: "게임 · 엔터",
+  brand: "브랜드 · 패션",
+  other: "기타"
+};
+
+const detectCategory = (popup: PopupEvent): PopupCategory => {
+  const text = [popup.title, popup.brand, popup.location, popup.description, popup.tags.join(" ")]
+    .join(" ")
+    .toLowerCase();
+
+  if (/(dessert|coffee|tea|bar|drink|food|bakery|cafe)/.test(text)) return "food";
+  if (/(cosmetic|skincare|skin care|makeup|beauty|fragrance|perfume)/.test(text)) return "beauty";
+  if (/(character|ip|anime|webtoon|포켓몬|디즈니|카카오프렌즈|라인프렌즈)/.test(text))
+    return "character";
+  if (/(game|gaming|esports|arcade|nintendo|playstation|xbox)/.test(text)) return "game";
+  if (/(brand|collection|collab|capsule|studio|flagship|fashion|apparel)/.test(text)) return "brand";
+
+  return "other";
+};
 
 export default function PopupRadarPage() {
   const { t, language } = useI18n();
   const { status, popups } = usePopups(language);
   const [filter, setFilter] = useState<"all" | "now" | "soon" | "ended">("all");
   const [search, setSearch] = useState("");
-  const [activeTag, setActiveTag] = useState<string | "all">("all");
+  const [activeCategory, setActiveCategory] = useState<PopupCategory | "all">("all");
 
-  const availableTags = useMemo(() => {
-    const tagSet = new Set<string>();
+  const availableCategories = useMemo<PopupCategory[]>(() => {
+    const set = new Set<PopupCategory>();
     popups.forEach((popup) => {
-      popup.tags.forEach((tag) => tagSet.add(tag));
+      set.add(detectCategory(popup as PopupEvent));
     });
-    return Array.from(tagSet).sort((a, b) => a.localeCompare(b));
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [popups]);
 
   const filteredPopups = useMemo(() => {
@@ -37,19 +64,21 @@ export default function PopupRadarPage() {
           return haystack.includes(normalized);
         });
 
-    const byTag =
-      activeTag === "all" ? searched : searched.filter((popup) => popup.tags.includes(activeTag));
+    const byCategory =
+      activeCategory === "all"
+        ? searched
+        : searched.filter((popup) => detectCategory(popup as PopupEvent) === activeCategory);
 
     // 전체 보기(all)에서는 ended 상태를 항상 리스트 하단으로 정렬
     if (filter === "all") {
       const statusOrder: Record<string, number> = { now: 0, soon: 1, ended: 2 };
-      return [...byTag].sort((a, b) => {
+      return [...byCategory].sort((a, b) => {
         return (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99);
       });
     }
 
-    return byTag;
-  }, [activeTag, filter, popups, search]);
+    return byCategory;
+  }, [activeCategory, filter, popups, search]);
 
   return (
     <section className="section-container space-y-10">
@@ -81,31 +110,31 @@ export default function PopupRadarPage() {
         </div>
       </div>
 
-      {availableTags.length > 0 && (
+      {availableCategories.length > 0 && (
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={() => setActiveTag("all")}
+            onClick={() => setActiveCategory("all")}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-              activeTag === "all"
+              activeCategory === "all"
                 ? "bg-[var(--ink)] text-white"
                 : "bg-[var(--paper)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
             }`}
           >
-            {t("popupRadar.filters.allTags", { defaultValue: "All tags" })}
+            전체 카테고리
           </button>
-          {availableTags.map((tag) => (
+          {availableCategories.map((category) => (
             <button
-              key={tag}
+              key={category}
               type="button"
-              onClick={() => setActiveTag(tag)}
+              onClick={() => setActiveCategory(category)}
               className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                activeTag === tag
+                activeCategory === category
                   ? "bg-[var(--ink)] text-white"
                   : "bg-[var(--paper)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
               }`}
             >
-              #{tag}
+              {CATEGORY_LABELS[category]}
             </button>
           ))}
         </div>

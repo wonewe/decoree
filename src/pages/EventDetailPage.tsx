@@ -109,7 +109,7 @@ export default function EventDetailPage() {
             <span>•</span>
             <span>{t(`event.eventCategory.${event.category}`)}</span>
           </div>
-          <h1 className="mt-4 text-3xl font-bold md:text-4xl">{event.title}</h1>
+          <h1 className="mt-4 text-3xl font-bold text-white md:text-4xl">{event.title}</h1>
           <p className="mt-2 max-w-3xl text-sm text-white/85 md:text-base">
             {event.description}
           </p>
