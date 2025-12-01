@@ -367,30 +367,6 @@ export default function AdminListPage() {
     );
   };
 
-  const filteredEvents = useMemo(() => {
-    if (!normalizedQuery) return events;
-    return events.filter((event) => {
-      const target = `${event.title} ${event.description} ${event.location} ${event.category} ${event.id}`.toLowerCase();
-      return target.includes(normalizedQuery);
-    });
-  }, [normalizedQuery, events]);
-
-  const filteredPhrases = useMemo(() => {
-    if (!normalizedQuery) return phrases;
-    return phrases.filter((phrase) => {
-      const target = `${phrase.korean} ${phrase.translation} ${phrase.category} ${phrase.id}`.toLowerCase();
-      return target.includes(normalizedQuery);
-    });
-  }, [normalizedQuery, phrases]);
-
-  const filteredPopups = useMemo(() => {
-    if (!normalizedQuery) return popups;
-    return popups.filter((popup) => {
-      const target = `${popup.title} ${popup.brand} ${popup.location} ${popup.description} ${popup.id}`.toLowerCase();
-      return target.includes(normalizedQuery);
-    });
-  }, [normalizedQuery, popups]);
-
   const renderEmptyState = (message: string) => (
     <p className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper)] p-6 text-sm text-[var(--ink-muted)]">
       {message}
