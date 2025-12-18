@@ -79,9 +79,27 @@ export default function TutoringLandingPage() {
       <article className="bg-[var(--paper)]">
         {/* Section 1: Hero */}
         <section className="relative h-[600px] md:h-[700px] w-full overflow-hidden">
-          {/* Fallback 이미지 (비디오 로드 실패 시) */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 z-[1] h-full w-full object-cover"
+            onError={(e) => {
+              // 비디오 로드 실패 시 fallback 이미지 표시
+              const video = e.currentTarget;
+              video.style.display = "none";
+              const fallback = video.nextElementSibling as HTMLElement;
+              if (fallback) {
+                fallback.style.display = "block";
+              }
+            }}
+          >
+            <source src="/hero-seoul-timelapse.mp4" type="video/mp4" />
+          </video>
+          {/* Fallback 이미지 (비디오 로드 실패 시만 표시) */}
           <div
-            className="absolute inset-0 z-0 bg-cover bg-center"
+            className="absolute inset-0 z-[1] hidden bg-cover bg-center"
             style={{
               backgroundImage: "url('/main1.jpg')",
               backgroundSize: "cover",
@@ -89,15 +107,6 @@ export default function TutoringLandingPage() {
             }}
             aria-hidden="true"
           />
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute inset-0 z-[1] h-full w-full object-cover"
-          >
-            <source src="/hero-seoul-timelapse.mp4" type="video/mp4" />
-          </video>
           <div className="absolute inset-0 z-[2] bg-gradient-to-b from-black/80 via-black/70 to-black/75" />
           <div className="absolute inset-x-0 bottom-0 z-[2] h-64 bg-gradient-to-b from-transparent via-transparent to-[var(--paper)]" />
           <div className="relative z-[3] flex h-full items-center">
