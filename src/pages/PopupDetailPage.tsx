@@ -219,6 +219,26 @@ export default function PopupDetailPage() {
             {t("popupRadar.cta.trends")}
           </Link>
         </div>
+
+        {/* Tutoring CTA Banner */}
+        <div className="mt-12 rounded-3xl border border-[var(--border)] bg-gradient-to-br from-[var(--ink)]/5 via-[var(--paper)] to-[var(--accent)]/10 p-8 shadow-sm">
+          <div className="flex flex-col items-center gap-4 text-center md:flex-row md:justify-between md:text-left">
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-[var(--ink)]">
+                {t("tutoring.banner.title")}
+              </h3>
+              <p className="text-sm text-[var(--ink-muted)]">
+                {t("tutoring.banner.subtitle")}
+              </p>
+            </div>
+            <Link
+              to="/tutoring"
+              className="whitespace-nowrap rounded-full border border-[var(--ink)] bg-[var(--paper)] px-6 py-3 text-sm font-semibold text-[var(--ink)] transition hover:bg-[var(--ink)] hover:text-white"
+            >
+              {t("tutoring.banner.cta")}
+            </Link>
+          </div>
+        </div>
       </div>
     </article>
   );

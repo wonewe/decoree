@@ -23,6 +23,7 @@ import AppTutorialHubPage from "./pages/AppTutorialHubPage";
 import AppTutorialDetailPage from "./pages/AppTutorialDetailPage";
 import StudentCommunityPage from "./pages/StudentCommunityPage";
 import CommunityBoardDetailPage from "./pages/CommunityBoardDetailPage";
+import TutoringLandingPage from "./pages/TutoringLandingPage";
 
 export default function App() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
         <Route path="/culture-test" element={<CultureTestPage />} />
         <Route path="/popups" element={<PopupRadarPage />} />
         <Route path="/popups/:id" element={<PopupDetailPage />} />
+        <Route path="/tutoring" element={<TutoringLandingPage />} />
         <Route
           path="/profile"
           element={

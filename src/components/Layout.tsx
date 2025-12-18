@@ -12,7 +12,8 @@ import { FeedbackPrompt } from "./FeedbackPrompt";
 const primaryNav = [
   { path: "/trends", labelKey: "nav.trends" },
   // { path: "/events", labelKey: "nav.events" }, // 임시 숨김
-  { path: "/popups", labelKey: "nav.popups" }
+  { path: "/popups", labelKey: "nav.popups" },
+  { path: "/tutoring", labelKey: "nav.tutoring" }
   // { path: "/phrasebook", labelKey: "nav.phrasebook" } // 임시 숨김
 ] as const;
 
