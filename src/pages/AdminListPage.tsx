@@ -55,7 +55,7 @@ const SECTION_META: Record<
   }
 };
 
-const sectionOrder: ContentType[] = ["trends", "events", "phrases", "popups"];
+const sectionOrder: ContentType[] = ["trends", /* "events", */ /* "phrases", */ "popups"]; // events, phrases 임시 숨김
 
 export default function AdminListPage() {
   const { user, isAdmin } = useAuth();
@@ -103,18 +103,18 @@ export default function AdminListPage() {
         value: trends.length,
         helper: `${getLanguageCoverage(trends)}개 언어`
       },
-      {
-        key: "events" as ContentType,
-        label: "이벤트",
-        value: events.length,
-        helper: `${getLanguageCoverage(events)}개 언어`
-      },
-      {
-        key: "phrases" as ContentType,
-        label: "프레이즈",
-        value: phrases.length,
-        helper: `${getLanguageCoverage(phrases)}개 언어`
-      },
+      // {
+      //   key: "events" as ContentType,
+      //   label: "이벤트",
+      //   value: events.length,
+      //   helper: `${getLanguageCoverage(events)}개 언어`
+      // }, // 임시 숨김
+      // {
+      //   key: "phrases" as ContentType,
+      //   label: "프레이즈",
+      //   value: phrases.length,
+      //   helper: `${getLanguageCoverage(phrases)}개 언어`
+      // }, // 임시 숨김
       {
         key: "popups" as ContentType,
         label: "팝업",
@@ -122,7 +122,7 @@ export default function AdminListPage() {
         helper: `${getLanguageCoverage(popups)}개 언어`
       }
     ],
-    [events, phrases, popups, trends]
+    [/* events, */ /* phrases, */ popups, trends]
   );
 
   const handleUpdateEvents = async () => {
