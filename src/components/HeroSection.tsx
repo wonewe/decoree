@@ -11,18 +11,18 @@ export default function HeroSection() {
       to: "/trends",
       image: "/main1.jpg"
     },
-    {
-      title: t("hero.highlights.events.title"),
-      description: t("hero.highlights.events.description"),
-      to: "/events",
-      image: "/main2.jpg"
-    },
-    {
-      title: t("hero.highlights.phrasebook.title"),
-      description: t("hero.highlights.phrasebook.description"),
-      to: "/phrasebook",
-      image: "/main3.jpg"
-    },
+    // {
+    //   title: t("hero.highlights.events.title"),
+    //   description: t("hero.highlights.events.description"),
+    //   to: "/events",
+    //   image: "/main2.jpg"
+    // }, // 임시 숨김
+    // {
+    //   title: t("hero.highlights.phrasebook.title"),
+    //   description: t("hero.highlights.phrasebook.description"),
+    //   to: "/phrasebook",
+    //   image: "/main3.jpg"
+    // }, // 임시 숨김
     {
       title: t("hero.highlights.popups.title"),
       description: t("hero.highlights.popups.description"),
@@ -53,9 +53,9 @@ export default function HeroSection() {
             >
               {t("hero.cta.primary")}
             </Link>
-            <Link to="/events" className="secondary-button">
+            {/* <Link to="/events" className="secondary-button">
               {t("hero.cta.secondary")}
-            </Link>
+            </Link> 임시 숨김 */}
           </div>
         </div>
 
