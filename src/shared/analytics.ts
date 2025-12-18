@@ -79,3 +79,21 @@ function flushPendingEvents() {
     }
   }
 }
+
+export function trackEvent(
+  eventName: string,
+  parameters?: {
+    [key: string]: string | number | boolean | undefined;
+  }
+) {
+  if (!gtagReady || typeof window.gtag !== "function") {
+    console.warn("[GA] gtag not ready, event skipped", { eventName, parameters });
+    return;
+  }
+
+  window.gtag("event", eventName, {
+    ...parameters,
+    send_to: GTAG_ID
+  });
+  console.info("[GA] event sent", { eventName, parameters });
+}
