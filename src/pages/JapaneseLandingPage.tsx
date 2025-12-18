@@ -10,16 +10,16 @@ export default function JapaneseLandingPage() {
       description: t("japaneseLanding.overview.items.trend.description"),
       to: "/trends"
     },
-    {
-      title: t("japaneseLanding.overview.items.event.title"),
-      description: t("japaneseLanding.overview.items.event.description"),
-      to: "/events"
-    },
-    {
-      title: t("japaneseLanding.overview.items.phrase.title"),
-      description: t("japaneseLanding.overview.items.phrase.description"),
-      to: "/phrasebook"
-    }
+    // {
+    //   title: t("japaneseLanding.overview.items.event.title"),
+    //   description: t("japaneseLanding.overview.items.event.description"),
+    //   to: "/events"
+    // }, // 임시 숨김
+    // {
+    //   title: t("japaneseLanding.overview.items.phrase.title"),
+    //   description: t("japaneseLanding.overview.items.phrase.description"),
+    //   to: "/phrasebook"
+    // } // 임시 숨김
   ];
 
   const resources = [
@@ -27,14 +27,14 @@ export default function JapaneseLandingPage() {
       label: t("japaneseLanding.resources.items.cultureTest"),
       to: "/culture-test"
     },
-    {
-      label: t("japaneseLanding.resources.items.phrasebook"),
-      to: "/phrasebook"
-    },
-    {
-      label: t("japaneseLanding.resources.items.events"),
-      to: "/events"
-    }
+    // {
+    //   label: t("japaneseLanding.resources.items.phrasebook"),
+    //   to: "/phrasebook"
+    // }, // 임시 숨김
+    // {
+    //   label: t("japaneseLanding.resources.items.events"),
+    //   to: "/events"
+    // } // 임시 숨김
   ];
 
   return (

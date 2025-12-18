@@ -3,24 +3,86 @@ import { Link } from "react-router-dom";
 import { useI18n } from "../shared/i18n";
 import { usePopups } from "../hooks/usePopups";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
+import type { PopupEvent } from "../data/popups";
+
+type PopupCategory = "food" | "beauty" | "character" | "game" | "brand" | "other";
+
+const CATEGORY_LABELS: Record<PopupCategory, string> = {
+  food: "식품 · F&B",
+  beauty: "화장품 · 뷰티",
+  character: "캐릭터 · IP",
+  game: "게임 · 엔터",
+  brand: "브랜드 · 패션",
+  other: "기타"
+};
+
+const detectCategory = (popup: PopupEvent): PopupCategory => {
+  if (popup.category) {
+    return popup.category as PopupCategory;
+  }
+
+  const text = [popup.title, popup.brand, popup.location, popup.description, popup.tags.join(" ")]
+    .join(" ")
+    .toLowerCase();
+
+  if (/(dessert|coffee|tea|bar|drink|food|bakery|cafe)/.test(text)) return "food";
+  if (/(cosmetic|skincare|skin care|makeup|beauty|fragrance|perfume)/.test(text)) return "beauty";
+  if (/(character|ip|anime|webtoon|포켓몬|디즈니|카카오프렌즈|라인프렌즈)/.test(text))
+    return "character";
+  if (/(game|gaming|esports|arcade|nintendo|playstation|xbox)/.test(text)) return "game";
+  if (/(brand|collection|collab|capsule|studio|flagship|fashion|apparel)/.test(text)) return "brand";
+
+  return "other";
+};
 
 export default function PopupRadarPage() {
   const { t, language } = useI18n();
   const { status, popups } = usePopups(language);
   const [filter, setFilter] = useState<"all" | "now" | "soon" | "ended">("all");
   const [search, setSearch] = useState("");
+  const [activeCategory, setActiveCategory] = useState<PopupCategory | "all">("all");
+
+  const availableCategories = useMemo<PopupCategory[]>(() => {
+    const set = new Set<PopupCategory>();
+    popups.forEach((popup) => {
+      set.add(detectCategory(popup as PopupEvent));
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [popups]);
 
   const filteredPopups = useMemo(() => {
     const list = filter === "all" ? popups : popups.filter((popup) => popup.status === filter);
     const normalized = search.trim().toLowerCase();
-    if (!normalized) return list;
-    return list.filter((popup) => {
-      const haystack = [popup.title, popup.brand, popup.location, popup.description, popup.tags.join(" ")]
-        .join(" ")
-        .toLowerCase();
-      return haystack.includes(normalized);
-    });
-  }, [filter, popups, search]);
+    const searched = !normalized
+      ? list
+      : list.filter((popup) => {
+          const haystack = [
+            popup.title,
+            popup.brand,
+            popup.location,
+            popup.description,
+            popup.tags.join(" ")
+          ]
+            .join(" ")
+            .toLowerCase();
+          return haystack.includes(normalized);
+        });
+
+    const byCategory =
+      activeCategory === "all"
+        ? searched
+        : searched.filter((popup) => detectCategory(popup as PopupEvent) === activeCategory);
+
+    // 전체 보기(all)에서는 ended 상태를 항상 리스트 하단으로 정렬
+    if (filter === "all") {
+      const statusOrder: Record<string, number> = { now: 0, soon: 1, ended: 2 };
+      return [...byCategory].sort((a, b) => {
+        return (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99);
+      });
+    }
+
+    return byCategory;
+  }, [activeCategory, filter, popups, search]);
 
   return (
     <section className="section-container space-y-10">
@@ -51,6 +113,36 @@ export default function PopupRadarPage() {
           </div>
         </div>
       </div>
+
+      {availableCategories.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveCategory("all")}
+            className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+              activeCategory === "all"
+                ? "bg-[var(--ink)] text-white"
+                : "bg-[var(--paper)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
+            }`}
+          >
+            전체 카테고리
+          </button>
+          {availableCategories.map((category) => (
+            <button
+              key={category}
+              type="button"
+              onClick={() => setActiveCategory(category)}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                activeCategory === category
+                  ? "bg-[var(--ink)] text-white"
+                  : "bg-[var(--paper)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
+              }`}
+            >
+              {CATEGORY_LABELS[category]}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="card space-y-3">
         <label

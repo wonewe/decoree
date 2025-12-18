@@ -5,11 +5,13 @@ import { getPopupById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
 import { sanitizeHtml } from "../utils/sanitizeHtml";
+import { useAuth } from "../shared/auth";
 
 export default function PopupDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { t, language } = useI18n();
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
   const [popup, setPopup] = useState<PopupEvent | null>(null);
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
 
@@ -65,7 +67,7 @@ export default function PopupDetailPage() {
     : null;
 
   const renderDetails = () => (
-    <div className="prose prose-slate max-w-none">
+    <div className="prose prose-lg max-w-none text-[var(--ink)] leading-relaxed prose-headings:text-[var(--ink)] prose-p:text-[1.08rem] md:prose-p:text-[1.16rem] prose-li:text-[1.08rem] md:prose-li:text-[1.16rem]">
       {popup.details.map((paragraph, index) => {
         const isHtml = /<\/?[a-z][^>]*>/i.test(paragraph);
         if (isHtml) {
@@ -74,12 +76,12 @@ export default function PopupDetailPage() {
             <div
               key={index}
               dangerouslySetInnerHTML={{ __html: safeHtml }}
-              className="mb-4 [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3"
+              className="mb-6 text-[1.08rem] leading-relaxed text-[var(--ink)] [&_img]:my-4 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded-lg [&_p]:mb-4 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mt-6 [&_h2]:mb-3 md:text-[1.16rem]"
             />
           );
         }
         return (
-          <p key={index} className="mb-4">
+          <p key={index} className="mb-4 text-[1.08rem] leading-relaxed text-[var(--ink)]">
             {paragraph}
           </p>
         );
@@ -113,10 +115,20 @@ export default function PopupDetailPage() {
       <div className="section-container space-y-10">
         <div className="grid gap-8 lg:grid-cols-[2fr_1fr]">
           <div className="space-y-6">
-            <p className="text-lg text-[var(--ink-muted)]">{popup.description}</p>
+            {isAdmin && (
+              <div className="flex justify-end">
+                <Link
+                  to={`/admin/edit/popups/${popup.id}`}
+                  className="text-xs font-semibold text-[var(--ink-subtle)] underline underline-offset-4 hover:text-[var(--ink)]"
+                >
+                  Studio에서 이 팝업 수정 →
+                </Link>
+              </div>
+            )}
+            <p className="text-xl leading-relaxed text-[var(--ink)]">{popup.description}</p>
             <div className="space-y-4 rounded-3xl bg-[var(--paper-muted)] p-6 shadow">
               <h2 className="text-xl font-semibold text-[var(--ink)]">Highlights</h2>
-              <ul className="space-y-3 text-sm text-[var(--ink-muted)]">
+              <ul className="space-y-3 text-base leading-relaxed text-[var(--ink)]">
                 {popup.highlights.map((item) => (
                   <li key={item} className="flex gap-3">
                     <span className="text-[var(--ink)]">•</span>
@@ -148,7 +160,7 @@ export default function PopupDetailPage() {
             </div>
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">Location</h3>
-              <p className="text-sm text-[var(--ink-muted)]">{popup.location}</p>
+              <p className="text-base text-[var(--ink)]">{popup.location}</p>
             </div>
             {mapEmbedUrl && (
               <div className="space-y-2">

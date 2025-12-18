@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { EventCategory } from "../data/events";
 import { useI18n } from "../shared/i18n";
 import { EventCardSkeleton } from "./events/EventCardSkeleton";
@@ -16,6 +16,7 @@ type EventCalendarProps = {
 
 export default function EventCalendar({ preview = false }: EventCalendarProps) {
   const { t, language } = useI18n();
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<EventCategory | "all">("all");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -131,7 +132,16 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
           {previewedEvents.map((event) => (
             <article
               key={event.id}
-              className="group relative flex h-full flex-col overflow-hidden rounded-3xl bg-[var(--paper)] text-[var(--ink)] shadow-sm ring-1 ring-[var(--border)] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate(`/events/${event.id}`)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  navigate(`/events/${event.id}`);
+                }
+              }}
+              className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl bg-[var(--paper)] text-[var(--ink)] shadow-sm ring-1 ring-[var(--border)] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
               <div className="relative aspect-[4/3] w-full overflow-hidden bg-[var(--paper-muted)]">
                 {event.imageUrl ? (
@@ -171,18 +181,12 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
 
                 <div className="flex flex-col gap-3 pt-2">
                   <div className="flex items-center justify-between text-xs font-medium text-[var(--ink-subtle)]">
-                    <span className="line-clamp-1 max-w-[60%]">{event.location}</span>
+                      <span className="line-clamp-1 max-w-[60%]">{event.location}</span>
                     <span className="text-[var(--ink)]">{event.price}</span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 border-t border-[var(--border)] pt-3">
-                    <Link
-                      to={`/events/${event.id}`}
-                      className="text-sm font-semibold text-[var(--ink)] transition hover:text-[var(--ink-muted)]"
-                    >
-                      {t("eventDetail.readMore")}
-                    </Link>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between gap-2 border-t border-[var(--border)] pt-3">
+                      <div className="flex items-center gap-2">
                       {event.bookingUrl && (
                         <a
                           href={event.bookingUrl}
@@ -190,24 +194,25 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
                           rel="noreferrer"
                           className="rounded-full bg-[var(--paper-muted)] p-2 text-[var(--ink-subtle)] transition hover:bg-[var(--ink)] hover:text-white"
                           title={t("eventDetail.bookingCta")}
+                            onClick={(e) => e.stopPropagation()}
                         >
                           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                           </svg>
                         </a>
                       )}
-                      <BookmarkButton
-                        size="sm"
-                        item={{
-                          id: event.id,
-                          type: "event",
-                          title: event.title,
-                          summary: event.description,
-                          imageUrl: event.imageUrl,
-                          location: event.location,
-                          href: `/events/${event.id}`
-                        }}
-                      />
+                          <BookmarkButton
+                            size="sm"
+                            item={{
+                              id: event.id,
+                              type: "event",
+                              title: event.title,
+                              summary: event.description,
+                              imageUrl: event.imageUrl,
+                              location: event.location,
+                              href: `/events/${event.id}`
+                            }}
+                          />
                     </div>
                   </div>
                 </div>

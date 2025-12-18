@@ -1,7 +1,7 @@
 import type { TrendReport, TrendIntensity } from "../data/trends";
 import type { KCultureEvent, EventCategory } from "../data/events";
 import type { Phrase, PhraseCategory } from "../data/phrases";
-import type { PopupEvent, PopupStatus } from "../data/popups";
+import type { PopupEvent, PopupStatus, PopupCategory } from "../data/popups";
 import type { SupportedLanguage } from "../shared/i18n";
 
 export type ContentType = "trends" | "events" | "phrases" | "popups";
@@ -39,6 +39,7 @@ export type EventDraft = {
   endDate: string;
   time: string;
   location: string;
+  mapQuery: string;
   category: EventCategory;
   price: string;
   bookingUrl: string;
@@ -71,6 +72,8 @@ export type PopupDraft = {
   startDate: string;
   endDate: string;
   location: string;
+  mapQuery: string;
+  category: PopupCategory;
   posterUrl: string;
   heroImageUrl: string;
   tagsInput: string;
