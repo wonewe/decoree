@@ -2,15 +2,11 @@ import { FormEvent, useState } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { addWaitlistEntry } from "../services/repositories/waitlistRepository";
-import { usePopups } from "../hooks/usePopups";
 import { useI18n } from "../shared/i18n";
 import { trackEvent } from "../shared/analytics";
 
 export default function TutoringLandingPage() {
   const { language, t } = useI18n();
-  const { popups } = usePopups(language);
-  const activePopups = popups.filter((popup) => popup.status !== "ended");
-  const topPopups = activePopups.slice(0, 6);
   
   const [formData, setFormData] = useState({
     name: "",
@@ -124,44 +120,7 @@ export default function TutoringLandingPage() {
           </div>
         </section>
 
-        {/* Section 2: Social Proof & Context */}
-        <section className="section-container py-16">
-          <div className="space-y-8">
-            {topPopups.length > 0 && (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {topPopups.map((popup) => (
-                  <Link
-                    key={popup.id}
-                    to={`/popups/${popup.id}`}
-                    className="group overflow-hidden rounded-2xl bg-[var(--paper)] shadow-sm ring-1 ring-[var(--border)] transition hover:-translate-y-1 hover:shadow-lg"
-                  >
-                    <div className="relative aspect-[4/3] overflow-hidden bg-[var(--paper-muted)]">
-                      <img
-                        src={popup.posterUrl}
-                        alt={popup.title}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                      <div className="absolute bottom-3 left-3 right-3 text-white">
-                        <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-white/90">
-                          {popup.window}
-                        </div>
-                        <h3 className="text-lg font-bold leading-tight line-clamp-2">{popup.title}</h3>
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <p className="line-clamp-2 text-sm text-[var(--ink-muted)]">{popup.description}</p>
-                      <p className="mt-2 text-xs text-[var(--ink-subtle)]">{popup.location}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Section 3: Meet Our Tutors */}
+        {/* Section 2: Meet Our Tutors */}
         <section className="section-container py-16">
           <div className="mb-12 text-center">
             <h2 className="mb-4 text-3xl font-bold text-[var(--ink)] md:text-4xl">
@@ -227,7 +186,7 @@ export default function TutoringLandingPage() {
           </div>
         </section>
 
-        {/* Section 4: The "Gen Z Tutor" Advantage */}
+        {/* Section 3: The "Gen Z Tutor" Advantage */}
         <section className="bg-[var(--paper-muted)] py-16">
           <div className="section-container">
             <h2 className="mb-12 text-center text-3xl font-bold text-[var(--ink)] md:text-4xl">
@@ -265,7 +224,7 @@ export default function TutoringLandingPage() {
           </div>
         </section>
 
-        {/* Section 5: Beta Program Offer */}
+        {/* Section 4: Beta Program Offer */}
         <section className="section-container py-16">
           <div className="rounded-3xl bg-gradient-to-br from-[var(--ink)]/10 via-[var(--paper)] to-[var(--accent)]/15 p-12 text-center shadow-lg">
             <h2 className="mb-6 text-3xl font-bold text-[var(--ink)] md:text-4xl">
@@ -297,7 +256,7 @@ export default function TutoringLandingPage() {
           </div>
         </section>
 
-        {/* Section 6: Conversion Form */}
+        {/* Section 5: Conversion Form */}
         <section id="waitlist-form" className="bg-[var(--paper-muted)] py-16">
           <div className="section-container">
             <div className="mx-auto max-w-2xl">
