@@ -14,10 +14,49 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState(user?.displayName ?? "");
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [enrollments, setEnrollments] = useState<(Enrollment & { course?: Course })[]>([]);
+  const [enrollmentsLoading, setEnrollmentsLoading] = useState(true);
 
   useEffect(() => {
     setDisplayName(user?.displayName ?? "");
   }, [user?.displayName]);
+
+  useEffect(() => {
+    if (user) {
+      loadEnrollments();
+    } else {
+      setEnrollments([]);
+      setEnrollmentsLoading(false);
+    }
+  }, [user]);
+
+  const loadEnrollments = async () => {
+    if (!user) return;
+    
+    try {
+      setEnrollmentsLoading(true);
+      const userEnrollments = await getUserEnrollments(user.uid);
+      
+      // 각 등록에 대한 수업 정보 로드
+      const enrollmentsWithCourses = await Promise.all(
+        userEnrollments.map(async (enrollment) => {
+          try {
+            const course = await getCourseById(enrollment.courseId);
+            return { ...enrollment, course };
+          } catch (err) {
+            console.error(`Failed to load course ${enrollment.courseId}:`, err);
+            return enrollment;
+          }
+        })
+      );
+      
+      setEnrollments(enrollmentsWithCourses);
+    } catch (err) {
+      console.error("Failed to load enrollments:", err);
+    } finally {
+      setEnrollmentsLoading(false);
+    }
+  };
 
   if (!user) {
     return (
@@ -217,6 +256,64 @@ export default function ProfilePage() {
                     {t("bookmarks.actions.remove")}
                   </button>
                 </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="space-y-6 rounded-3xl border border-[var(--border)] bg-[var(--paper)] p-8 shadow">
+        <div className="space-y-2">
+          <h2 className="text-2xl font-semibold text-[var(--ink)]">
+            {t("profile.enrollments.title")}
+          </h2>
+          <p className="text-sm text-[var(--ink-muted)]">{t("profile.enrollments.subtitle")}</p>
+        </div>
+        {enrollmentsLoading ? (
+          <p className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper-muted)] px-4 py-6 text-sm text-[var(--ink-muted)]">
+            {t("auth.loading")}
+          </p>
+        ) : enrollments.length === 0 ? (
+          <p className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper-muted)] px-4 py-6 text-sm text-[var(--ink-muted)]">
+            {t("profile.enrollments.empty")}
+          </p>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            {enrollments.map((enrollment) => (
+              <article
+                key={enrollment.id}
+                className="flex flex-col gap-3 rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] p-4"
+              >
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
+                  <span>{t(`profile.enrollments.status.${enrollment.status}`)}</span>
+                  {enrollment.createdAt && (
+                    <span>{formatDate(enrollment.createdAt.toDate().toISOString())}</span>
+                  )}
+                </div>
+                <h3 className="text-lg font-semibold text-[var(--ink)]">
+                  {enrollment.course?.title || "Unknown Course"}
+                </h3>
+                {enrollment.course?.description && (
+                  <p className="text-sm text-[var(--ink-muted)]">{enrollment.course.description}</p>
+                )}
+                {enrollment.course && (
+                  <div className="flex flex-wrap gap-2 text-xs text-[var(--ink-subtle)]">
+                    {enrollment.course.level && (
+                      <span>{t(`tutoring.enroll.course.level.${enrollment.course.level}`)}</span>
+                    )}
+                    {enrollment.course.duration && (
+                      <span>{enrollment.course.duration}분</span>
+                    )}
+                    {enrollment.course.price && (
+                      <span>
+                        {new Intl.NumberFormat("ko-KR", {
+                          style: "currency",
+                          currency: "KRW"
+                        }).format(enrollment.course.price)}
+                      </span>
+                    )}
+                  </div>
+                )}
               </article>
             ))}
           </div>
