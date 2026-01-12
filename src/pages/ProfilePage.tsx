@@ -4,6 +4,11 @@ import { useAuth } from "../shared/auth";
 import { useI18n } from "../shared/i18n";
 import { useBookmarks } from "../shared/bookmarks";
 import { formatDate } from "../shared/date";
+import {
+  getUserEnrollments,
+  type Enrollment
+} from "../services/repositories/enrollmentRepository";
+import { getCourseById, type Course } from "../services/repositories/courseRepository";
 
 type FormStatus = "idle" | "saving" | "success" | "error";
 
@@ -42,7 +47,7 @@ export default function ProfilePage() {
         userEnrollments.map(async (enrollment) => {
           try {
             const course = await getCourseById(enrollment.courseId);
-            return { ...enrollment, course };
+            return { ...enrollment, course: course || undefined };
           } catch (err) {
             console.error(`Failed to load course ${enrollment.courseId}:`, err);
             return enrollment;

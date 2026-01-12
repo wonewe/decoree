@@ -542,14 +542,7 @@ const translations: TranslationDictionary = {
       "tutoring.enroll.payment.success": "Paiement réussi !",
       "tutoring.enroll.payment.error": "Une erreur s'est produite lors du paiement.",
       "tutoring.enroll.enrollment.success": "Inscription réussie !",
-      "tutoring.enroll.enrollment.error": "Une erreur s'est produite lors de l'inscription.",
-      "profile.enrollments.title": "Mes inscriptions",
-      "profile.enrollments.subtitle": "Consultez vos inscriptions aux cours de coréen.",
-      "profile.enrollments.empty": "Aucune inscription pour le moment.",
-      "profile.enrollments.status.pending": "Paiement en attente",
-      "profile.enrollments.status.paid": "Payé",
-      "profile.enrollments.status.completed": "Terminé",
-      "profile.enrollments.status.cancelled": "Annulé"
+      "tutoring.enroll.enrollment.error": "Une erreur s'est produite lors de l'inscription."
     }
   },
   ko: {
@@ -1067,14 +1060,7 @@ const translations: TranslationDictionary = {
       "tutoring.enroll.payment.success": "결제가 완료되었습니다!",
       "tutoring.enroll.payment.error": "결제 중 오류가 발생했습니다.",
       "tutoring.enroll.enrollment.success": "수업 신청이 완료되었습니다!",
-      "tutoring.enroll.enrollment.error": "수업 신청 중 오류가 발생했습니다.",
-      "profile.enrollments.title": "내가 신청한 수업",
-      "profile.enrollments.subtitle": "수강신청한 한국어 튜터링 수업을 확인하세요.",
-      "profile.enrollments.empty": "아직 신청한 수업이 없습니다.",
-      "profile.enrollments.status.pending": "결제 대기",
-      "profile.enrollments.status.paid": "결제 완료",
-      "profile.enrollments.status.completed": "수강 완료",
-      "profile.enrollments.status.cancelled": "취소됨"
+      "tutoring.enroll.enrollment.error": "수업 신청 중 오류가 발생했습니다."
     }
   },
   ja: {
@@ -1593,14 +1579,7 @@ const translations: TranslationDictionary = {
       "tutoring.enroll.payment.success": "支払いが完了しました！",
       "tutoring.enroll.payment.error": "支払い中にエラーが発生しました。",
       "tutoring.enroll.enrollment.success": "授業申し込みが完了しました！",
-      "tutoring.enroll.enrollment.error": "授業申し込み中にエラーが発生しました。",
-      "profile.enrollments.title": "申し込んだ授業",
-      "profile.enrollments.subtitle": "受講申し込みした韓国語チューター授業を確認してください。",
-      "profile.enrollments.empty": "まだ申し込んだ授業がありません。",
-      "profile.enrollments.status.pending": "支払い待ち",
-      "profile.enrollments.status.paid": "支払い完了",
-      "profile.enrollments.status.completed": "受講完了",
-      "profile.enrollments.status.cancelled": "キャンセル済み"
+      "tutoring.enroll.enrollment.error": "授業申し込み中にエラーが発生しました。"
     }
   },
   en: {
@@ -2110,14 +2089,7 @@ const translations: TranslationDictionary = {
       "tutoring.enroll.payment.success": "Payment completed!",
       "tutoring.enroll.payment.error": "An error occurred during payment.",
       "tutoring.enroll.enrollment.success": "Enrollment completed!",
-      "tutoring.enroll.enrollment.error": "An error occurred during enrollment.",
-      "profile.enrollments.title": "My Enrollments",
-      "profile.enrollments.subtitle": "View your Korean tutoring course enrollments.",
-      "profile.enrollments.empty": "No enrollments yet.",
-      "profile.enrollments.status.pending": "Pending Payment",
-      "profile.enrollments.status.paid": "Paid",
-      "profile.enrollments.status.completed": "Completed",
-      "profile.enrollments.status.cancelled": "Cancelled"
+      "tutoring.enroll.enrollment.error": "An error occurred during enrollment."
     }
   }
 };
