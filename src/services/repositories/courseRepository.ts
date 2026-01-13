@@ -5,7 +5,9 @@ import {
   query,
   orderBy,
   collection,
-  Timestamp
+  Timestamp,
+  FieldPath,
+  where
 } from "firebase/firestore";
 import { db } from "./firestoreClient";
 import { assertFirestoreAvailable } from "./runtimeConfig";
@@ -57,5 +59,57 @@ export async function getCourseById(id: string): Promise<Course | null> {
     id: courseDoc.id,
     ...courseDoc.data()
   } as Course;
+}
+
+/**
+ * 여러 수업 ID로 수업 정보를 한 번에 조회합니다.
+ * Firestore의 'in' 쿼리 제한(최대 10개)을 고려하여 배치로 처리합니다.
+ */
+export async function getMultipleCoursesByIds(ids: string[]): Promise<Course[]> {
+  assertFirestoreAvailable("Getting multiple courses by IDs");
+  
+  if (ids.length === 0) {
+    return [];
+  }
+  
+  // 중복 제거
+  const uniqueIds = [...new Set(ids)];
+  
+  // Firestore의 'in' 쿼리는 최대 10개까지만 허용되므로 배치로 나눠서 처리
+  const BATCH_SIZE = 10;
+  const batches: string[][] = [];
+  
+  for (let i = 0; i < uniqueIds.length; i += BATCH_SIZE) {
+    batches.push(uniqueIds.slice(i, i + BATCH_SIZE));
+  }
+  
+  const coursesCollection = collection(db, "courses");
+  const allCourses: Course[] = [];
+  
+  // 각 배치를 병렬로 처리
+  await Promise.all(
+    batches.map(async (batchIds) => {
+      const q = query(
+        coursesCollection,
+        where(FieldPath.documentId(), "in", batchIds)
+      );
+      const snapshot = await getDocs(q);
+      
+      const courses = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        } as Course))
+        .filter((course) => course.active !== false);
+      
+      allCourses.push(...courses);
+    })
+  );
+  
+  // 원래 ID 순서 유지
+  const courseMap = new Map(allCourses.map((course) => [course.id, course]));
+  return uniqueIds
+    .map((id) => courseMap.get(id))
+    .filter((course): course is Course => course !== undefined);
 }
 

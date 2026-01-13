@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "../shared/auth";
 import { useI18n } from "../shared/i18n";
-import { fetchCourses, getCourseById, type Course } from "../services/repositories/courseRepository";
+import { fetchCourses, type Course } from "../services/repositories/courseRepository";
 import {
   createEnrollment,
   updateEnrollmentStatus,
-  getEnrollmentByUserAndCourse,
-  type Enrollment
+  getEnrollmentByUserAndCourse
 } from "../services/repositories/enrollmentRepository";
-import RequireAuth from "../components/RequireAuth";
 
 export default function TutoringEnrollPage() {
   const { user } = useAuth();
@@ -181,7 +179,7 @@ export default function TutoringEnrollPage() {
                   className="primary-button w-full disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {enrollingCourseId === course.id
-                    ? t("tutoring.enroll.payment.cancelling")
+                    ? t("tutoring.enroll.payment.processing")
                     : t("tutoring.enroll.course.enrollButton")}
                 </button>
               </article>
@@ -225,7 +223,7 @@ export default function TutoringEnrollPage() {
                   disabled={enrollingCourseId !== null}
                   className="primary-button flex-1 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {enrollingCourseId ? t("tutoring.enroll.payment.cancelling") : t("tutoring.enroll.payment.confirm")}
+                  {enrollingCourseId ? t("tutoring.enroll.payment.processing") : t("tutoring.enroll.payment.confirm")}
                 </button>
               </div>
             </div>
