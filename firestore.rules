@@ -65,6 +65,31 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    match /memberships/{membershipId} {
+      // 본인의 멤버십만 읽기 가능
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      // 본인의 멤버십만 생성 가능
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      // 본인의 멤버십만 수정 가능
+      allow update: if request.auth != null && request.auth.uid == resource.data.userId;
+      // 삭제는 허용하지 않음
+      allow delete: if false;
+    }
+
+    match /newsletters/{newsletterId} {
+      allow read: if true;
+      allow write: if isAdminEmail();
+    }
+
+    match /newsletterSubscriptions/{subscriptionId} {
+      // 익명 구독 허용 (누구나 구독 가능)
+      allow create: if true;
+      // 읽기는 인증된 사용자만 (관리자용)
+      allow read: if request.auth != null;
+      // 삭제는 허용하지 않음
+      allow delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

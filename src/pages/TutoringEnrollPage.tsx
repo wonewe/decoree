@@ -6,9 +6,9 @@ import { useI18n } from "../shared/i18n";
 import { fetchCourses, type Course } from "../services/repositories/courseRepository";
 import {
   createEnrollment,
-  updateEnrollmentStatus,
   getEnrollmentByUserAndCourse
 } from "../services/repositories/enrollmentRepository";
+import { getActiveMembership } from "../services/repositories/membershipRepository";
 
 export default function TutoringEnrollPage() {
   const { user } = useAuth();
@@ -46,6 +46,18 @@ export default function TutoringEnrollPage() {
     }
 
     try {
+      // 활성 멤버십 확인
+      const membership = await getActiveMembership(user.uid);
+      if (!membership) {
+        alert(t("tutoring.enroll.membership.required")); // TODO: 멤버십 구매 페이지로 이동
+        return;
+      }
+
+      if (membership.sessionsRemaining <= 0) {
+        alert(t("tutoring.enroll.membership.noSessions")); // TODO: 멤버십 업그레이드 페이지로 이동
+        return;
+      }
+
       // 이미 등록된 수업인지 확인
       const existingEnrollment = await getEnrollmentByUserAndCourse(user.uid, course.id);
       if (existingEnrollment && existingEnrollment.status !== "cancelled") {
@@ -67,12 +79,8 @@ export default function TutoringEnrollPage() {
     try {
       setEnrollingCourseId(selectedCourse.id);
       
-      // 등록 생성
-      const enrollmentId = await createEnrollment(user.uid, selectedCourse.id);
-      
-      // TODO: 실제 결제 처리 (Stripe 등)
-      // 여기서는 간단히 상태를 'paid'로 업데이트
-      await updateEnrollmentStatus(enrollmentId, "paid");
+      // 멤버십 기반으로 등록 생성 (세션 차감 포함)
+      await createEnrollment(user.uid, selectedCourse.id);
       
       setShowPaymentModal(false);
       setSelectedCourse(null);
@@ -85,7 +93,12 @@ export default function TutoringEnrollPage() {
       navigate("/profile");
     } catch (err) {
       console.error("Failed to enroll:", err);
-      setError(t("tutoring.enroll.enrollment.error"));
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      if (errorMessage.includes("membership")) {
+        setError(t("tutoring.enroll.membership.required"));
+      } else {
+        setError(t("tutoring.enroll.enrollment.error"));
+      }
       setEnrollingCourseId(null);
     }
   };

@@ -13,7 +13,9 @@ const primaryNav = [
   { path: "/trends", labelKey: "nav.trends" },
   // { path: "/events", labelKey: "nav.events" }, // 임시 숨김
   { path: "/popups", labelKey: "nav.popups" },
-  { path: "/tutoring", labelKey: "nav.tutoring" }
+  { path: "/tutoring", labelKey: "nav.tutoring" },
+  { path: "/tutoring/membership", labelKey: "nav.membership" },
+  { path: "/newsletter", labelKey: "nav.newsletter" }
   // { path: "/phrasebook", labelKey: "nav.phrasebook" } // 임시 숨김
 ] as const;
 

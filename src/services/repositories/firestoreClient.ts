@@ -10,3 +10,6 @@ export const phraseCollection = collection(db, "phrases");
 export const popupCollection = collection(db, "popups");
 export const courseCollection = collection(db, "courses");
 export const enrollmentCollection = collection(db, "enrollments");
+export const membershipCollection = collection(db, "memberships");
+export const newsletterCollection = collection(db, "newsletters");
+export const newsletterSubscriptionCollection = collection(db, "newsletterSubscriptions");

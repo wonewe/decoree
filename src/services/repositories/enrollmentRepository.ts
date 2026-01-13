@@ -12,39 +12,65 @@ import {
 import { db } from "./firestoreClient";
 import { assertFirestoreAvailable } from "./runtimeConfig";
 import type { Course } from "./courseRepository";
+import { getActiveMembership, useMembershipSession } from "./membershipRepository";
 
-export type EnrollmentStatus = "pending" | "paid" | "completed" | "cancelled";
+export type EnrollmentStatus = "pending" | "scheduled" | "completed" | "cancelled";
 
 export type Enrollment = {
   id?: string;
   userId: string;
+  membershipId: string; // 멤버십 ID
   courseId: string;
   course?: Course; // 조인된 수업 정보
   status: EnrollmentStatus;
-  paymentIntentId?: string; // 결제 ID (Stripe 등)
+  tutorId?: string; // 배정된 튜터 ID (추후 추가)
+  scheduledAt?: Timestamp; // 수업 예약 시간
   enrolledAt?: Timestamp;
-  paidAt?: Timestamp;
+  completedAt?: Timestamp;
+  cancelledAt?: Timestamp;
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 };
 
+/**
+ * 멤버십 기반으로 수업 등록 생성
+ * 활성 멤버십이 있고 남은 세션이 있어야 등록 가능
+ */
 export async function createEnrollment(
   userId: string,
   courseId: string
 ): Promise<string> {
   assertFirestoreAvailable("Creating enrollment");
   
+  // 활성 멤버십 확인
+  const membership = await getActiveMembership(userId);
+  if (!membership) {
+    throw new Error("Active membership required");
+  }
+  
+  if (membership.sessionsRemaining <= 0) {
+    throw new Error("No remaining sessions in membership");
+  }
+  
+  // Enrollment 생성
   const enrollmentsCollection = collection(db, "enrollments");
   const enrollmentData: Omit<Enrollment, "id"> = {
     userId,
+    membershipId: membership.id!,
     courseId,
     status: "pending",
+    enrolledAt: Timestamp.now(),
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now()
   };
   
   const docRef = await addDoc(enrollmentsCollection, enrollmentData);
-  return docRef.id;
+  const enrollmentId = docRef.id;
+  
+  // 멤버십 세션 사용 (수업 등록 시점에 차감)
+  await useMembershipSession(membership.id!);
+  
+  return enrollmentId;
 }
 
 export async function getUserEnrollments(userId: string): Promise<Enrollment[]> {
@@ -54,7 +80,7 @@ export async function getUserEnrollments(userId: string): Promise<Enrollment[]> 
   const q = query(
     enrollmentsCollection,
     where("userId", "==", userId),
-    where("status", "in", ["pending", "paid", "completed"])
+    where("status", "in", ["pending", "scheduled", "completed"])
   );
   
   const snapshot = await getDocs(q);
@@ -83,7 +109,7 @@ export async function getEnrollmentById(enrollmentId: string): Promise<Enrollmen
 export async function updateEnrollmentStatus(
   enrollmentId: string,
   status: EnrollmentStatus,
-  paymentIntentId?: string
+  scheduledAt?: Timestamp
 ): Promise<void> {
   assertFirestoreAvailable("Updating enrollment status");
   
@@ -93,9 +119,16 @@ export async function updateEnrollmentStatus(
     updatedAt: Timestamp.now()
   };
   
-  if (status === "paid" && paymentIntentId) {
-    updateData.paymentIntentId = paymentIntentId;
-    updateData.paidAt = Timestamp.now();
+  if (status === "scheduled" && scheduledAt) {
+    updateData.scheduledAt = scheduledAt;
+  }
+  
+  if (status === "completed") {
+    updateData.completedAt = Timestamp.now();
+  }
+  
+  if (status === "cancelled") {
+    updateData.cancelledAt = Timestamp.now();
   }
   
   await updateDoc(enrollmentRef, updateData);

@@ -6,7 +6,6 @@ import {
   orderBy,
   collection,
   Timestamp,
-  FieldPath,
   where
 } from "firebase/firestore";
 import { db } from "./firestoreClient";
@@ -86,16 +85,16 @@ export async function getMultipleCoursesByIds(ids: string[]): Promise<Course[]> 
   const coursesCollection = collection(db, "courses");
   const allCourses: Course[] = [];
   
-  // 각 배치를 병렬로 처리
+  // 각 배치를 병렬로 처리 (document ID로 직접 getDoc 사용)
   await Promise.all(
     batches.map(async (batchIds) => {
-      const q = query(
-        coursesCollection,
-        where(FieldPath.documentId(), "in", batchIds)
+      const coursePromises = batchIds.map((courseId) => 
+        getDoc(doc(coursesCollection, courseId))
       );
-      const snapshot = await getDocs(q);
+      const courseDocs = await Promise.all(coursePromises);
       
-      const courses = snapshot.docs
+      const courses = courseDocs
+        .filter((doc) => doc.exists())
         .map((doc) => ({
           id: doc.id,
           ...doc.data()
