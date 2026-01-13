@@ -5,6 +5,15 @@ import { useI18n } from "../shared/i18n";
 import { formatDate } from "../shared/date";
 import { fetchNewsletters, type Newsletter } from "../services/repositories/newsletterRepository";
 
+// 스티비 폼 타입 선언
+declare global {
+  interface Window {
+    stb_subscribe_form?: {
+      init: () => void;
+    };
+  }
+}
+
 export default function NewsletterPage() {
   const { t } = useI18n();
   const [newsletters, setNewsletters] = useState<Newsletter[]>([]);
@@ -15,21 +24,36 @@ export default function NewsletterPage() {
     loadNewsletters();
   }, []);
 
-  // 스티비 스크립트 로드
+  // 스티비 스크립트 로드 (폼이 렌더링된 후 실행)
   useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://resource.stibee.com/subscribe/stb_subscribe_form.js";
-    script.async = true;
-    document.body.appendChild(script);
+    // 이미 스크립트가 로드되어 있는지 확인
+    const existingScript = document.querySelector(
+      'script[src="https://resource.stibee.com/subscribe/stb_subscribe_form.js"]'
+    );
+    
+    if (existingScript) {
+      // 이미 로드되어 있으면 스크립트가 자동으로 폼을 초기화함
+      return;
+    }
+
+    // 폼이 DOM에 렌더링될 때까지 약간의 지연
+    const timer = setTimeout(() => {
+      // 스크립트 로드
+      const script = document.createElement("script");
+      script.src = "https://resource.stibee.com/subscribe/stb_subscribe_form.js";
+      script.type = "text/javascript";
+      script.async = true;
+      
+      script.onerror = () => {
+        console.error("Failed to load Stibee subscription form script");
+      };
+      
+      // body 끝에 추가 (스티비 권장 방식)
+      document.body.appendChild(script);
+    }, 100);
 
     return () => {
-      // Cleanup: 컴포넌트 언마운트 시 스크립트 제거
-      const existingScript = document.querySelector(
-        'script[src="https://resource.stibee.com/subscribe/stb_subscribe_form.js"]'
-      );
-      if (existingScript) {
-        document.body.removeChild(existingScript);
-      }
+      clearTimeout(timer);
     };
   }, []);
 
@@ -74,7 +98,7 @@ export default function NewsletterPage() {
           <div className="rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--paper)] to-[var(--paper-muted)] p-8 shadow-sm">
             <div id="stb_subscribe">
               <form
-                action="https://stibee.com/api/v1.0/lists/FPXdejb7QZ6uPQNHTkdj4zcCB-IViw==/public/subscribers"
+                action="https://stibee.com/api/v1.0/lists/oVUdazUb9JZUikJAyW5MUOZrRTvHPQ==/public/subscribers"
                 method="POST"
                 target="_blank"
                 acceptCharset="utf-8"
