@@ -118,12 +118,12 @@ export default function TutoringLandingPage() {
                 <p className="text-lg leading-relaxed md:text-xl text-white/90">
                   {t("tutoring.hero.subtitle")}
                 </p>
-                <button
-                  onClick={scrollToForm}
+                <Link
+                  to="/tutoring/enroll"
                   className="primary-button bg-white text-[var(--ink)] hover:bg-white/90"
                 >
-                  {t("tutoring.hero.cta")}
-                </button>
+                  {t("tutoring.hero.cta.enroll")}
+                </Link>
               </div>
             </div>
           </div>

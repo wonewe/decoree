@@ -24,6 +24,7 @@ import AppTutorialDetailPage from "./pages/AppTutorialDetailPage";
 import StudentCommunityPage from "./pages/StudentCommunityPage";
 import CommunityBoardDetailPage from "./pages/CommunityBoardDetailPage";
 import TutoringLandingPage from "./pages/TutoringLandingPage";
+import TutoringEnrollPage from "./pages/TutoringEnrollPage";
 
 export default function App() {
   return (
@@ -46,6 +47,14 @@ export default function App() {
         <Route path="/popups" element={<PopupRadarPage />} />
         <Route path="/popups/:id" element={<PopupDetailPage />} />
         <Route path="/tutoring" element={<TutoringLandingPage />} />
+        <Route
+          path="/tutoring/enroll"
+          element={
+            <RequireAuth>
+              <TutoringEnrollPage />
+            </RequireAuth>
+          }
+        />
         <Route
           path="/profile"
           element={
