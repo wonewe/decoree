@@ -1,25 +1,38 @@
 rules_version = '2';
 
 service cloud.firestore {
+  // 관리자 이메일 목록 (VITE_KORAID_ADMIN_EMAILS와 동기화 유지 필요)
+  // 아래에 관리자 이메일을 추가하세요 (소문자로)
+  function isAdminEmail() {
+    return request.auth != null && 
+      request.auth.token.email != null &&
+      (
+        // 관리자 이메일 목록을 여기에 추가
+        request.auth.token.email == 'archaimbaud08@gmail.com' ||
+        request.auth.token.email == 'merci@ajou.ac.kr'
+        // 추가 관리자 이메일을 위와 같은 형식으로 추가하세요
+      );
+  }
+
   match /databases/{database}/documents {
     match /trends/{trendId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdminEmail();
     }
 
     match /events/{eventId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdminEmail();
     }
 
     match /phrases/{phraseId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdminEmail();
     }
 
     match /popups/{popupId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdminEmail();
     }
 
     match /feedback/{feedbackId} {
@@ -38,7 +51,7 @@ service cloud.firestore {
 
     match /courses/{courseId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdminEmail();
     }
 
     match /enrollments/{enrollmentId} {
