@@ -29,3 +29,11 @@ export {
   updatePopup,
   deletePopup
 } from "./repositories/popupRepository";
+
+export {
+  fetchNewsletters,
+  getNewsletterById,
+  addNewsletter,
+  updateNewsletter,
+  deleteNewsletter
+} from "./repositories/newsletterRepository";

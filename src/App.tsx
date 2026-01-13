@@ -25,6 +25,9 @@ import StudentCommunityPage from "./pages/StudentCommunityPage";
 import CommunityBoardDetailPage from "./pages/CommunityBoardDetailPage";
 import TutoringLandingPage from "./pages/TutoringLandingPage";
 import TutoringEnrollPage from "./pages/TutoringEnrollPage";
+import TutoringMembershipPage from "./pages/TutoringMembershipPage";
+import NewsletterPage from "./pages/NewsletterPage";
+import NewsletterDetailPage from "./pages/NewsletterDetailPage";
 
 export default function App() {
   return (
@@ -46,7 +49,10 @@ export default function App() {
         <Route path="/culture-test" element={<CultureTestPage />} />
         <Route path="/popups" element={<PopupRadarPage />} />
         <Route path="/popups/:id" element={<PopupDetailPage />} />
+        <Route path="/newsletter" element={<NewsletterPage />} />
+        <Route path="/newsletter/:id" element={<NewsletterDetailPage />} />
         <Route path="/tutoring" element={<TutoringLandingPage />} />
+        <Route path="/tutoring/membership" element={<TutoringMembershipPage />} />
         <Route
           path="/tutoring/enroll"
           element={

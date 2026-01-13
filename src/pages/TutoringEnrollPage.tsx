@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "../shared/auth";
 import { useI18n } from "../shared/i18n";
-import { fetchCourses, getCourseById, type Course } from "../services/repositories/courseRepository";
+import { fetchCourses, type Course } from "../services/repositories/courseRepository";
 import {
   createEnrollment,
-  updateEnrollmentStatus,
-  getEnrollmentByUserAndCourse,
-  type Enrollment
+  getEnrollmentByUserAndCourse
 } from "../services/repositories/enrollmentRepository";
-import RequireAuth from "../components/RequireAuth";
+import {
+  getActiveMembership,
+  MembershipRequiredError,
+  NoRemainingSessionsError
+} from "../services/repositories/membershipRepository";
 
 export default function TutoringEnrollPage() {
   const { user } = useAuth();
@@ -48,6 +50,18 @@ export default function TutoringEnrollPage() {
     }
 
     try {
+      // 활성 멤버십 확인
+      const membership = await getActiveMembership(user.uid);
+      if (!membership) {
+        alert(t("tutoring.enroll.membership.required")); // TODO: 멤버십 구매 페이지로 이동
+        return;
+      }
+
+      if (membership.sessionsRemaining <= 0) {
+        alert(t("tutoring.enroll.membership.noSessions")); // TODO: 멤버십 업그레이드 페이지로 이동
+        return;
+      }
+
       // 이미 등록된 수업인지 확인
       const existingEnrollment = await getEnrollmentByUserAndCourse(user.uid, course.id);
       if (existingEnrollment && existingEnrollment.status !== "cancelled") {
@@ -69,12 +83,8 @@ export default function TutoringEnrollPage() {
     try {
       setEnrollingCourseId(selectedCourse.id);
       
-      // 등록 생성
-      const enrollmentId = await createEnrollment(user.uid, selectedCourse.id);
-      
-      // TODO: 실제 결제 처리 (Stripe 등)
-      // 여기서는 간단히 상태를 'paid'로 업데이트
-      await updateEnrollmentStatus(enrollmentId, "paid");
+      // 멤버십 기반으로 등록 생성 (세션 차감 포함)
+      await createEnrollment(user.uid, selectedCourse.id);
       
       setShowPaymentModal(false);
       setSelectedCourse(null);
@@ -87,7 +97,13 @@ export default function TutoringEnrollPage() {
       navigate("/profile");
     } catch (err) {
       console.error("Failed to enroll:", err);
-      setError(t("tutoring.enroll.enrollment.error"));
+      if (err instanceof MembershipRequiredError) {
+        setError(t("tutoring.enroll.membership.required"));
+      } else if (err instanceof NoRemainingSessionsError) {
+        setError(t("tutoring.enroll.membership.noSessions"));
+      } else {
+        setError(t("tutoring.enroll.enrollment.error"));
+      }
       setEnrollingCourseId(null);
     }
   };
@@ -181,7 +197,7 @@ export default function TutoringEnrollPage() {
                   className="primary-button w-full disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {enrollingCourseId === course.id
-                    ? t("tutoring.enroll.payment.cancelling")
+                    ? t("tutoring.enroll.payment.processing")
                     : t("tutoring.enroll.course.enrollButton")}
                 </button>
               </article>
@@ -225,7 +241,7 @@ export default function TutoringEnrollPage() {
                   disabled={enrollingCourseId !== null}
                   className="primary-button flex-1 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {enrollingCourseId ? t("tutoring.enroll.payment.cancelling") : t("tutoring.enroll.payment.confirm")}
+                  {enrollingCourseId ? t("tutoring.enroll.payment.processing") : t("tutoring.enroll.payment.confirm")}
                 </button>
               </div>
             </div>

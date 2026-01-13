@@ -8,7 +8,7 @@ import {
   getUserEnrollments,
   type Enrollment
 } from "../services/repositories/enrollmentRepository";
-import { getCourseById, type Course } from "../services/repositories/courseRepository";
+import { getMultipleCoursesByIds, type Course } from "../services/repositories/courseRepository";
 
 type FormStatus = "idle" | "saving" | "success" | "error";
 
@@ -42,18 +42,18 @@ export default function ProfilePage() {
       setEnrollmentsLoading(true);
       const userEnrollments = await getUserEnrollments(user.uid);
       
-      // 각 등록에 대한 수업 정보 로드
-      const enrollmentsWithCourses = await Promise.all(
-        userEnrollments.map(async (enrollment) => {
-          try {
-            const course = await getCourseById(enrollment.courseId);
-            return { ...enrollment, course: course || undefined };
-          } catch (err) {
-            console.error(`Failed to load course ${enrollment.courseId}:`, err);
-            return enrollment;
-          }
-        })
-      );
+      // 모든 courseId 수집
+      const courseIds = userEnrollments.map((enrollment) => enrollment.courseId);
+      
+      // 한 번의 배치 쿼리로 모든 수업 정보 로드
+      const courses = await getMultipleCoursesByIds(courseIds);
+      const courseMap = new Map(courses.map((course) => [course.id, course]));
+      
+      // 등록 정보와 수업 정보 조인
+      const enrollmentsWithCourses = userEnrollments.map((enrollment) => ({
+        ...enrollment,
+        course: courseMap.get(enrollment.courseId)
+      }));
       
       setEnrollments(enrollmentsWithCourses);
     } catch (err) {
