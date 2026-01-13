@@ -12,7 +12,7 @@ import {
 import { db } from "./firestoreClient";
 import { assertFirestoreAvailable } from "./runtimeConfig";
 import type { Course } from "./courseRepository";
-import { getActiveMembership, useMembershipSession } from "./membershipRepository";
+import { getActiveMembership } from "./membershipRepository";
 
 export type EnrollmentStatus = "pending" | "scheduled" | "completed" | "cancelled";
 
@@ -45,11 +45,11 @@ export async function createEnrollment(
   // 활성 멤버십 확인
   const membership = await getActiveMembership(userId);
   if (!membership) {
-    throw new Error("Active membership required");
+    throw new MembershipRequiredError();
   }
   
   if (membership.sessionsRemaining <= 0) {
-    throw new Error("No remaining sessions in membership");
+    throw new NoRemainingSessionsError();
   }
   
   // Enrollment 생성
@@ -67,8 +67,11 @@ export async function createEnrollment(
   const docRef = await addDoc(enrollmentsCollection, enrollmentData);
   const enrollmentId = docRef.id;
   
-  // 멤버십 세션 사용 (수업 등록 시점에 차감)
-  await useMembershipSession(membership.id!);
+  // TODO: 멤버십 세션 차감은 서버 측(Cloud Functions)에서 처리해야 함
+  // Firestore 규칙이 관리자만 멤버십을 수정할 수 있도록 제한되어 있으므로,
+  // 클라이언트에서 직접 useMembershipSession을 호출할 수 없음
+  // Cloud Functions에서 enrollment 생성 후 webhook 또는 트리거로 세션 차감 처리 필요
+  // await useMembershipSession(membership.id!);
   
   return enrollmentId;
 }

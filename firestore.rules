@@ -68,10 +68,13 @@ service cloud.firestore {
     match /memberships/{membershipId} {
       // 본인의 멤버십만 읽기 가능
       allow read: if request.auth != null && request.auth.uid == resource.data.userId;
-      // 본인의 멤버십만 생성 가능
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
-      // 본인의 멤버십만 수정 가능
-      allow update: if request.auth != null && request.auth.uid == resource.data.userId;
+      // 멤버십 생성은 관리자만 가능 (결제 webhook에서 관리자 권한으로 호출)
+      // 사용자가 직접 생성하는 것을 방지하여 결제 시스템 우회 차단
+      allow create: if isAdminEmail();
+      // 멤버십 수정은 관리자만 가능
+      // 세션 사용(useMembershipSession), 취소(cancelMembership) 등은 모두 서버 측에서 처리
+      // 사용자가 sessionsUsed, sessionsTotal, tier, status 등을 임의로 변경하는 것을 방지
+      allow update: if isAdminEmail();
       // 삭제는 허용하지 않음
       allow delete: if false;
     }
@@ -84,8 +87,8 @@ service cloud.firestore {
     match /newsletterSubscriptions/{subscriptionId} {
       // 익명 구독 허용 (누구나 구독 가능)
       allow create: if true;
-      // 읽기는 인증된 사용자만 (관리자용)
-      allow read: if request.auth != null;
+      // 읽기는 관리자만 (개인정보 보호)
+      allow read: if isAdminEmail();
       // 삭제는 허용하지 않음
       allow delete: if false;
     }
