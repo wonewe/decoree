@@ -24,15 +24,27 @@ export default function NewsletterPage() {
     loadNewsletters();
   }, []);
 
-  // 스티비 스크립트 로드 (폼이 렌더링된 후 실행)
+  // 스티비 CSS 및 스크립트 로드
   useEffect(() => {
+    // CSS가 이미 로드되어 있는지 확인
+    const existingCSS = document.querySelector(
+      'link[href="https://resource.stibee.com/subscribe/stb_subscribe_form_style.css"]'
+    );
+    
+    if (!existingCSS) {
+      // CSS 로드
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "https://resource.stibee.com/subscribe/stb_subscribe_form_style.css";
+      document.head.appendChild(link);
+    }
+
     // 이미 스크립트가 로드되어 있는지 확인
     const existingScript = document.querySelector(
       'script[src="https://resource.stibee.com/subscribe/stb_subscribe_form.js"]'
     );
     
     if (existingScript) {
-      // 이미 로드되어 있으면 스크립트가 자동으로 폼을 초기화함
       return;
     }
 
@@ -50,7 +62,7 @@ export default function NewsletterPage() {
       
       // body 끝에 추가 (스티비 권장 방식)
       document.body.appendChild(script);
-    }, 100);
+    }, 200);
 
     return () => {
       clearTimeout(timer);
@@ -121,6 +133,17 @@ export default function NewsletterPage() {
                     id="stb_email"
                     name="email"
                     required
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "0.75rem",
+                      border: "1px solid #d1d5db",
+                      borderRadius: "0.5rem",
+                      fontSize: "1rem",
+                      lineHeight: "1.5",
+                      backgroundColor: "#ffffff",
+                      color: "#111827"
+                    }}
                   />
                   <div className="stb_form_msg_error" id="stb_email_error"></div>
                 </fieldset>
