@@ -7,13 +7,35 @@ import {
   setDoc,
   Timestamp,
   updateDoc,
-  collection
+  collection,
+  runTransaction,
+  increment
 } from "firebase/firestore";
 import { db } from "./firestoreClient";
 import { assertFirestoreAvailable } from "./runtimeConfig";
 
 export type MembershipTier = "basic" | "pro";
 export type MembershipStatus = "active" | "expired" | "cancelled";
+
+/**
+ * 활성 멤버십이 없을 때 발생하는 에러
+ */
+export class MembershipRequiredError extends Error {
+  constructor(message: string = "Active membership required") {
+    super(message);
+    this.name = "MembershipRequiredError";
+  }
+}
+
+/**
+ * 멤버십에 남은 세션이 없을 때 발생하는 에러
+ */
+export class NoRemainingSessionsError extends Error {
+  constructor(message: string = "No remaining sessions in membership") {
+    super(message);
+    this.name = "NoRemainingSessionsError";
+  }
+}
 
 export type Membership = {
   id?: string;
@@ -153,30 +175,36 @@ export async function getMembershipById(membershipId: string): Promise<Membershi
 }
 
 /**
- * 수업 사용 (sessionsUsed 증가)
+ * 멤버십 세션 사용 (차감)
+ * 원자적 트랜잭션을 사용하여 경쟁 조건 방지
  */
 export async function useMembershipSession(membershipId: string): Promise<void> {
   assertFirestoreAvailable("Using membership session");
-  
+
   const membershipRef = doc(db, "memberships", membershipId);
-  const membershipDoc = await getDoc(membershipRef);
-  
-  if (!membershipDoc.exists()) {
-    throw new Error("Membership not found");
-  }
-  
-  const membership = membershipDoc.data() as Membership;
-  const newSessionsUsed = membership.sessionsUsed + 1;
-  const newSessionsRemaining = membership.sessionsTotal - newSessionsUsed;
-  
-  // 모든 세션을 사용했으면 상태를 expired로 변경
-  const newStatus: MembershipStatus = newSessionsRemaining <= 0 ? "expired" : membership.status;
-  
-  await updateDoc(membershipRef, {
-    sessionsUsed: newSessionsUsed,
-    sessionsRemaining: newSessionsRemaining,
-    status: newStatus,
-    updatedAt: Timestamp.now()
+
+  await runTransaction(db, async (transaction) => {
+    const membershipDoc = await transaction.get(membershipRef);
+
+    if (!membershipDoc.exists()) {
+      throw new Error("Membership not found");
+    }
+
+    const membership = membershipDoc.data() as Membership;
+    if (membership.sessionsRemaining <= 0) {
+      throw new NoRemainingSessionsError();
+    }
+
+    const newSessionsRemaining = membership.sessionsRemaining - 1;
+    const newStatus: MembershipStatus =
+      newSessionsRemaining <= 0 ? "expired" : membership.status;
+
+    transaction.update(membershipRef, {
+      sessionsUsed: increment(1),
+      sessionsRemaining: increment(-1),
+      status: newStatus,
+      updatedAt: Timestamp.now(),
+    });
   });
 }
 

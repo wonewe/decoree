@@ -12,7 +12,11 @@ import {
 import { db } from "./firestoreClient";
 import { assertFirestoreAvailable } from "./runtimeConfig";
 import type { Course } from "./courseRepository";
-import { getActiveMembership } from "./membershipRepository";
+import { 
+  getActiveMembership,
+  MembershipRequiredError,
+  NoRemainingSessionsError
+} from "./membershipRepository";
 
 export type EnrollmentStatus = "pending" | "scheduled" | "completed" | "cancelled";
 

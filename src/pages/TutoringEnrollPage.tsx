@@ -8,7 +8,11 @@ import {
   createEnrollment,
   getEnrollmentByUserAndCourse
 } from "../services/repositories/enrollmentRepository";
-import { getActiveMembership } from "../services/repositories/membershipRepository";
+import {
+  getActiveMembership,
+  MembershipRequiredError,
+  NoRemainingSessionsError
+} from "../services/repositories/membershipRepository";
 
 export default function TutoringEnrollPage() {
   const { user } = useAuth();
@@ -93,9 +97,10 @@ export default function TutoringEnrollPage() {
       navigate("/profile");
     } catch (err) {
       console.error("Failed to enroll:", err);
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      if (errorMessage.includes("membership")) {
+      if (err instanceof MembershipRequiredError) {
         setError(t("tutoring.enroll.membership.required"));
+      } else if (err instanceof NoRemainingSessionsError) {
+        setError(t("tutoring.enroll.membership.noSessions"));
       } else {
         setError(t("tutoring.enroll.enrollment.error"));
       }
