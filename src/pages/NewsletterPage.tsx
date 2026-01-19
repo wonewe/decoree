@@ -209,7 +209,7 @@ export default function NewsletterPage() {
                     <h3 className="mb-3 text-xl font-semibold text-[var(--ink)] transition group-hover:text-[var(--accent)]">
                       {newsletter.title}
                     </h3>
-                    {newsletter.content ? (
+                    {newsletter.content && (
                       <div
                         className="mb-4 flex-grow text-sm text-[var(--ink-muted)] line-clamp-3"
                         dangerouslySetInnerHTML={{
@@ -219,11 +219,7 @@ export default function NewsletterPage() {
                               .substring(0, 150) + "..."
                         }}
                       />
-                    ) : newsletter.externalUrl ? (
-                      <p className="mb-4 flex-grow text-sm text-[var(--ink-muted)]">
-                        외부 링크로 연결된 뉴스레터입니다.
-                      </p>
-                    ) : null}
+                    )}
                     <div className="text-sm font-semibold text-[var(--accent)]">
                       {t("newsletter.archives.readMore")} →
                     </div>
