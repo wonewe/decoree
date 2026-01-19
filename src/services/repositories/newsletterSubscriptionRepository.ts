@@ -41,20 +41,7 @@ export async function subscribeToNewsletter(email: string): Promise<void> {
   const normalizedEmail = email.toLowerCase().trim();
   console.log("[Newsletter] Normalized email:", normalizedEmail);
   
-  // 중복 체크
-  const subscriptionsCollection = collection(db, "newsletterSubscriptions");
-  const q = query(subscriptionsCollection, where("email", "==", normalizedEmail));
-  
-  console.log("[Newsletter] Checking for duplicates...");
-  const snapshot = await getDocs(q);
-  
-  if (!snapshot.empty) {
-    console.log("[Newsletter] Email already subscribed");
-    // 이미 구독되어 있으면 에러 없이 성공으로 처리
-    return;
-  }
-  
-  // Stibee API로 구독 전송
+  // Stibee API로 먼저 구독 전송 (중복 체크 전에 실행)
   console.log("[Newsletter] Sending to Stibee API...");
   try {
     const formData = new FormData();
@@ -70,7 +57,8 @@ export async function subscribeToNewsletter(email: string): Promise<void> {
     
     console.log("[Newsletter] Stibee API response status:", response.status);
     if (!response.ok) {
-      console.error("[Newsletter] Stibee API error:", response.status, await response.text());
+      const responseText = await response.text();
+      console.error("[Newsletter] Stibee API error:", response.status, responseText);
       // Stibee API 실패해도 계속 진행 (Firestore에는 저장)
     } else {
       console.log("[Newsletter] Successfully sent to Stibee");
@@ -78,6 +66,19 @@ export async function subscribeToNewsletter(email: string): Promise<void> {
   } catch (error) {
     console.error("[Newsletter] Failed to send to Stibee:", error);
     // Stibee API 실패해도 계속 진행
+  }
+  
+  // 중복 체크 (Stibee 전송 후)
+  const subscriptionsCollection = collection(db, "newsletterSubscriptions");
+  const q = query(subscriptionsCollection, where("email", "==", normalizedEmail));
+  
+  console.log("[Newsletter] Checking for duplicates in Firestore...");
+  const snapshot = await getDocs(q);
+  
+  if (!snapshot.empty) {
+    console.log("[Newsletter] Email already in Firestore, skipping save");
+    // 이미 Firestore에 있으면 저장하지 않음 (하지만 Stibee에는 이미 전송됨)
+    return;
   }
   
   // Firestore에 저장
