@@ -82,12 +82,25 @@ export async function addNewsletter(newsletter: Omit<Newsletter, "id" | "created
   const newslettersCollection = collection(db, "newsletters");
   const docRef = doc(newslettersCollection);
   
-  const newsletterData: Omit<Newsletter, "id"> = {
-    ...newsletter,
+  // Firestore는 undefined 값을 저장할 수 없으므로 undefined 필드 제거
+  const newsletterData: Record<string, any> = {
+    title: newsletter.title,
+    publishedAt: newsletter.publishedAt,
     hidden: newsletter.hidden ?? false,
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now()
   };
+  
+  // optional 필드는 값이 있을 때만 추가
+  if (newsletter.content !== undefined) {
+    newsletterData.content = newsletter.content;
+  }
+  if (newsletter.externalUrl !== undefined) {
+    newsletterData.externalUrl = newsletter.externalUrl;
+  }
+  if (newsletter.language !== undefined) {
+    newsletterData.language = newsletter.language;
+  }
   
   await setDoc(docRef, newsletterData);
   return docRef.id;
@@ -100,12 +113,28 @@ export async function updateNewsletter(newsletter: Newsletter): Promise<void> {
   assertFirestoreAvailable("Updating newsletter");
   
   const newsletterRef = doc(db, "newsletters", newsletter.id);
-  const { id, createdAt, ...updateData } = newsletter;
+  const { id, createdAt, ...rest } = newsletter;
   
-  await updateDoc(newsletterRef, {
-    ...updateData,
+  // Firestore는 undefined 값을 저장할 수 없으므로 undefined 필드 제거
+  const updateData: Record<string, any> = {
+    title: newsletter.title,
+    publishedAt: newsletter.publishedAt,
+    hidden: newsletter.hidden ?? false,
     updatedAt: Timestamp.now()
-  });
+  };
+  
+  // optional 필드는 값이 있을 때만 추가
+  if (newsletter.content !== undefined) {
+    updateData.content = newsletter.content;
+  }
+  if (newsletter.externalUrl !== undefined) {
+    updateData.externalUrl = newsletter.externalUrl;
+  }
+  if (newsletter.language !== undefined) {
+    updateData.language = newsletter.language;
+  }
+  
+  await updateDoc(newsletterRef, updateData);
 }
 
 /**

@@ -29,34 +29,25 @@ export default function WeeklyTrendDecoder() {
         </div>
       )}
       {showGrid && (
-        <>
-          <div className="grid gap-5 md:grid-cols-2">
-            {reports.slice(0, 4).map((report) => (
-              <article key={report.id} className="card gap-4">
-                <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
-                  {formatDate(report.publishedAt)} · {report.neighborhood}
-                </div>
-                <div className="space-y-2">
-                  <h3 className="text-xl font-semibold text-[var(--ink)]">{report.title}</h3>
-                  <p className="text-base text-[var(--ink-muted)] line-clamp-3">{report.summary}</p>
-                </div>
-                <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--ink-subtle)]">
-                  <span>{report.tags.slice(0, 3).join(" / ")}</span>
-                  <Link to={`/trends/${report.id}`} className="text-sm font-semibold text-[var(--ink)]">
-                    {t("trends.readMore")} →
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
-          {reports.length > 4 && (
-            <div className="content-shell flex justify-end">
-              <Link to="/trends" className="secondary-button">
-                {t("trends.viewAll")} →
-              </Link>
-            </div>
-          )}
-        </>
+        <div className="grid gap-5 md:grid-cols-2">
+          {reports.map((report) => (
+            <article key={report.id} className="card gap-4">
+              <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
+                {formatDate(report.publishedAt)} · {report.neighborhood}
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-xl font-semibold text-[var(--ink)]">{report.title}</h3>
+                <p className="text-base text-[var(--ink-muted)] line-clamp-3">{report.summary}</p>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--ink-subtle)]">
+                <span>{report.tags.slice(0, 3).join(" / ")}</span>
+                <Link to={`/trends/${report.id}`} className="text-sm font-semibold text-[var(--ink)]">
+                  {t("trends.readMore")} →
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
       )}
       {showEmpty && (
         <TrendEmptyState
