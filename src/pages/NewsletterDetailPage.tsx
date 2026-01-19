@@ -32,6 +32,13 @@ export default function NewsletterDetailPage() {
         setError(t("newsletter.detail.notFound"));
         return;
       }
+      
+      // 외부 링크가 있으면 해당 링크로 리다이렉트
+      if (data.externalUrl) {
+        window.location.href = data.externalUrl;
+        return;
+      }
+      
       setNewsletter(data);
     } catch (err) {
       console.error("Failed to load newsletter:", err);
@@ -95,9 +102,15 @@ export default function NewsletterDetailPage() {
         </header>
 
         {/* Content */}
-        <div className="prose prose-lg max-w-none rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-8 shadow-sm">
-          <MarkdownContent content={newsletter.content} />
-        </div>
+        {newsletter.content ? (
+          <div className="prose prose-lg max-w-none rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-8 shadow-sm">
+            <MarkdownContent content={newsletter.content} />
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] p-10 text-center">
+            <p className="text-[var(--ink-muted)]">콘텐츠가 없습니다.</p>
+          </div>
+        )}
       </article>
     </>
   );
