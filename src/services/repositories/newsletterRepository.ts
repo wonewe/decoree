@@ -17,7 +17,8 @@ import type { SupportedLanguage } from "../../shared/i18n";
 export type Newsletter = {
   id: string;
   title: string;
-  content: string; // HTML content
+  content?: string; // HTML content (optional if externalUrl is provided)
+  externalUrl?: string; // External link (e.g., Stibee newsletter link)
   publishedAt: string; // ISO date string (YYYY-MM-DD)
   language?: SupportedLanguage;
   hidden?: boolean;

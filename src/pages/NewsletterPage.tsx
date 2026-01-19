@@ -22,6 +22,16 @@ export default function NewsletterPage() {
     loadNewsletters();
   }, []);
 
+  useEffect(() => {
+    if (!submitSuccess) return;
+
+    const timer = setTimeout(() => {
+      setSubmitSuccess(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [submitSuccess]);
+
   const loadNewsletters = async () => {
     try {
       setLoading(true);
@@ -51,9 +61,6 @@ export default function NewsletterPage() {
       setSubmitSuccess(true);
       setEmail("");
       setAgreed(false);
-      setTimeout(() => {
-        setSubmitSuccess(false);
-      }, 5000);
     } catch (err) {
       console.error("Failed to subscribe:", err);
       setSubmitError(t("newsletter.subscribe.error"));
@@ -193,32 +200,60 @@ export default function NewsletterPage() {
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {newsletters.map((newsletter) => (
-                <Link
-                  key={newsletter.id}
-                  to={`/newsletter/${newsletter.id}`}
-                  className="group flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm transition hover:shadow-md"
-                >
-                  <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
-                    {formatDate(newsletter.publishedAt)}
-                  </div>
-                  <h3 className="mb-3 text-xl font-semibold text-[var(--ink)] transition group-hover:text-[var(--accent)]">
-                    {newsletter.title}
-                  </h3>
-                  <div
-                    className="mb-4 flex-grow text-sm text-[var(--ink-muted)] line-clamp-3"
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        newsletter.content
-                          .replace(/<[^>]*>/g, "") // Remove HTML tags for preview
-                          .substring(0, 150) + "..."
-                    }}
-                  />
-                  <div className="text-sm font-semibold text-[var(--accent)]">
-                    {t("newsletter.archives.readMore")} →
-                  </div>
-                </Link>
-              ))}
+              {newsletters.map((newsletter) => {
+                const CardContent = (
+                  <>
+                    <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
+                      {formatDate(newsletter.publishedAt)}
+                    </div>
+                    <h3 className="mb-3 text-xl font-semibold text-[var(--ink)] transition group-hover:text-[var(--accent)]">
+                      {newsletter.title}
+                    </h3>
+                    {newsletter.content ? (
+                      <div
+                        className="mb-4 flex-grow text-sm text-[var(--ink-muted)] line-clamp-3"
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            newsletter.content
+                              .replace(/<[^>]*>/g, "") // Remove HTML tags for preview
+                              .substring(0, 150) + "..."
+                        }}
+                      />
+                    ) : newsletter.externalUrl ? (
+                      <p className="mb-4 flex-grow text-sm text-[var(--ink-muted)]">
+                        외부 링크로 연결된 뉴스레터입니다.
+                      </p>
+                    ) : null}
+                    <div className="text-sm font-semibold text-[var(--accent)]">
+                      {t("newsletter.archives.readMore")} →
+                    </div>
+                  </>
+                );
+
+                if (newsletter.externalUrl) {
+                  return (
+                    <a
+                      key={newsletter.id}
+                      href={newsletter.externalUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm transition hover:shadow-md"
+                    >
+                      {CardContent}
+                    </a>
+                  );
+                }
+
+                return (
+                  <Link
+                    key={newsletter.id}
+                    to={`/newsletter/${newsletter.id}`}
+                    className="group flex flex-col rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-6 shadow-sm transition hover:shadow-md"
+                  >
+                    {CardContent}
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>

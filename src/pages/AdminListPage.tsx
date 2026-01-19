@@ -16,10 +16,17 @@ import {
   deleteTrendReport
 } from "../services/contentService";
 import { fetchFeedbacks, type FeedbackEntry } from "../services/repositories/feedbackRepository";
+import {
+  fetchNewsletters,
+  addNewsletter,
+  updateNewsletter,
+  deleteNewsletter,
+  type Newsletter
+} from "../services/repositories/newsletterRepository";
 import { useAuth } from "../shared/auth";
 import { getLanguageLabel } from "../shared/i18n";
 
-type ContentType = "trends" | "events" | "phrases" | "popups";
+type ContentType = "trends" | "events" | "phrases" | "popups" | "newsletters";
 
 const SECTION_META: Record<
   ContentType,
@@ -52,10 +59,84 @@ const SECTION_META: Record<
     createLabel: "새 팝업 작성",
     createPath: "/admin/edit/popups",
     tagline: "도심 리서치"
+  },
+  newsletters: {
+    label: "뉴스레터 아카이브",
+    description: "이전 뉴스레터를 관리하고 외부 링크(Stibee)를 연결하세요.",
+    createLabel: "새 뉴스레터 추가",
+    createPath: "/admin/edit/newsletters",
+    tagline: "뉴스레터 관리"
   }
 };
 
-const sectionOrder: ContentType[] = ["trends", /* "events", */ /* "phrases", */ "popups"]; // events, phrases 임시 숨김
+const sectionOrder: ContentType[] = ["trends", /* "events", */ /* "phrases", */ "popups", "newsletters"]; // events, phrases 임시 숨김
+
+type NewsletterItemProps = {
+  newsletter: Newsletter;
+  isSelected: boolean;
+  onSelect: () => void;
+  onUpdate: (newsletter: Newsletter) => void;
+  onDelete: (id: string) => void;
+};
+
+const NewsletterItem = ({ newsletter, isSelected, onSelect, onUpdate, onDelete }: NewsletterItemProps) => {
+  return (
+    <div className="card w-full">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3 flex-1">
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onClick={(e) => e.stopPropagation()}
+            onChange={onSelect}
+            className="mt-1 h-4 w-4 rounded border-[var(--border)]"
+          />
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              {newsletter.hidden && (
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
+                  숨김
+                </span>
+              )}
+              {newsletter.externalUrl && (
+                <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[11px] font-semibold text-blue-700">
+                  외부 링크
+                </span>
+              )}
+            </div>
+            <h4 className="mt-1 font-semibold text-[var(--ink)]">{newsletter.title}</h4>
+            {newsletter.externalUrl && (
+              <p className="mt-1 text-sm text-[var(--ink-muted)] break-all">{newsletter.externalUrl}</p>
+            )}
+            <p className="mt-1 text-xs text-[var(--ink-subtle)]">{newsletter.publishedAt}</p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onUpdate(newsletter);
+            }}
+            className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold text-[var(--ink-subtle)] hover:text-[var(--ink)]"
+          >
+            수정
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(newsletter.id);
+            }}
+            className="rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-50"
+          >
+            삭제
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function AdminListPage() {
   const { user, isAdmin } = useAuth();
@@ -66,6 +147,7 @@ export default function AdminListPage() {
   const [events, setEvents] = useState<KCultureEvent[]>([]);
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [popups, setPopups] = useState<PopupEvent[]>([]);
+  const [newsletters, setNewsletters] = useState<Newsletter[]>([]);
   const [feedbacks, setFeedbacks] = useState<FeedbackEntry[]>([]);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
@@ -83,11 +165,13 @@ export default function AdminListPage() {
     events: string[];
     phrases: string[];
     popups: string[];
+    newsletters: string[];
   }>({
     trends: [],
     events: [],
     phrases: [],
-    popups: []
+    popups: [],
+    newsletters: []
   });
 
   const getLanguageCoverage = (items: { language?: string }[]) => {
@@ -200,16 +284,18 @@ export default function AdminListPage() {
     const loadContent = async () => {
       setLoading(true);
       try {
-        const [trendsData, eventsData, phrasesData, popupsData] = await Promise.all([
+        const [trendsData, eventsData, phrasesData, popupsData, newslettersData] = await Promise.all([
           fetchTrendReports(undefined, { includeHidden: true }),
           fetchEvents(undefined, { includeHidden: true }),
           fetchPhrases(undefined, { includeHidden: true }),
-          fetchPopups(undefined, { includeHidden: true })
+          fetchPopups(undefined, { includeHidden: true }),
+          fetchNewsletters({ includeHidden: true })
         ]);
         setTrends(trendsData);
         setEvents(eventsData);
         setPhrases(phrasesData);
         setPopups(popupsData);
+        setNewsletters(newslettersData);
       } catch (error) {
         console.error("Failed to load content:", error);
       } finally {
@@ -273,6 +359,14 @@ export default function AdminListPage() {
     });
   }, [normalizedQuery, popups]);
 
+  const filteredNewsletters = useMemo(() => {
+    if (!normalizedQuery) return newsletters;
+    return newsletters.filter((newsletter) => {
+      const target = `${newsletter.title} ${newsletter.externalUrl || ""} ${newsletter.id}`.toLowerCase();
+      return target.includes(normalizedQuery);
+    });
+  }, [normalizedQuery, newsletters]);
+
   const currentSelectedIds = selectedIds[activeSection];
 
   const toggleSelect = (id: string) => {
@@ -309,12 +403,94 @@ export default function AdminListPage() {
       } else if (activeSection === "popups") {
         await Promise.all(ids.map((id) => deletePopup(id)));
         setPopups((prev) => prev.filter((item) => !ids.includes(item.id)));
+      } else if (activeSection === "newsletters") {
+        await Promise.all(ids.map((id) => deleteNewsletter(id)));
+        setNewsletters((prev) => prev.filter((item) => !ids.includes(item.id)));
       }
       clearSelection(activeSection);
       alert("선택한 콘텐츠가 삭제되었습니다.");
     } catch (error) {
       console.error("Bulk delete failed:", error);
       alert("선택 삭제 중 오류가 발생했습니다. 콘솔 로그를 확인해주세요.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddNewsletter = async () => {
+    const title = prompt("뉴스레터 제목을 입력하세요:");
+    if (!title) return;
+
+    const url = prompt("뉴스레터 URL을 입력하세요 (예: https://stib.ee/lmsK):");
+    if (!url) return;
+
+    try {
+      setLoading(true);
+      const today = new Date().toISOString().split("T")[0];
+      const id = await addNewsletter({
+        title,
+        externalUrl: url,
+        publishedAt: today,
+        hidden: false
+      });
+      const newNewsletter: Newsletter = {
+        id,
+        title,
+        externalUrl: url,
+        publishedAt: today,
+        hidden: false
+      };
+      setNewsletters((prev) => [newNewsletter, ...prev]);
+      alert("뉴스레터가 추가되었습니다.");
+    } catch (error) {
+      console.error("Failed to add newsletter:", error);
+      alert("뉴스레터 추가 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateNewsletter = async (newsletter: Newsletter) => {
+    const newTitle = prompt("뉴스레터 제목:", newsletter.title);
+    if (newTitle === null) return;
+
+    const newUrl = prompt("뉴스레터 URL:", newsletter.externalUrl || "");
+    if (newUrl === null) return;
+
+    try {
+      setLoading(true);
+      await updateNewsletter({
+        ...newsletter,
+        title: newTitle,
+        externalUrl: newUrl || undefined
+      });
+      setNewsletters((prev) =>
+        prev.map((item) =>
+          item.id === newsletter.id
+            ? { ...item, title: newTitle, externalUrl: newUrl || undefined }
+            : item
+        )
+      );
+      alert("뉴스레터가 업데이트되었습니다.");
+    } catch (error) {
+      console.error("Failed to update newsletter:", error);
+      alert("뉴스레터 업데이트 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteNewsletter = async (id: string) => {
+    if (!confirm("이 뉴스레터를 정말 삭제하시겠습니까?")) return;
+
+    try {
+      setLoading(true);
+      await deleteNewsletter(id);
+      setNewsletters((prev) => prev.filter((item) => item.id !== id));
+      alert("뉴스레터가 삭제되었습니다.");
+    } catch (error) {
+      console.error("Failed to delete newsletter:", error);
+      alert("뉴스레터 삭제 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
     }
@@ -729,6 +905,57 @@ export default function AdminListPage() {
                       <span className="ml-4 text-xs text-[var(--ink-subtle)]">{popup.id}</span>
                     </div>
                   </button>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+
+      case "newsletters":
+        return (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-[var(--ink)]">뉴스레터 아카이브</h3>
+              <button
+                onClick={handleAddNewsletter}
+                className="primary-button"
+              >
+                새 뉴스레터 추가
+              </button>
+            </div>
+            <p className="text-xs font-semibold text-[var(--ink-subtle)]">
+              외부 링크(Stibee)를 연결하여 이전 뉴스레터를 관리하세요.
+            </p>
+            <div className="flex items-center justify-between text-xs text-[var(--ink-subtle)]">
+              <span>
+                {currentSelectedIds.length > 0
+                  ? `선택됨: ${currentSelectedIds.length}개`
+                  : "행 왼쪽 체크박스로 여러 개를 선택할 수 있습니다."}
+              </span>
+              <button
+                type="button"
+                onClick={handleBulkDelete}
+                disabled={currentSelectedIds.length === 0}
+                className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold text-[var(--ink-subtle)] hover:text-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                선택 삭제
+              </button>
+            </div>
+            {filteredNewsletters.length === 0 ? (
+              renderEmptyState(
+                newsletters.length === 0 ? "아직 등록된 뉴스레터가 없습니다." : "검색 결과가 없습니다."
+              )
+            ) : (
+              <div className="space-y-2">
+                {filteredNewsletters.map((newsletter) => (
+                  <NewsletterItem
+                    key={newsletter.id}
+                    newsletter={newsletter}
+                    isSelected={currentSelectedIds.includes(newsletter.id)}
+                    onSelect={() => toggleSelect(newsletter.id)}
+                    onUpdate={handleUpdateNewsletter}
+                    onDelete={handleDeleteNewsletter}
+                  />
                 ))}
               </div>
             )}
