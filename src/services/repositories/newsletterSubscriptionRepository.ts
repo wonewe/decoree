@@ -15,9 +15,11 @@ export type NewsletterSubscription = {
 export async function subscribeToNewsletter(email: string): Promise<void> {
   assertFirestoreAvailable("Subscribing to newsletter");
   
+  const normalizedEmail = email.toLowerCase().trim();
+  
   // 중복 체크
   const subscriptionsCollection = collection(db, "newsletterSubscriptions");
-  const q = query(subscriptionsCollection, where("email", "==", email.toLowerCase().trim()));
+  const q = query(subscriptionsCollection, where("email", "==", normalizedEmail));
   const snapshot = await getDocs(q);
   
   if (!snapshot.empty) {
@@ -25,8 +27,31 @@ export async function subscribeToNewsletter(email: string): Promise<void> {
     return;
   }
   
+  // Stibee API로 구독 전송
+  try {
+    const formData = new FormData();
+    formData.append("email", normalizedEmail);
+    
+    const response = await fetch(
+      "https://stibee.com/api/v1.0/lists/oVUdazUb9JZUikJAyW5MUOZrRTvHPQ==/public/subscribers",
+      {
+        method: "POST",
+        body: formData
+      }
+    );
+    
+    if (!response.ok) {
+      console.error("Stibee API error:", response.status);
+      // Stibee API 실패해도 계속 진행 (Firestore에는 저장)
+    }
+  } catch (error) {
+    console.error("Failed to send to Stibee:", error);
+    // Stibee API 실패해도 계속 진행
+  }
+  
+  // Firestore에 저장
   await addDoc(subscriptionsCollection, {
-    email: email.toLowerCase().trim(),
+    email: normalizedEmail,
     subscribedAt: Timestamp.now(),
     createdAt: Timestamp.now()
   });
