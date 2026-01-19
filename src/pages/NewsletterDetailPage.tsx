@@ -80,6 +80,15 @@ export default function NewsletterDetailPage() {
       <Helmet>
         <title>{newsletter.title} | {t("newsletter.title")} | koraid</title>
         <meta name="description" content={newsletter.title} />
+        <meta property="og:title" content={`${newsletter.title} | koraid`} />
+        <meta property="og:description" content={newsletter.title} />
+        <meta property="og:image" content="https://koraid.com/main1.jpg" />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://koraid.com/newsletter/${id}`} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${newsletter.title} | koraid`} />
+        <meta name="twitter:description" content={newsletter.title} />
+        <meta name="twitter:image" content="https://koraid.com/main1.jpg" />
       </Helmet>
 
       <article className="section-container space-y-8 py-16">
