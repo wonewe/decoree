@@ -78,22 +78,22 @@ export default function Layout() {
       </Helmet>
 
       <header
-        className={`sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--paper)]/90 backdrop-blur transition-transform duration-300 ${
+        className={`sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--paper)]/95 backdrop-blur-sm transition-transform duration-200 ${
           showHeader ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-          <NavLink to="/" className="font-heading text-2xl font-semibold tracking-tight text-[var(--ink)]">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3 md:py-4">
+          <NavLink to="/" className="font-heading text-xl font-semibold tracking-tight text-[var(--ink)] md:text-2xl">
             koraid
           </NavLink>
-          <nav className="hidden items-center gap-6 text-sm font-semibold text-[var(--ink-subtle)] md:flex">
+          <nav className="hidden items-center gap-5 text-sm font-medium text-[var(--ink-muted)] md:flex">
             {primaryNav.map((link) => (
               <NavLink
                 key={link.path}
                 to={link.path}
                 className={({ isActive }) =>
-                  `transition ${
-                    isActive ? "text-[var(--ink)]" : "hover:text-[var(--ink)]"
+                  `transition-colors duration-150 ${
+                    isActive ? "text-[var(--ink)] font-semibold" : "hover:text-[var(--ink)]"
                   }`
                 }
               >
@@ -104,10 +104,10 @@ export default function Layout() {
               <NavLink
                 to="/admin"
                 className={({ isActive }) =>
-                  `inline-flex rounded-full border px-3 py-2 text-xs font-semibold transition ${
+                  `inline-flex rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-150 ${
                     isActive
-                      ? "border-[var(--border-strong)] bg-[var(--paper)] text-[var(--ink)]"
-                      : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
+                      ? "border-[var(--border-strong)] bg-[var(--paper-accent)] text-[var(--ink)]"
+                      : "border-[var(--border)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
                   }`
                 }
               >
@@ -115,12 +115,12 @@ export default function Layout() {
               </NavLink>
             )}
           </nav>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <button
               type="button"
               onClick={cycleTheme}
-              className="rounded-full border border-[var(--border)] p-2 text-xs font-semibold text-[var(--ink-muted)] transition hover:text-[var(--ink)]"
+              className="rounded-full border border-[var(--border)] p-2.5 text-xs text-[var(--ink-muted)] transition-colors duration-150 hover:border-[var(--ink)] hover:text-[var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2"
               aria-label="Toggle theme"
             >
               {resolvedTheme === "dark" ? "☀️" : preference === "system" ? "🌓" : "🌙"}
@@ -129,14 +129,14 @@ export default function Layout() {
             <button
               type="button"
               onClick={() => setMobileNavOpen((prev) => !prev)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--paper)] text-[var(--ink-subtle)] shadow-sm transition hover:-translate-y-0.5 hover:text-[var(--ink)] md:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border)] text-[var(--ink-muted)] transition-colors duration-150 hover:border-[var(--ink)] hover:text-[var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2 md:hidden"
               aria-label="카테고리 열기"
               aria-expanded={mobileNavOpen}
             >
-              <span className="flex flex-col items-center justify-center gap-[2px]">
-                <span className="h-[3px] w-[3px] rounded-full bg-current" />
-                <span className="h-[3px] w-[3px] rounded-full bg-current" />
-                <span className="h-[3px] w-[3px] rounded-full bg-current" />
+              <span className="flex flex-col items-center justify-center gap-1">
+                <span className="h-0.5 w-4 rounded-full bg-current" />
+                <span className="h-0.5 w-4 rounded-full bg-current" />
+                <span className="h-0.5 w-4 rounded-full bg-current" />
               </span>
             </button>
             {user ? (
@@ -144,20 +144,20 @@ export default function Layout() {
                 {isAdmin && (
                   <NavLink
                     to="/admin"
-                    className="inline-flex rounded-full border border-[var(--border)] bg-[var(--paper)] px-3 py-2 text-xs font-semibold text-[var(--ink-muted)] transition hover:border-[var(--ink)] hover:text-[var(--ink)] md:hidden"
+                    className="inline-flex rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--ink-muted)] transition-colors duration-150 hover:border-[var(--ink)] hover:text-[var(--ink)] md:hidden"
                   >
                     {t("nav.admin")}
                   </NavLink>
                 )}
                 <NavLink
                   to="/profile"
-                  className="hidden rounded-full border border-[var(--border)] px-4 py-2 text-xs font-semibold text-[var(--ink-muted)] transition hover:text-[var(--ink)] md:inline-flex"
+                  className="hidden rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--ink-muted)] transition-colors duration-150 hover:border-[var(--ink)] hover:text-[var(--ink)] md:inline-flex"
                 >
                   {user.displayName?.trim() || user.email}
                 </NavLink>
                 <button
                   onClick={handleLogout}
-                  className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold text-[var(--ink-muted)] transition hover:text-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--ink-muted)] transition-colors duration-150 hover:border-[var(--ink)] hover:text-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={isProcessing}
                 >
                   {isProcessing ? t("auth.loading") : t("auth.logout")}
@@ -167,13 +167,13 @@ export default function Layout() {
               <div className="hidden items-center gap-2 md:flex">
                 <NavLink
                   to="/login"
-                  className="rounded-full border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--ink-muted)] transition hover:text-[var(--ink)]"
+                  className="min-h-[44px] rounded-full border border-[var(--border)] px-3 py-2.5 text-sm font-medium text-[var(--ink-muted)] transition-colors duration-150 hover:border-[var(--ink)] hover:text-[var(--ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2"
                 >
                   {t("auth.login")}
                 </NavLink>
                 <NavLink
                   to="/signup"
-                  className="rounded-full border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--ink-muted)] transition hover:text-[var(--ink)]"
+                  className="min-h-[44px] rounded-full border border-[var(--border)] bg-[var(--ink)] px-3 py-2.5 text-sm font-medium text-[var(--paper)] transition-colors duration-150 hover:bg-[color-mix(in_srgb,var(--ink)_92%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2"
                 >
                   {t("auth.signup")}
                 </NavLink>
@@ -184,51 +184,49 @@ export default function Layout() {
 
         {/* 모바일: 카테고리 버튼 드롭다운 (헤더 아래로 펼쳐짐) */}
         {mobileNavOpen && (
-          <div className="mx-auto max-w-6xl px-6 pb-3 md:hidden">
-            <div className="mt-2 rounded-2xl border border-[var(--border)] bg-[var(--paper)] shadow-lg">
-              <div className="flex flex-wrap gap-2 px-3 py-3">
-                {primaryNav.map((link) => (
-                  <NavLink
-                    key={link.path}
-                    to={link.path}
-                    className={({ isActive }) =>
-                      `whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
-                        isActive
-                          ? "border-[var(--ink)] bg-[var(--paper)] text-[var(--ink)] shadow-sm"
-                          : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-subtle)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
-                      }`
-                    }
-                  >
-                    {t(link.labelKey)}
-                  </NavLink>
-                ))}
-                {isAdmin && (
-                  <NavLink
-                    to="/admin"
-                    className={({ isActive }) =>
-                      `whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
-                        isActive
-                          ? "border-[var(--ink)] bg-[var(--paper)] text-[var(--ink)] shadow-sm"
-                          : "border-[var(--border)] bg-[var(--paper)] text-[var(--ink-subtle)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
-                      }`
-                    }
-                  >
-                    {t("nav.admin")}
-                  </NavLink>
-                )}
-              </div>
+          <div className="mx-auto max-w-6xl border-t border-[var(--border)] bg-[var(--paper)] px-6 py-3 md:hidden">
+            <div className="flex flex-wrap gap-2">
+              {primaryNav.map((link) => (
+                <NavLink
+                  key={link.path}
+                  to={link.path}
+                  className={({ isActive }) =>
+                    `whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-150 ${
+                      isActive
+                        ? "border-[var(--ink)] bg-[var(--paper-accent)] text-[var(--ink)]"
+                        : "border-[var(--border)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
+                    }`
+                  }
+                >
+                  {t(link.labelKey)}
+                </NavLink>
+              ))}
+              {isAdmin && (
+                <NavLink
+                  to="/admin"
+                  className={({ isActive }) =>
+                    `whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-colors duration-150 ${
+                      isActive
+                        ? "border-[var(--ink)] bg-[var(--paper-accent)] text-[var(--ink)]"
+                        : "border-[var(--border)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
+                    }`
+                  }
+                >
+                  {t("nav.admin")}
+                </NavLink>
+              )}
             </div>
           </div>
         )}
 
         {authError && (
-          <div className="bg-rose-50 px-4 py-2 text-xs text-rose-700">
+          <div className="border-b border-rose-200 bg-rose-50/50 px-4 py-2 text-xs text-rose-700 dark:border-rose-800 dark:bg-rose-950/30 dark:text-rose-300">
             <div className="mx-auto flex max-w-5xl items-center justify-between gap-4">
               <span>{authError}</span>
               <button
                 type="button"
                 onClick={dismissError}
-                className="rounded-full border border-rose-200 px-3 py-1 text-[10px] font-semibold transition hover:bg-rose-100"
+                className="rounded-full px-2 py-1 text-xs font-medium transition-colors duration-150 hover:bg-rose-100 dark:hover:bg-rose-900/50"
               >
                 ×
               </button>
@@ -239,19 +237,19 @@ export default function Layout() {
       <main>
         <Outlet />
       </main>
-      <footer className="border-t border-[var(--border)] bg-[var(--paper)] py-12">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 text-sm text-[var(--ink-muted)] md:flex-row md:items-center md:justify-between">
+      <footer className="border-t border-[var(--border)] bg-[var(--paper)] py-8 md:py-10">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 text-sm text-[var(--ink-muted)] md:flex-row md:items-center md:justify-between">
           <span>
             © {new Date().getFullYear()} koraid · {t("footer.madeIn")}
           </span>
           <div className="flex flex-wrap gap-4">
-            <a href="https://www.instagram.com" className="muted-link" target="_blank" rel="noreferrer">
+            <a href="https://www.instagram.com" className="muted-link transition-colors duration-150" target="_blank" rel="noreferrer">
               Instagram
             </a>
-            <a href="https://www.tiktok.com" className="muted-link" target="_blank" rel="noreferrer">
+            <a href="https://www.tiktok.com" className="muted-link transition-colors duration-150" target="_blank" rel="noreferrer">
               TikTok
             </a>
-            <a href="mailto:Team@kor-aid.com" className="muted-link">
+            <a href="mailto:Team@kor-aid.com" className="muted-link transition-colors duration-150">
               Team@kor-aid.com
             </a>
           </div>

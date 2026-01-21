@@ -85,15 +85,15 @@ export default function PopupRadarPage() {
   }, [activeCategory, filter, popups, search]);
 
   return (
-    <section className="section-container space-y-10">
+    <section className="section-container space-y-8">
       <div className="content-shell space-y-4">
         <span className="badge-label">{t("popupRadar.title")}</span>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-2">
-            <h2 className="font-heading text-4xl text-[var(--ink)]">
+            <h2 className="font-heading text-3xl text-[var(--ink)] md:text-4xl">
               {t("popupRadar.sections.now.title")}
             </h2>
-            <p className="text-[var(--ink-muted)]">{t("popupRadar.sections.now.subtitle")}</p>
+            <p className="text-sm text-[var(--ink-muted)] md:text-base">{t("popupRadar.sections.now.subtitle")}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             {(["all", "now", "soon", "ended"] as const).map((key) => (
@@ -101,10 +101,10 @@ export default function PopupRadarPage() {
                 key={key}
                 type="button"
                 onClick={() => setFilter(key)}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                className={`min-h-[44px] rounded-full border px-4 py-2.5 text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2 ${
                   filter === key
-                    ? "bg-[var(--ink)] text-white"
-                    : "bg-white text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                    ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]"
+                    : "border-[var(--border)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
                 }`}
               >
                 {t(`popupRadar.filters.${key}`)}
@@ -119,10 +119,10 @@ export default function PopupRadarPage() {
           <button
             type="button"
             onClick={() => setActiveCategory("all")}
-            className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+            className={`min-h-[44px] rounded-full border px-4 py-2.5 text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2 ${
               activeCategory === "all"
-                ? "bg-[var(--ink)] text-white"
-                : "bg-[var(--paper)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]"
+                : "border-[var(--border)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
             }`}
           >
             전체 카테고리
@@ -132,10 +132,10 @@ export default function PopupRadarPage() {
               key={category}
               type="button"
               onClick={() => setActiveCategory(category)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+              className={`min-h-[44px] rounded-full border px-4 py-2.5 text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2 ${
                 activeCategory === category
-                  ? "bg-[var(--ink)] text-white"
-                  : "bg-[var(--paper)] text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                  ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]"
+                  : "border-[var(--border)] text-[var(--ink-muted)] hover:border-[var(--ink)] hover:text-[var(--ink)]"
               }`}
             >
               {CATEGORY_LABELS[category]}
@@ -144,10 +144,10 @@ export default function PopupRadarPage() {
         </div>
       )}
 
-      <div className="card space-y-3">
+      <div className="card space-y-2">
         <label
           htmlFor="popup-search"
-          className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]"
+          className="text-xs font-medium uppercase tracking-wide text-[var(--ink-subtle)]"
         >
           {t("popupRadar.search.label")}
         </label>
@@ -158,13 +158,13 @@ export default function PopupRadarPage() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder={t("popupRadar.search.placeholder")}
-            className="w-full rounded-2xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-3 pr-12 text-sm focus:border-[var(--ink)] focus:outline-none"
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--paper-muted)] px-4 py-2.5 pr-10 text-sm transition-colors duration-150 focus:border-[var(--ink)] focus:outline-none focus:ring-1 focus:ring-[var(--ink)]"
           />
           {search && (
             <button
               type="button"
               onClick={() => setSearch("")}
-              className="absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-[var(--ink)]"
+              className="absolute inset-y-0 right-3 flex items-center text-xs font-medium text-[var(--ink-muted)] transition-colors duration-150 hover:text-[var(--ink)]"
             >
               {t("popupRadar.search.clear")}
             </button>
@@ -187,26 +187,28 @@ export default function PopupRadarPage() {
           {filteredPopups.map((popup) => (
             <article
               key={popup.id}
-              className="group flex h-full flex-col overflow-hidden rounded-[32px] bg-[var(--paper)] shadow-xl ring-1 ring-[var(--border)]"
+              className="group flex h-full flex-col overflow-hidden rounded-2xl bg-[var(--paper)] border border-[var(--border)] shadow-[var(--shadow-card)] transition-shadow duration-200 hover:shadow-[var(--shadow-card-hover)]"
             >
               <div className="relative overflow-hidden">
                 <Link to={`/popups/${popup.id}`} className="block">
                   <img
                     src={popup.posterUrl}
                     alt={popup.title}
-                    className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
+                    className="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-                    <div className="text-xs">{popup.window}</div>
-                    <h3 className="text-2xl font-bold leading-tight text-white drop-shadow">{popup.title}</h3>
-                    <p className="text-sm text-white/80">{popup.location}</p>
+                    <div className="text-xs font-medium mb-1">{popup.window}</div>
+                    <h3 className="text-xl font-semibold leading-tight text-white">{popup.title}</h3>
+                    <p className="text-sm text-white/90 mt-1">{popup.location}</p>
                   </div>
                 </Link>
                 <span
-                  className={`absolute left-4 top-4 rounded-full px-3 py-1 text-xs font-semibold ${
-                    popup.status === "ended" ? "bg-slate-700/80 text-white" : "bg-black/70 text-white"
+                  className={`absolute left-3 top-3 rounded-full border px-2.5 py-1 text-xs font-medium ${
+                    popup.status === "ended" 
+                      ? "border-white/30 bg-black/60 text-white" 
+                      : "border-white/30 bg-black/50 text-white"
                   }`}
                 >
                   {popup.status === "now"
@@ -230,8 +232,8 @@ export default function PopupRadarPage() {
                   />
                 </div>
               </div>
-              <div className="flex flex-1 flex-col justify-between gap-3 p-5 text-[var(--ink)]">
-                <p className="text-sm text-[var(--ink-muted)] line-clamp-2">{popup.description}</p>
+              <div className="flex flex-1 flex-col justify-between gap-2.5 p-4 text-[var(--ink)]">
+                <p className="text-sm text-[var(--ink-muted)] line-clamp-2 leading-relaxed">{popup.description}</p>
                 <p className="text-xs text-[var(--ink-subtle)]">{popup.location}</p>
               </div>
             </article>
@@ -240,7 +242,7 @@ export default function PopupRadarPage() {
       )}
 
       {status === "success" && filteredPopups.length === 0 && (
-        <div className="rounded-3xl border border-dashed border-[var(--border)] bg-white p-6 text-center text-sm text-[var(--ink-muted)]">
+        <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--paper)] p-8 text-center text-sm text-[var(--ink-muted)]">
           {t("popupRadar.empty")}
         </div>
       )}

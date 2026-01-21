@@ -15,10 +15,19 @@ export default function LanguageSwitcher() {
         setOpen(false);
       }
     };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && open) {
+        setOpen(false);
+      }
+    };
     if (open) {
       document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscape);
     }
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, [open]);
 
   useEffect(() => {
@@ -32,10 +41,10 @@ export default function LanguageSwitcher() {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold text-[var(--ink)] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ink)] ${
+        className={`flex min-h-[44px] items-center gap-1.5 rounded-full border px-3 py-2.5 text-sm font-medium text-[var(--ink)] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2 ${
           open
-            ? "border-[var(--ink)] bg-[var(--paper)] shadow-lg"
-            : "border-[var(--border)] bg-[var(--paper)]"
+            ? "border-[var(--ink)] bg-[var(--paper-accent)]"
+            : "border-[var(--border)] hover:border-[var(--ink)]"
         }`}
         aria-haspopup="listbox"
         aria-expanded={open}
@@ -44,8 +53,8 @@ export default function LanguageSwitcher() {
         <span className="text-xs">{open ? "▲" : "▼"}</span>
       </button>
       {open && (
-        <div className="absolute right-0 z-20 mt-2 w-40 rounded-2xl border border-[var(--border)] bg-[var(--paper)] p-2 shadow-xl">
-          <ul role="listbox" className="space-y-1 text-sm">
+        <div className="absolute right-0 z-20 mt-2 w-36 rounded-xl border border-[var(--border)] bg-[var(--paper)] p-1.5 shadow-[var(--shadow-card-hover)]">
+          <ul role="listbox" className="space-y-0.5 text-sm">
             {languages.map((code) => (
               <li key={code}>
                 <button
@@ -53,10 +62,16 @@ export default function LanguageSwitcher() {
                   role="option"
                   aria-selected={language === code}
                   onClick={() => setLanguage(code)}
-                  className={`w-full rounded-xl px-3 py-2 text-left transition ${
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setLanguage(code);
+                    }
+                  }}
+                  className={`min-h-[44px] w-full rounded-lg px-3 py-2.5 text-left transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2 ${
                     language === code
-                      ? "bg-[var(--ink)] text-white"
-                      : "text-[var(--ink-muted)] hover:bg-[var(--paper-muted)] hover:text-[var(--ink)]"
+                      ? "bg-[var(--ink)] text-[var(--paper)]"
+                      : "text-[var(--ink-muted)] hover:bg-[var(--paper-accent)] hover:text-[var(--ink)]"
                   }`}
                 >
                   {getLanguageLabel(code)}

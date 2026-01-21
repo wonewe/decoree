@@ -15,34 +15,38 @@ export default function WeeklyTrendDecoder() {
   const showError = status === "error";
 
   return (
-    <section className="section-container space-y-10">
-      <div className="content-shell space-y-4">
-        <span className="badge-label text-[var(--ink-subtle)]">{t("hero.highlights.cta")}</span>
-        <h2 className="font-heading text-4xl text-[var(--ink)]">{t("trends.title")}</h2>
-        <p className="max-w-2xl text-[var(--ink-muted)]">{t("trends.subtitle")}</p>
+    <section className="section-container space-y-8">
+      <div className="content-shell space-y-3">
+        <span className="badge-label">{t("hero.highlights.cta")}</span>
+        <h2 className="font-heading text-3xl text-[var(--ink)] md:text-4xl">{t("trends.title")}</h2>
+        <p className="max-w-2xl text-sm text-[var(--ink-muted)] md:text-base">{t("trends.subtitle")}</p>
       </div>
       {status === "loading" && (
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-5 md:grid-cols-2">
           {skeletonItems.map((_, index) => (
             <TrendCardSkeleton key={index} />
           ))}
         </div>
       )}
       {showGrid && (
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {reports.map((report) => (
-            <article key={report.id} className="card gap-4">
-              <div className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
+            <article key={report.id} className="card space-y-3">
+              <div className="text-xs font-medium uppercase tracking-wide text-[var(--ink-subtle)]">
                 {formatDate(report.publishedAt)} · {report.neighborhood}
               </div>
               <div className="space-y-2">
-                <h3 className="text-xl font-semibold text-[var(--ink)]">{report.title}</h3>
-                <p className="text-base text-[var(--ink-muted)] line-clamp-3">{report.summary}</p>
+                <h3 className="text-lg font-semibold text-[var(--ink)] md:text-xl">{report.title}</h3>
+                <p className="text-sm text-[var(--ink-muted)] line-clamp-3 leading-relaxed">{report.summary}</p>
               </div>
-              <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--ink-subtle)]">
-                <span>{report.tags.slice(0, 3).join(" / ")}</span>
-                <Link to={`/trends/${report.id}`} className="text-sm font-semibold text-[var(--ink)]">
-                  {t("trends.readMore")} →
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                <span className="text-xs text-[var(--ink-subtle)]">{report.tags.slice(0, 3).join(" / ")}</span>
+                <Link 
+                  to={`/trends/${report.id}`} 
+                  className="inline-flex items-center gap-1 text-sm font-medium text-[var(--ink)] transition-colors duration-150 hover:text-[var(--ink-muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2 rounded"
+                >
+                  {t("trends.readMore")}
+                  <span aria-hidden="true">→</span>
                 </Link>
               </div>
             </article>

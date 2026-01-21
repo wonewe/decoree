@@ -33,29 +33,26 @@ export default function HeroSection() {
 
   return (
     <section className="border-b border-[var(--border)] bg-[var(--paper)]">
-      <div className="section-container space-y-12 pb-16 pt-20">
-        <div className="content-shell space-y-8 text-left">
+      <div className="section-container space-y-8 pb-12 pt-16 md:space-y-12 md:pb-16 md:pt-20">
+        <div className="content-shell space-y-6 text-left">
           {t("hero.ribbon") && (
             <span className="badge-label">{t("hero.ribbon")}</span>
           )}
-          <div className="space-y-5">
-            <h1 className="font-heading text-5xl leading-tight text-[var(--ink)] md:text-6xl">
+          <div className="space-y-4">
+            <h1 className="font-heading text-4xl leading-tight text-[var(--ink)] md:text-5xl lg:text-6xl">
               {t("hero.title")}
             </h1>
-            <p className="max-w-2xl text-lg text-[var(--ink-muted)] md:text-xl">
+            <p className="max-w-2xl text-base text-[var(--ink-muted)] md:text-lg">
               {t("hero.subtitle")}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Link
               to="/trends"
-              className="pill-button border border-[var(--border)] bg-[var(--paper)] text-[var(--ink)] hover:-translate-y-0.5"
+              className="primary-button focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2"
             >
               {t("hero.cta.primary")}
             </Link>
-            {/* <Link to="/events" className="secondary-button">
-              {t("hero.cta.secondary")}
-            </Link> 임시 숨김 */}
           </div>
         </div>
 
@@ -64,23 +61,23 @@ export default function HeroSection() {
             <Link
               key={item.title}
               to={item.to}
-              className="card group flex flex-col gap-6 md:flex-row"
+              className="card group flex flex-col gap-5 md:flex-row focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2 active:scale-[0.98]"
             >
               <div className="flex-1 space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-subtle)]">
+                <h3 className="text-xl font-semibold text-[var(--ink)] md:text-2xl">{item.title}</h3>
+                <p className="text-sm text-[var(--ink-muted)] leading-relaxed">{item.description}</p>
+                <span className="inline-flex items-center gap-1 text-sm font-medium text-[var(--ink)]">
                   {t("hero.highlights.cta")}
-                </p>
-                <h3 className="text-2xl font-semibold text-[var(--ink)]">{item.title}</h3>
-                <p className="text-sm text-[var(--ink-muted)]">{item.description}</p>
-                <span className="text-sm font-semibold text-[var(--ink)]">
-                  {t("hero.highlights.cta")} →
+                  <span className="transition-transform duration-150 group-hover:translate-x-0.5 group-active:translate-x-1" aria-hidden="true">→</span>
                 </span>
               </div>
-              <div className="h-40 w-full overflow-hidden rounded-2xl bg-[var(--paper-muted)] md:h-auto md:w-44">
+              <div className="h-48 w-full overflow-hidden rounded-xl bg-[var(--paper-muted)] md:h-auto md:w-40">
                 <img
                   src={item.image}
-                  alt=""
-                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                  alt={item.title}
+                  width={160}
+                  height={192}
+                  className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
                   loading="lazy"
                 />
               </div>
