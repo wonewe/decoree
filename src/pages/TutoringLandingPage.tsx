@@ -66,7 +66,9 @@ export default function TutoringLandingPage() {
       source: "hero"
     });
     const formElement = document.getElementById("waitlist-form");
-    formElement?.scrollIntoView({ behavior: "smooth" });
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   return (
@@ -118,12 +120,12 @@ export default function TutoringLandingPage() {
                 <p className="text-lg leading-relaxed md:text-xl text-white/90">
                   {t("tutoring.hero.subtitle")}
                 </p>
-                <Link
-                  to="/tutoring/enroll"
-                  className="primary-button bg-white text-[var(--ink)] hover:bg-white/90"
+                <button
+                  onClick={scrollToForm}
+                  className="primary-button bg-white text-[var(--ink)] hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2"
                 >
                   {t("tutoring.hero.cta.enroll")}
-                </Link>
+                </button>
               </div>
             </div>
           </div>

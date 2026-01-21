@@ -10,47 +10,47 @@ export default function PopupRadarPreview() {
   const topPopups = activePopups.slice(0, 4);
 
   return (
-    <section className="section-container space-y-8">
+    <section className="section-container space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-2">
           <span className="badge-label">
             {t("nav.popups")}
           </span>
-          <h2 className="text-3xl font-bold text-[var(--ink)]">{t("popupRadar.title")}</h2>
-          <p className="max-w-2xl text-[var(--ink-muted)]">{t("popupRadar.subtitle")}</p>
+          <h2 className="font-heading text-3xl text-[var(--ink)] md:text-4xl">{t("popupRadar.title")}</h2>
+          <p className="max-w-2xl text-sm text-[var(--ink-muted)] md:text-base">{t("popupRadar.subtitle")}</p>
         </div>
         <Link
           to="/popups"
-          className="rounded-full border border-[var(--ink)] px-6 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[var(--ink)] hover:text-white"
+          className="secondary-button focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2"
         >
           {t("popupRadar.cards.cta")}
         </Link>
       </div>
 
       {status === "success" && topPopups.length > 0 && (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {topPopups.map((popup) => (
             <Link
               key={popup.id}
               to={`/popups/${popup.id}`}
-              className="group overflow-hidden rounded-[32px] bg-[var(--paper)] shadow-lg ring-1 ring-[var(--border)] transition hover:-translate-y-1"
+              className="group overflow-hidden rounded-2xl bg-[var(--paper)] border border-[var(--border)] shadow-[var(--shadow-card)] transition-shadow duration-200 hover:shadow-[var(--shadow-card-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2"
             >
               <div className="relative overflow-hidden">
                 <img
                   src={popup.posterUrl}
                   alt={popup.title}
-                  className="h-72 w-full object-cover transition duration-500 group-hover:scale-105"
+                  className="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-4 text-white">
-                  <div className="text-xs">{popup.window}</div>
-                  <h3 className="text-2xl font-bold leading-tight text-white drop-shadow">
+                  <div className="text-xs font-medium mb-1">{popup.window}</div>
+                  <h3 className="text-xl font-semibold leading-tight text-white">
                     {popup.title}
                   </h3>
-                  <p className="text-sm text-white/80">{popup.location}</p>
+                  <p className="text-sm text-white/90 mt-1">{popup.location}</p>
                 </div>
-                <span className="absolute left-4 top-4 rounded-full bg-black/65 px-3 py-1 text-xs font-semibold text-white">
+                <span className="absolute left-3 top-3 rounded-full border border-white/30 bg-black/50 px-2.5 py-1 text-xs font-medium text-white">
                   {popup.status === "now"
                     ? t("popupRadar.status.now")
                     : popup.status === "soon"
@@ -58,8 +58,8 @@ export default function PopupRadarPreview() {
                       : t("popupRadar.status.ended")}
                 </span>
               </div>
-              <div className="p-5 text-sm text-[var(--ink-muted)]">
-                <p className="line-clamp-3">{popup.description}</p>
+              <div className="p-4 text-sm text-[var(--ink-muted)]">
+                <p className="line-clamp-3 leading-relaxed">{popup.description}</p>
               </div>
             </Link>
           ))}
@@ -67,13 +67,13 @@ export default function PopupRadarPreview() {
       )}
 
       {status === "success" && topPopups.length === 0 && (
-        <p className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--paper)] p-8 text-center text-sm text-[var(--ink-muted)]">
+        <p className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--paper)] p-8 text-center text-sm text-[var(--ink-muted)]">
           {t("popupRadar.empty")}
         </p>
       )}
 
       {status === "loading" && (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, idx) => (
             <PopupCardSkeleton key={idx} />
           ))}

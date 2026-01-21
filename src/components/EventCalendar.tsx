@@ -141,7 +141,7 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
                   navigate(`/events/${event.id}`);
                 }
               }}
-              className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl bg-[var(--paper)] text-[var(--ink)] shadow-sm ring-1 ring-[var(--border)] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl bg-[var(--paper)] text-[var(--ink)] shadow-sm ring-1 ring-[var(--border)] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2"
             >
               <div className="relative aspect-[4/3] w-full overflow-hidden bg-[var(--paper-muted)]">
                 {event.imageUrl ? (

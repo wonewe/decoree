@@ -45,7 +45,7 @@ export default function RequireAuth({ children, requireAdmin = false }: RequireA
           <p className="text-sm text-[var(--ink-muted)]">{t("auth.adminOnlyDescription")}</p>
           <Link
             to="/"
-            className="mx-auto inline-flex items-center rounded-full border border-[var(--ink)] px-5 py-2 text-sm font-semibold text-[var(--ink)] transition hover:bg-[var(--ink)] hover:text-white"
+            className="mx-auto inline-flex min-h-[44px] items-center rounded-full border border-[var(--ink)] px-5 py-2.5 text-sm font-semibold text-[var(--ink)] transition hover:bg-[var(--ink)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2"
           >
             {t("auth.adminOnlyCta")}
           </Link>
