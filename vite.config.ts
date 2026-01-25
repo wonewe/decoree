@@ -10,15 +10,20 @@ export default defineConfig(({ mode }) => {
 
   const baseRoutes = [
     "/",
-    "/search",
     "/trends",
     "/events",
     "/phrasebook",
     "/popups",
+    "/tutoring",
+    "/tutoring/membership",
+    "/tutoring/enroll",
+    "/newsletter",
     "/local-support/services",
     "/local-support/apps",
     "/local-support/community",
-    "/culture-test"
+    "/culture-test",
+    "/login",
+    "/signup"
   ];
 
   const localizedRoutes = SUPPORTED_LANGS.map((lang) => `/${lang}`);

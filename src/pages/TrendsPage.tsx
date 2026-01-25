@@ -4,11 +4,11 @@ import WeeklyTrendDecoder from "../components/WeeklyTrendDecoder";
 
 export default function TrendsPage() {
   const { t } = useI18n();
-  
+
   const siteOrigin =
     import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
     (typeof window !== "undefined" ? window.location.origin : "https://kor-aid.com");
-  
+
   const title = `${t("trends.title")} | koraid`;
   const description = t("trends.subtitle");
   const ogImage = `${siteOrigin}/main1.jpg`;
