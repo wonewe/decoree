@@ -43,30 +43,27 @@ export async function subscribeToNewsletter(email: string): Promise<void> {
   
   // Stibee API로 먼저 구독 전송 (중복 체크 전에 실행)
   console.log("[Newsletter] Sending to Stibee API...");
-  try {
-    const formData = new FormData();
-    formData.append("email", normalizedEmail);
-    
-    const response = await fetch(
-      "https://stibee.com/api/v1.0/lists/oVUdazUb9JZUikJAyW5MUOZrRTvHPQ==/public/subscribers",
-      {
-        method: "POST",
-        body: formData
-      }
-    );
-    
-    console.log("[Newsletter] Stibee API response status:", response.status);
-    if (!response.ok) {
-      const responseText = await response.text();
-      console.error("[Newsletter] Stibee API error:", response.status, responseText);
-      // Stibee API 실패해도 계속 진행 (Firestore에는 저장)
-    } else {
-      console.log("[Newsletter] Successfully sent to Stibee");
+  const formData = new FormData();
+  formData.append("email", normalizedEmail);
+  
+  const response = await fetch(
+    "https://stibee.com/api/v1.0/lists/mwtp_rEwRi2pv38v2FjKCbN7TYOiCg==/public/subscribers",
+    {
+      method: "POST",
+      body: formData
     }
-  } catch (error) {
-    console.error("[Newsletter] Failed to send to Stibee:", error);
-    // Stibee API 실패해도 계속 진행
+  );
+  
+  console.log("[Newsletter] Stibee API response status:", response.status);
+  
+  if (!response.ok) {
+    const responseText = await response.text();
+    console.error("[Newsletter] Stibee API error:", response.status, responseText);
+    // Stibee API 실패 시 에러를 던져서 사용자에게 알림
+    throw new Error(`Stibee 구독 실패: ${response.status}`);
   }
+  
+  console.log("[Newsletter] Successfully sent to Stibee");
   
   // 중복 체크 (Stibee 전송 후)
   const subscriptionsCollection = collection(db, "newsletterSubscriptions");
