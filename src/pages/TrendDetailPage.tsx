@@ -78,11 +78,14 @@ export default function TrendDetailPage() {
   const siteOrigin = typeof window !== "undefined" ? window.location.origin : "https://koraid.com";
   const pageUrl = `${siteOrigin}/trends/${report.id}`;
   
+  const publishedDate = new Date(report.publishedAt);
+  const publishedAtISO = publishedDate.toISOString();
+  
   const articleSchema = generateArticleSchema(
     report.title,
     report.summary,
     report.imageUrl,
-    report.publishedAt.toISOString(),
+    publishedAtISO,
     "koraid",
     {
       authorName: author?.name,
