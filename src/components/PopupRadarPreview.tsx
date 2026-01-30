@@ -20,7 +20,7 @@ export default function PopupRadarPreview() {
           <p className="max-w-2xl text-sm text-[var(--ink-muted)] md:text-base">{t("popupRadar.subtitle")}</p>
           <div className="max-w-2xl space-y-2 text-sm text-[var(--ink-muted)] md:text-base">
             <p>
-              Korea's pop-up scene is constantly evolving with limited-time collaborations, concept cafes, and exclusive brand experiences. Our radar tracks pop-ups across Seoul, Busan, and Jeju, helping you discover unique experiences before they're gone. From K-pop merchandise drops to art installations, find the pop-ups that match your interests.
+              {t("popupRadar.description")}
             </p>
           </div>
         </div>

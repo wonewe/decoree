@@ -47,10 +47,10 @@ export default function HeroSection() {
             </p>
             <div className="max-w-2xl space-y-3 text-sm text-[var(--ink-muted)] md:text-base">
               <p>
-                Whether you're planning your first trip to Korea or you're already here, koraid helps you navigate the latest trends, discover must-visit pop-ups, and learn the phrases that locals actually use. Our weekly trend reports decode what's happening in Seoul's hottest neighborhoods, from Gangnam to Hongdae.
+                {t("hero.description.paragraph1")}
               </p>
               <p>
-                Stay ahead with our curated event calendar featuring K-culture concerts, festivals, and exclusive pop-up experiences. Plus, build your personalized phrasebook with expressions tailored to your interests—whether you're into K-pop, Korean cuisine, or tech startups.
+                {t("hero.description.paragraph2")}
               </p>
             </div>
           </div>

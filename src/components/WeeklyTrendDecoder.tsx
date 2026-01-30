@@ -22,14 +22,15 @@ export default function WeeklyTrendDecoder() {
         <p className="max-w-2xl text-sm text-[var(--ink-muted)] md:text-base">{t("trends.subtitle")}</p>
         <div className="max-w-2xl space-y-2 text-sm text-[var(--ink-muted)] md:text-base">
           <p>
-            Our team in Seoul tracks the latest trends across fashion, food, entertainment, and lifestyle. Each week, we publish detailed reports on what's trending in neighborhoods like Myeongdong, Itaewon, and Seongsu. From viral cafes to emerging K-beauty brands, stay informed about what's happening in Korea right now. For more insights, follow Korean trend platforms like{" "}
+            {t("trends.description")}{" "}
+            {t("trends.description.link")}{" "}
             <a href="https://www.instagram.com/explore/tags/seoul" target="_blank" rel="noreferrer noopener" className="text-[var(--ink)] underline underline-offset-2 hover:text-[var(--ink-muted)] transition-colors duration-150">
-              #Seoul
+              {t("trends.description.linkText")}
             </a>
-            {" on Instagram."}
+            {" "}{t("trends.description.linkSuffix")}
           </p>
           <p>
-            Explore our archive of trend reports to discover hidden gems, understand cultural shifts, and find the best spots to visit during your stay in Korea.
+            {t("trends.description2")}
           </p>
         </div>
       </div>
@@ -70,7 +71,7 @@ export default function WeeklyTrendDecoder() {
               to="/trends" 
               className="secondary-button focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ink)] focus-visible:ring-offset-2"
             >
-              {t("trends.viewAll") || "View all trends →"}
+              {t("trends.viewAll")} →
             </Link>
           </div>
         </>

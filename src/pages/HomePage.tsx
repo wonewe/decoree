@@ -48,22 +48,23 @@ export default function HomePage() {
       <section className="section-container py-12 md:py-16">
         <div className="content-shell space-y-6">
           <h2 className="font-heading text-3xl text-[var(--ink)] md:text-4xl">
-            Your Guide to Modern Korea
+            {t("home.about.title")}
           </h2>
           <div className="max-w-3xl space-y-4 text-base text-[var(--ink-muted)] md:text-lg">
             <p>
-              Korea is more than K-pop and kimchi. It's a dynamic country where tradition meets innovation, and where new trends emerge every week. Whether you're a student, traveler, or expat, koraid helps you understand what's happening in Korea right now.
+              {t("home.about.paragraph1")}
             </p>
             <p>
-              Our team is based in Seoul and constantly exploring the city to bring you the latest insights. From hidden cafes in Seongsu to pop-up stores in Gangnam, we cover the trends that matter. Explore our resources to learn more about Korean culture, language, and lifestyle. For official information about visiting Korea, check out the{" "}
+              {t("home.about.paragraph2")}{" "}
+              {t("home.about.paragraph2.link")}{" "}
               <a href="https://www.visitkorea.or.kr" target="_blank" rel="noreferrer noopener" className="text-[var(--ink)] underline underline-offset-2 hover:text-[var(--ink-muted)] transition-colors duration-150">
-                Korea Tourism Organization
+                {t("home.about.paragraph2.link1")}
               </a>
-              {" or the "}
+              {" "}{t("home.about.paragraph2.linkMiddle")}{" "}
               <a href="https://www.seoul.go.kr" target="_blank" rel="noreferrer noopener" className="text-[var(--ink)] underline underline-offset-2 hover:text-[var(--ink-muted)] transition-colors duration-150">
-                Seoul Metropolitan Government
+                {t("home.about.paragraph2.link2")}
               </a>
-              {" website."}
+              {" "}{t("home.about.paragraph2.linkSuffix")}
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
               <Link 

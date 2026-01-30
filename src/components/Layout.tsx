@@ -241,7 +241,7 @@ export default function Layout() {
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid gap-8 md:grid-cols-5 mb-8">
             <div className="space-y-3">
-              <h3 className="font-semibold text-[var(--ink)]">About</h3>
+              <h3 className="font-semibold text-[var(--ink)]">{t("footer.sections.about.title")}</h3>
               <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
                 <li>
                   <NavLink to="/" className="hover:text-[var(--ink)] transition-colors duration-150">
@@ -266,7 +266,7 @@ export default function Layout() {
               </ul>
             </div>
             <div className="space-y-3">
-              <h3 className="font-semibold text-[var(--ink)]">Resources</h3>
+              <h3 className="font-semibold text-[var(--ink)]">{t("footer.sections.resources.title")}</h3>
               <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
                 <li>
                   <NavLink to="/newsletter" className="hover:text-[var(--ink)] transition-colors duration-150">
@@ -291,7 +291,7 @@ export default function Layout() {
               </ul>
             </div>
             <div className="space-y-3">
-              <h3 className="font-semibold text-[var(--ink)]">Connect</h3>
+              <h3 className="font-semibold text-[var(--ink)]">{t("footer.sections.connect.title")}</h3>
               <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
                 <li>
                   <a href="https://www.instagram.com/koraid.official/" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
@@ -311,32 +311,32 @@ export default function Layout() {
               </ul>
             </div>
             <div className="space-y-3">
-              <h3 className="font-semibold text-[var(--ink)]">External Resources</h3>
+              <h3 className="font-semibold text-[var(--ink)]">{t("footer.sections.external.title")}</h3>
               <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
                 <li>
                   <a href="https://www.visitkorea.or.kr" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
-                    Visit Korea
+                    {t("footer.external.visitKorea")}
                   </a>
                 </li>
                 <li>
                   <a href="https://www.seoul.go.kr" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
-                    Seoul Metropolitan Government
+                    {t("footer.external.seoulGov")}
                   </a>
                 </li>
                 <li>
                   <a href="https://www.1330.or.kr" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
-                    Tourism Hotline 1330
+                    {t("footer.external.tourCall")}
                   </a>
                 </li>
                 <li>
                   <a href="https://www.hikorea.go.kr" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
-                    HiKorea (Immigration)
+                    {t("footer.external.hikorea")}
                   </a>
                 </li>
               </ul>
             </div>
             <div className="space-y-3">
-              <h3 className="font-semibold text-[var(--ink)]">Legal</h3>
+              <h3 className="font-semibold text-[var(--ink)]">{t("footer.sections.legal.title")}</h3>
               <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
                 <li>
                   <span className="text-[var(--ink-subtle)]">{t("footer.madeIn")}</span>
