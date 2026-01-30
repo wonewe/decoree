@@ -45,9 +45,9 @@ const translations: TranslationDictionary = {
       "hero.subtitle":
         "Décodage des tendances, événements K-culture et phrasebook personnalisé, conçus pour les voyageurs internationaux.",
       "hero.description.paragraph1":
-        "Que vous planifiiez votre premier voyage en Corée ou que vous y soyez déjà, koraid vous aide à naviguer dans les dernières tendances, découvrir les pop-ups incontournables et apprendre les phrases que les locaux utilisent vraiment. Nos rapports hebdomadaires décodent ce qui se passe dans les quartiers les plus branchés de Séoul, de Gangnam à Hongdae.",
+        "Premier voyage ou déjà sur place, koraid vous guide dans les dernières tendances, les pop-ups à ne pas manquer et les expressions que les locaux utilisent vraiment. Nos rapports hebdomadaires décodent ce qui se passe dans les quartiers branchés de Séoul, de Gangnam à Hongdae.",
       "hero.description.paragraph2":
-        "Restez en avance avec notre calendrier d'événements sélectionné présentant des concerts K-culture, des festivals et des expériences pop-up exclusives. De plus, créez votre phrasebook personnalisé avec des expressions adaptées à vos intérêts—que vous soyez passionné de K-pop, de cuisine coréenne ou de startups tech.",
+        "Calendrier d'événements K-culture, festivals et pop-ups exclusifs. Créez votre phrasebook personnalisé selon vos intérêts—K-pop, cuisine coréenne ou startups tech.",
       "hero.cta.primary": "Explorer les tendances",
       "hero.cta.secondary": "Voir les nouveautés",
       "hero.highlights.title": "koraid en un clin d'œil",
@@ -78,7 +78,7 @@ const translations: TranslationDictionary = {
       "popupRadar.subtitle":
         "Parcours national des pop-ups : collabs mode/beauty, cafés éphémères et éditions limitées.",
       "popupRadar.description":
-        "La scène pop-up coréenne évolue constamment avec des collaborations à durée limitée, des cafés concept et des expériences de marque exclusives. Notre radar suit les pop-ups à Séoul, Busan et Jeju, vous aidant à découvrir des expériences uniques avant qu'elles ne disparaissent. Des drops de merchandising K-pop aux installations artistiques, trouvez les pop-ups qui correspondent à vos intérêts.",
+        "Collaborations limitées, cafés concept et expériences exclusives. Notre radar suit les pop-ups à Séoul, Busan et Jeju pour découvrir des expériences uniques avant qu'elles ne disparaissent.",
       "popupRadar.sections.overview.title": "Pop-ups en Corée",
       "popupRadar.sections.overview.body":
         "Séoul, 부산, 제주 등 주요 도시의 팝업을 한 곳에 모았습니다. 기간과 위치를 확인하고 놓치지 마세요.",
@@ -134,12 +134,12 @@ const translations: TranslationDictionary = {
       "trends.title": "Weekly Trend Decoder",
       "trends.subtitle": "Analyses hebdomadaires des tendances coréennes.",
       "trends.description":
-        "Notre équipe à Séoul suit les dernières tendances dans la mode, la gastronomie, le divertissement et le mode de vie. Chaque semaine, nous publions des rapports détaillés sur ce qui est tendance dans des quartiers comme Myeongdong, Itaewon et Seongsu. Des cafés viraux aux marques K-beauty émergentes, restez informé de ce qui se passe en Corée en ce moment.",
-      "trends.description.link": "Pour plus d'informations, suivez les plateformes de tendances coréennes comme",
+        "Notre équipe à Séoul suit les dernières tendances mode, gastronomie, divertissement et lifestyle. Rapports hebdomadaires sur ce qui est tendance dans les quartiers comme Myeongdong, Itaewon et Seongsu.",
+      "trends.description.link": "Suivez",
       "trends.description.linkText": "#Seoul",
-      "trends.description.linkSuffix": "sur Instagram.",
+      "trends.description.linkSuffix": "sur Instagram pour plus d'inspiration.",
       "trends.description2":
-        "Explorez nos archives de rapports de tendances pour découvrir des pépites cachées, comprendre les changements culturels et trouver les meilleurs endroits à visiter pendant votre séjour en Corée.",
+        "Explorez nos archives pour découvrir des pépites cachées et les meilleurs endroits à visiter.",
       "trends.viewAll": "Voir toutes les tendances",
       "trends.empty": "Aucun Trend Decoder n'est disponible pour le moment. Revenez très vite.",
       "trends.error": "Impossible de charger le Trend Decoder.",
@@ -305,9 +305,9 @@ const translations: TranslationDictionary = {
       "footer.external.hikorea": "HiKorea (Immigration)",
       "home.about.title": "Votre guide de la Corée moderne",
       "home.about.paragraph1":
-        "La Corée, c'est plus que le K-pop et le kimchi. C'est un pays dynamique où la tradition rencontre l'innovation, et où de nouvelles tendances émergent chaque semaine. Que vous soyez étudiant, voyageur ou expatrié, koraid vous aide à comprendre ce qui se passe en Corée en ce moment.",
+        "La Corée, c'est plus que le K-pop et le kimchi. Un pays dynamique où tradition et innovation se rencontrent, avec de nouvelles tendances chaque semaine.",
       "home.about.paragraph2":
-        "Notre équipe est basée à Séoul et explore constamment la ville pour vous apporter les dernières informations. Des cafés cachés de Seongsu aux pop-ups de Gangnam, nous couvrons les tendances qui comptent. Explorez nos ressources pour en savoir plus sur la culture, la langue et le mode de vie coréens.",
+        "Notre équipe basée à Séoul explore la ville pour vous apporter les dernières informations. Des cafés cachés de Seongsu aux pop-ups de Gangnam, nous couvrons les tendances importantes.",
       "home.about.paragraph2.link": "Pour des informations officielles sur la visite de la Corée, consultez le site de",
       "home.about.paragraph2.link1": "l'Organisation coréenne du tourisme",
       "home.about.paragraph2.linkMiddle": "ou le site du",
@@ -668,6 +668,10 @@ const translations: TranslationDictionary = {
       "hero.title": "트렌드를 찾아보세요",
       "hero.subtitle":
         "다양한 트렌드를 koraid 에서 찾아보세요",
+      "hero.description.paragraph1":
+        "첫 방문이든 재방문이든, koraid가 최신 트렌드와 인기 팝업, 현지인이 쓰는 표현을 알려드립니다. 주간 리포트로 강남부터 홍대까지 서울 핫플레이스를 파악하세요.",
+      "hero.description.paragraph2":
+        "K-컬처 콘서트와 페스티벌, 독점 팝업을 한눈에 보는 이벤트 캘린더. 관심사에 맞춘 맞춤형 회화장도 만들어보세요.",
       "hero.cta.primary": "트렌드 확인하기",
       "hero.cta.secondary": "새소식 보기",
       "hero.highlights.title": "koraid 한눈에 보기",
@@ -695,7 +699,7 @@ const translations: TranslationDictionary = {
       "popupRadar.title": "팝업 레이더",
       "popupRadar.subtitle": "전국의 크리에이터 협업, 한정 컬렉션, 팝업 카페를 한눈에 모아보세요.",
       "popupRadar.description":
-        "한국의 팝업 씬은 한정 기간 협업, 컨셉 카페, 독점 브랜드 경험으로 끊임없이 진화하고 있습니다. 우리 레이더는 서울, 부산, 제주의 팝업을 추적하여 사라지기 전에 독특한 경험을 발견할 수 있도록 도와줍니다. K-pop 굿즈 드롭부터 아트 설치까지, 당신의 관심사와 맞는 팝업을 찾아보세요.",
+        "한정 기간 협업, 컨셉 카페, 독점 브랜드 경험. 우리 레이더가 서울, 부산, 제주의 팝업을 추적해 사라지기 전에 독특한 경험을 발견할 수 있도록 도와줍니다.",
       "popupRadar.sections.overview.title": "지금 뜨는 팝업",
       "popupRadar.sections.overview.body":
         "서울·부산·제주 등 주요 도시에 열리는 팝업을 기간/위치별로 정리했습니다. 운영 시간과 재고는 브랜드 채널을 확인하세요.",
@@ -748,12 +752,12 @@ const translations: TranslationDictionary = {
       "trends.title": "주간 트렌드 해독 리포트",
       "trends.subtitle": "한국을 방문하는 여행자를 위한 심층 소비 트렌드 분석.",
       "trends.description":
-        "서울에 있는 우리 팀은 패션, 음식, 엔터테인먼트, 라이프스타일 전반에 걸친 최신 트렌드를 추적합니다. 매주 명동, 이태원, 성수동 같은 동네에서 유행하는 것에 대한 상세한 리포트를 발행합니다. 바이럴 카페부터 떠오르는 K-뷰티 브랜드까지, 지금 한국에서 일어나고 있는 일을 계속 알아보세요.",
-      "trends.description.link": "더 많은 인사이트를 원하시면 인스타그램의",
+        "서울에 있는 우리 팀이 패션, 음식, 엔터테인먼트, 라이프스타일 전반의 최신 트렌드를 추적합니다. 매주 명동, 이태원, 성수동 같은 동네의 유행을 상세히 리포트합니다.",
+      "trends.description.link": "더 많은 인사이트는 인스타그램",
       "trends.description.linkText": "#Seoul",
-      "trends.description.linkSuffix": "같은 한국 트렌드 플랫폼을 팔로우하세요.",
+      "trends.description.linkSuffix": "을 팔로우하세요.",
       "trends.description2":
-        "트렌드 리포트 아카이브를 탐색하여 숨겨진 보석을 발견하고, 문화적 변화를 이해하며, 한국 체류 중 방문할 최고의 장소를 찾아보세요.",
+        "아카이브를 탐색해 숨겨진 보석을 발견하고 방문할 최고의 장소를 찾아보세요.",
       "trends.viewAll": "모든 트렌드 보기",
       "trends.empty": "현재 공개된 트렌드 리포트가 없습니다. 곧 새로운 소식을 전해 드릴게요.",
       "trends.error": "트렌드 리포트를 불러오지 못했습니다.",
@@ -912,9 +916,9 @@ const translations: TranslationDictionary = {
       "footer.external.hikorea": "하이코리아 (출입국)",
       "home.about.title": "현대 한국 가이드",
       "home.about.paragraph1":
-        "한국은 K-pop과 김치 이상입니다. 전통과 혁신이 만나고 매주 새로운 트렌드가 등장하는 역동적인 국가입니다. 학생이든, 여행자든, 외국인 거주자든, koraid는 지금 한국에서 일어나고 있는 일을 이해하는 데 도움을 줍니다.",
+        "한국은 K-pop과 김치 이상입니다. 전통과 혁신이 만나고 매주 새로운 트렌드가 등장하는 역동적인 국가입니다.",
       "home.about.paragraph2":
-        "우리 팀은 서울에 기반을 두고 최신 인사이트를 제공하기 위해 끊임없이 도시를 탐험합니다. 성수동의 숨겨진 카페부터 강남의 팝업 스토어까지, 중요한 트렌드를 다룹니다. 한국 문화, 언어, 라이프스타일에 대해 더 알아보려면 우리 리소스를 탐색하세요.",
+        "서울에 기반을 둔 우리 팀이 도시를 탐험하며 최신 인사이트를 제공합니다. 성수동의 숨겨진 카페부터 강남의 팝업 스토어까지, 중요한 트렌드를 다룹니다.",
       "home.about.paragraph2.link": "한국 방문에 대한 공식 정보는",
       "home.about.paragraph2.link1": "한국관광공사",
       "home.about.paragraph2.linkMiddle": "또는",
@@ -1272,6 +1276,10 @@ const translations: TranslationDictionary = {
       "hero.title": "言葉の壁を越えて韓国を旅しよう",
       "hero.subtitle":
         "最新トレンド分析、Kカルチャーイベント、興味別の韓国語フレーズを日本語でお届けします。",
+      "hero.description.paragraph1":
+        "初めてでも再訪でも、koraidが最新トレンド、人気ポップアップ、現地で使われる表現を紹介します。週間レポートで江南から弘大まで、ソウルのホットスポットを把握しましょう。",
+      "hero.description.paragraph2":
+        "K-カルチャーコンサートやフェス、独占ポップアップを一目で見られるイベントカレンダー。興味に合わせたパーソナル会話帳も作成できます。",
       "hero.cta.primary": "トレンドを確認する",
       "hero.cta.secondary": "新着情報を見る",
       "hero.highlights.title": "koraid一覧",
@@ -1299,7 +1307,7 @@ const translations: TranslationDictionary = {
       "popupRadar.title": "聖水ポップアップレーダー",
       "popupRadar.subtitle": "クリエイターコラボや限定カフェを1日で巡るためのルートガイド。",
       "popupRadar.description":
-        "韓国のポップアップシーンは、期間限定コラボレーション、コンセプトカフェ、独占ブランド体験で絶えず進化しています。私たちのレーダーは、ソウル、釜山、済州のポップアップを追跡し、消える前にユニークな体験を発見できるよう支援します。K-popグッズのドロップからアートインスタレーションまで、あなたの興味に合うポップアップを見つけてください。",
+        "期間限定コラボ、コンセプトカフェ、独占ブランド体験。私たちのレーダーがソウル、釜山、済州のポップアップを追跡し、消える前にユニークな体験を発見できます。",
       "popupRadar.sections.overview.title": "なぜ聖水？",
       "popupRadar.sections.overview.body":
         "工場地帯から変身した聖水は、デザイナーズショップや限定ポップアップが最速で登場するエリアです。",
@@ -1355,12 +1363,12 @@ const translations: TranslationDictionary = {
       "trends.title": "週間トレンドレポート",
       "trends.subtitle": "韓国を訪れる旅行者のための消費トレンド分析。",
       "trends.description":
-        "ソウルにいる私たちのチームは、ファッション、食べ物、エンターテインメント、ライフスタイル全般の最新トレンドを追跡しています。毎週、明洞、梨泰院、聖水洞などの地域で流行していることについての詳細なレポートを公開しています。バイラルカフェから新興のK-ビューティーブランドまで、今韓国で起きていることを常に把握してください。",
-      "trends.description.link": "より多くのインサイトを得るには、Instagramの",
+        "ソウルにいる私たちのチームがファッション、食べ物、エンターテインメント、ライフスタイル全般の最新トレンドを追跡。毎週、明洞、梨泰院、聖水洞などの地域の流行を詳細にレポートします。",
+      "trends.description.link": "より多くのインサイトはInstagramの",
       "trends.description.linkText": "#Seoul",
-      "trends.description.linkSuffix": "などの韓国トレンドプラットフォームをフォローしてください。",
+      "trends.description.linkSuffix": "をフォローしてください。",
       "trends.description2":
-        "トレンドレポートのアーカイブを探索して、隠れた宝石を発見し、文化的変化を理解し、韓国滞在中に訪れる最高の場所を見つけてください。",
+        "アーカイブを探索して隠れた宝石を発見し、訪れる最高の場所を見つけてください。",
       "trends.viewAll": "すべてのトレンドを見る",
       "trends.empty": "現在公開中のトレンドレポートはありません。少し後でもう一度チェックしてください。",
       "trends.error": "トレンドレポートを読み込めませんでした。",
@@ -1519,9 +1527,9 @@ const translations: TranslationDictionary = {
       "footer.external.hikorea": "HiKorea（出入国）",
       "home.about.title": "現代韓国ガイド",
       "home.about.paragraph1":
-        "韓国はK-popとキムチ以上のものです。伝統と革新が出会い、毎週新しいトレンドが出現するダイナミックな国です。学生でも、旅行者でも、在住外国人でも、koraidは今韓国で起きていることを理解するのに役立ちます。",
+        "韓国はK-popとキムチ以上のものです。伝統と革新が出会い、毎週新しいトレンドが出現するダイナミックな国です。",
       "home.about.paragraph2":
-        "私たちのチームはソウルに拠点を置き、最新のインサイトを提供するために絶えず街を探索しています。聖水洞の隠れたカフェから江南のポップアップストアまで、重要なトレンドをカバーしています。韓国文化、言語、ライフスタイルについてもっと学ぶには、私たちのリソースを探索してください。",
+        "ソウルに拠点を置く私たちのチームが街を探索し、最新のインサイトを提供します。聖水洞の隠れたカフェから江南のポップアップストアまで、重要なトレンドをカバーしています。",
       "home.about.paragraph2.link": "韓国訪問に関する公式情報については、",
       "home.about.paragraph2.link1": "韓国観光公社",
       "home.about.paragraph2.linkMiddle": "または",
@@ -1877,6 +1885,10 @@ const translations: TranslationDictionary = {
       "hero.title": "Explore Korea without barriers",
       "hero.subtitle":
         "Weekly trend reports, K-culture events and a personalised phrasebook crafted for global travellers.",
+      "hero.description.paragraph1":
+        "Whether it's your first trip or you're already here, koraid helps you navigate the latest trends, discover must-visit pop-ups, and learn phrases locals actually use. Our weekly reports decode what's happening in Seoul's hottest neighborhoods, from Gangnam to Hongdae.",
+      "hero.description.paragraph2":
+        "Stay ahead with our curated K-culture calendar featuring concerts, festivals, and exclusive pop-ups. Build your personalized phrasebook tailored to your interests—K-pop, Korean cuisine, or tech startups.",
       "hero.cta.primary": "Read the trends",
       "hero.cta.secondary": "See what's new",
       "hero.highlights.title": "koraid at a glance",
@@ -1906,7 +1918,7 @@ const translations: TranslationDictionary = {
       "popupRadar.subtitle":
         "A three-stop loop to keep up with creator collaborations, concept cafés and limited launches in Seongsu.",
       "popupRadar.description":
-        "Korea's pop-up scene is constantly evolving with limited-time collaborations, concept cafes, and exclusive brand experiences. Our radar tracks pop-ups across Seoul, Busan, and Jeju, helping you discover unique experiences before they're gone. From K-pop merchandise drops to art installations, find the pop-ups that match your interests.",
+        "Limited-time collaborations, concept cafes, and exclusive experiences. Our radar tracks pop-ups across Seoul, Busan, and Jeju to discover unique experiences before they're gone.",
       "popupRadar.sections.overview.title": "Why Seongsu?",
       "popupRadar.sections.overview.body":
         "Former factories turned studios and galleries make Seongsu the fastest neighbourhood for new drops in Seoul.",
@@ -1962,12 +1974,12 @@ const translations: TranslationDictionary = {
       "trends.title": "Weekly Trend Decoder",
       "trends.subtitle": "Curated insight on Korean culture trends, in English.",
       "trends.description":
-        "Our team in Seoul tracks the latest trends across fashion, food, entertainment, and lifestyle. Each week, we publish detailed reports on what's trending in neighborhoods like Myeongdong, Itaewon, and Seongsu. From viral cafes to emerging K-beauty brands, stay informed about what's happening in Korea right now.",
-      "trends.description.link": "For more insights, follow Korean trend platforms like",
+        "Our team in Seoul tracks the latest trends across fashion, food, entertainment, and lifestyle. Weekly reports on what's trending in neighborhoods like Myeongdong, Itaewon, and Seongsu.",
+      "trends.description.link": "Follow",
       "trends.description.linkText": "#Seoul",
-      "trends.description.linkSuffix": "on Instagram.",
+      "trends.description.linkSuffix": "on Instagram for more inspiration.",
       "trends.description2":
-        "Explore our archive of trend reports to discover hidden gems, understand cultural shifts, and find the best spots to visit during your stay in Korea.",
+        "Explore our archive to discover hidden gems and find the best spots to visit.",
       "trends.viewAll": "View all trends",
       "trends.empty": "No trend reports are available right now. Check back soon.",
       "trends.error": "We couldn't load the Trend Decoder.",
@@ -2201,9 +2213,9 @@ const translations: TranslationDictionary = {
       "footer.external.hikorea": "HiKorea (Immigration)",
       "home.about.title": "Your Guide to Modern Korea",
       "home.about.paragraph1":
-        "Korea is more than K-pop and kimchi. It's a dynamic country where tradition meets innovation, and where new trends emerge every week. Whether you're a student, traveler, or expat, koraid helps you understand what's happening in Korea right now.",
+        "Korea is more than K-pop and kimchi. A dynamic country where tradition meets innovation, with new trends emerging every week.",
       "home.about.paragraph2":
-        "Our team is based in Seoul and constantly exploring the city to bring you the latest insights. From hidden cafes in Seongsu to pop-up stores in Gangnam, we cover the trends that matter. Explore our resources to learn more about Korean culture, language, and lifestyle.",
+        "Our team based in Seoul explores the city to bring you the latest insights. From hidden cafes in Seongsu to pop-ups in Gangnam, we cover the trends that matter.",
       "home.about.paragraph2.link": "For official information about visiting Korea, check out the",
       "home.about.paragraph2.link1": "Korea Tourism Organization",
       "home.about.paragraph2.linkMiddle": "or the",
