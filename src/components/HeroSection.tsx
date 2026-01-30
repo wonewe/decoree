@@ -45,6 +45,14 @@ export default function HeroSection() {
             <p className="max-w-2xl text-base text-[var(--ink-muted)] md:text-lg">
               {t("hero.subtitle")}
             </p>
+            <div className="max-w-2xl space-y-3 text-sm text-[var(--ink-muted)] md:text-base">
+              <p>
+                Whether you're planning your first trip to Korea or you're already here, koraid helps you navigate the latest trends, discover must-visit pop-ups, and learn the phrases that locals actually use. Our weekly trend reports decode what's happening in Seoul's hottest neighborhoods, from Gangnam to Hongdae.
+              </p>
+              <p>
+                Stay ahead with our curated event calendar featuring K-culture concerts, festivals, and exclusive pop-up experiences. Plus, build your personalized phrasebook with expressions tailored to your interests—whether you're into K-pop, Korean cuisine, or tech startups.
+              </p>
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Link
@@ -79,6 +87,8 @@ export default function HeroSection() {
                   height={192}
                   className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
                   loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
                 />
               </div>
             </Link>

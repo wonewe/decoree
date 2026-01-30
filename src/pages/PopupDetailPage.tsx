@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import type { PopupEvent } from "../data/popups";
 import { getPopupById } from "../services/contentService";
 import { useI18n } from "../shared/i18n";
@@ -89,8 +90,29 @@ export default function PopupDetailPage() {
     </div>
   );
 
+  const siteOrigin =
+    typeof window !== "undefined" ? window.location.origin : "https://koraid.com";
+  const canonicalUrl = `${siteOrigin}/popups/${popup.id}`;
+
   return (
     <article className="bg-[var(--paper)]">
+      <Helmet>
+        <title>{popup.title} | koraid</title>
+        <meta name="description" content={popup.description} />
+        <link rel="canonical" href={canonicalUrl} />
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={`${popup.title} | koraid`} />
+        <meta property="og:description" content={popup.description} />
+        <meta property="og:image" content={popup.heroImageUrl || popup.posterUrl} />
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={canonicalUrl} />
+        <meta name="twitter:title" content={`${popup.title} | koraid`} />
+        <meta name="twitter:description" content={popup.description} />
+        <meta name="twitter:image" content={popup.heroImageUrl || popup.posterUrl} />
+      </Helmet>
       <div className="relative h-[320px] w-full overflow-hidden">
         <img src={popup.heroImageUrl} alt={popup.title} className="h-full w-full object-cover" />
         <div className="absolute right-6 top-6">

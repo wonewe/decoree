@@ -52,7 +52,7 @@ export default function PersonalizedPhrasebook() {
     <section className="section-container space-y-10">
       <div className="content-shell space-y-4">
         <span className="badge-label">{t("phrasebook.title")}</span>
-        <h2 className="font-heading text-4xl text-[var(--ink)]">{t("phrasebook.title")}</h2>
+        <h1 className="font-heading text-4xl text-[var(--ink)]">{t("phrasebook.title")}</h1>
         <p className="max-w-2xl text-[var(--ink-muted)]">{t("phrasebook.subtitle")}</p>
       </div>
 
