@@ -53,7 +53,11 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
       <div className="content-shell flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-3">
           <span className="badge-label">{t("events.title")}</span>
-          <h2 className="font-heading text-4xl text-[var(--ink)]">{t("events.title")}</h2>
+          {preview ? (
+            <h2 className="font-heading text-4xl text-[var(--ink)]">{t("events.title")}</h2>
+          ) : (
+            <h1 className="font-heading text-4xl text-[var(--ink)]">{t("events.title")}</h1>
+          )}
           <p className="max-w-2xl text-[var(--ink-muted)]">{t("events.subtitle")}</p>
         </div>
         {preview && (
@@ -150,6 +154,8 @@ export default function EventCalendar({ preview = false }: EventCalendarProps) {
                     alt={event.title}
                     className="h-full w-full object-cover transition duration-500 ease-out group-hover:scale-105"
                     loading="lazy"
+                    decoding="async"
+                    fetchPriority="low"
                   />
                 ) : (
                   <div className="flex h-full flex-col items-center justify-center gap-2 text-[var(--ink-subtle)]">

@@ -45,6 +45,14 @@ export default function HeroSection() {
             <p className="max-w-2xl text-base text-[var(--ink-muted)] md:text-lg">
               {t("hero.subtitle")}
             </p>
+            <div className="max-w-2xl space-y-3 text-sm text-[var(--ink-muted)] md:text-base">
+              <p>
+                {t("hero.description.paragraph1")}
+              </p>
+              <p>
+                {t("hero.description.paragraph2")}
+              </p>
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <Link
@@ -79,6 +87,8 @@ export default function HeroSection() {
                   height={192}
                   className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
                   loading="lazy"
+                  decoding="async"
+                  fetchPriority="low"
                 />
               </div>
             </Link>

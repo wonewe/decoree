@@ -8,6 +8,7 @@ import { formatDateRange } from "../shared/date";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
 import { useAuth } from "../shared/auth";
 import { sanitizeHtml } from "../utils/sanitizeHtml";
+import { generateEventSchema, generateStructuredDataScript } from "../utils/structuredData";
 
 type Status = "idle" | "loading" | "success" | "not-found" | "error";
 
@@ -78,15 +79,45 @@ export default function EventDetailPage() {
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
     : null;
 
+  const siteOrigin = typeof window !== "undefined" ? window.location.origin : "https://koraid.com";
+  const startDateISO = new Date(event.startDate).toISOString();
+  const endDateISO = event.endDate ? new Date(event.endDate).toISOString() : undefined;
+  
+  const eventSchema = generateEventSchema(
+    event.title,
+    event.description,
+    startDateISO,
+    {
+      endDate: endDateISO,
+      image: event.imageUrl,
+      locationName: event.location,
+      locationAddress: event.location,
+      price: event.price,
+      priceCurrency: "KRW",
+      bookingUrl: event.bookingUrl
+    }
+  );
+
   return (
     <article className="bg-[var(--paper)]">
       <Helmet>
+        <script type="application/ld+json">
+          {generateStructuredDataScript(eventSchema)}
+        </script>
         <title>{event.title} | koraid</title>
         <meta name="description" content={event.description} />
-        <meta property="og:title" content={event.title} />
+        <link rel="canonical" href={`${typeof window !== "undefined" ? window.location.origin : "https://koraid.com"}/events/${event.id}`} />
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="event" />
+        <meta property="og:url" content={`${typeof window !== "undefined" ? window.location.origin : "https://koraid.com"}/events/${event.id}`} />
+        <meta property="og:title" content={`${event.title} | koraid`} />
         <meta property="og:description" content={event.description} />
         <meta property="og:image" content={event.imageUrl} />
-        <meta property="og:type" content="event" />
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${event.title} | koraid`} />
+        <meta name="twitter:description" content={event.description} />
+        <meta name="twitter:image" content={event.imageUrl} />
       </Helmet>
       <div className="relative h-[320px] w-full overflow-hidden">
         <img

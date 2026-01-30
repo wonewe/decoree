@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useI18n } from "../shared/i18n";
 import { usePopups } from "../hooks/usePopups";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
@@ -84,15 +85,42 @@ export default function PopupRadarPage() {
     return byCategory;
   }, [activeCategory, filter, popups, search]);
 
+  const siteOrigin =
+    import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
+    (typeof window !== "undefined" ? window.location.origin : "https://koraid.com");
+  
+  const title = `${t("popupRadar.sections.now.title")} | koraid`;
+  const description = t("popupRadar.sections.now.subtitle");
+  const ogImage = `${siteOrigin}/main4.jpg`;
+  const canonicalUrl = `${siteOrigin}/popups`;
+
   return (
-    <section className="section-container space-y-8">
+    <>
+      <Helmet>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={canonicalUrl} />
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImage} />
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={canonicalUrl} />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
+      </Helmet>
+      <section className="section-container space-y-8">
       <div className="content-shell space-y-4">
         <span className="badge-label">{t("popupRadar.title")}</span>
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-2">
-            <h2 className="font-heading text-3xl text-[var(--ink)] md:text-4xl">
+            <h1 className="font-heading text-3xl text-[var(--ink)] md:text-4xl">
               {t("popupRadar.sections.now.title")}
-            </h2>
+            </h1>
             <p className="text-sm text-[var(--ink-muted)] md:text-base">{t("popupRadar.sections.now.subtitle")}</p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -247,5 +275,6 @@ export default function PopupRadarPage() {
         </div>
       )}
     </section>
+    </>
   );
 }

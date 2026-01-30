@@ -237,21 +237,128 @@ export default function Layout() {
       <main>
         <Outlet />
       </main>
-      <footer className="border-t border-[var(--border)] bg-[var(--paper)] py-8 md:py-10">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 text-sm text-[var(--ink-muted)] md:flex-row md:items-center md:justify-between">
-          <span>
-            © {new Date().getFullYear()} koraid · {t("footer.madeIn")}
-          </span>
-          <div className="flex flex-wrap gap-4">
-            <a href="https://www.instagram.com" className="muted-link transition-colors duration-150" target="_blank" rel="noreferrer">
-              Instagram
-            </a>
-            <a href="https://www.tiktok.com" className="muted-link transition-colors duration-150" target="_blank" rel="noreferrer">
-              TikTok
-            </a>
-            <a href="mailto:Team@kor-aid.com" className="muted-link transition-colors duration-150">
-              Team@kor-aid.com
-            </a>
+      <footer className="border-t border-[var(--border)] bg-[var(--paper)] py-12 md:py-16">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="grid gap-8 md:grid-cols-5 mb-8">
+            <div className="space-y-3">
+              <h3 className="font-semibold text-[var(--ink)]">{t("footer.sections.about.title")}</h3>
+              <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
+                <li>
+                  <NavLink to="/" className="hover:text-[var(--ink)] transition-colors duration-150">
+                    {t("nav.home") || "Home"}
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/trends" className="hover:text-[var(--ink)] transition-colors duration-150">
+                    {t("nav.trends")}
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/popups" className="hover:text-[var(--ink)] transition-colors duration-150">
+                    {t("nav.popups")}
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/tutoring" className="hover:text-[var(--ink)] transition-colors duration-150">
+                    {t("nav.tutoring")}
+                  </NavLink>
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-3">
+              <h3 className="font-semibold text-[var(--ink)]">{t("footer.sections.resources.title")}</h3>
+              <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
+                <li>
+                  <NavLink to="/newsletter" className="hover:text-[var(--ink)] transition-colors duration-150">
+                    {t("nav.newsletter")}
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/phrasebook" className="hover:text-[var(--ink)] transition-colors duration-150">
+                    {t("nav.phrasebook")}
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/local-support/services" className="hover:text-[var(--ink)] transition-colors duration-150">
+                    {t("nav.localSupport")}
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/culture-test" className="hover:text-[var(--ink)] transition-colors duration-150">
+                    {t("nav.cultureTest")}
+                  </NavLink>
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-3">
+              <h3 className="font-semibold text-[var(--ink)]">{t("footer.sections.connect.title")}</h3>
+              <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
+                <li>
+                  <a href="https://www.instagram.com/koraid.official/" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
+                    Instagram
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.tiktok.com/@koraid" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
+                    TikTok
+                  </a>
+                </li>
+                <li>
+                  <a href="mailto:Team@kor-aid.com" className="hover:text-[var(--ink)] transition-colors duration-150">
+                    Team@kor-aid.com
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-3">
+              <h3 className="font-semibold text-[var(--ink)]">{t("footer.sections.external.title")}</h3>
+              <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
+                <li>
+                  <a href="https://www.visitkorea.or.kr" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
+                    {t("footer.external.visitKorea")}
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.seoul.go.kr" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
+                    {t("footer.external.seoulGov")}
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.1330.or.kr" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
+                    {t("footer.external.tourCall")}
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.hikorea.go.kr" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
+                    {t("footer.external.hikorea")}
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-3">
+              <h3 className="font-semibold text-[var(--ink)]">{t("footer.sections.legal.title")}</h3>
+              <ul className="space-y-2 text-sm text-[var(--ink-muted)]">
+                <li>
+                  <span className="text-[var(--ink-subtle)]">{t("footer.madeIn")}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-[var(--border)] pt-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between text-sm text-[var(--ink-muted)]">
+            <span>
+              © {new Date().getFullYear()} koraid · {t("footer.madeIn")}
+            </span>
+            <div className="flex flex-wrap gap-4">
+              <a href="https://www.instagram.com/koraid.official/" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
+                Instagram
+              </a>
+              <a href="https://www.tiktok.com/@koraid" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
+                TikTok
+              </a>
+              <a href="mailto:Team@kor-aid.com" className="hover:text-[var(--ink)] transition-colors duration-150">
+                Team@kor-aid.com
+              </a>
+            </div>
           </div>
         </div>
       </footer>

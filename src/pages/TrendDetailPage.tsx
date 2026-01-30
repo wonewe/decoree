@@ -9,6 +9,7 @@ import { formatDate } from "../shared/date";
 import { BookmarkButton } from "../components/bookmarks/BookmarkButton";
 import { useAuth } from "../shared/auth";
 import { MarkdownContent } from "../components/MarkdownContent";
+import { generateArticleSchema, generateStructuredDataScript } from "../utils/structuredData";
 
 type Status = "idle" | "loading" | "success" | "not-found" | "error";
 
@@ -74,15 +75,45 @@ export default function TrendDetailPage() {
     href: `/trends/${report.id}`
   };
 
+  const siteOrigin = typeof window !== "undefined" ? window.location.origin : "https://koraid.com";
+  const pageUrl = `${siteOrigin}/trends/${report.id}`;
+  
+  const publishedDate = new Date(report.publishedAt);
+  const publishedAtISO = publishedDate.toISOString();
+  
+  const articleSchema = generateArticleSchema(
+    report.title,
+    report.summary,
+    report.imageUrl,
+    publishedAtISO,
+    "koraid",
+    {
+      authorName: author?.name,
+      pageUrl,
+      publisherLogo: `${siteOrigin}/favicon.svg`
+    }
+  );
+
   return (
     <article className="bg-[var(--paper-muted)]">
       <Helmet>
+        <script type="application/ld+json">
+          {generateStructuredDataScript(articleSchema)}
+        </script>
         <title>{report.title} | koraid</title>
         <meta name="description" content={report.summary} />
-        <meta property="og:title" content={report.title} />
+        <link rel="canonical" href={`${typeof window !== "undefined" ? window.location.origin : "https://koraid.com"}/trends/${report.id}`} />
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`${typeof window !== "undefined" ? window.location.origin : "https://koraid.com"}/trends/${report.id}`} />
+        <meta property="og:title" content={`${report.title} | koraid`} />
         <meta property="og:description" content={report.summary} />
         <meta property="og:image" content={report.imageUrl} />
-        <meta property="og:type" content="article" />
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${report.title} | koraid`} />
+        <meta name="twitter:description" content={report.summary} />
+        <meta name="twitter:image" content={report.imageUrl} />
       </Helmet>
       <div className="relative h-[320px] w-full overflow-hidden">
         <img

@@ -39,6 +39,39 @@ export default defineConfig(({ mode }) => {
         outDir: "dist"
       })
     ],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Vendor chunks
+            "react-vendor": ["react", "react-dom", "react-router-dom"],
+            "helmet-vendor": ["react-helmet-async"],
+            // Feature chunks
+            "admin": [
+              "./src/pages/AdminListPage",
+              "./src/pages/AdminEditorPage"
+            ],
+            "auth": [
+              "./src/pages/LoginPage",
+              "./src/pages/SignupPage",
+              "./src/pages/ProfilePage"
+            ],
+            "content": [
+              "./src/pages/TrendDetailPage",
+              "./src/pages/EventDetailPage",
+              "./src/pages/PopupDetailPage",
+              "./src/pages/NewsletterDetailPage"
+            ]
+          }
+        }
+      },
+      chunkSizeWarningLimit: 1000,
+      cssCodeSplit: true,
+      sourcemap: false,
+      minify: "esbuild",
+      target: "esnext",
+      assetsInlineLimit: 4096
+    },
     server: {
       port: 5173
     },
