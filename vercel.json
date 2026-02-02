@@ -12,6 +12,10 @@
       "destination": "/sitemap.xml"
     },
     {
+      "source": "/api/og",
+      "destination": "/api/og.ts"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }

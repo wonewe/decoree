@@ -7,7 +7,7 @@ export default function TrendsPage() {
   
   const siteOrigin =
     import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
-    (typeof window !== "undefined" ? window.location.origin : "https://koraid.com");
+    (typeof window !== "undefined" ? window.location.origin : "https://kor-aid.com");
   
   const title = `${t("trends.title")} | koraid`;
   const description = t("trends.subtitle");

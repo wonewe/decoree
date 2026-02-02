@@ -7,7 +7,7 @@ export default function PhrasebookPage() {
   
   const siteOrigin =
     import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
-    (typeof window !== "undefined" ? window.location.origin : "https://koraid.com");
+    (typeof window !== "undefined" ? window.location.origin : "https://kor-aid.com");
   
   const title = `${t("phrasebook.title")} | koraid`;
   const description = t("phrasebook.subtitle");

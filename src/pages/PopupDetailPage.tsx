@@ -92,7 +92,7 @@ export default function PopupDetailPage() {
 
   const siteOrigin =
     import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
-    (typeof window !== "undefined" ? window.location.origin : "https://koraid.com");
+    (typeof window !== "undefined" ? window.location.origin : "https://kor-aid.com");
   const canonicalUrl = `${siteOrigin}/popups/${popup.id}`;
   
   // 이미지 URL을 절대 URL로 변환

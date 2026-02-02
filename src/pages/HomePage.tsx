@@ -14,7 +14,7 @@ export default function HomePage() {
   
   const siteOrigin =
     import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
-    (typeof window !== "undefined" ? window.location.origin : "https://koraid.com");
+    (typeof window !== "undefined" ? window.location.origin : "https://kor-aid.com");
   
   const title = `${t("hero.title")} | koraid`;
   const description = t("hero.subtitle");
