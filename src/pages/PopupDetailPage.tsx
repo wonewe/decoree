@@ -91,8 +91,23 @@ export default function PopupDetailPage() {
   );
 
   const siteOrigin =
-    typeof window !== "undefined" ? window.location.origin : "https://koraid.com";
+    import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
+    (typeof window !== "undefined" ? window.location.origin : "https://koraid.com");
   const canonicalUrl = `${siteOrigin}/popups/${popup.id}`;
+  
+  // 이미지 URL을 절대 URL로 변환
+  const getAbsoluteImageUrl = (imageUrl: string | undefined): string => {
+    if (!imageUrl) return `${siteOrigin}/main1.jpg`;
+    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+      return imageUrl;
+    }
+    if (imageUrl.startsWith("/")) {
+      return `${siteOrigin}${imageUrl}`;
+    }
+    return `${siteOrigin}/${imageUrl}`;
+  };
+  
+  const ogImageUrl = getAbsoluteImageUrl(popup.heroImageUrl || popup.posterUrl);
 
   return (
     <article className="bg-[var(--paper)]">
@@ -105,13 +120,19 @@ export default function PopupDetailPage() {
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:title" content={`${popup.title} | koraid`} />
         <meta property="og:description" content={popup.description} />
-        <meta property="og:image" content={popup.heroImageUrl || popup.posterUrl} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={popup.title} />
+        <meta property="og:site_name" content="koraid" />
+        <meta property="og:locale" content="en_US" />
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content={canonicalUrl} />
         <meta name="twitter:title" content={`${popup.title} | koraid`} />
         <meta name="twitter:description" content={popup.description} />
-        <meta name="twitter:image" content={popup.heroImageUrl || popup.posterUrl} />
+        <meta name="twitter:image" content={ogImageUrl} />
+        <meta name="twitter:image:alt" content={popup.title} />
       </Helmet>
       <div className="relative h-[320px] w-full overflow-hidden">
         <img src={popup.heroImageUrl} alt={popup.title} className="h-full w-full object-cover" />
