@@ -75,8 +75,24 @@ export default function TrendDetailPage() {
     href: `/trends/${report.id}`
   };
 
-  const siteOrigin = typeof window !== "undefined" ? window.location.origin : "https://koraid.com";
+  const siteOrigin =
+    import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
+    (typeof window !== "undefined" ? window.location.origin : "https://koraid.com");
   const pageUrl = `${siteOrigin}/trends/${report.id}`;
+  
+  // 이미지 URL을 절대 URL로 변환
+  const getAbsoluteImageUrl = (imageUrl: string): string => {
+    if (!imageUrl) return `${siteOrigin}/main1.jpg`;
+    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+      return imageUrl;
+    }
+    if (imageUrl.startsWith("/")) {
+      return `${siteOrigin}${imageUrl}`;
+    }
+    return `${siteOrigin}/${imageUrl}`;
+  };
+  
+  const ogImageUrl = getAbsoluteImageUrl(report.imageUrl);
   
   const publishedDate = new Date(report.publishedAt);
   const publishedAtISO = publishedDate.toISOString();
@@ -84,7 +100,7 @@ export default function TrendDetailPage() {
   const articleSchema = generateArticleSchema(
     report.title,
     report.summary,
-    report.imageUrl,
+    ogImageUrl,
     publishedAtISO,
     "koraid",
     {
@@ -102,18 +118,25 @@ export default function TrendDetailPage() {
         </script>
         <title>{report.title} | koraid</title>
         <meta name="description" content={report.summary} />
-        <link rel="canonical" href={`${typeof window !== "undefined" ? window.location.origin : "https://koraid.com"}/trends/${report.id}`} />
+        <link rel="canonical" href={pageUrl} />
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={`${typeof window !== "undefined" ? window.location.origin : "https://koraid.com"}/trends/${report.id}`} />
+        <meta property="og:url" content={pageUrl} />
         <meta property="og:title" content={`${report.title} | koraid`} />
         <meta property="og:description" content={report.summary} />
-        <meta property="og:image" content={report.imageUrl} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={report.title} />
+        <meta property="og:site_name" content="koraid" />
+        <meta property="og:locale" content="en_US" />
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={pageUrl} />
         <meta name="twitter:title" content={`${report.title} | koraid`} />
         <meta name="twitter:description" content={report.summary} />
-        <meta name="twitter:image" content={report.imageUrl} />
+        <meta name="twitter:image" content={ogImageUrl} />
+        <meta name="twitter:image:alt" content={report.title} />
       </Helmet>
       <div className="relative h-[320px] w-full overflow-hidden">
         <img

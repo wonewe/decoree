@@ -79,7 +79,25 @@ export default function EventDetailPage() {
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`
     : null;
 
-  const siteOrigin = typeof window !== "undefined" ? window.location.origin : "https://koraid.com";
+  const siteOrigin =
+    import.meta.env.VITE_SITE_URL?.replace(/\/+$/, "") ||
+    (typeof window !== "undefined" ? window.location.origin : "https://koraid.com");
+  const pageUrl = `${siteOrigin}/events/${event.id}`;
+  
+  // 이미지 URL을 절대 URL로 변환
+  const getAbsoluteImageUrl = (imageUrl: string): string => {
+    if (!imageUrl) return `${siteOrigin}/main1.jpg`;
+    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+      return imageUrl;
+    }
+    if (imageUrl.startsWith("/")) {
+      return `${siteOrigin}${imageUrl}`;
+    }
+    return `${siteOrigin}/${imageUrl}`;
+  };
+  
+  const ogImageUrl = getAbsoluteImageUrl(event.imageUrl);
+  
   const startDateISO = new Date(event.startDate).toISOString();
   const endDateISO = event.endDate ? new Date(event.endDate).toISOString() : undefined;
   
@@ -89,7 +107,7 @@ export default function EventDetailPage() {
     startDateISO,
     {
       endDate: endDateISO,
-      image: event.imageUrl,
+      image: ogImageUrl,
       locationName: event.location,
       locationAddress: event.location,
       price: event.price,
@@ -106,18 +124,25 @@ export default function EventDetailPage() {
         </script>
         <title>{event.title} | koraid</title>
         <meta name="description" content={event.description} />
-        <link rel="canonical" href={`${typeof window !== "undefined" ? window.location.origin : "https://koraid.com"}/events/${event.id}`} />
+        <link rel="canonical" href={pageUrl} />
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="event" />
-        <meta property="og:url" content={`${typeof window !== "undefined" ? window.location.origin : "https://koraid.com"}/events/${event.id}`} />
+        <meta property="og:url" content={pageUrl} />
         <meta property="og:title" content={`${event.title} | koraid`} />
         <meta property="og:description" content={event.description} />
-        <meta property="og:image" content={event.imageUrl} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={event.title} />
+        <meta property="og:site_name" content="koraid" />
+        <meta property="og:locale" content="en_US" />
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={pageUrl} />
         <meta name="twitter:title" content={`${event.title} | koraid`} />
         <meta name="twitter:description" content={event.description} />
-        <meta name="twitter:image" content={event.imageUrl} />
+        <meta name="twitter:image" content={ogImageUrl} />
+        <meta name="twitter:image:alt" content={event.title} />
       </Helmet>
       <div className="relative h-[320px] w-full overflow-hidden">
         <img
