@@ -299,7 +299,7 @@ export default function Layout() {
                   </a>
                 </li>
                 <li>
-                  <a href="https://www.tiktok.com/@koraid" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
+                  <a href="https://www.tiktok.com/@koraid.official" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
                     TikTok
                   </a>
                 </li>
@@ -352,7 +352,7 @@ export default function Layout() {
               <a href="https://www.instagram.com/koraid.official/" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
                 Instagram
               </a>
-              <a href="https://www.tiktok.com/@koraid" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
+              <a href="https://www.tiktok.com/@koraid.official" className="hover:text-[var(--ink)] transition-colors duration-150" target="_blank" rel="noreferrer noopener">
                 TikTok
               </a>
               <a href="mailto:Team@kor-aid.com" className="hover:text-[var(--ink)] transition-colors duration-150">
