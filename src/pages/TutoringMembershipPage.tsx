@@ -1,5 +1,4 @@
 import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
 import { useI18n } from "../shared/i18n";
 import { useAuth } from "../shared/auth";
 
@@ -69,17 +68,20 @@ export default function TutoringMembershipPage() {
               </ul>
             </div>
 
-            <Link
-              to={user ? "#" : "/login"}
-              className="primary-button w-full text-center"
+            <a
+              href={user ? "https://archai0.gumroad.com/l/koraid-basic" : "/login"}
+              className="primary-button w-full text-center block"
+              target={user ? "_blank" : undefined}
+              rel={user ? "noopener noreferrer" : undefined}
               onClick={(e) => {
-                if (!user) return;
-                e.preventDefault();
-                // TODO: Lemon Squeezy 통합 시 결제 링크로 이동
+                if (!user) {
+                  e.preventDefault();
+                  window.location.href = "/login";
+                }
               }}
             >
               {t("tutoring.membership.basic.cta")}
-            </Link>
+            </a>
           </div>
 
           {/* Pro Membership */}
@@ -127,17 +129,20 @@ export default function TutoringMembershipPage() {
               </ul>
             </div>
 
-            <Link
-              to={user ? "#" : "/login"}
-              className="primary-button w-full text-center bg-[var(--accent)] hover:bg-[var(--accent)]/90"
+            <a
+              href={user ? "https://archai0.gumroad.com/l/koraid-pro" : "/login"}
+              className="primary-button w-full text-center block bg-[var(--accent)] hover:bg-[var(--accent)]/90"
+              target={user ? "_blank" : undefined}
+              rel={user ? "noopener noreferrer" : undefined}
               onClick={(e) => {
-                if (!user) return;
-                e.preventDefault();
-                // TODO: Lemon Squeezy 통합 시 결제 링크로 이동
+                if (!user) {
+                  e.preventDefault();
+                  window.location.href = "/login";
+                }
               }}
             >
               {t("tutoring.membership.pro.cta")}
-            </Link>
+            </a>
           </div>
         </div>
 
