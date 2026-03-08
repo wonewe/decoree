@@ -1,6 +1,6 @@
 import type { SupportedLanguage } from "../../shared/i18n";
 
-const GOOGLE_ENDPOINT = "https://translate.googleapis.com/translate_a/single";
+const GOOGLE_ENDPOINT = "/api/translate";
 
 const translationCache = new Map<string, string>();
 

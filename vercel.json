@@ -16,6 +16,10 @@
       "destination": "/api/og.ts"
     },
     {
+      "source": "/api/translate",
+      "destination": "/api/translate.ts"
+    },
+    {
       "source": "/(.*)",
       "destination": "/"
     }
