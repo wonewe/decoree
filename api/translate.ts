@@ -22,7 +22,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   });
 
   try {
-    const response = await fetch(`${GOOGLE_ENDPOINT}?${params.toString()}`);
+    const response = await fetch(GOOGLE_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: params.toString(),
+    });
     if (!response.ok) {
       return res.status(response.status).json({ error: "Translation API error" });
     }
