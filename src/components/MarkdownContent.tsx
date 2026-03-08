@@ -59,8 +59,8 @@ const renderBlock = (block: string) => {
   if (!trimmed) return "";
 
   // 1. HTML 블록 태그 감지 (에디터에서 생성된 콘텐츠)
-  // 블록 레벨 태그로 시작하면 HTML로 간주하고 그대로 반환
-  if (/^<(p|div|h[1-6]|ul|ol|blockquote|pre|figure|hr|table)\b/i.test(trimmed)) {
+  // 블록 레벨 태그가 어디에든 있으면 HTML로 간주하고 그대로 반환
+  if (/<(p|div|h[1-6]|ul|ol|blockquote|pre|figure|hr|table)\b/i.test(trimmed)) {
     return trimmed;
   }
 

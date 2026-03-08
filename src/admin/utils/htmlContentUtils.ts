@@ -6,7 +6,7 @@
  * HTML 태그가 포함되어 있는지 확인
  */
 export function hasHtmlContent(content: string): boolean {
-  return content.includes("<img") || content.includes("<p>") || content.includes("<h2>");
+  return /<(img|p|div|h[1-6]|ul|ol|blockquote|pre)\b/i.test(content);
 }
 
 /**
