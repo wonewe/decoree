@@ -68,22 +68,28 @@ export async function translateText({
     sl: sourceCode ?? "auto",
     tl: targetCode,
     dt: "t",
-    q: trimmed
+    q: normalizedInput
   });
 
-  const response = await fetch(`${GOOGLE_ENDPOINT}?${params.toString()}`);
-  if (!response.ok) {
-    throw new Error(`Translate request failed (${response.status})`);
-  }
+  try {
+    const response = await fetch(`${GOOGLE_ENDPOINT}?${params.toString()}`);
+    if (!response.ok) {
+      console.warn(`Translate request failed (${response.status}), falling back to original`);
+      return trimmed;
+    }
 
-  const payload = await response.json();
-  const translatedRaw =
-    Array.isArray(payload?.[0]) && Array.isArray(payload[0][0])
-      ? payload[0].map((segment: [string]) => segment[0]).join("")
-      : trimmed;
-  const clean = sanitizeTranslatedText(translatedRaw);
-  translationCache.set(cacheKey, clean);
-  return clean;
+    const payload = await response.json();
+    const translatedRaw =
+      Array.isArray(payload?.[0]) && Array.isArray(payload[0][0])
+        ? payload[0].map((segment: [string]) => segment[0]).join("")
+        : trimmed;
+    const clean = sanitizeTranslatedText(translatedRaw);
+    translationCache.set(cacheKey, clean);
+    return clean;
+  } catch {
+    console.warn("Translation unavailable (CORS or network), falling back to original");
+    return trimmed;
+  }
 }
 
 export type TranslationBatchResult = {
